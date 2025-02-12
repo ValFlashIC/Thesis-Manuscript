@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="svg2244" xmlns="http://www.w3.org/2000/svg" width="693.4" height="178.3" viewBox="0 0 693.4 178.3">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #264653;
+      }
+
+      .cls-1, .cls-2, .cls-3 {
+        stroke-width: 0px;
+      }
+
+      .cls-2 {
+        fill: #e76f51;
+      }
+
+      .cls-3 {
+        fill: #1ca18e;
+      }
+    </style>
+  </defs>
+  <rect id="rect83630-4-3-3-8-7" class="cls-2" x="181.3" y=".7" width="48.8" height="41.8"/>
+  <rect id="rect83630-0-4-6-7" class="cls-1" x="181" y="72.1" width="48.8" height="106.3"/>
+  <g id="text83636-1-67-5-3">
+    <path id="path83746-7-37-2-9" class="cls-1" d="m0,46h52.2v132.3h48.8V46h52.2V0L0,.3v45.7Z"/>
+  </g>
+  <g id="text83640-0-80-2-9">
+    <path id="path6694" class="cls-1" d="m257.7,177.8l48.8.3v-94.4l55.7,94,55.7-94v94.6l48.8-.3V.2h-48.8l-55.7,94L306.5.2h-48.8v177.6Z"/>
+  </g>
+  <g id="g262730">
+    <path id="path201109-9-2-0-6" class="cls-3" d="m565.5.7l-71.1,177.6h50.4l43.5-112.9,5.5-15.4,3.1,8.5,46.2,119.7h50.3L622.3.7h-56.8Z"/>
+    <g id="g248181-0">
+      <path id="path201111-8-4-6-7" class="cls-2" d="m609.5,178.3h-50.7l26-67.5,24.7,67.5Z"/>
+      <path id="path201111-8-4-2-2-8" class="cls-2" d="m629,178.3h-36.3l17.9-48,18.3,48Z"/>
+    </g>
+  </g>
+</svg>

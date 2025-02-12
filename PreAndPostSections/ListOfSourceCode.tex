@@ -1,0 +1,16 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% List of Source Code
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\FancyHeadLeft{\sectitle}
+
+\if\Language\EN \renewcommand{\sectitle}{List of Source Code}
+\else \renewcommand{\sectitle}{Table des codes sources} \fi
+
+\phantomsection
+\addcontentsline{toc}{chapter}{\sectitle}
+
+\listofsourcecode
+
+\cleardoublepage %% Comment this line if this section occupies the last pages
+\adjustmtc

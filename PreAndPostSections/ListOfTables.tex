@@ -1,0 +1,16 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% List of Tables
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\FancyHeadLeft{\sectitle}
+
+\if\Language\EN \renewcommand{\sectitle}{List of Tables}
+\else \renewcommand{\sectitle}{Liste des tableaux} \fi
+
+\phantomsection
+\addcontentsline{toc}{chapter}{\sectitle}
+
+\listoftables
+
+\cleardoublepage %% Comment this line if this section occupies the last pages
+\adjustmtc

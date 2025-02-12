@@ -1,0 +1,142 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Bibliography
+%
+% ID writing convention: NameDate_KeyWord
+% Ex.: Zhang2021_Gamma
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+@article{Isaac2024_SoA,
+	author = {Isaac-{-}Chassande, Valentin and Evans, Adrian and Durand, Yves and Rousseau, Fr\'{e}d\'{e}ric},
+	title = {Dedicated Hardware Accelerators for Processing of Sparse Matrices and Vectors: A Survey},
+	year = {2024},
+	issue_date = {June 2024},
+	publisher = {Association for Computing Machinery},
+	address = {New York, NY, USA},
+	volume = {21},
+	number = {2},
+	issn = {1544-3566},
+	url = {https://doi.org/10.1145/3640542},
+	doi = {10.1145/3640542},
+	abstract = {Performance in scientific and engineering applications such as computational physics, algebraic graph problems or Convolutional Neural Networks (CNN), is dominated by the manipulation of large sparse matrices—matrices with a large number of zero elements. Specialized software using data formats for sparse matrices has been optimized for the main kernels of interest: SpMV and SpMSpM matrix multiplications, but due to the indirect memory accesses, the performance is still limited by the memory hierarchy of conventional computers. Recent work shows that specific hardware accelerators can reduce memory traffic and improve the execution time of sparse matrix multiplication, compared to the best software implementations. The performance of these sparse hardware accelerators depends on the choice of the sparse format, COO, CSR, etc, the algorithm, inner-product, outer-product, Gustavson, and many hardware design choices. In this article, we propose a systematic survey which identifies the design choices of state-of-the-art accelerators for sparse matrix multiplication kernels. We introduce the necessary concepts and then present, compare, and classify the main sparse accelerators in the literature, using consistent notations. Finally, we propose a taxonomy for these accelerators to help future designers make the best choices depending on their objectives.},
+	journal = {ACM Trans. Archit. Code Optim.},
+	month = feb,
+	articleno = {27},
+	numpages = {26},
+	keywords = {High performance computing (HPC), accelerators, sparse matrices, memory hierarchy}
+}
+
+@INPROCEEDINGS{Isaac2024_SpDCache,
+    author = {Isaac-{-}Chassande, Valentin and Evans, Adrian and Durand, Yves and Rousseau, Fr\'{e}d\'{e}ric},
+    booktitle = {2024 IEEE 35th International Conference on Application-specific Systems, Architectures and Processors (ASAP)},
+    title = {SpDCache: Region-Based Reduction Cache for Outer-Product Sparse Matrix Kernels},
+    year = {2024},
+    volume = {},
+    issn = {},
+    pages = {3-7},
+    abstract = {Improvements in computer performance depend increasingly on specialized accelerators and recently, numerous architectures optimized for sparse matrix kernels have been proposed, however, they do not exploit the structural properties of the matrices. SpDCache is a cache for outer-product Sparse Matrix-Vector Multiplication (SpMV) which has storage strategies optimized for both dense and sparse regions and which performs reductions locally in this cache. Real world matrices typically have a dense band which benefits from being blocked in the dense region of our cache, while the sparse regions benefit from fine-grained storage and a shift of the computation close to the main memory. We present the architectural principals of SpDCache and show that it reduces main memory traffic by -8x and increases the cache utilization by -2x for banded matrices.},
+    keywords = {program processors;computational modeling;systems architecture;computer architecture;hardware;computer performance;sparse matrices},
+    doi = {10.1109/ASAP61560.2024.00012},
+    url = {https://doi.ieeecomputersociety.org/10.1109/ASAP61560.2024.00012},
+    publisher = {IEEE Computer Society},
+    address = {Los Alamitos, CA, USA},
+    month = {jul}
+}
+
+@INPROCEEDINGS{Zhang2021_Gamma,
+    author = {Zhang, Guowei and Attaluri, Nithya and Emer, Joel S. and Sanchez, Daniel},
+    title = {Gamma: Leveraging Gustavson’s Algorithm to Accelerate Sparse Matrix Multiplication},
+    year = {2021},
+    isbn = {9781450383172},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3445814.3446702},
+    doi = {10.1145/3445814.3446702},
+    abstract = {Sparse matrix-sparse matrix multiplication (spMspM) is at the heart of a wide range of scientific and machine learning applications. spMspM is inefficient on general-purpose architectures, making accelerators attractive. However, prior spMspM accelerators use inner- or outer-product dataflows that suffer poor input or output reuse, leading to high traffic and poor performance. These prior accelerators have not explored Gustavson's algorithm, an alternative spMspM dataflow that does not suffer from these problems but features irregular memory access patterns that prior accelerators do not support. We present GAMMA, an spMspM accelerator that uses Gustavson's algorithm to address the challenges of prior work. GAMMA performs spMspM's computation using specialized processing elements with simple high-radix mergers, and performs many merges in parallel to achieve high throughput. GAMMA uses a novel on-chip storage structure that combines features of both caches and explicitly managed buffers. This structure captures Gustavson's irregular reuse patterns and streams thousands of concurrent sparse fibers (i.e., lists of coordinates and values for rows or columns) with explicitly decoupled data movement. GAMMA features a new dynamic scheduling algorithm to achieve high utilization despite irregularity. We also present new preprocessing algorithms that boost GAMMA's efficiency and versatility. As a result, GAMMA outperforms prior accelerators by gmean 2.1x, and reduces memory traffic by gmean 2.2x and by up to 13x.},
+    booktitle = {Proceedings of the 26th ACM International Conference on Architectural Support for Programming Languages and Operating Systems},
+    pages = {687–701},
+    numpages = {15},
+    keywords = {explicit data orchestration, high-radix merge, sparse linear algebra, accelerator, Gustavson's algorithm, data movement reduction, sparse matrix multiplication},
+    location = {Virtual, USA},
+    series = {ASPLOS '21}
+}
+
+@CONFERENCE{Srikanth2017_SuperStrider,
+	author = {Srikanth, Sriseshan and Conte, Thomas M. and DeBenedictis, Erik P. and Cook, Jeanine},
+	title = {The superstrider architecture: Integrating logic and memory towards non-von Neumann computing},
+	year = {2017},
+	journal = {2017 IEEE International Conference on Rebooting Computing, ICRC 2017 - Proceedings},
+	volume = {2017-January},
+	pages = {1 – 8},
+	doi = {10.1109/ICRC.2017.8123669},
+	url = {https://www.scopus.com/inward/record.uri?eid=2-s2.0-85043534972&doi=10.1109%2fICRC.2017.8123669&partnerID=40&md5=11893ac02aceeec2e23fba2b6ae61430},
+	type = {Conference paper},
+	publication_stage = {Final},
+	source = {Scopus},
+}
+
+@book{Barrett1994_CSR_BCSR_DIA_ELL,
+    author = {Barrett, Richard and Berry, Michael and Chan, Tony F. and Demmel, James and Donato, June and Dongarra, Jack and Eijkhout, Victor and Pozo, Roldan and Romine, Charles and van der Vorst, Henk},
+    title = {Templates for the Solution of Linear Systems: Building Blocks for Iterative Methods},
+    publisher = {Society for Industrial and Applied Mathematics},
+    year = {1994},
+    doi = {10.1137/1.9781611971538},
+    address = {},
+    edition   = {},
+    URL = {https://epubs.siam.org/doi/abs/10.1137/1.9781611971538},
+}
+
+@online{Smith2017_FROSTT,
+    title = {{FROSTT}: The Formidable Repository of Open Sparse Tensors and Tools},
+    author = {Smith, Shaden and Choi, Jee W. and Li, Jiajia and Vuduc, Richard and Park, Jongsoo and Liu, Xing and Karypis, George},
+    url = {http://frostt.io/},
+    year = {2017},
+}
+
+@misc{Beamer2017_GAP,
+    title={The GAP Benchmark Suite}, 
+    author={Scott Beamer and Krste Asanović and David Patterson},
+    year={2017},
+    eprint={1508.03619},
+    archivePrefix={arXiv},
+    primaryClass={cs.DC},
+    url = {http://gap.cs.berkeley.edu/benchmark.html}
+}
+
+@techreport{JESD235B,
+    key = {JESD235A},
+    month = jan,
+    year = {2016},
+    title = {JEDEC Updates Groundbreaking High Bandwidth Memory (HBM) Standard},
+    volume = {},
+    institution = {JEDEC},
+    url = {https://www.jedec.org/news/pressreleases/jedec-updates-groundbreaking-high-bandwidth-memory-hbm-standard}
+}
+
+@Inbook{Brandt2003,
+    author="Brandt, Achi and Ron, Dorit",
+    editor="Cong, Jason and Shinnerl, Joseph R.",
+    title="Multigrid Solvers and Multilevel Optimization Strategies",
+    bookTitle="Multilevel Optimization in VLSICAD",
+    year="2003",
+    publisher="Springer US",
+    address="Boston, MA",
+    pages="1--69",
+    abstract="An optimization problem is the task of minimizing (or maximizing --- for definiteness we discuss minimization) a certain real-valued ``objective functional'' (or ``cost'' , or ``energy'' , or ``performance index'', etc.) E(x), possibly under a set of equality and/or inequality constraints, where x = (x1, {\ldots}, xn) is a vector (often the discretization of one or several functions) of unknown variables (real or complex numbers, and/or integers, and/or Ising spins, etc.). A general process for solving such problems is the point-by-point minimization, in which one changes only one variable xj(or few of them) at a time, lowering E as much as possible in each such step. More generally, the process accepts any candidate change of one or few variables if it causes a drop in energy (бE < 0).",
+    isbn="978-1-4757-3748-6",
+    doi="10.1007/978-1-4757-3748-6_1",
+    url="https://doi.org/10.1007/978-1-4757-3748-6_1"
+}
+
+@article{Deveci2018,
+    title = {Sparse Matrix-Matrix Multiplication on Multilevel Memory Architectures: Algorithms and Experiments},
+    author = {Deveci, Mehmet and Hammond, Simon David and Wolf, Michael M. and Rajamanickam, Sivasankaran},
+    abstractNote = {Architectures with multiple classes of memory media are becoming a common part of mainstream supercomputer deployments. So called multi-level memories offer differing characteristics for each memory component including variation in bandwidth, latency and capacity. This paper investigates the performance of sparse matrix multiplication kernels on two leading highperformance computing architectures — Intel's Knights Landing processor and NVIDIA's Pascal GPU. We describe a data placement method and a chunking-based algorithm for our kernels that exploits the existence of the multiple memory spaces in each hardware platform. We evaluate the performance of these methods w.r.t. standard algorithms using the auto-caching mechanisms Our results show that standard algorithms that exploit cache reuse performed as well as multi-memory-aware algorithms for architectures such as Ki\iLs where the memory subsystems have similar latencies. However, for architectures such as GPUS where memory subsystems differ significantly in both bandwidth and latency, multi-memory-aware methods are crucial for good performance. In addition, our new approaches permit the user to run problems that require larger capacities than the fastest memory of each compute node without depending on the software-managed cache mechanisms.},
+    doi = {10.2172/1435688},
+    url = {https://www.osti.gov/biblio/1435688},
+    journal = {},
+    number = {},
+    volume = {},
+    place = {United States},
+    year = {2018},
+    month = {4}
+}

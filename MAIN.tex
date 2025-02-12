@@ -1,0 +1,59 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MAIN
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% If you wish to only have sections (no chapter), change the document class to article
+% and do not use the \chapter{} command. In this case, if you use the minitoc package,
+% you will need to change the commands \dominitoc and \minitoc into \dosecttoc and
+% \secttoc, respectively, as well as comment/uncomment the right options in the
+% Configuration.tex file.
+% PS: The only \dominitoc command of this document is a few lines below.
+% PS: The \minitoc commands are situated just after chapter declarations, where you
+% want the content to appear.
+
+%\documentclass[12pt, a4paper]{article}
+\documentclass[12pt, a4paper]{report}
+\input{Configuration}
+
+\begin{document}
+
+\dominitoc
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                             Preliminary Sections
+\input{Header1} % There is an other header template in file Header2.tex
+\input{PreAndPostSections/Acknowledgements}
+\input{PreAndPostSections/Epigraph}
+\input{PreAndPostSections/Resume}
+\input{PreAndPostSections/ListOfPublications}
+\input{PreAndPostSections/Summary}
+\input{PreAndPostSections/Notations}
+\input{PreAndPostSections/Glossary}
+\input{PreAndPostSections/Acronyms}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                             Header Configuration for Sections
+\FancyHeadLeft{\leftmark}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                             Main Sections
+\input{Chapter_Guidelines/Chapter_Guidelines}
+\input{Chapter_X/Chapter_X}
+\input{Chapter_Y/Chapter_Y}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                             Post Sections
+\input{PreAndPostSections/Conclusion}
+\input{PreAndPostSections/Appendices}
+\input{PreAndPostSections/ListOfFigures}
+\input{PreAndPostSections/ListOfTables}
+\input{PreAndPostSections/ListOfAlgos}
+\input{PreAndPostSections/ListOfSourceCode}
+\input{PreAndPostSections/References}
+\input{PreAndPostSections/TableOfContent}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}

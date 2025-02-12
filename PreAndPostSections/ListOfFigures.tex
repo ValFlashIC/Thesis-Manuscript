@@ -1,0 +1,16 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% List of Figures
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\FancyHeadLeft{\sectitle}
+
+\if\Language\EN \renewcommand{\sectitle}{List of Figures}
+\else \renewcommand{\sectitle}{Table des figures} \fi
+
+\phantomsection
+\addcontentsline{toc}{chapter}{\sectitle}
+
+\listoffigures
+
+\cleardoublepage %% Comment this line if this section occupies the last pages
+\adjustmtc

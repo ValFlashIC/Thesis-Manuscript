@@ -1,0 +1,46 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Conclusion
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\FancyHeadLeft{\sectitle}
+
+\renewcommand{\sectitle}{Conclusion}
+
+\phantomsection
+\chapter*{\sectitle}
+\addstarredchapter{\sectitle}
+
+\minitoc
+
+\newcounter{concluCnt}
+\setcounter{concluCnt}{0}
+\renewcommand{\thesection}{\arabic{concluCnt}}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Appendix 1
+
+\addtocounter{concluCnt}{1}
+\section{First element}
+
+\lipsum[1-2]
+
+\subsection{A Section}
+
+\subsubsection{A Subsection}
+
+\lipsum[3]
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Appendix 2
+
+\addtocounter{concluCnt}{1}
+\section{Second element}
+
+\lipsum[1-5]
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
+
+\cleardoublepage %% Comment this line if this section occupies the last pages
+% \adjustmtc %% Commented for the appendices minitoc to not disappear

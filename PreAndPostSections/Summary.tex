@@ -1,0 +1,16 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                             Summary
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\FancyHeadLeft{\sectitle}
+
+\if\Language\EN \renewcommand{\sectitle}{Summary}
+\else \renewcommand{\sectitle}{Sommaire} \fi
+
+\phantomsection
+\addcontentsline{toc}{chapter}{\sectitle}
+
+\shorttoc{\sectitle}{1}
+
+\cleardoublepage %% Comment this line if this section occupies the last pages
+\adjustmtc

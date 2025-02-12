@@ -1,0 +1,18 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                             Table of content
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\FancyHeadLeft{\sectitle}
+
+\if\Language\EN \renewcommand{\sectitle}{Contents}
+\else \renewcommand{\sectitle}{Table des matières} \fi
+
+\phantomsection
+\addcontentsline{toc}{chapter}{\sectitle}
+
+\setcounter{tocdepth}{4}
+\renewcommand{\contentsname}{\sectitle}
+\tableofcontents
+
+% \cleardoublepage %% Comment this line if this section occupies the last pages
+\adjustmtc

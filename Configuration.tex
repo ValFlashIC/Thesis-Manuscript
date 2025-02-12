@@ -1,0 +1,306 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Packages and Configuration
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Variables
+\def\EN{e}
+\def\FR{f}
+\def\Language{\EN}
+
+\def\YES{1}
+\def\NO{0}
+\def\DoMinitoc{\YES}
+
+\def\TopMargin{0.70cm}
+\def\BottomMargin{1.90cm}
+\def\LeftMargin{2.50cm}
+\def\RightMargin{2.50cm}
+
+\def\HeadHeight{39.0pt}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Variables
+\renewcommand{\title}{The Title of your Manuscript}
+\newcommand{\frtitle}{Le titre de votre manuscrit}
+\renewcommand{\author}{FirstName LASTNAME}
+\newcommand{\doctype}{Document Type} % Ex.: Thesis / Rapport de Stage
+
+\newcommand{\sectitle}{Sec. Title} % Don't modify this
+
+\newcommand{\StartYear}{20xx}
+\newcommand{\EndYear}{20xx}
+\newcommand{\StartDate}{xx.xx.\StartYear}
+\newcommand{\EndDate}{xx.xx.\EndYear}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Packages
+\usepackage[includeheadfoot, left=\LeftMargin, right=\RightMargin, top=\TopMargin, bottom=\BottomMargin]{geometry}
+\headheight=\HeadHeight
+\usepackage[square,numbers,sort&compress]{natbib}
+\if\Language\EN \usepackage[english]{babel}
+\else \usepackage[french]{babel} \fi
+\usepackage[T1]{fontenc}
+\usepackage{shorttoc}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[ruled, algochapter, linesnumbered]{algorithm2e}
+\usepackage{hhline}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{pifont}
+\usepackage{pdfpages}
+\usepackage{wallpaper}
+\usepackage{array, float}
+\usepackage[Lenny]{fncychap}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage[absolute, overlay]{textpos}
+\usepackage[titles]{tocloft} % add subfigure option if the subfigure package is used
+\usepackage{listings}
+\usepackage{tcolorbox}
+\if\DoMinitoc\YES \usepackage{minitoc}
+\else \usepackage{mtcoff} \fi
+
+%\usepackage{todonotes} % To mark TODO notes on the PDF
+\usepackage{lipsum} % Some text to fill in the template
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Water mark (comment this to remove the watermark)
+\usepackage{draftwatermark}
+\SetWatermarkText{TEMPLATE}
+\SetWatermarkScale{4}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Add subsubsections environment
+\setcounter{secnumdepth}{3}
+
+\newenvironment{subsubfigure}[2][]{
+  \begin{subfigure}[#1]{#2}
+    \stepcounter{subsubfigure}
+    \renewcommand{\thesubfigure}{\alph{subfigure}.\roman{subsubfigure}}
+}{
+    \addtocounter{subfigure}{-1}
+  \end{subfigure}
+}
+\newcounter{subsubfigure}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Change itemize configuration
+\setlist[itemize]{label=$\bullet$, parsep=0cm, itemsep=0cm, topsep=0cm}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Change enumerate configuration
+\setlist[enumerate]{parsep=0cm, itemsep=0cm, topsep=0cm}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Change Comment command for algorithms
+\SetKwComment{Comment}{/* }{ */}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Listing package configuration for source code
+\lstset{
+	aboveskip=3mm,
+	belowskip=-2mm,
+	backgroundcolor=\color{White},
+	basicstyle=\footnotesize,
+	breakatwhitespace=false,
+	breaklines=true,
+	captionpos=t,
+	commentstyle=\color{Green},
+	deletekeywords={...},
+	escapeinside={\%*}{*)},
+	extendedchars=true,
+	framexleftmargin=16pt,
+	framextopmargin=3pt,
+	framexbottommargin=3pt,
+	frame=tb,
+	keepspaces=true,
+	keywordstyle=\bfseries\color{Blue},
+	language=C,
+	literate=
+	{²}{{\textsuperscript{2}}}1
+	{⁴}{{\textsuperscript{4}}}1
+	{⁶}{{\textsuperscript{6}}}1
+	{⁸}{{\textsuperscript{8}}}1
+	{€}{{\euro{}}}1
+	{é}{{\'e}}1
+	{è}{{\`{e}}}1
+	{ê}{{\^{e}}}1
+	{ë}{{\"{e}}}1
+	{É}{{\'{E}}}1
+	{Ê}{{\^{E}}}1
+	{û}{{\^{u}}}1
+	{ù}{{\`{u}}}1
+	{â}{{\^{a}}}1
+	{à}{{\`{a}}}1
+	{á}{{\'{a}}}1
+	{ã}{{\~{a}}}1
+	{Á}{{\'{A}}}1
+	{Â}{{\^{A}}}1
+	{Ã}{{\~{A}}}1
+	{ç}{{\c{c}}}1
+	{Ç}{{\c{C}}}1
+	{õ}{{\~{o}}}1
+	{ó}{{\'{o}}}1
+	{ô}{{\^{o}}}1
+	{Õ}{{\~{O}}}1
+	{Ó}{{\'{O}}}1
+	{Ô}{{\^{O}}}1
+	{î}{{\^{i}}}1
+	{Î}{{\^{I}}}1
+	{í}{{\'{i}}}1
+	{Í}{{\~{Í}}}1,
+	morekeywords={*,region\_t,asm,...},
+	numbers=left,
+	numbersep=10pt,
+	numberstyle=\tiny\color{black},
+	rulecolor=\color{black},
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+	stepnumber=1,
+	stringstyle=\color{Purple},
+	tabsize=4,
+	title=\lstname,
+}
+
+\newcommand{\listsourcecodename}{List of Source Code}
+\newlistof{sourcecode}{src}{\listsourcecodename}
+
+\newcommand{\sourcecode}[4]{% source code file, title, label, position
+    \refstepcounter{sourcecode}
+    \addcontentsline{src}{sourcecode}{\thechapter.\protect\numberline{\thesourcecode}#2}
+    \begin{figure}[#4]
+        \begin{enumerate}[label=, ref=\thechapter.\thesourcecode, topsep=0cm, leftmargin=0cm]
+            \item \label{#3}
+            \begin{minipage}{\linewidth}
+                \addtolength{\linewidth}{-16pt}
+                \colorbox{white}{\begin{minipage}[t][5mm][t]{6.5pt}\null\hfill\null\end{minipage}}
+                \begin{minipage}{\linewidth}
+                    \lstinputlisting[
+                        title=Source Code \thechapter.\thesourcecode: #2]{#1}
+                \end{minipage}
+            \end{minipage}
+        \end{enumerate}
+    \end{figure}
+}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Change minitoc configuration
+% If the document class is book or report:
+\setcounter{minitocdepth}{2} % default
+\setlength{\mtcindent}{24pt} % default
+\renewcommand{\mtcfont}{\small\rm} % default
+\renewcommand{\mtcSfont}{\small\bf} % default
+% If the document class is article:
+% \setcounter{\secttocdepth}{2} % default
+% \setlength{\stcindent}{24pt} % default
+% \renewcommand{\stcfont}{\small\rm} % default
+% \renewcommand{\stcSSfont}{\small\bf} % default
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Variables
+\def\HeadPageLogos{
+    % Version with CEA and blanc logos
+    \begin{minipage}[b]{0.072\linewidth}
+        \includegraphics[width=\linewidth]{Figures/PDF/LogoBlanc1.pdf}
+        \includegraphics[width=\linewidth]{Figures/PDF/LogoBlanc2.pdf}
+    \end{minipage}
+    \!
+    \includegraphics[width=0.15\linewidth]{Figures/PDF/LIST.pdf}
+}
+% \def\HeadPageLogos{
+%     % Version with CEA, UGA and TIMA
+%     \begin{minipage}[b]{0.072\linewidth}
+%         \includegraphics[width=\linewidth]{Figures/PDF/LogoUGA.pdf}
+%         \includegraphics[width=\linewidth]{Figures/PDF/LogoTIMA.pdf}
+%     \end{minipage}
+%     \!
+%     \includegraphics[width=0.15\linewidth]{Figures/PDF/LIST.pdf}
+% }
+% \def\HeadPageLogos{
+%     % Version with CEA and UGA
+%     \includegraphics[scale=0.5]{Figures/PDF/LogoUGA.pdf}
+%     \includegraphics[scale=0.08]{Figures/PDF/LIST.pdf}}
+% }
+
+\def\FootpageNote{Whatever you want} % Your affiliation for example
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Fancy Header package: specific style for chapters and head and foot page
+\pagestyle{fancy}
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\fancyhead[R]{\HeadPageLogos}
+\newcommand{\FancyHeadLeft}[1]{
+    \fancyhead[L]{
+        \begin{minipage}[b]{0.7\linewidth}
+            \textsc{\doctype}
+            \newline
+            {\footnotesize \textit{\MakeUppercase{#1}}}
+        \end{minipage}
+    }
+}
+
+\fancyfoot[L]{\FootpageNote}
+\fancyfoot[C]{}
+\fancyfoot[R]{Page \thepage/\pageref{LastPage}}
+
+\fancypagestyle{plain}{}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This package must be the last loaded
+\usepackage{hyperref}
+\hypersetup{ % hyperlinks parameters
+    colorlinks=true,                % allow colors
+    breaklinks=true,                % allow to break links when too long
+    urlcolor= blue,                 % colors of the hyperlinks (\url{})
+    linkcolor= black,               % colors of internal links (\label{})
+    citecolor= black                % colors of the bibliography links (\cite{})
+}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Exception: need to be loaded after the hyperref package (don't ask me why)
+\usepackage[acronym, toc]{glossaries}
+
+\makenoidxglossaries
+\input{Gloss&Acro}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Define Macros
+%% example of a new command to apply a specific style to some text. Try: \algo{some text}
+\newcommand{\algo}[1]{{\fontfamily{qcr}\selectfont #1}}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Define Lengths
+%% example of a new length to use as a variable.
+\newlength{\ExampleOfLength}
+\setlength{\ExampleOfLength}{8cm}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Define Colors
+%% example of a new colors to use as variables. Ex.: \textcolor{amber}{some text}
+\definecolor{lightGray}{gray}{0.75}
+\definecolor{amber}{rgb}{1.0, 0.75, 0.0}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

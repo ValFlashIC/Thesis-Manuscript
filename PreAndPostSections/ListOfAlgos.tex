@@ -1,0 +1,17 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% List of Algorithms
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\FancyHeadLeft{\sectitle}
+
+\if\Language\EN \renewcommand{\sectitle}{List of Algorithms}
+\else \renewcommand{\sectitle}{Liste des algorithmes} \fi
+
+\phantomsection
+\addcontentsline{toc}{chapter}{\sectitle}
+\renewcommand{\listalgorithmcfname}{\sectitle}
+
+\listofalgorithms
+
+\cleardoublepage %% Comment this line if this section occupies the last pages
+\adjustmtc

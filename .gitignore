@@ -1,0 +1,14 @@
+MAIN.out
+MAIN.log
+MAIN.aux
+MAIN.blg
+MAIN.bbl
+MAIN.loa
+MAIN.lof
+MAIN.lot
+MAIN.toc
+MAIN.maf
+MAIN.src
+MAIN.mtc*
+MAIN.synctex.gz
+Chapter_*/Sections/*.log

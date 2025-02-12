@@ -1,0 +1,17 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                             References
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\FancyHeadLeft{\sectitle}
+
+\if\Language\EN \renewcommand{\sectitle}{Bibliography}
+\else \renewcommand{\sectitle}{Bibliographie} \fi
+
+\phantomsection
+\addcontentsline{toc}{chapter}{\sectitle}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{biblio}
+
+\cleardoublepage %% Comment this line if this section occupies the last pages
+\adjustmtc

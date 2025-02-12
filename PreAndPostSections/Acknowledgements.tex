@@ -1,0 +1,21 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Acknowledgements
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\FancyHeadLeft{\sectitle}
+
+\if\Language\EN \renewcommand{\sectitle}{Acknowledgements}
+\else \renewcommand{\sectitle}{Remerciements} \fi
+
+\phantomsection
+\addcontentsline{toc}{chapter}{\sectitle}
+\chapter*{\sectitle}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Your Text %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\lipsum[1-2]
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cleardoublepage %% Comment this line if this section occupies the last pages
+\adjustmtc

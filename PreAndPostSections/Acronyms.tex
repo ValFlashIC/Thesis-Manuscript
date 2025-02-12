@@ -1,0 +1,13 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Acronyms
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\FancyHeadLeft{\sectitle}
+
+\if\Language\EN \renewcommand{\sectitle}{Acronyms}
+\else \renewcommand{\sectitle}{Acronymes} \fi
+
+\printnoidxglossary[type=\acronymtype, title={\sectitle}]
+
+\cleardoublepage %% Comment this line if this section occupies the last pages
+\adjustmtc

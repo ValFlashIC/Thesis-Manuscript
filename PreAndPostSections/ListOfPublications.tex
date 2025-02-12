@@ -1,0 +1,36 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% List of Publications
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\FancyHeadLeft{\sectitle}
+
+\if\Language\EN \renewcommand{\sectitle}{List of Publications}
+\else \renewcommand{\sectitle}{Liste des publications} \fi
+
+\phantomsection
+\addcontentsline{toc}{chapter}{\sectitle}
+\chapter*{\sectitle}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Your Text %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\noindent This thesis is based on the following publications:
+\begin{enumerate}[label=\Roman*, ref=\Roman*, itemsep=0.5cm, topsep=0.5cm]
+    %
+    \item \label{publ:SoA}
+        Valentin Isaac-{-}Chassande, Adrian Evans, Yves Durand, and Frédéric Rousseau. 2024. Dedicated Hardware Accelerators for Processing of Sparse Matrices and Vectors: A Survey. \textit{ACM Trans. Archit. Code Optim.} 21, 2, Article 27 (Feb. 2024), 26 pages.
+        Reference~\cite{Isaac2024_SoA}
+    %
+    \item \label{publ:SpDC}
+        Valentin Isaac-{-}Chassande, Adrian Evans, Yves Durand, and Frédéric Rousseau. 2024. SpDCache: Region-Based Reduction Cache for Outer-Product Sparse Matrix Kernels. In \textit{2024 IEEE 35th International Conference on Application-specific Systems, Architectures and Processors (ASAP)}. IEEE Computer Society, Los Alamitos, CA, USA, 3–7.
+        Reference~\cite{Isaac2024_SpDCache}
+    %
+\end{enumerate}
+
+\bigskip \bigskip \bigskip
+
+\noindent The papers will be referred to in the thesis using their Roman numerals.
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cleardoublepage %% Comment this line if this section occupies the last pages
+\adjustmtc

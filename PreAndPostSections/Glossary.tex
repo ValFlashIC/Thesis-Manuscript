@@ -1,0 +1,13 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Glossary
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\FancyHeadLeft{\sectitle}
+
+\if\Language\EN \renewcommand{\sectitle}{Glossary}
+\else \renewcommand{\sectitle}{Glossaire} \fi
+
+\printnoidxglossary[type=main, title={\sectitle}]
+
+\cleardoublepage %% Comment this line if this section occupies the last pages
+\adjustmtc
