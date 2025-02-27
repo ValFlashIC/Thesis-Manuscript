@@ -1,0 +1,52 @@
+\chapter{Plan (Brouillon)}
+
+\begin{itemize}
+    \item SoA
+    \begin{itemize}
+        \item irregular accesses -> def, issues (in memory but not only?), domains/applications (including sparse matrix processing)
+        \item Focus on sparse matrices, context: it is widely used, in many domains, sparse, large, structures
+        \item Sparse matrices in a kernel: show where the accesses are regular vs irregular (infos on basic sparse formats, basic kernels, basic algos...)
+        \item Hardware challenges clearly defined (gather, scatter...)
+        \item Present solutions in SW for CPU/GPU, such as special sparse formats, possibility to play on algo (gust analysis), tiling methods adapted for sparse data (specific sparse format + specific algos)
+        \item Present solutions in HW (dedicated accelerators) -> classification along common characteristics
+        \item Presentation of the major accelerators
+        \item Problem of comparison / comparison of standalone / other analysis (issue of matrix structure)
+        \item Takeaways -> paths for designing an accelerator (end od SoA paper)
+        \item We choose a path -> show which one (coarse grain, at the level of the SoA, comparable to SortCache, PHI...)
+    \end{itemize}
+    \item Theory
+    \begin{itemize}
+        \item Describe the design space of the path we choose (with remainders if necessary) -> cache / reductions / OP SpMV / ...
+        \item Emphasis the comparison between concerned SoA accelerators -> show what is already done and useful, show what is missing
+        \item Explain the coarse grain concept of our solution compared to the previous ones (regions)
+        \item Show the interest of separate cache regions for A/b and c (formal) -> show that a GC is obviously not efficient when random accesses / confirm why SortCache, PHI, ...
+        \item Show that A and b need a 1 set 4 ways region -> it is not a limiting factor
+        \item We use a GRC (no modification) for A and b -> quick formalisation to get nb loads and writes, hit, miss, evict
+        \item Show the interest of a reduction cache region for c -> REDs / reduce the number of mem accesses / link to SoA
+        \item Show that it is not enough to handle randomness of REDs -> we propose additional regions
+        \item "Randomness" -> tied to the matrix structure -> coarse grain (ex banded) / fine grain locality VS. isolated elements
+        \item To show the interest of having regions in RedC, model of RedC behaviour, to use with different configurations (give some already, explain what we expect to see, and what additional info it will give us (cache parameters analysis))
+        \item RedC Modelling / Validation compare to Python model / Advantage of having the proba model
+        \item Show RedC 1reg vs RedC 2reg on banded example
+        \item Show best cache dimensions for the dense part (band)
+        \item Show that sparse region (out of band) could use an other region for fine grain density (case of sub bands) -> dimensions
+        \item Show that sparse region could use adapted HW because of the isolated elements -> dimensions
+        \item Show how it would work with a "full random" matrix -> how does it affects the dimensions
+        \item Explain the concept of our solution with details on the regions, the dimensions, the case study (banded matrix)
+    \end{itemize}
+    \item Hardware solution
+    \begin{itemize}
+        \item Present our hardware solution, based on the previous concept (remind) / several architecture
+        \item SpDCache, architecture presentation with two regions, details on REDs transactions, IBRC vs OBRT
+        \item Architecture presentation with three regions (add OBRC, CB...)
+        \item Architecture of eviction anticipation
+        \item Present multicore version -> scale
+        \item Present additional optimisation (region config, learn from first iteration)
+    \end{itemize}
+    \item Experimentations
+    \begin{itemize}
+        \item Present our implementation -> only SpDCache, based on HPDcache in open source
+        \item Experimentations -> matrices chosen, generated / metrics / ...
+        \item Results / comparison with theory / analysis / conclusion
+    \end{itemize}
+\end{itemize}

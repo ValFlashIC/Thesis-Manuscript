@@ -4,7 +4,7 @@
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % If you want to include a PDF as a first page
-\includepdf[pages=-]{Figures/PDF/FrontPage.pdf}
+\includepdf[pages=-]{Figures/PDF/couverture_these.pdf}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -16,7 +16,7 @@
 % This is just a proposition
 % Feel free to modify (you can use the SVGs in Figures/Src as a base)
 % See other propositions in Figures/PDF
-\ThisULCornerWallPaper{1.0}{Figures/PDF/Fond_Page_de_Garde_CEA}
+\ThisULCornerWallPaper{1.0}{Figures/PDF/Fond_Page_de_Garde_CEA-UGA-TIMA}
 
 %% We redefine the page borders. At the end, \restoregeometry is called
 %% to go back to the borders defined in Configuration.tex.
@@ -29,29 +29,29 @@
 
 \begin{minipage}[t][0.2\headerheight]{\linewidth}
 
-    %% Logos (version with CEA, blanc logos)
-    \raggedleft
-    \newlength{\llogo}
-    \setlength{\llogo}{0.25\linewidth}
-    \begin{minipage}[b][0.5\llogo]{0.12\linewidth}
-        \includegraphics[width=\linewidth]{Figures/PDF/LogoBlanc1.pdf}
-        \vfill
-        \includegraphics[width=\linewidth]{Figures/PDF/LogoBlanc2.pdf}
-    \end{minipage}
-    \qquad
-    \includegraphics[width=\llogo]{Figures/PDF/LIST.pdf}
-
-    % %% Logos (version with CEA, UGA and TIMA)
+    % %% Logos (version with CEA, blanc logos)
     % \raggedleft
     % \newlength{\llogo}
     % \setlength{\llogo}{0.25\linewidth}
     % \begin{minipage}[b][0.5\llogo]{0.12\linewidth}
-    %     \includegraphics[width=\linewidth]{Figures/PDF/LogoUGA.pdf}
+    %     \includegraphics[width=\linewidth]{Figures/PDF/LogoBlanc1.pdf}
     %     \vfill
-    %     \includegraphics[width=\linewidth]{Figures/PDF/LogoTIMA.pdf}
+    %     \includegraphics[width=\linewidth]{Figures/PDF/LogoBlanc2.pdf}
     % \end{minipage}
     % \qquad
     % \includegraphics[width=\llogo]{Figures/PDF/LIST.pdf}
+
+    %% Logos (version with CEA, UGA and TIMA)
+    \raggedleft
+    \newlength{\llogo}
+    \setlength{\llogo}{0.25\linewidth}
+    \begin{minipage}[b][0.5\llogo]{0.12\linewidth}
+        \includegraphics[width=\linewidth]{Figures/PDF/LogoUGA.pdf}
+        \vfill
+        \includegraphics[width=\linewidth]{Figures/PDF/LogoTIMA.pdf}
+    \end{minipage}
+    \qquad
+    \includegraphics[width=\llogo]{Figures/PDF/LIST.pdf}
 
     % %% Logos (version with CEA and UGA)
     % \raggedleft
@@ -72,17 +72,17 @@
     %% Information about the author. Fill free to add or remove fields
     \textbf{\author}
     	
-    Affiliation 1
+    Universit\'e Grenoble Alpes
     	
-    Affiliation 2
+    CEA Grenoble (DRT/LIST/DSCIN/LSTA)
     	
-    Affiliation 3
+    TIMA Laboratory (SLS)
     
-    \textit{ORCID : 0000-0000-0000-0000}
+    \textit{ORCID : 0009-0007-9842-5777}
     
-    \textit{professional@address.1}
+    \textit{valentin.isaacchassande@univ-grenoble-alpes.fr}
     
-    \textit{professional@address.2}
+    \textit{valentin.isaacchassande@cea.fr}
 
 \end{minipage}
 
@@ -124,12 +124,12 @@
 
     %% Some supervisor names (example of a thesis)
     \begin{tabular}{rl}
-        Thesis Adviser: & FirstName LASTNAME \\
-        Thesis Co-Supervisors: & FirstName LASTNAME \\
-        & FirstName LASTNAME \\
+        Thesis Adviser: & Fr\'ed\'eric ROUSSEAU \\
+        Thesis Co-Supervisors: & Adrian EVANS \\
+        & Yves DURAND \\
         & \\
-        CSI Members: & FirstName LASTNAME (HDR) \\
-        & FirstName LASTNAME
+        CSI Members: & Yves ROBERT (HDR) \\
+        & Christophe PICARD
     \end{tabular}
 
 \end{minipage}
@@ -139,7 +139,7 @@
     \centering
 
     %% Any Additional Information
-    A School, A Speciality
+    EEATS Doctoral College, NENT Speciality
     
     \StartYear~-- \EndYear~Academic Years
     
