@@ -1,52 +1,73 @@
 \chapter{Plan (Brouillon)}
 
 \begin{itemize}
-    \item SoA
+    \item Introduction \textbf{(\textasciitilde 3 p.)}
     \begin{itemize}
-        \item irregular accesses -> def, issues (in memory but not only?), domains/applications (including sparse matrix processing)
+        \item "light" > give the entry point on sparse matrices and irregular accesses \textbf{(1-2 p.)}
+        \item introduce the structure of the manuscript \textbf{(1 p.)}
+    \end{itemize}
+    \item Background \textbf{(\textasciitilde 5 p.)}
+    \begin{itemize}
+        \item irregular accesses -> def, issues (in memory but not only?), domains/applications (including sparse matrix processing) \textbf{(1 p.)}
         \item Focus on sparse matrices, context: it is widely used, in many domains, sparse, large, structures
-        \item Sparse matrices in a kernel: show where the accesses are regular vs irregular (infos on basic sparse formats, basic kernels, basic algos...)
-        \item Hardware challenges clearly defined (gather, scatter...)
-        \item Present solutions in SW for CPU/GPU, such as special sparse formats, possibility to play on algo (gust analysis), tiling methods adapted for sparse data (specific sparse format + specific algos)
-        \item Present solutions in HW (dedicated accelerators) -> classification along common characteristics
-        \item Presentation of the major accelerators
-        \item Problem of comparison / comparison of standalone / other analysis (issue of matrix structure)
-        \item Takeaways -> paths for designing an accelerator (end od SoA paper)
+        \item Sparse matrices in a kernel: show where the accesses are regular vs irregular (infos on basic sparse formats, basic kernels, basic algos...) \textbf{(2-3 p.)}
+        \item Hardware challenges clearly defined (gather, scatter...) \textbf{(1 p.)}
+    \end{itemize}
+    \item SoA \textbf{(\textasciitilde 10 p.)}
+    \begin{itemize}
+        \item Present solutions in SW for CPU/GPU, such as special sparse formats, possibility to play on algo (gust analysis), tiling methods adapted for sparse data (specific sparse format + specific algos) \textbf{(1 p.)}
+        \item Present solutions in HW (dedicated accelerators) -> classification along common characteristics \textbf{(1-2 p.)}
+        \item Presentation of the major accelerators (selection of 3-4 important) \textbf{(3-4 p.)}
+        \item Problem of comparison / comparison of standalone / other analysis (issue of matrix structure) \textbf{(1 p.)}
+        \item Takeaways -> paths for designing an accelerator (end od SoA paper) \textbf{(1-2 p.)}
         \item We choose a path -> show which one (coarse grain, at the level of the SoA, comparable to SortCache, PHI...)
     \end{itemize}
-    \item Theory
+    \item Conceptual solution \textbf{(\textasciitilde 10 p.)}
     \begin{itemize}
-        \item Describe the design space of the path we choose (with remainders if necessary) -> cache / reductions / OP SpMV / ...
+        \item Remainder of the path we choose with more details: cache / reductions / OP SpMV / ... \textbf{(1 p.)}
         \item Emphasis the comparison between concerned SoA accelerators -> show what is already done and useful, show what is missing
-        \item Explain the coarse grain concept of our solution compared to the previous ones (regions)
-        \item Show the interest of separate cache regions for A/b and c (formal) -> show that a GC is obviously not efficient when random accesses / confirm why SortCache, PHI, ...
-        \item Show that A and b need a 1 set 4 ways region -> it is not a limiting factor
-        \item We use a GRC (no modification) for A and b -> quick formalisation to get nb loads and writes, hit, miss, evict
-        \item Show the interest of a reduction cache region for c -> REDs / reduce the number of mem accesses / link to SoA
-        \item Show that it is not enough to handle randomness of REDs -> we propose additional regions
-        \item "Randomness" -> tied to the matrix structure -> coarse grain (ex banded) / fine grain locality VS. isolated elements
-        \item To show the interest of having regions in RedC, model of RedC behaviour, to use with different configurations (give some already, explain what we expect to see, and what additional info it will give us (cache parameters analysis))
-        \item RedC Modelling / Validation compare to Python model / Advantage of having the proba model
-        \item Show RedC 1reg vs RedC 2reg on banded example
-        \item Show best cache dimensions for the dense part (band)
-        \item Show that sparse region (out of band) could use an other region for fine grain density (case of sub bands) -> dimensions
-        \item Show that sparse region could use adapted HW because of the isolated elements -> dimensions
-        \item Show how it would work with a "full random" matrix -> how does it affects the dimensions
-        \item Explain the concept of our solution with details on the regions, the dimensions, the case study (banded matrix)
+        \item Present the case of banded matrices as an example of structure to leverage \textbf{(1-2 p.)}
+        \item SpDCache, architecture presentation with two regions, details on REDs transactions, IBRC vs OBRT \textbf{(7 p.)}
     \end{itemize}
-    \item Hardware solution
+    \item Theory \textbf{(\textasciitilde 23 p.)}
     \begin{itemize}
-        \item Present our hardware solution, based on the previous concept (remind) / several architecture
-        \item SpDCache, architecture presentation with two regions, details on REDs transactions, IBRC vs OBRT
-        \item Architecture presentation with three regions (add OBRC, CB...)
-        \item Architecture of eviction anticipation
-        \item Present multicore version -> scale
-        \item Present additional optimisation (region config, learn from first iteration)
+        \item Explain the objectives of this chapter (\~ proof of concept + dimensioning) \textbf{(1 p.)}
+        \item Describe the design space of the path we choose (with remainders if necessary) -> introduce base parameters and/or variables, give the exact algorithm... \textbf{(1 p.)}
+        \item Show the interest of separate cache regions for A/b and c (formal) -> show that a GC is obviously not efficient when random accesses / confirm why SortCache, PHI, ... exist \textbf{(2 p.)}
+        \item Show that A and b are not a limiting factor with a formal reasoning -> give the needed space for GRC when prefetcher \textbf{(2-3 p.)}
+        \item We use a GRC (no modification) for A and b -> get nb loads and writes, hit, miss, evict (should be all hits, and one traversal only)
+        \item Show the interest of a reduction cache region for c -> REDs / reduce the number of mem accesses / link to SoA (see ASAP) \textbf{(2 p.)}
+        \item We created a model/simulation in C of the reduction cache / validation of the model \textbf{(1-2 p.)}
+        \item Show that reduction cache does not handle randomness -> model graph \textbf{(1-2 p.)}
+        \item Show RedC 1reg vs RedC 2reg on banded example \textbf{(2-3 p.)}
+        \item Show best cache dimensions for the dense part (band) \textbf{(1 p.)}
+        \item Show that sparse region (out of band) could use an other region for fine grain density (case of sub bands) -> dimensions \textbf{(1-2 p.)}
+        \item Show that sparse region could use adapted HW because of the isolated elements -> dimensions \textbf{(1-2 p.)}
+        \item Show how it would work with a "full random" matrix -> how does it affects the dimensions \textbf{(1 p.)}
+        \item Conclude on our solution and dimensioning \textbf{(1 p.)}
     \end{itemize}
-    \item Experimentations
+    \item Hardware solution \textbf{(\textasciitilde 10 p.)}
     \begin{itemize}
-        \item Present our implementation -> only SpDCache, based on HPDcache in open source
+        \item Present our hardware solution, based on the concept
+        \item Start with basic info on HPDcache (only the one that are useful for SpDCache)
+        \item Describe modif in pipeline / modif in RAM accesses ...
+    \end{itemize}
+    \item Experimental results \textbf{(\textasciitilde 10 p.)}
+    \begin{itemize}
         \item Experimentations -> matrices chosen, generated / metrics / ...
         \item Results / comparison with theory / analysis / conclusion
+    \end{itemize}
+    \item Alternate solutions \textbf{(\textasciitilde 8 p.)}
+    \begin{itemize}
+        \item Architecture presentation with three regions (add OBRC, CB...) \textbf{(2 p.)}
+        \item Architecture of eviction anticipation \textbf{(2 p.)}
+        \item Present multicore version -> scale \textbf{(2 p.)}
+        \item Present additional optimisation (region config, learn from first iteration) \textbf{(1-2 p.)}
+    \end{itemize}
+    \item Annexes
+    \begin{itemize}
+        \item All sparse formats
+        \item Other accelerators of SoA
+        \item Model of the reduction cache
     \end{itemize}
 \end{itemize}
