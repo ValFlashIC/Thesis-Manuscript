@@ -5,6 +5,9 @@
 % Ex.: Zhang2021_Gamma
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% My Papers
+
 @article{Isaac2024_SoA,
 	author = {Isaac-{-}Chassande, Valentin and Evans, Adrian and Durand, Yves and Rousseau, Fr\'{e}d\'{e}ric},
 	title = {Dedicated Hardware Accelerators for Processing of Sparse Matrices and Vectors: A Survey},
@@ -42,6 +45,74 @@
     month = {jul}
 }
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Accelerators
+
+@INPROCEEDINGS {Angshuman2017_SCNN,
+    author = {A. Parashar and M. Rhu and A. Mukkara and A. Puglielli and R. Venkatesan and B. Khailany and J. Emer and S. W. Keckler and W. J. Dally},
+    booktitle = {2017 ACM/IEEE 44th Annual International Symposium on Computer Architecture (ISCA)},
+    title = {SCNN: An accelerator for compressed-sparse convolutional neural networks},
+    year = {2017},
+    volume = {},
+    issn = {},
+    pages = {27-40},
+    abstract = {Convolutional Neural Networks (CNNs) have emerged as a fundamental technology for machine learning. High performance and extreme energy efficiency are critical for deployments of CNNs, especially in mobile platforms such as autonomous vehicles, cameras, and electronic personal assistants. This paper introduces the Sparse CNN (SCNN) accelerator architecture, which improves performance and energy efficiency by exploiting the zero-valued weights that stem from network pruning during training and zero-valued activations that arise from the common ReLU operator. Specifically, SCNN employs a novel dataflow that enables maintaining the sparse weights and activations in a compressed encoding, which eliminates unnecessary data transfers and reduces storage requirements. Furthermore, the SCNN dataflow facilitates efficient delivery of those weights and activations to a multiplier array, where they are extensively reused; product accumulation is performed in a novel accumulator array. On contemporary neural networks, SCNN can improve both performance and energy by a factor of 2.7× and 2.3×, respectively, over a comparably provisioned dense CNN accelerator.},
+    keywords = {training;arrays;random access memory;accelerator architectures;encoding},
+    doi = {10.1145/3079856.3080254},
+    url = {https://doi.ieeecomputersociety.org/10.1145/3079856.3080254},
+    publisher = {IEEE Computer Society},
+    address = {Los Alamitos, CA, USA},
+    month = {jun}
+}
+
+@INPROCEEDINGS{Pal2018_OuterSPACE,
+  author={Pal, Subhankar and Beaumont, Jonathan and Park, Dong-Hyeon and Amarnath, Aporva and Feng, Siying and Chakrabarti, Chaitali and Kim, Hun-Seok and Blaauw, David and Mudge, Trevor and Dreslinski, Ronald},
+  booktitle={2018 IEEE International Symposium on High Performance Computer Architecture (HPCA)}, 
+  title={OuterSPACE: An Outer Product Based Sparse Matrix Multiplication Accelerator}, 
+  year={2018},
+  publisher = {Institute of Electrical and Electronics Engineers},
+  address = {New York, NY, USA},
+  volume={},
+  number={},
+  pages={724-736},
+  doi={10.1109/HPCA.2018.00067}
+}
+
+@INPROCEEDINGS{Hegde2019_ExTensor,
+    author = {Hegde, Kartik and Asghari-Moghaddam, Hadi and Pellauer, Michael and Crago, Neal and Jaleel, Aamer and Solomonik, Edgar and Emer, Joel and Fletcher, Christopher W.},
+    title = {ExTensor: An Accelerator for Sparse Tensor Algebra},
+    year = {2019},
+    isbn = {9781450369381},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3352460.3358275},
+    doi = {10.1145/3352460.3358275},
+    abstract = {Generalized tensor algebra is a prime candidate for acceleration via customized ASICs. Modern tensors feature a wide range of data sparsity, with the density of non-zero elements ranging from 10-6\% to 50\%. This paper proposes a novel approach to accelerate tensor kernels based on the principle of hierarchical elimination of computation in the presence of sparsity. This approach relies on rapidly finding intersections---situations where both operands of a multiplication are non-zero---enabling new data fetching mechanisms and avoiding memory latency overheads associated with sparse kernels implemented in software.We propose the ExTensor accelerator, which builds these novel ideas on handling sparsity into hardware to enable better bandwidth utilization and compute throughput. We evaluate ExTensor on several kernels relative to industry libraries (Intel MKL) and state-of-the-art tensor algebra compilers (TACO). When bandwidth normalized, we demonstrate an average speedup of 3.4\texttimes{}, 1.3\texttimes{}, 2.8\texttimes{}, 24.9\texttimes{}, and 2.7\texttimes{} on SpMSpM, SpMM, TTV, TTM, and SDDMM kernels respectively over a server class CPU.},
+    booktitle = {Proceedings of the 52nd Annual IEEE/ACM International Symposium on Microarchitecture},
+    pages = {319–333},
+    numpages = {15},
+    keywords = {Tensor Algebra, Sparse Computation, Hardware Acceleration},
+    location = {Columbus, OH, USA},
+    series = {MICRO '52}
+}
+
+@INPROCEEDINGS{Zhekai2020_SpArch,
+    author = {Zhekai Zhang and Hanrui Wang and Song Han and William J. Dally},
+    booktitle = {2020 IEEE International Symposium on High Performance Computer Architecture (HPCA)},
+    title = {SpArch: Efficient Architecture for Sparse Matrix Multiplication},
+    year = {2020},
+    volume = {},
+    issn = {},
+    pages = {261-274},
+    abstract = {Generalized Sparse Matrix-Matrix Multiplication (SpGEMM) is a ubiquitous task in various engineering and scientific applications. However, inner product based SpGEMM introduces redundant input fetches for mismatched nonzero operands, while outer product based approach suffers from poor output locality due to numerous partial product matrices. Inefficiency in the reuse of either inputs or outputs data leads to extensive and expensive DRAM access. To address this problem, this paper proposes an efficient sparse matrix multiplication accelerator architecture, SpArch, which jointly optimizes the data locality for both input and output matrices. We first design a highly parallelized streaming-based merger to pipeline the multiply and merge stage of partial matrices so that partial matrices are merged on chip immediately after produced. We then propose a condensed matrix representation that reduces the number of partial matrices by three orders of magnitude and thus reduces DRAM access by 5.4x. We further develop a Huffman tree scheduler to improve the scalability of the merger for larger sparse matrices, which reduces the DRAM access by another 1.8x. We also resolve the increased input matrix read induced by the new representation using a row prefetcher with near-optimal buffer replacement policy, further reducing the DRAM access by 1.5x. Evaluated on 20 benchmarks, SpArch reduces the total DRAM access by 2.8x over previous state-of-the-art. On average, SpArch achieves 4x, 19x, 18x, 17x, 1285x speedup and 6x, 164x, 435x, 307x, 62x energy savings over OuterSpace, MKL, cuSPARSE, CUSP, and ARM Armadillo, respectively.},
+    keywords = {random access memory;sparse matrices;corporate acquisitions;prefetching;parallel processing;indexes;computer architecture},
+    doi = {10.1109/HPCA47549.2020.00030},
+    url = {https://doi.ieeecomputersociety.org/10.1109/HPCA47549.2020.00030},
+    publisher = {IEEE Computer Society},
+    address = {Los Alamitos, CA, USA},
+    month = {feb}
+}
+
 @INPROCEEDINGS{Zhang2021_Gamma,
     author = {Zhang, Guowei and Attaluri, Nithya and Emer, Joel S. and Sanchez, Daniel},
     title = {Gamma: Leveraging Gustavson’s Algorithm to Accelerate Sparse Matrix Multiplication},
@@ -60,6 +131,584 @@
     series = {ASPLOS '21}
 }
 
+@INPROCEEDINGS{Zhang2019_HTA,
+    author = {Zhang, Guowei and Sanchez, Daniel},
+    title = {Leveraging Caches to Accelerate Hash Tables and Memoization},
+    year = {2019},
+    isbn = {9781450369381},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3352460.3358272},
+    doi = {10.1145/3352460.3358272},
+    abstract = {Hash tables are widely used, but they are inefficient in current systems: they use core resources poorly and suffer from limited spatial locality in caches. To address these issues we propose HTA, a technique that accelerates hash table operations via simple ISA extensions and hardware changes. HTA adopts an efficient hash table format that leverages the characteristics of caches. HTA accelerates most operations in hardware, and leaves rare cases to software.We present two implementations of HTA, Flat-HTA and Hierarchical-HTA. Flat-HTA adopts a simple, hierarchy-oblivious layout and reduces runtime overheads with simple changes to cores. Hierarchical-HTA is a more complex implementation that uses a hierarchy-aware layout to improve spatial locality at intermediate cache levels. It requires some changes to caches and provides modest benefits over Flat-HTA.We evaluate HTA on hash table-intensive benchmarks and use it to accelerate memoization, a technique that caches and reuses the outputs of repetitive computations. Flat-HTA improves the performance of the state-of-the-art hash table-intensive applications by up to 2\texttimes{}, while Hierarchical-HTA outperforms Flat-HTA by up to 35\%. Flat-HTA also outperforms software memoization by 2\texttimes{}.},
+    booktitle = {Proceedings of the 52nd Annual IEEE/ACM International Symposium on Microarchitecture},
+    pages = {440–452},
+    numpages = {13},
+    keywords = {memoization, microarchitecture, specialization, cache, hash table},
+    location = {Columbus, OH, USA},
+    series = {MICRO '52}
+}
+
+@INPROCEEDINGS{Barredo2019_SPiDRE,
+  author={Barredo, Adrián and Beard, Jonathan C. and Moretó, Miquel},
+  booktitle={2019 28th International Conference on Parallel Architectures and Compilation Techniques (PACT)}, 
+  title={POSTER: SPiDRE: Accelerating Sparse Memory Access Patterns}, 
+  year={2019},
+  publisher = {Institute of Electrical and Electronics Engineers},
+  address = {New York, NY, USA},
+  volume={},
+  number={},
+  pages={483-484},
+  doi={10.1109/PACT.2019.00056}
+}
+
+@INPROCEEDINGS{Mukkara2019_PHI,
+    author = {Mukkara, Anurag and Beckmann, Nathan and Sanchez, Daniel},
+    title = {PHI: Architectural Support for Synchronization- and Bandwidth-Efficient Commutative Scatter Updates},
+    year = {2019},
+    isbn = {9781450369381},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3352460.3358254},
+    doi = {10.1145/3352460.3358254},
+    abstract = {Many applications perform frequent scatter update operations to large data structures. For example, in push-style graph algorithms, processing each vertex requires updating the data of all its neighbors. Neighbors are often scattered over the whole graph, so these scatter updates have poor spatial and temporal locality. In current systems, scatter updates suffer high synchronization costs and high memory traffic. These drawbacks make push-style execution unattractive, and, when algorithms allow it, programmers gravitate towards pull-style implementations based on gather reads instead.We present PHI, a push cache hierarchy that makes scatter updates synchronization- and bandwidth-efficient. PHI adds support for pushing sparse, commutative updates from cores towards main memory. PHI adds simple compute logic at each cache level to buffer and coalesce these commutative updates throughout the hierarchy. This avoids synchronization, exploits temporal locality, and produces a load-balanced execution. Moreover, PHI exploits spatial locality by selectively deferring updates with poor spatial locality, batching them to achieve sequential main memory transfers.PHI is the first system to leverage both the temporal and spatial locality benefits of commutative scatter updates, some of which do not apply to gather reads. As a result, PHI not only makes push algorithms efficient, but makes them consistently faster than pull ones. We evaluate PHI on graph algorithms and other sparse applications processing large inputs. PHI improves performance by 4.7\texttimes{} on average (and by up to 11\texttimes{}), and reduces memory traffic by 2\texttimes{} (and by up to 5\texttimes{}).},
+    booktitle = {Proceedings of the 52nd Annual IEEE/ACM International Symposium on Microarchitecture},
+    pages = {1009–1022},
+    numpages = {14},
+    keywords = {locality, graph analytics, specialization, multicore, caches},
+    location = {Columbus, OH, USA},
+    series = {MICRO '52}
+}
+
+@ARTICLE{Srikanth2021_SortCache,
+    author = {Srikanth, Sriseshan and Jain, Anirudh and Conte, Thomas M. and Debenedictis, Erik P. and Cook, Jeanine},
+    title = {SortCache: Intelligent Cache Management for Accelerating Sparse Data Workloads},
+    year = {2021},
+    issue_date = {December 2021},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {18},
+    number = {4},
+    issn = {1544-3566},
+    url = {https://doi.org/10.1145/3473332},
+    doi = {10.1145/3473332},
+    abstract = {Sparse data applications have irregular access patterns that stymie modern memory architectures. Although hyper-sparse workloads have received considerable attention in the past, moderately-sparse workloads prevalent in machine learning applications, graph processing and HPC have not. Where the former can bypass the cache hierarchy, the latter fit in the cache. This article makes the observation that intelligent, near-processor cache management can improve bandwidth utilization for data-irregular accesses, thereby accelerating moderately-sparse workloads. We propose SortCache, a processor-centric approach to accelerating sparse workloads by introducing accelerators that leverage the on-chip cache subsystem, with minimal programmer intervention.},
+    journal = {ACM Trans. Archit. Code Optim.},
+    month = {sep},
+    articleno = {56},
+    numpages = {24},
+    keywords = {intelligent cache, graph analytics, spgemm, Sparse matrix, pruned convolutions}
+}
+
+@MISC{ZeroPoint2022_Zeptilion-BW,
+    author = {ZeroPoint Technologies AB},
+	title = {How to accelerate memory bandwidth by 50\% with {ZeroPoint} technology},
+	year = {2022},
+	url = {https://www.design-reuse.com/articles/52588/how-to-accelerate-memory-bandwidth-by-50-with-zeropoint-technology.html?utm_content=343581&utm_campaign=52588&utm_medium=socnewsalert&utm_source=designreuse},
+	urldate = {2022-10-26},
+	journal = {Design \& Reuse}
+}
+
+@ARTICLE{Zhang2022_ASA,
+    author = {Zhang, Chao and Bremer, Maximilian and Chan, Cy and Shalf, John and Guo, Xiaochen},
+    title = {ASA: Accelerating Sparse Accumulation in Column-Wise SpGEMM},
+    year = {2022},
+    issue_date = {December 2022},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {19},
+    number = {4},
+    issn = {1544-3566},
+    url = {https://doi.org/10.1145/3543068},
+    doi = {10.1145/3543068},
+    abstract = {Sparse linear algebra is an important kernel in many different applications. Among various sparse general matrix-matrix multiplication (SpGEMM) algorithms, Gustavson’s column-wise SpGEMM has good locality when reading input matrix and can be easily parallelized by distributing the computation of different columns of an output matrix to different processors. However, the sparse accumulation (SPA) step in column-wise SpGEMM, which merges partial sums from each of the multiplications by the row indices, is still a performance bottleneck. The state-of-the-art software implementation uses a hash table for partial sum search in the SPA, which makes SPA the largest contributor to the execution time of SpGEMM. There are three reasons that cause the SPA to become the bottleneck: (1) hash probing requires data-dependent branches that are difficult for a branch predictor to predict correctly; (2) the accumulation of partial sum is dependent on the results of the hash probing, which makes it difficult to hide the hash probing latency; and (3) hash collision requires time-consuming linear search and optimizations to reduce these collisions require an accurate estimation of the number of non-zeros in each column of the output matrix.This work proposes ASA architecture to accelerate the SPA. ASA overcomes the challenges of SPA by (1) executing the partial sum search and accumulate with a single instruction through ISA extension to eliminate data-dependent branches in hash probing, (2) using a dedicated on-chip cache to perform the search and accumulation in a pipelined fashion, (3) relying on the parallel search capability of a set-associative cache to reduce search latency, and (4) delaying the merging of overflowed entries. As a result, ASA achieves an average of 2.25\texttimes{} and 5.05\texttimes{} speedup as compared to the state-of-the-art software implementation of a Markov clustering application and its SpGEMM kernel, respectively. As compared to a state-of-the-art hashing accelerator design, ASA achieves an average of 1.95\texttimes{} speedup in the SpGEMM kernel.},
+    journal = {ACM Trans. Archit. Code Optim.},
+    month = {sep},
+    articleno = {49},
+    numpages = {24},
+    keywords = {sparse linear algebra, SpGEMM, Markov clustering, sparse accumulation}
+}
+
+@INPROCEEDINGS{Srivastava2020_MatRaptor,
+    author={Srivastava, Nitish and Jin, Hanchen and Liu, Jie and Albonesi, David and Zhang, Zhiru},
+    booktitle={2020 53rd Annual IEEE/ACM International Symposium on Microarchitecture (MICRO)}, 
+    title={MatRaptor: A Sparse-Sparse Matrix Multiplication Accelerator Based on Row-Wise Product}, 
+    year={2020},
+    publisher = {Institute of Electrical and Electronics Engineers},
+    address = {New York, NY, USA},
+    volume={},
+    number={},
+    pages={766-780},
+    abstract={Sparse-sparse matrix multiplication (SpGEMM) is a computation kernel widely used in numerous application domains such as data analytics, graph processing, and scientific computing. In this work we propose MatRaptor, a novel SpGEMM accelerator that is high performance and highly resource efficient. Unlike conventional methods using inner or outer product as the meta operation for matrix multiplication, our approach is based on row-wise product, which offers a better tradeoff in terms of data reuse and on-chip memory requirements, and achieves higher performance for large sparse matrices. We further propose a new hardware-friendly sparse storage format, which allows parallel compute engines to access the sparse data in a vectorized and streaming fashion, leading to high utilization of memory bandwidth. We prototype and simulate our accelerator architecture using gem5 on a diverse set of matrices. Our experiments show that MatRaptor achieves 129.2× speedup over single-threaded CPU, 8.8× speedup over GPU and 1.8× speedup over the state-of-the-art SpGEMM accelerator (OuterSPACE). MatRaptor also has 7.2× lower power consumption and 31.3× smaller area compared to OuterSPACE.},
+    keywords={},
+    doi={10.1109/MICRO50266.2020.00068},
+    ISSN={},
+    month={Oct},
+}
+
+@ARTICLE{LI_2023_GSCSp,
+    author={Li, Shiqing and Huai, Shuo and Liu, Weichen},
+    journal={IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems}, 
+    title={An Efficient Gustavson-Based Sparse Matrix–Matrix Multiplication Accelerator on Embedded FPGAs}, 
+    year={2023},
+    volume={42},
+    number={12},
+    pages={4671-4680},
+    abstract={Sparse matrix–matrix multiplication (SpMM) is an important kernel in multiple areas, e.g., data analytics and machine learning. Due to the low on-chip memory requirement, the consistent data format, and the simplified control logic, Gustavson’s algorithm is a promising backbone algorithm for SpMM on hardware accelerators. However, the off-chip memory traffic still limits the performance of the algorithm, especially on embedded FPGAs. Previous researchers optimize Gustavson’s algorithm targeting high bandwidth memory-based architectures and their solutions cannot be directly applied to embedded FPGAs with traditional DDRs. In this work, we propose an efficient Gustavson-based SpMM accelerator on embedded FPGAs. The proposed design fully considers the feature of off-chip memory access on embedded FPGAs and the dataflow of Gustavson’s algorithm. First, we analyze the parallelism of the algorithm and propose to perform the algorithm with element-wise parallelism, which reduces the idle time of processing elements caused by synchronization. Further, we show a counter-intuitive example that the traditional cache leads to worse performance. Then, we propose a novel access pattern-aware cache scheme called SpCache, which provides quick responses to reduce bank conflicts caused by irregular memory accesses and combines streaming and caching to handle requests that access ordered elements of unpredictable length. Moreover, we propose to perform the merge on part of partial results, which removes some redundant merges in the naive implementation and has little postprocessing overhead. Finally, we conduct experiments on the Xilinx Zynq-UltraScale ZCU106 platform with a set of benchmarks from the SuiteSparse matrix collection. The experimental results show that the proposed design achieves an average  $1.75\times $  performance speedup compared to the baseline.},
+    keywords={Sparse matrices;Indexes;Field programmable gate arrays;Parallel processing;Machine learning algorithms;System-on-chip;Memory management;Dataflow;FPGA;Gustavson;sparse matrix–matrix multiplication (SpMM)},
+    doi={10.1109/TCAD.2023.3281719},
+    ISSN={1937-4151},
+    month={Dec},
+}
+
+% Others
+
+@inproceedings{Du2022_HiSparse,
+    author = {Du, Yixiao and Hu, Yuwei and Zhou, Zhongchun and Zhang, Zhiru},
+    title = {High-Performance Sparse Linear Algebra on HBM-Equipped FPGAs Using HLS: A Case Study on SpMV},
+    year = {2022},
+    isbn = {9781450391498},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3490422.3502368},
+    doi = {10.1145/3490422.3502368},
+    abstract = {Sparse linear algebra operators are memory bound due to low compute to memory access ratio and irregular data access patterns. The exceptional bandwidth improvement provided by the emerging high-bandwidth memory (HBM) technologies, coupled with the ability of FPGAs to customize the memory hierarchy and compute engines, brings the potential to significantly boost the performance of sparse linear algebra operators. In this paper we identify four challenges when developing high-performance sparse linear algebra accelerators on HBM-equipped FPGAs --- low HBM bandwidth utilization with conventional sparse storage, limited on-chip memory capacity being the bottleneck when scaling to multiple HBM channels, low compute occupancy due to bank conflicts and inter-iteration carried dependencies, and timing closure on multi-die heterogeneous fabrics. We conduct an in-depth case study on sparse matrix-vector multiplication (SpMV) to explore techniques that tackle the four challenges. These techniques include (1) a customized sparse matrix format tailored for HBMs, (2) a scalable on-chip buffer design that combines replication and banking, (3) best practices of using HLS to implement hardware modules that dynamically resolve bank conflicts and carried dependencies for achieving high compute occupancy, and (4) a split-kernel design methodology for frequency optimization. Using the techniques, we demonstrate HiSparse, a high-performance SpMV accelerator on a multi-die HBM-equipped FPGA device. We evaluated HiSparse on a variety of matrix datasets. The results show that HiSparse achieves a high frequency and delivers promising speedup with increased bandwidth efficiency when compared to prior arts on CPUs, GPUs, and FPGAs. HiSparse is available at https://github.com/cornell-zhang/HiSparse.},
+    booktitle = {Proceedings of the 2022 ACM/SIGDA International Symposium on Field-Programmable Gate Arrays},
+    pages = {54–64},
+    numpages = {11},
+    keywords = {fpga acceleration, hbm, hls, sparse matrix-vector multiplication},
+    location = {Virtual Event, USA},
+    series = {FPGA '22}
+}
+
+@INPROCEEDINGS{Hu2021_GraphLily,
+    author={Hu, Yuwei and Du, Yixiao and Ustun, Ecenur and Zhang, Zhiru},
+    booktitle={2021 IEEE/ACM International Conference On Computer Aided Design (ICCAD)}, 
+    title={GraphLily: Accelerating Graph Linear Algebra on HBM-Equipped FPGAs}, 
+    year={2021},
+    volume={},
+    number={},
+    pages={1-9},
+    abstract={Graph processing is typically memory bound due to low compute to memory access ratio and irregular data access pattern. The emerging high-bandwidth memory (HBM) delivers exceptional bandwidth by providing multiple channels that can service memory requests concurrently, thus bringing the potential to significantly boost the performance of graph processing. This paper proposes GraphLily, a graph linear algebra overlay, to accelerate graph processing on HBM-equipped FPGAs. GraphLily supports a rich set of graph algorithms by adopting the GraphBLAS programming interface, which formulates graph algorithms as sparse linear algebra operations. GraphLily provides efficient, memory-optimized accelerators for the two widely-used kernels in GraphBLAS, namely, sparse-matrix dense-vector multiplication (SpMV) and sparse-matrix sparse-vector multiplication (SpMSpV). The SpMV accelerator uses a sparse matrix storage format tailored to HBM that enables streaming, vectorized accesses to each channel and concurrent accesses to multiple channels. Besides, the SpMV accelerator exploits data reuse in accesses of the dense vector by introducing a scalable on-chip buffer design. The SpMSpV accelerator complements the SpMV accelerator to handle cases where the input vector has a high sparsity. GraphLily further builds a middleware to provide runtime support. With this middleware, we can port existing GraphBLAS programs to FPGAs with slight modifications to the original code intended for CPU/GPU execution. Evaluation shows that compared with state-of-the-art graph processing frameworks on CPUs and GPUs, GraphLily achieves up to 2.5 x and 1.1 x higher throughput, while reducing the energy consumption by 8.1 x and 2.4 x; compared with prior single-purpose graph accelerators on FPGAs, GraphLily achieves 1.2 x -1.9 x higher throughput.},
+    keywords={},
+    doi={10.1109/ICCAD51958.2021.9643582},
+    ISSN={1558-2434},
+    month={Nov},
+}
+
+@INPROCEEDINGS{Srivastava2020_Tensaurus,
+    author={Srivastava, Nitish and Jin, Hanchen and Smith, Shaden and Rong, Hongbo and Albonesi, David and Zhang, Zhiru},
+    booktitle={2020 IEEE International Symposium on High Performance Computer Architecture (HPCA)}, 
+    title={Tensaurus: A Versatile Accelerator for Mixed Sparse-Dense Tensor Computations}, 
+    year={2020},
+    volume={},
+    number={},
+    pages={689-702},
+    abstract={Tensor factorizations are powerful tools in many machine learning and data analytics applications. Tensors are often sparse, which makes sparse tensor factorizations memory bound. In this work, we propose a hardware accelerator that can accelerate both dense and sparse tensor factorizations. We co-design the hardware and a sparse storage format, which allows accessing the sparse data in vectorized and streaming fashion and maximizes the utilization of the memory bandwidth. We extract a common computation pattern that is found in numerous matrix and tensor operations and implement it in the hardware. By designing the hardware based on this common compute pattern, we can not only accelerate tensor factorizations but also mixed sparse-dense matrix operations. We show significant speedup and energy benefit over the state-of-the-art CPU and GPU implementations of tensor factorizations and over CPU, GPU and accelerators for matrix operations.},
+    keywords={},
+    doi={10.1109/HPCA47549.2020.00062},
+    ISSN={2378-203X},
+    month={Feb},
+}
+
+@ARTICLE{Scheffler2023_SSSR,
+    author = {P. Scheffler and F. Zaruba and F. Schuiki and T. Hoefler and L. Benini},
+    journal = {IEEE Transactions on Parallel and Distributed Systems},
+    title = {Sparse Stream Semantic Registers: A Lightweight ISA Extension Accelerating General Sparse Linear Algebra},
+    year = {2023},
+    volume = {34},
+    number = {12},
+    issn = {1558-2183},
+    pages = {3147-3161},
+    abstract = {Sparse linear algebra is crucial in many application domains, but challenging to handle efficiently in both software and hardware, with one- and two-sided operand sparsity handled with distinct approaches. In this work, we enhance an existing memory-streaming RISC-V ISA extension to accelerate both one- and two-sided operand sparsity on widespread sparse tensor formats like compressed sparse row (CSR) and compressed sparse fiber (CSF) by accelerating the underlying operations of streaming indirection, intersection, and union. Our extensions enable single-core speedups over an optimized RISC-V baseline of up to 7.0x, 7.7x, and 9.8x on sparse-dense multiply, sparse-sparse multiply, and sparse-sparse addition, respectively, and peak FPU utilizations of up to 80% on sparse-dense problems. On an eight-core cluster, sparse-dense and sparse-sparse matrix-vector multiply using real-world matrices are up to 4.9x and 5.9x faster and up to 2.9x and 3.0x more energy efficient. We explore further applications for our extensions, such as stencil codes and graph pattern matching. Compared to recent CPU, GPU, and accelerator approaches, our extensions enable higher flexibility on data representation, degree of sparsity, and dataflow at a minimal hardware footprint, adding only 1.8% in area to a compute cluster. A cluster with our extensions running CSR matrix-vector multiplication achieves 9.9x and 1.7x higher peak floating-point utilizations than recent highly optimized sparse data structures and libraries for CPU and GPU, respectively, even when accounting for off-chip main memory (HBM) and on-chip interconnect latency and bandwidth effects.},
+    keywords = {indexes;hardware;generators;sparse matrices;tensors;registers;micromechanical devices},
+    doi = {10.1109/TPDS.2023.3322029},
+    publisher = {IEEE Computer Society},
+    address = {Los Alamitos, CA, USA},
+    month = {dec}
+}
+
+@inproceedings{Sadi2019_ITS,
+    author = {Sadi, Fazle and Sweeney, Joe and Low, Tze Meng and Hoe, James C. and Pileggi, Larry and Franchetti, Franz},
+    title = {Efficient SpMV Operation for Large and Highly Sparse Matrices Using Scalable Multi-Way Merge Parallelization},
+    year = {2019},
+    isbn = {9781450369381},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3352460.3358330},
+    doi = {10.1145/3352460.3358330},
+    abstract = {The importance of Sparse Matrix dense Vector multiplication (SpMV) operation in graph analytics and numerous scientific applications has led to development of custom accelerators that are intended to over-come the difficulties of sparse data operations on general purpose architectures. However, efficient SpMV operation on large problem (i.e. working set exceeds on-chip storage) is severely constrained due to strong dependence on limited amount of fast random access memory to scale. Additionally, unstructured matrix with high sparsity pose difficulties as most solutions rely on exploitation of data locality. This work presents an algorithm co-optimized scalable hardware architecture that can efficiently operate on very large (~billion nodes) and/or highly sparse (avg. degree &lt;10) graphs with significantly less on-chip fast memory than existing solutions. A novel parallelization methodology for implementing large and high throughput multi-way merge network is the key enabler of this high performance SpMV accelerator. Additionally, a data compression scheme to reduce off-chip traffic and special computation for nodes with exceptionally large number of edges, commonly found in power-law graphs, are presented. This accelerator is demonstrated with 16-nm fabricated ASIC and Stratix® 10 FPGA platforms. Experimental results show more than an order of magnitude improvement over current custom hardware solutions and more than two orders of magnitude improvement over commercial off-the-shelf (COTS) architectures for both performance and energy efficiency.},
+    booktitle = {Proceedings of the 52nd Annual IEEE/ACM International Symposium on Microarchitecture},
+    pages = {347–358},
+    numpages = {12},
+    keywords = {custom hardware, SpMV, sparse matrices, merge parallelization},
+    location = {Columbus, OH, USA},
+    series = {MICRO '52}
+}
+
+@article{Han2016_EIE,
+    author = {Han, Song and Liu, Xingyu and Mao, Huizi and Pu, Jing and Pedram, Ardavan and Horowitz, Mark A. and Dally, William J.},
+    title = {EIE: Efficient Inference Engine on Compressed Deep Neural Network},
+    year = {2016},
+    issue_date = {June 2016},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {44},
+    number = {3},
+    issn = {0163-5964},
+    url = {https://doi.org/10.1145/3007787.3001163},
+    doi = {10.1145/3007787.3001163},
+    abstract = {State-of-the-art deep neural networks (DNNs) have hundreds of millions of connections and are both computationally and memory intensive, making them difficult to deploy on embedded systems with limited hardware resources and power budgets. While custom hardware helps the computation, fetching weights from DRAM is two orders of magnitude more expensive than ALU operations, and dominates the required power.Previously proposed 'Deep Compression' makes it possible to fit large DNNs (AlexNet and VGGNet) fully in on-chip SRAM. This compression is achieved by pruning the redundant connections and having multiple connections share the same weight. We propose an energy efficient inference engine (EIE) that performs inference on this compressed network model and accelerates the resulting sparse matrix-vector multiplication with weight sharing. Going from DRAM to SRAM gives EIE 120\texttimes{} energy saving; Exploiting sparsity saves 10\texttimes{}; Weight sharing gives 8\texttimes{}; Skipping zero activations from ReLU saves another 3\texttimes{}. Evaluated on nine DNN benchmarks, EIE is 189\texttimes{} and 13\texttimes{} faster when compared to CPU and GPU implementations of the same DNN without compression. EIE has a processing power of 102 GOPS working directly on a compressed network, corresponding to 3 TOPS on an uncompressed network, and processes FC layers of AlexNet at 1.88\texttimes{}104 frames/sec with a power dissipation of only 600mW. It is 24,000\texttimes{} and 3,400\texttimes{} more energy efficient than a CPU and GPU respectively. Compared with DaDianNao, EIE has 2.9\texttimes{}, 19\texttimes{} and 3\texttimes{} better throughput, energy efficiency and area efficiency.},
+    journal = {SIGARCH Comput. Archit. News},
+    month = {jun},
+    pages = {243–254},
+    numpages = {12},
+    keywords = {algorithm-hardware co-design, ASIC, hardware acceleration, deep learning, model compression}
+}
+
+@inproceedings{Dadu2019_SPU,
+    author = {Dadu, Vidushi and Weng, Jian and Liu, Sihao and Nowatzki, Tony},
+    title = {Towards General Purpose Acceleration by Exploiting Common Data-Dependence Forms},
+    year = {2019},
+    isbn = {9781450369381},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3352460.3358276},
+    doi = {10.1145/3352460.3358276},
+    abstract = {With slowing technology scaling, specialized accelerators are increasingly attractive solutions to continue expected generational scaling of performance. However, in order to accelerate more advanced algorithms or those from challenging domains, supporting data-dependence becomes necessary. This manifests as either data-dependent control (eg. join two sparse lists), or data-dependent memory accesses (eg. hash-table access). These forms of data-dependence inherently couple compute with memory, and also preclude efficient vectorization -- defeating the traditional mechanisms of programmable accelerators (eg. GPUs).Our goal is to develop an accelerator which is broadly applicable across algorithms with and without data-dependence. To this end, we first identify forms of data-dependence which are both common and possible to exploit with specialized hardware: specifically stream-join and alias-free indirection. Then, we create an accelerator with an interface to support these, called the Sparse Processing Unit (SPU). SPU supports alias-free indirection with a compute-enabled scratchpad and aggressive stream reordering and stream-join with a novel dataflow control model for a reconfigurable systolic compute-fabric. Finally, we add robustness across datatypes by adding decomposability across the compute and memory pipelines. SPU achieves 16.5\texttimes{}, 10.3\texttimes{}, and 14.2\texttimes{} over a 24-core SKL CPU on ML, database, and graph algorithms respectively. SPU achieves similar performance to domain-specific accelerators. For ML, SPU achieves 1.8-7\texttimes{} speedup against a similarly provisioned GPGPU, with much less area and power.},
+    booktitle = {Proceedings of the 52nd Annual IEEE/ACM International Symposium on Microarchitecture},
+    pages = {924–939},
+    numpages = {16},
+    keywords = {dataflow, generality, Irregularity, accelerators, reconfigurable, indirection, systolic, join, data-dependence},
+    location = {Columbus, OH, USA},
+    series = {MICRO '52}
+}
+
+@INPROCEEDINGS{Asgari2020_Alrescha,
+    author={Asgari, Bahar and Hadidi, Ramyad and Krishna, Tushar and Kim, Hyesoon and Yalamanchili, Sudhakar},
+    booktitle={2020 IEEE International Symposium on High Performance Computer Architecture (HPCA)}, 
+    title={ALRESCHA: A Lightweight Reconfigurable Sparse-Computation Accelerator}, 
+    year={2020},
+    volume={},
+    number={},
+    pages={249-260},
+    abstract={Sparse problems that dominate a wide range of applications fail to effectively benefit from high memory bandwidth and concurrent computations in modern high-performance computer systems. Therefore, hardware accelerators have been proposed to capture a high degree of parallelism in sparse problems. However, the unexplored challenge for sparse problems is the limited opportunity for parallelism because of data dependencies, a common computation pattern in scientific sparse problems. Our key insight is to extract parallelism by mathematically transforming the computations into equivalent forms. The transformation breaks down the sparse kernels into a majority of independent parts and a minority of data-dependent ones and reorders these parts to gain performance. To implement the key insight, we propose a lightweight reconfigurable sparse-computation accelerator (Alrescha). To efficiently run the data-dependent and parallel parts and to enable fast switching between them, Alrescha makes two contributions. First, it implements a compute engine with a fixed compute unit for the parallel parts and a lightweight reconfigurable engine for the execution of the data-dependent parts. Second, Alrescha benefits from a locally-dense storage format, with the right order of non-zero values to yield the order of computations dictated by the transformation. The combination of the lightweight reconfigurable hardware and the storage format enables uninterrupted streaming from memory. Our simulation results show that compared to GPU, Alrescha achieves an average speedup of 15.6x for scientific sparse problems, and 8x for graph algorithms. Moreover, compared to GPU, Alrescha consumes 14x less energy.},
+    keywords={},
+    doi={10.1109/HPCA47549.2020.00029},
+    ISSN={2378-203X},
+    month={Feb},
+}
+
+@INPROCEEDINGS{Feng2021_CoSPARSE,
+    author={Feng, Siying and Sun, Jiawen and Pal, Subhankar and He, Xin and Kaszyk, Kuba and Park, Dong-hyeon and Morton, Magnus and Mudge, Trevor and Cole, Murray and O’Boyle, Michael and Chakrabarti, Chaitali and Dreslinski, Ronald},
+    booktitle={2021 58th ACM/IEEE Design Automation Conference (DAC)}, 
+    title={CoSPARSE: A Software and Hardware Reconfigurable SpMV Framework for Graph Analytics}, 
+    year={2021},
+    volume={},
+    number={},
+    pages={949-954},
+    abstract={Sparse matrix-vector multiplication (SpMV) is a critical building block for iterative graph analytics algorithms. Typically, such algorithms have a varying active vertex set across iterations. This variability has been used to improve performance by either dynamically switching algorithms between iterations (software) or designing custom accelerators (hardware) for graph analytics algorithms. In this work, we propose a novel framework, CoSPARSE, that employs hardware and software reconfiguration as a synergistic solution to accelerate SpMV-based graph analytics algorithms. Building on previously proposed general-purpose reconfigurable hardware, we implement CoSPARSE as a software layer, abstracting the hardware as a specialized SpMV accelerator. CoSPARSE dynamically selects software and hardware configurations for each iteration and achieves a maximum speedup of 2.0 × compared to the naïve implementation with no reconfiguration. Across a suite of graph algorithms, CoSPARSE outperforms a state-of-the-art shared memory framework, Ligra, on a Xeon CPU with up to 3.51 × better performance and 877 × better energy efficiency.},
+    keywords={},
+    doi={10.1109/DAC18074.2021.9586114},
+    ISSN={0738-100X},
+    month={Dec},
+}
+
+@INPROCEEDINGS{Song2018_GraphR,
+    author={Song, Linghao and Zhuo, Youwei and Qian, Xuehai and Li, Hai and Chen, Yiran},
+    booktitle={2018 IEEE International Symposium on High Performance Computer Architecture (HPCA)}, 
+    title={GraphR: Accelerating Graph Processing Using ReRAM}, 
+    year={2018},
+    volume={},
+    number={},
+    pages={531-543},
+    abstract={Graph processing recently received intensive interests in light of a wide range of needs to understand relationships. It is well-known for the poor locality and high memory bandwidth requirement. In conventional architectures, they incur a significant amount of data movements and energy consumption which motivates several hardware graph processing accelerators. The current graph processing accelerators rely on memory access optimizations or placing computation logics close to memory. Distinct from all existing approaches, we leverage an emerging memory technology to accelerate graph processing with analog computation. This paper presents GRAPHR, the first ReRAM-based graph processing accelerator. GRAPHR follows the principle of near-data processing and explores the opportunity of performing massive parallel analog operations with low hardware and energy cost. The analog computation is suitable for graph processing because: 1) The algorithms are iterative and could inherently tolerate the imprecision; 2) Both probability calculation (e.g., PageRank and Collaborative Filtering) and typical graph algorithms involving integers (e.g., BFS/SSSP) are resilient to errors. The key insight of GRAPHR is that if a vertex program of a graph algorithm can be expressed in sparse matrix vector multiplication (SpMV), it can be efficiently performed by ReRAM crossbar. We show that this assumption is generally true for a large set of graph algorithms. GRAPHR is a novel accelerator architecture consisting of two components: memory ReRAM and graph engine (GE). The core graph computations are performed in sparse matrix format in GEs (ReRAM crossbars). The vector/matrix-based graph computation is not new, but ReRAM offers the unique opportunity to realize the massive parallelism with unprecedented energy efficiency and low hardware cost. With small subgraphs processed by GEs, the gain of performing parallel operations overshadows the wastes due to sparsity. The experiment results show that GRAPHR achieves a 16.01× (up to 132.67×) speedup and a 33.82× energy saving on geometric mean compared to a CPU baseline system. Compared to GPU, GRAPHR achieves 1.69× to 2.19× speedup and consumes 4.77× to 8.91× less energy. GRAPHR gains a speedup of 1.16× to 4.12×, and is 3.67× to 10.96× more energy efficiency compared to PIM-based architecture.},
+    keywords={},
+    doi={10.1109/HPCA.2018.00052},
+    ISSN={2378-203X},
+    month={Feb},
+}
+
+@INPROCEEDINGS{Xie2021_SpaceA,
+    author={Xie, Xinfeng and Liang, Zheng and Gu, Peng and Basak, Abanti and Deng, Lei and Liang, Ling and Hu, Xing and Xie, Yuan},
+    booktitle={2021 IEEE International Symposium on High-Performance Computer Architecture (HPCA)}, 
+    title={SpaceA: Sparse Matrix Vector Multiplication on Processing-in-Memory Accelerator}, 
+    year={2021},
+    volume={},
+    number={},
+    pages={570-583},
+    abstract={Sparse matrix-vector multiplication (SpMV) is an important primitive across a wide range of application domains such as scientific computing and graph analytics. Due to its intrinsic memory-bound characteristics, the performance of SpMV on throughput-oriented architectures such as GPU is bounded by the limited bandwidth between processors and memory. Processing-in-memory (PIM) architectures, made feasible by advances in 3D stacking, provide new opportunities to utilize ultra-high bandwidth by integrating compute-logic into memory.In this paper, we develop an SpMV accelerator, named as SpaceA, based on PIM architectures. SpaceA integrates compute logic near memory banks to exploit bank-level bandwidth. SpaceA contains both hardware and data-mapping design features to alleviate irregular memory access patterns which hinder full utilization of high memory bandwidth. In terms of hardware design features, SpaceA consists of two unique features: (1) it utilizes the capability of outstanding memory requests to hide the memory access latency to data located in non-local memory banks; (2) it integrates Content Addressable Memory (CAM) at the bank level to exploit data reuse of the input vectors. In addition, we develop a mapping scheme that partitions the sparse matrix into different memory banks, to maximize the data locality of the input vector and to achieve workload balance among processing elements (PEs) near each bank. Overall, SpaceA together with the proposed mapping method achieves 13.54x speedup and 87.49% energy saving on average over the GPU baseline on SpMV computation. In addition to SpMV primitives, we conduct a case study on graph analytics to demonstrate the benefits of SpaceA for applications built on SpMV. Compared to Tesseract and GraphP, state-of-the-art graph accelerators, SpaceA obtains better performance due to its higher effective bandwidth provided by near-bank integration.},
+    keywords={},
+    doi={10.1109/HPCA51647.2021.00055},
+    ISSN={2378-203X},
+    month={Feb},
+}
+
+@INPROCEEDINGS{Gudaparthi2022_CANDLES,
+    author={Gudaparthi, Sumanth and Singh, Sarabjeet and Narayanan, Surya and Balasubramonian, Rajeev and Sathe, Visvesh},
+    booktitle={2022 IEEE International Symposium on High-Performance Computer Architecture (HPCA)}, 
+    title={CANDLES: Channel-Aware Novel Dataflow-Microarchitecture Co-Design for Low Energy Sparse Neural Network Acceleration}, 
+    year={2022},
+    volume={},
+    number={},
+    pages={876-891},
+    abstract={Several deep neural network (DNN) accelerators have been designed to exploit the sparsity exhibited by DNN activations and weights. State-of-the-art sparse accelerators can be described as either Pixel-first or Channel-first accelerators, each with its unique dataflow and compression format aiding its dataflow. The former expends significant energy updating neuron partial sums, while the latter expends significant energy in handling the index metadata. This work introduces a novel microarchitecture and dataflow that reconciles these trade-offs by adopting a Pixel-first compression and Channel-first dataflow. The proposed microarchitecture has a simpler index-generation logic combined with an accumulator buffer hierarchy and crossbar with low wiring overhead. The compression format and dataflow promote high temporal locality in neuron updates, further lowering energy. Finally, we introduce work partitions across processing elements that naturally lead to load balance without offline analysis. Compared to four state-of-the-art baselines, the proposed architecture, CANDLES, significantly outperforms three and matches the performance of the fourth. In terms of energy, CANDLES is between 2.5× and 5.6× more energy-efficient than these four baselines.},
+    keywords={},
+    doi={10.1109/HPCA53966.2022.00069},
+    ISSN={2378-203X},
+    month={April},
+}
+
+@inproceedings{Munoz-Martinez2023_Flexagon,
+    author = {Mu\~{n}oz-Mart\'{\i}nez, Francisco and Garg, Raveesh and Pellauer, Michael and Abell\'{a}n, Jos\'{e} L. and Acacio, Manuel E. and Krishna, Tushar},
+    title = {Flexagon: A Multi-Dataflow Sparse-Sparse Matrix Multiplication Accelerator for Efficient DNN Processing},
+    year = {2023},
+    isbn = {9781450399180},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3582016.3582069},
+    doi = {10.1145/3582016.3582069},
+    abstract = {Sparsity is a growing trend in modern DNN models. Existing Sparse-Sparse Matrix Multiplication (SpMSpM) accelerators are tailored to a particular SpMSpM dataflow (i.e., Inner Product, Outer Product or Gustavson's), which determines their overall efficiency. We demonstrate that this static decision inherently results in a suboptimal dynamic solution. This is because different SpMSpM kernels show varying features (i.e., dimensions, sparsity pattern, sparsity degree), which makes each dataflow better suited to different data sets. In this work we present Flexagon, the first SpMSpM reconfigurable accelerator that is capable of performing SpMSpM computation by using the particular dataflow that best matches each case. Flexagon accelerator is based on a novel Merger-Reduction Network (MRN) that unifies the concept of reducing and merging in the same substrate, increasing efficiency. Additionally, Flexagon also includes a new L1 on-chip memory organization, specifically tailored to the different access characteristics of the input and output compressed matrices. Using detailed cycle-level simulation of contemporary DNN models from a variety of application domains, we show that Flexagon achieves average performance benefits of 4.59x, 1.71x, and 1.35x with respect to the state-of-the-art SIGMA-like, SpArch-like and GAMMA-like accelerators (265\%, 67\%, and 18\%, respectively, in terms of average performance/area efficiency).},
+    booktitle = {Proceedings of the 28th ACM International Conference on Architectural Support for Programming Languages and Operating Systems, Volume 3},
+    pages = {252–265},
+    numpages = {14},
+    keywords = {Sparse-Sparse Matrix Multiplication, Memory Hierarchy, Merger-Reduction Network, Dataflow, Deep Neural Network Accelerators},
+    location = {Vancouver, BC, Canada},
+    series = {ASPLOS 2023}
+}
+
+@ARTICLE{Gao2023_SDMA,
+    author={Gao, Yingxue and Gong, Lei and Wang, Chao and Wang, Teng and Li, Xi and Zhou, Xuehai},
+    journal={IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems}, 
+    title={Algorithm/Hardware Co-Optimization for Sparsity-Aware SpMM Acceleration of GNNs}, 
+    year={2023},
+    volume={42},
+    number={12},
+    pages={4763-4776},
+    doi={10.1109/TCAD.2023.3281714}
+}
+
+@ARTICLE{Li2023_OnXilinx,
+    author={Li, Shiqing and Huai, Shuo and Liu, Weichen},
+    journal={IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems}, 
+    title={An Efficient Gustavson-Based Sparse Matrix–Matrix Multiplication Accelerator on Embedded FPGAs}, 
+    year={2023},
+    volume={42},
+    number={12},
+    pages={4671-4680},
+    abstract={Sparse matrix–matrix multiplication (SpMM) is an important kernel in multiple areas, e.g., data analytics and machine learning. Due to the low on-chip memory requirement, the consistent data format, and the simplified control logic, Gustavson’s algorithm is a promising backbone algorithm for SpMM on hardware accelerators. However, the off-chip memory traffic still limits the performance of the algorithm, especially on embedded FPGAs. Previous researchers optimize Gustavson’s algorithm targeting high bandwidth memory-based architectures and their solutions cannot be directly applied to embedded FPGAs with traditional DDRs. In this work, we propose an efficient Gustavson-based SpMM accelerator on embedded FPGAs. The proposed design fully considers the feature of off-chip memory access on embedded FPGAs and the dataflow of Gustavson’s algorithm. First, we analyze the parallelism of the algorithm and propose to perform the algorithm with element-wise parallelism, which reduces the idle time of processing elements caused by synchronization. Further, we show a counter-intuitive example that the traditional cache leads to worse performance. Then, we propose a novel access pattern-aware cache scheme called SpCache, which provides quick responses to reduce bank conflicts caused by irregular memory accesses and combines streaming and caching to handle requests that access ordered elements of unpredictable length. Moreover, we propose to perform the merge on part of partial results, which removes some redundant merges in the naive implementation and has little postprocessing overhead. Finally, we conduct experiments on the Xilinx Zynq-UltraScale ZCU106 platform with a set of benchmarks from the SuiteSparse matrix collection. The experimental results show that the proposed design achieves an average  $1.75\times $  performance speedup compared to the baseline.},
+    keywords={},
+    doi={10.1109/TCAD.2023.3281719},
+    ISSN={1937-4151},
+    month={Dec}
+}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Simulators and Compilers
+
+@INPROCEEDINGS{Wu2022_SparseLoop,
+    author={Wu, Yannan Nellie and Tsai, Po-An and Parashar, Angshuman and Sze, Vivienne and Emer, Joel S.},
+    booktitle={2022 55th IEEE/ACM International Symposium on Microarchitecture (MICRO)}, 
+    title={Sparseloop: An Analytical Approach To Sparse Tensor Accelerator Modeling}, 
+    year={2022},
+    publisher = {Institute of Electrical and Electronics Engineers and Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume={},
+    number={},
+    pages={1377-1395},
+    doi={10.1109/MICRO56248.2022.00096}
+}
+
+@article{10.1145/2508148.2485963,
+    author = {Sanchez, Daniel and Kozyrakis, Christos},
+    title = {ZSim: Fast and Accurate Microarchitectural Simulation of Thousand-Core Systems},
+    year = {2013},
+    issue_date = {June 2013},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {41},
+    number = {3},
+    issn = {0163-5964},
+    url = {https://doi.org/10.1145/2508148.2485963},
+    doi = {10.1145/2508148.2485963},
+    abstract = {Architectural simulation is time-consuming, and the trend towards hundreds of cores is making sequential simulation even slower. Existing parallel simulation techniques either scale poorly due to excessive synchronization, or sacrifice accuracy by allowing event reordering and using simplistic contention models. As a result, most researchers use sequential simulators and model small-scale systems with 16-32 cores. With 100-core chips already available, developing simulators that scale to thousands of cores is crucial.We present three novel techniques that, together, make thousand-core simulation practical. First, we speed up detailed core models (including OOO cores) with instruction-driven timing models that leverage dynamic binary translation. Second, we introduce bound-weave, a two-phase parallelization technique that scales parallel simulation on multicore hosts efficiently with minimal loss of accuracy. Third, we implement lightweight user-level virtualization to support complex workloads, including multiprogrammed, client-server, and managed-runtime applications, without the need for full-system simulation, sidestepping the lack of scalable OSs and ISAs that support thousands of cores.We use these techniques to build zsim, a fast, scalable, and accurate simulator. On a 16-core host, zsim models a 1024-core chip at speeds of up to 1,500 MIPS using simple cores and up to 300 MIPS using detailed OOO cores, 2-3 orders of magnitude faster than existing parallel simulators. Simulator performance scales well with both the number of modeled cores and the number of host cores. We validate zsim against a real Westmere system on a wide variety of workloads, and find performance and microarchitectural events to be within a narrow range of the real system.},
+    journal = {SIGARCH Comput. Archit. News},
+    month = {jun},
+    pages = {475–486},
+    numpages = {12}
+}
+
+@inproceedings{SANCHEZ_2013_ZSIM,
+    author = {Sanchez, Daniel and Kozyrakis, Christos},
+    title = {ZSim: Fast and Accurate Microarchitectural Simulation of Thousand-Core Systems},
+    year = {2013},
+    isbn = {9781450320795},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/2485922.2485963},
+    doi = {10.1145/2485922.2485963},
+    abstract = {Architectural simulation is time-consuming, and the trend towards hundreds of cores is making sequential simulation even slower. Existing parallel simulation techniques either scale poorly due to excessive synchronization, or sacrifice accuracy by allowing event reordering and using simplistic contention models. As a result, most researchers use sequential simulators and model small-scale systems with 16-32 cores. With 100-core chips already available, developing simulators that scale to thousands of cores is crucial.We present three novel techniques that, together, make thousand-core simulation practical. First, we speed up detailed core models (including OOO cores) with instruction-driven timing models that leverage dynamic binary translation. Second, we introduce bound-weave, a two-phase parallelization technique that scales parallel simulation on multicore hosts efficiently with minimal loss of accuracy. Third, we implement lightweight user-level virtualization to support complex workloads, including multiprogrammed, client-server, and managed-runtime applications, without the need for full-system simulation, sidestepping the lack of scalable OSs and ISAs that support thousands of cores.We use these techniques to build zsim, a fast, scalable, and accurate simulator. On a 16-core host, zsim models a 1024-core chip at speeds of up to 1,500 MIPS using simple cores and up to 300 MIPS using detailed OOO cores, 2-3 orders of magnitude faster than existing parallel simulators. Simulator performance scales well with both the number of modeled cores and the number of host cores. We validate zsim against a real Westmere system on a wide variety of workloads, and find performance and microarchitectural events to be within a narrow range of the real system.},
+    booktitle = {Proceedings of the 40th Annual International Symposium on Computer Architecture},
+    pages = {475–486},
+    numpages = {12},
+    location = {Tel-Aviv, Israel},
+    series = {ISCA '13}
+}
+
+@misc{Lowe2020_gem5__short,
+  doi = {10.48550/ARXIV.2007.03152},
+  url = {https://arxiv.org/abs/2007.03152},
+  author = "Jason Lowe-Power et al.",
+  keywords = {Hardware Architecture (cs.AR), FOS: Computer and information sciences, FOS: Computer and information sciences},
+  title = {The gem5 Simulator: Version 20.0+},
+  publisher = {arXiv},
+  year = {2020},
+  copyright = {Creative Commons Attribution 4.0 International}
+}
+
+@misc{Lowe2020_gem5,
+  doi = {10.48550/ARXIV.2007.03152},
+  url = {https://arxiv.org/abs/2007.03152},
+  author = {Lowe-Power, Jason and Ahmad, Abdul Mutaal and Akram, Ayaz and Alian, Mohammad and Amslinger, Rico and Andreozzi, Matteo and Armejach, Adrià and Asmussen, Nils and Beckmann, Brad and Bharadwaj, Srikant and Black, Gabe and Bloom, Gedare and Bruce, Bobby R. and Carvalho, Daniel Rodrigues and Castrillon, Jeronimo and Chen, Lizhong and Derumigny, Nicolas and Diestelhorst, Stephan and Elsasser, Wendy and Escuin, Carlos and Fariborz, Marjan and Farmahini-Farahani, Amin and Fotouhi, Pouya and Gambord, Ryan and Gandhi, Jayneel and Gope, Dibakar and Grass, Thomas and Gutierrez, Anthony and Hanindhito, Bagus and Hansson, Andreas and Haria, Swapnil and Harris, Austin and Hayes, Timothy and Herrera, Adrian and Horsnell, Matthew and Jafri, Syed Ali Raza and Jagtap, Radhika and Jang, Hanhwi and Jeyapaul, Reiley and Jones, Timothy M. and Jung, Matthias and Kannoth, Subash and Khaleghzadeh, Hamidreza and Kodama, Yuetsu and Krishna, Tushar and Marinelli, Tommaso and Menard, Christian and Mondelli, Andrea and Moreto, Miquel and Mück, Tiago and Naji, Omar and Nathella, Krishnendra and Nguyen, Hoa and Nikoleris, Nikos and Olson, Lena E. and Orr, Marc and Pham, Binh and Prieto, Pablo and Reddy, Trivikram and Roelke, Alec and Samani, Mahyar and Sandberg, Andreas and Setoain, Javier and Shingarov, Boris and Sinclair, Matthew D. and Ta, Tuan and Thakur, Rahul and Travaglini, Giacomo and Upton, Michael and Vaish, Nilay and Vougioukas, Ilias and Wang, William and Wang, Zhengrong and Wehn, Norbert and Weis, Christian and Wood, David A. and Yoon, Hongil and Zulian, Éder F.},
+  keywords = {Hardware Architecture (cs.AR), FOS: Computer and information sciences, FOS: Computer and information sciences},
+  title = {The gem5 Simulator: Version 20.0+},
+  publisher = {arXiv},
+  year = {2020},
+  copyright = {Creative Commons Attribution 4.0 International}
+}
+
+@article{Balasubramonian2017_CACTI7,
+    author = {Balasubramonian, Rajeev and Kahng, Andrew B. and Muralimanohar, Naveen and Shafiee, Ali and Srinivas, Vaishnav},
+    title = {CACTI 7: New Tools for Interconnect Exploration in Innovative Off-Chip Memories},
+    year = {2017},
+    issue_date = {June 2017},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {14},
+    number = {2},
+    issn = {1544-3566},
+    url = {https://doi.org/10.1145/3085572},
+    doi = {10.1145/3085572},
+    abstract = {Historically, server designers have opted for simple memory systems by picking one of a few commoditized DDR memory products. We are already witnessing a major upheaval in the off-chip memory hierarchy, with the introduction of many new memory products—buffer-on-board, LRDIMM, HMC, HBM, and NVMs, to name a few. Given the plethora of choices, it is expected that different vendors will adopt different strategies for their high-capacity memory systems, often deviating from DDR standards and/or integrating new functionality within memory systems. These strategies will likely differ in their choice of interconnect and topology, with a significant fraction of memory energy being dissipated in I/O and data movement. To make the case for memory interconnect specialization, this paper makes three contributions.First, we design a tool that carefully models I/O power in the memory system, explores the design space, and gives the user the ability to define new types of memory interconnects/topologies. The tool is validated against SPICE models, and is integrated into version 7 of the popular CACTI package. Our analysis with the tool shows that several design parameters have a significant impact on I/O power.We then use the tool to help craft novel specialized memory system channels. We introduce a new relay-on-board chip that partitions a DDR channel into multiple cascaded channels. We show that this simple change to the channel topology can improve performance by 22\% for DDR DRAM and lower cost by up to 65\% for DDR DRAM. This new architecture does not require any changes to DIMMs, and it efficiently supports hybrid DRAM/NVM systems.Finally, as an example of a more disruptive architecture, we design a custom DIMM and parallel bus that moves away from the DDR3/DDR4 standards. To reduce energy and improve performance, the baseline data channel is split into three narrow parallel channels and the on-DIMM interconnects are operated at a lower frequency. In addition, this allows us to design a two-tier error protection strategy that reduces data transfers on the interconnect. This architecture yields a performance improvement of 18\% and a memory power reduction of 23\%.The cascaded channel and narrow channel architectures serve as case studies for the new tool and show the potential for benefit from re-organizing basic memory interconnects.},
+    journal = {ACM Trans. Archit. Code Optim.},
+    month = {jun},
+    articleno = {14},
+    numpages = {25},
+    keywords = {interconnects, NVM, Memory, DRAM, tools}
+}
+
+@INPROCEEDINGS{Li2009_McPAT,
+  author={Li, Sheng and Ahn, Jung Ho and Strong, Richard D. and Brockman, Jay B. and Tullsen, Dean M. and Jouppi, Norman P.},
+  booktitle={2009 42nd Annual IEEE/ACM International Symposium on Microarchitecture (MICRO)}, 
+  title={McPAT: An integrated power, area, and timing modeling framework for multicore and manycore architectures}, 
+  year={2009},
+  publisher = {Institute of Electrical and Electronics Engineers and Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume={},
+  number={},
+  pages={469-480},
+  abstract={This paper introduces McPAT, an integrated power, area, and timing modeling framework that supports comprehensive design space exploration for multicore and manycore processor configurations ranging from 90 nm to 22 nm and beyond. At the microarchitectural level, McPAT includes models for the fundamental components of a chip multiprocessor, including in-order and out-of-order processor cores, networks-on-chip, shared caches, integrated memory controllers, and multiple-domain clocking. At the circuit and technology levels, McPAT supports critical-path timing modeling, area modeling, and dynamic, short-circuit, and leakage power modeling for each of the device types forecast in the ITRS roadmap including bulk CMOS, SOI, and double-gate transistors. McPAT has a flexible XML interface to facilitate its use with many performance simulators. Combined with a performance simulator, McPAT enables architects to consistently quantify the cost of new ideas and assess tradeoffs of different architectures using new metrics like energy-delay-area2 product (EDA2P) and energy-delay-area product (EDAP). This paper explores the interconnect options of future manycore processors by varying the degree of clustering over generations of process technologies. Clustering will bring interesting tradeoffs between area and performance because the interconnects needed to group cores into clusters incur area overhead, but many applications can make good use of them due to synergies of cache sharing. Combining power, area, and timing results of McPAT with performance simulation of PARSEC benchmarks at the 22 nm technology node for both common in-order and out-of-order manycore designs shows that when die cost is not taken into account clustering 8 cores together gives the best energy-delay product, whereas when cost is taken into account configuring clusters with 4 cores gives the best EDA2P and EDAP.},
+  keywords={},
+  doi={},
+  ISSN={2379-3155},
+  month={Dec}
+}
+
+@INPROCEEDINGS{Munoz-Martinez2021_STONNE,
+    author={Muñoz-Martínez, Francisco and Abellán, José L. and Acacio, Manuel E. and Krishna, Tushar},
+    booktitle={2021 IEEE International Symposium on Workload Characterization (IISWC)}, 
+    title={STONNE: Enabling Cycle-Level Microarchitectural Simulation for DNN Inference Accelerators}, 
+    year={2021},
+    volume={},
+    number={},
+    pages={201-213},
+    abstract={The design of specialized architectures for accelerating the inference procedure of Deep Neural Networks (DNNs) is a booming area of research nowadays. While first-generation rigid accelerator proposals used simple fixed dataflows tailored for dense DNNs, more recent architectures have argued for flexibility to efficiently support a wide variety of layer types, dimensions, and sparsity. As the complexity of these accelerators grows, the analytical models currently being used for design-space exploration are unable to capture execution-time subtleties, leading to inexact results in many cases as we demonstrate. This opens up a need for cycle-level simulation tools to allow for fast and accurate design-space exploration of DNN accelerators, and rapid quantification of the efficacy of architectural enhancements during the early stages of a design. To this end, we present STONNE (Simulation TOol of Neural Network/Engines), a cycle-level microarchitectural simulation framework that can plug into any high-level DNN framework as an accelerator device and perform full-model evaluation (i.e. we are able to simulate real, complete, unmodified DNN models) of state-of-the-art rigid and flexible DNN accelerators, both with and without sparsity support. As a proof of concept, we use STONNE in three use cases: i) a direct comparison of three dominant inference accelerators using real DNN models; ii) back-end extensions and iii) front-end extensions of the simulator to showcase the capability of STONNE to rapidly and precisely evaluate data-dependent optimizations.},
+    keywords={},
+    doi={10.1109/IISWC53511.2021.00028},
+    ISSN={},
+    month={Nov},
+}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Dataflow (baselines)
+
+@MISC{Dalton2014_Cusp,
+  author = "Steven Dalton and Nathan Bell and Luke Olson and Michael Garland",
+  title = "Cusp: Generic Parallel Algorithms for Sparse Matrix and Graph Computations",
+  year = "2014",
+  url = "http://cusplibrary.github.io/",
+  note = "Version 0.5.1",
+  lastaccessed = "May 2022",
+}
+
+@MISC{NVIDIA2014_cuSPARSE,
+  author = "NVIDIA",
+  title = "cuSPARSE Library",
+  year = "2014",
+  url = "https://developer.nvidia.com/cusparse",
+  lastaccessed = "May 2022",
+}
+
+@MISC{Intel2003_IntelMKL,
+  author = "Intel",
+  title = "Intel Math Kernel Library",
+  year = "2003",
+  url = {https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html#gs.ylo2j7},
+  lastaccessed = "May 2022",
+}
+
+@article{Conrad2016_Armadillo,
+    doi = {10.21105/joss.00026},
+    url = {https://doi.org/10.21105/joss.00026},
+    year = {2016},
+    publisher = {The Open Journal},
+    volume = {1},
+    number = {2},
+    pages = {26},
+    author = {Conrad Sanderson and Ryan Curtin},
+    title = {Armadillo: a template-based C++ library for linear algebra},
+    journal = {Journal of Open Source Software}
+}
+
+@article{Kjolstad2017_TACO,
+    author = {Kjolstad, Fredrik and Kamil, Shoaib and Chou, Stephen and Lugato, David and Amarasinghe, Saman},
+    title = {The Tensor Algebra Compiler},
+    year = {2017},
+    issue_date = {October 2017},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {1},
+    number = {OOPSLA},
+    url = {https://doi.org/10.1145/3133901},
+    doi = {10.1145/3133901},
+    abstract = {Tensor algebra is a powerful tool with applications in machine learning, data analytics, engineering and the physical sciences. Tensors are often sparse and compound operations must frequently be computed in a single kernel for performance and to save memory. Programmers are left to write kernels for every operation of interest, with different mixes of dense and sparse tensors in different formats. The combinations are infinite, which makes it impossible to manually implement and optimize them all. This paper introduces the first compiler technique to automatically generate kernels for any compound tensor algebra operation on dense and sparse tensors. The technique is implemented in a C++ library called taco. Its performance is competitive with best-in-class hand-optimized kernels in popular libraries, while supporting far more tensor operations.},
+    journal = {Proc. ACM Program. Lang.},
+    month = {oct},
+    articleno = {77},
+    numpages = {29},
+    keywords = {linear algebra, performance, tensor algebra, parallelism, iteration graphs, sparse data structures, merge lattices, code generation, tensors}
+}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Algorithms
+
+@article{Faddeev1981_InnerOuter,
+    author = {Faddeev, D. K. and Faddeeva, V. N.},
+    title = {Computational methods of linear algebra},
+    year = {1981},
+    issue_date = {1981/03/01},
+    publisher = {Springer},
+    address = {Berlin, Germany},
+    volume = {15},
+    number = {5},
+    pages = {531-650},
+    url = {https://doi.org/10.1007/BF01086544},
+    doi = {10.1007/BF01086544},
+    abstract = {The authors' survey paper is devoted to the present state of computational methods in linear algebra. Questions discussed are the means and methods of estimating the quality of numerical solution of computational problems, the generalized inverse of a matrix, the solution of systems with rectangular and poorly conditioned matrices, the inverse eigenvalue problem, and more traditional questions such as algebraic eigenvalue problems and the solution of systems with a square matrix (by direct and iterative methods).},
+    journal = {Journal of Soviet Mathematics},
+    ISSN = {1573-8795},
+}
+
 @CONFERENCE{Srikanth2017_SuperStrider,
 	author = {Srikanth, Sriseshan and Conte, Thomas M. and DeBenedictis, Erik P. and Cook, Jeanine},
 	title = {The superstrider architecture: Integrating logic and memory towards non-von Neumann computing},
@@ -74,6 +723,68 @@
 	source = {Scopus},
 }
 
+@article{Srikanth2019_MetaStrider,
+    author = {Srikanth, Sriseshan and Jain, Anirudh and Lennon, Joseph M. and Conte, Thomas M. and Debenedictis, Erik and Cook, Jeanine},
+    title = {MetaStrider: Architectures for Scalable Memory-centric Reduction of Sparse Data Streams},
+    year = {2019},
+    issue_date = {December 2019},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {16},
+    number = {4},
+    issn = {1544-3566},
+    url = {https://doi.org/10.1145/3355396},
+    doi = {10.1145/3355396},
+    abstract = {Reduction is an operation performed on the values of two or more key-value pairs that share the same key. Reduction of sparse data streams finds application in a wide variety of domains such as data and graph analytics, cybersecurity, machine learning, and HPC applications. However, these applications exhibit low locality of reference, rendering traditional architectures and data representations inefficient. This article presents MetaStrider, a significant algorithmic and architectural enhancement to the state-of-the-art, SuperStrider. Furthermore, these enhancements enable a variety of parallel, memory-centric architectures that we propose, resulting in demonstrated performance that scales near-linearly with available memory-level parallelism.},
+    journal = {ACM Trans. Archit. Code Optim.},
+    month = {oct},
+    articleno = {35},
+    pages = {1-26},
+    numpages = {26},
+    keywords = {sparse, Memory-centric architectures, DRAM}
+}
+
+@article{Gustavson1978_GustAlgo,
+    author = {Gustavson, Fred G.},
+    title = {Two Fast Algorithms for Sparse Matrices: Multiplication and Permuted Transposition},
+    year = {1978},
+    issue_date = {Sept. 1978},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {4},
+    number = {3},
+    issn = {0098-3500},
+    url = {https://doi.org/10.1145/355791.355796},
+    doi = {10.1145/355791.355796},
+    journal = {ACM Trans. Math. Softw.},
+    month = {sep},
+    pages = {250–269},
+    numpages = {20}
+}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Sparse Formats
+
+@book{Tewarson1973_COO_CSR_LIL_first,
+  title={Sparse matrices},
+  author={Tewarson, Reginald P.},
+  volume={69},
+  year={1973},
+  publisher={Academic press New York},
+  address = {State University of New York, Stony Brook, NY}
+}
+
+@techreport{Kincaid1989_ELLPACK,
+    author = {Kincaid, David R. and Oppe, Thomas C. and Young, David M.},
+    title = {ITPACKV 2D user's guide},
+    year = {1989},
+    month = {5},
+    source = {https://www.osti.gov/biblio/7093021},
+    doi = {10.2172/7093021},
+    publisher = {Office of Scientific and Technical Information},
+    address = {United States},
+}
+
 @book{Barrett1994_CSR_BCSR_DIA_ELL,
     author = {Barrett, Richard and Berry, Michael and Chan, Tony F. and Demmel, James and Donato, June and Dongarra, Jack and Eijkhout, Victor and Pozo, Roldan and Romine, Charles and van der Vorst, Henk},
     title = {Templates for the Solution of Linear Systems: Building Blocks for Iterative Methods},
@@ -85,21 +796,328 @@
     URL = {https://epubs.siam.org/doi/abs/10.1137/1.9781611971538},
 }
 
+@book{Saad2003_COO_CSR_DIA_ELL,
+    author = {Saad, Yousef},
+    title = {Iterative Methods for Sparse Linear Systems},
+    publisher = {Society for Industrial and Applied Mathematics},
+    year = {2003},
+    doi = {10.1137/1.9780898718003},
+    address = {},
+    edition   = {Second},
+    URL = {https://epubs.siam.org/doi/abs/10.1137/1.9780898718003}
+}
+
+@inproceedings{Bell2009_HYB,
+    author = {Bell, Nathan and Garland, Michael},
+    title = {Implementing Sparse Matrix-Vector Multiplication on Throughput-Oriented Processors},
+    year = {2009},
+    isbn = {9781605587448},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/1654059.1654078},
+    doi = {10.1145/1654059.1654078},
+    abstract = {Sparse matrix-vector multiplication (SpMV) is of singular importance in sparse linear algebra. In contrast to the uniform regularity of dense linear algebra, sparse operations encounter a broad spectrum of matrices ranging from the regular to the highly irregular. Harnessing the tremendous potential of throughput-oriented processors for sparse operations requires that we expose substantial fine-grained parallelism and impose sufficient regularity on execution paths and memory access patterns. We explore SpMV methods that are well-suited to throughput-oriented architectures like the GPU and which exploit several common sparsity classes. The techniques we propose are efficient, successfully utilizing large percentages of peak bandwidth. Furthermore, they deliver excellent total throughput, averaging 16 GFLOP/s and 10 GFLOP/s in double precision for structured grid and unstructured mesh matrices, respectively, on a GeForce GTX 285. This is roughly 2.8 times the throughput previously achieved on Cell BE and more than 10 times that of a quad-core Intel Clovertown system.},
+    booktitle = {Proceedings of the Conference on High Performance Computing Networking, Storage and Analysis},
+    articleno = {18},
+    numpages = {11},
+    location = {Portland, Oregon},
+    series = {SC '09}
+}
+
+@article{Chou2018_COO_CSR_DIA_ELL_HASH,
+    author = {Chou, Stephen and Kjolstad, Fredrik and Amarasinghe, Saman},
+    title = {Format Abstraction for Sparse Tensor Algebra Compilers},
+    year = {2018},
+    issue_date = {November 2018},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {2},
+    number = {OOPSLA},
+    url = {https://doi.org/10.1145/3276493},
+    doi = {10.1145/3276493},
+    abstract = {This paper shows how to build a sparse tensor algebra compiler that is agnostic to tensor formats (data layouts). We develop an interface that describes formats in terms of their capabilities and properties, and show how to build a modular code generator where new formats can be added as plugins. We then describe six implementations of the interface that compose to form the dense, CSR/CSF, COO, DIA, ELL, and HASH tensor formats and countless variants thereof. With these implementations at hand, our code generator can generate code to compute any tensor algebra expression on any combination of the aforementioned formats. To demonstrate our technique, we have implemented it in the taco tensor algebra compiler. Our modular code generator design makes it simple to add support for new tensor formats, and the performance of the generated code is competitive with hand-optimized implementations. Furthermore, by extending taco to support a wider range of formats specialized for different application and data characteristics, we can improve end-user application performance. For example, if input data is provided in the COO format, our technique allows computing a single matrix-vector multiplication directly with the data in COO, which is up to 3.6\texttimes{} faster than by first converting the data to CSR.},
+    journal = {Proc. ACM Program. Lang.},
+    month = {oct},
+    articleno = {123},
+    numpages = {30},
+    keywords = {tensor formats, sparse tensor algebra compilation, modular code generation}
+}
+
+% Use of tiling and blocks in general -> for BCSR
+@article{Im2004_TilingBCSR,
+    author = {Eun-Jin Im and Katherine Yelick and Richard Vuduc},
+    title ={Sparsity: Optimization Framework for Sparse Matrix Kernels},
+    journal = {The International Journal of High Performance Computing Applications},
+    volume = {18},
+    number = {1},
+    pages = {135-158},
+    year = {2004},
+    doi = {10.1177/1094342004041296},
+    URL = {https://doi.org/10.1177/1094342004041296},
+    eprint = {https://doi.org/10.1177/1094342004041296},
+    abstract = { Sparse matrix–vector multiplication is an important computational kernel that performs poorly on most modern processors due to a low compute-to-memory ratio and irregular memory access patterns. Optimization is difficult because of the complexity of cache-based memory systems and because performance is highly dependent on the non-zero structure of the matrix. The SPARSITY system is designed to address these problems by allowing users to automatically build sparse matrix kernels that are tuned to their matrices and machines. SPARSITY combines traditional techniques such as loop transformations with data structure transformations and optimization heuristics that are specific to sparse matrices. It provides a novel framework for selecting optimization parameters, such as block size, using a combination of performance models and search.In this paper we discuss the optimization of two operations: a sparse matrix times a dense vector and a sparse matrix times a set of dense vectors. Our experience indicates that register level optimizations are effective for matrices arising in certain scientific simulations, in particular finite-element problems. Cache level optimizations are important when the vector used in multiplication is larger than the cache size, especially for matrices in which the non-zero structure is random. For applications involving multiple vectors, reorganizing the computation to perform the entire set of multiplications as a single operation produces significant speedups. We describe the different optimizations and parameter selection techniques and evaluate them on several machines using over 40 matrices taken from a broad set of application domains. Our results demonstrate speedups of up to 4× for the single vector case and up to 10× for the multiple vector case.}
+}
+
+% Use of ELL format in GPUs
+@INPROCEEDINGS{Cao2010_ELLforGPUs,
+    author={Wei Cao and Lu Yao and Zongzhe Li and Yongxian Wang and Zhenghua Wang},
+    booktitle={2010 International Conference on Computer Application and System Modeling (ICCASM 2010)}, 
+    title={Implementing Sparse Matrix-Vector multiplication using CUDA based on a hybrid sparse matrix format},
+    year={2010},
+    volume={11},
+    number={},
+    pages={V11-161-V11-165},
+    abstract={The Sparse Matrix-Vector product (SpMV) is a key operation in engineering and scientific computing. Methods for efficiently implementing it in parallel are critical to the performance of many applications. Modern Graphics Processing Units (GPUs) coupled with the advent of general purpose programming environments like NVIDIA's CUDA, have gained interest as a viable architecture for data-parallel general purpose computations. Currently, SpMV implementations using CUDA based on common sparse matrix format have already appeared. Among them, the performance of implementation based on ELLPACK-R format is the best. However, in this implementation, when the maximum number of nonzeros per row does substantially differ from the average, thread is suffering from load imbalance. This paper proposes a new matrix storage format called ELLPACK-RP, which combines ELLPACK-R format with JAD format, and implements the SpMV using CUDA based on it. The result proves that it can decrease the load imbalance and improve the SpMV performance efficiently.},
+    keywords={},
+    doi={10.1109/ICCASM.2010.5623237},
+    ISSN={2161-9077},
+    month={Oct},
+}
+
+% Use of ELL format in GPUs
+@article{Vazquez2009_ELLforGPUs,
+    author = {Vázquez, F. and Garzon, E M and Martinez, Jose and Fernández, J},
+    year = {2009},
+    month = {01},
+    pages = {},
+    title = {The sparse matrix vector product on GPUs},
+    volume = {2},
+    journal = {Proceedings of the 2009 International Conference on Computational and Mathematical Methods in Science and Engineering}
+}
+
+% Tiling
+@article{Lam1991_Tiling,
+    author = {Lam, Monica D. and Rothberg, Edward E. and Wolf, Michael E.},
+    title = {The Cache Performance and Optimizations of Blocked Algorithms},
+    year = {1991},
+    issue_date = {Apr. 1991},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {26},
+    number = {4},
+    issn = {0362-1340},
+    url = {https://doi.org/10.1145/106973.106981},
+    doi = {10.1145/106973.106981},
+    journal = {SIGPLAN Not.},
+    month = {apr},
+    pages = {63–74},
+    numpages = {12}
+}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Matrices
+
+@article{Kolodziej2019_SuiteSparse,
+    doi = {10.21105/joss.01244},
+    url = {https://doi.org/10.21105/joss.01244},
+    year = {2019},
+    publisher = {The Open Journal},
+    volume = {4},
+    number = {35},
+    pages = {1244},
+    author = {Scott P. Kolodziej and Mohsen Aznaveh and Matthew Bullock and Jarrett David and Timothy A. Davis and Matthew Henderson and Yifan Hu and Read Sandstrom},
+    title = {The SuiteSparse Matrix Collection Website Interface},
+    journal = {Journal of Open Source Software}
+}
+
+@online{Leskovec2014_SNAP,
+    author       = {Jure Leskovec and Andrej Krevl},
+    title        = {{SNAP Datasets}: {Stanford} Large Network Dataset Collection},
+    url          = {http://snap.stanford.edu/data},
+    month        = "jun",
+    year         = "2014",
+    lastaccessed = "May 2022",
+}
+
 @online{Smith2017_FROSTT,
     title = {{FROSTT}: The Formidable Repository of Open Sparse Tensors and Tools},
     author = {Smith, Shaden and Choi, Jee W. and Li, Jiajia and Vuduc, Richard and Park, Jongsoo and Liu, Xing and Karypis, George},
     url = {http://frostt.io/},
     year = {2017},
+    lastaccessed ={May 2022},
 }
 
-@misc{Beamer2017_GAP,
-    title={The GAP Benchmark Suite}, 
-    author={Scott Beamer and Krste Asanović and David Patterson},
-    year={2017},
-    eprint={1508.03619},
+@article{Azad2018_HipMCL,
+    author = {Azad, Ariful and Pavlopoulos, Georgios A and Ouzounis, Christos A and Kyrpides, Nikos C and Buluç, Aydin},
+    title = "{HipMCL: a high-performance parallel implementation of the Markov clustering algorithm for large-scale networks}",
+    journal = {Nucleic Acids Research},
+    volume = {46},
+    number = {6},
+    pages = {e33-e33},
+    year = {2018},
+    month = {01},
+    abstract = "{Biological networks capture structural or functional properties of relevant entities such as molecules, proteins or genes. Characteristic examples are gene expression networks or protein–protein interaction networks, which hold information about functional affinities or structural similarities. Such networks have been expanding in size due to increasing scale and abundance of biological data. While various clustering algorithms have been proposed to find highly connected regions, Markov Clustering (MCL) has been one of the most successful approaches to cluster sequence similarity or expression networks. Despite its popularity, MCL’s scalability to cluster large datasets still remains a bottleneck due to high running times and memory demands. Here, we present High-performance MCL (HipMCL), a parallel implementation of the original MCL algorithm that can run on distributed-memory computers. We show that HipMCL can efficiently utilize 2000 compute nodes and cluster a network of ∼70 million nodes with ∼68 billion edges in ∼2.4 h. By exploiting distributed-memory environments, HipMCL clusters large-scale networks several orders of magnitude faster than MCL and enables clustering of even bigger networks. HipMCL is based on MPI and OpenMP and is freely available under a modified BSD license.}",
+    issn = {0305-1048},
+    doi = {10.1093/nar/gkx1313},
+    url = {https://doi.org/10.1093/nar/gkx1313},
+    eprint = {https://academic.oup.com/nar/article-pdf/46/6/e33/24525991/gkx1313.pdf},
+}
+
+@INPROCEEDINGS{Reddi2020_MLPerf,
+    author={Reddi, Vijay Janapa and Cheng, Christine and Kanter, David and Mattson, Peter and Schmuelling, Guenther and Wu, Carole-Jean and Anderson, Brian and Breughe, Maximilien and Charlebois, Mark and Chou, William and Chukka, Ramesh and Coleman, Cody and Davis, Sam and Deng, Pan and Diamos, Greg and Duke, Jared and Fick, Dave and Gardner, J. Scott and Hubara, Itay and Idgunji, Sachin and Jablin, Thomas B. and Jiao, Jeff and John, Tom St. and Kanwar, Pankaj and Lee, David and Liao, Jeffery and Lokhmotov, Anton and Massa, Francisco and Meng, Peng and Micikevicius, Paulius and Osborne, Colin and Pekhimenko, Gennady and Rajan, Arun Tejusve Raghunath and Sequeira, Dilip and Sirasao, Ashish and Sun, Fei and Tang, Hanlin and Thomson, Michael and Wei, Frank and Wu, Ephrem and Xu, Lingjie and Yamada, Koichi and Yu, Bing and Yuan, George and Zhong, Aaron and Zhang, Peizhao and Zhou, Yuchen},
+    booktitle={2020 ACM/IEEE 47th Annual International Symposium on Computer Architecture (ISCA)}, 
+    title={MLPerf Inference Benchmark}, 
+    year={2020},
+    volume={},
+    number={},
+    pages={446-459},
+    abstract={Machine-learning (ML) hardware and software system demand is burgeoning. Driven by ML applications, the number of different ML inference systems has exploded. Over 100 organizations are building ML inference chips, and the systems that incorporate existing models span at least three orders of magnitude in power consumption and five orders of magnitude in performance; they range from embedded devices to data-center solutions. Fueling the hardware are a dozen or more software frameworks and libraries. The myriad combinations of ML hardware and ML software make assessing ML-system performance in an architecture-neutral, representative, and reproducible manner challenging. There is a clear need for industry-wide standard ML benchmarking and evaluation criteria. MLPerf Inference answers that call. In this paper, we present our benchmarking method for evaluating ML inference systems. Driven by more than 30 organizations as well as more than 200 ML engineers and practitioners, MLPerf prescribes a set of rules and best practices to ensure comparability across systems with wildly differing architectures. The first call for submissions garnered more than 600 reproducible inference-performance measurements from 14 organizations, representing over 30 systems that showcase a wide range of capabilities. The submissions attest to the benchmark’s flexibility and adaptability.},
+    keywords={},
+    doi={10.1109/ISCA45697.2020.00045},
+    ISSN={},
+    month={May},
+}
+
+@techreport{Ang2010_Graph500,
+    author = {Ang, James Alfred and Barrett, Brian W. and Wheeler, Kyle Bruce and Murphy, Richard C},
+    title = {Introducing the graph 500.},
+    year = {2010},
+    source = {https://www.osti.gov/biblio/1014641},
+    publisher = {Office of Scientific and Technical Information},
+    address = {United States},
+}
+
+@article{Beamer2017_GAP,
+    Author = {Scott Beamer and Krste Asanović and David Patterson},
+    Title = {The GAP Benchmark Suite},
+    Year = {2017},
+    Eprint = {1508.03619},
     archivePrefix={arXiv},
     primaryClass={cs.DC},
-    url = {http://gap.cs.berkeley.edu/benchmark.html}
+    doi = {10.48550/arXiv.1508.03619},
+}
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Others
+
+@INPROCEEDINGS{ZHANG_2015__Exploiting_Commutativity,
+  author={Zhang, Guowei and Horn, Webb and Sanchez, Daniel},
+  booktitle={2015 48th Annual IEEE/ACM International Symposium on Microarchitecture (MICRO)}, 
+  title={Exploiting commutativity to reduce the cost of updates to shared data in cache-coherent systems}, 
+  year={2015},
+  publisher = {Institute of Electrical and Electronics Engineers and Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume={},
+  number={},
+  pages={13-25},
+  doi={10.1145/2830772.2830774}
+}
+
+@inproceedings{Kiriansky2016_Milk,
+    author = {Kiriansky, Vladimir and Zhang, Yunming and Amarasinghe, Saman},
+    title = {Optimizing Indirect Memory References with Milk},
+    year = {2016},
+    isbn = {9781450341219},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/2967938.2967948},
+    doi = {10.1145/2967938.2967948},
+    abstract = {Modern applications such as graph and data analytics, when operating on real world data, have working sets much larger than cache capacity and are bottlenecked by DRAM. To make matters worse, DRAM bandwidth is increasing much slower than per CPU core count, while DRAM latency has been virtually stagnant. Parallel applications that are bound by memory bandwidth fail to scale, while applications bound by memory latency draw a small fraction of much-needed bandwidth. While expert programmers may be able to tune important applications by hand through heroic effort, traditional compiler cache optimizations have not been sufficiently aggressive to overcome the growing DRAM gap.In this paper, we introduce milk - a C/C++ language extension that allows programmers to annotate memory-bound loops concisely. Using optimized intermediate data structures, random indirect memory references are transformed into batches of efficient sequential DRAM accesses. A simple semantic model enhances programmer productivity for efficient parallelization with OpenMP.We evaluate the MILK compiler on parallel implementations of traditional graph applications, demonstrating performance gains of up to 3x.},
+    booktitle = {Proceedings of the 2016 International Conference on Parallel Architectures and Compilation},
+    pages = {299–312},
+    numpages = {14},
+    keywords = {indirect memory reference, milk, irregular memory access, openmp, graph algorithms, parallel algorithms, bsp},
+    location = {Haifa, Israel},
+    series = {PACT '16}
+}
+
+@article{MOHAMMED_2022_SPARSE,
+  doi = {10.48550/ARXIV.2212.07490},
+  eprint={2212.07490},
+  archivePrefix={arXiv},
+  primaryClass={cs.DS},
+  author = {Mohammed, Thaha and Mehmood, Rashid},
+  keywords = {Data Structures and Algorithms (cs.DS), Numerical Analysis (math.NA), FOS: Computer and information sciences, FOS: Computer and information sciences, FOS: Mathematics, FOS: Mathematics},
+  title = {Performance Enhancement Strategies for Sparse Matrix-Vector Multiplication (SpMV) and Iterative Linear Solvers},
+  year = {2022},
+  copyright = {Creative Commons Attribution 4.0 International},
+  abstract = {Iterative solutions of sparse linear systems and sparse eigenvalue problems have a fundamental role in vital fields of scientific research and engineering. The crucial computing kernel for such iterative solutions is the multiplication of a sparse matrix by a dense vector. Efficient implementation of sparse matrix-vector multiplication (SpMV) and linear solvers are therefore essential and has been subjected to extensive research across a variety of computing architectures and accelerators such as central processing units (CPUs), graphical processing units (GPUs), many integrated cores (MICs), and field programmable gate arrays (FPGAs). Unleashing the full potential of an architecture/accelerator requires determining the factors that affect an efficient implementation of SpMV. This article presents the first of its kind, in-depth survey covering over two hundred state-of-the-art optimization schemes for solving sparse iterative linear systems with a focus on computing SpMV. A new taxonomy for iterative solutions and SpMV techniques common to all architectures is proposed. This article includes reviews of SpMV techniques for all architectures to consolidate a single taxonomy to encourage cross-architectural and heterogeneous-architecture developments. However, the primary focus is on GPUs. The major contributions as well as the primary, secondary, and tertiary contributions of the SpMV techniques are first highlighted utilizing the taxonomy and then qualitatively compared. A summary of the current state of the research for each architecture is discussed separately. Finally, several open problems and key challenges for future research directions are outlined.}
+}
+
+@ARTICLE{Dennard1974_DennardLaw,
+  author={Dennard, R.H. and Gaensslen, F.H. and Yu, Hwa-Nien and Rideout, V.L. and Bassous, E. and LeBlanc, A.R.},
+  journal={IEEE Journal of Solid-State Circuits}, 
+  title={Design of ion-implanted MOSFET's with very small physical dimensions}, 
+  year={1974},
+  volume={9},
+  number={5},
+  pages={256-268},
+  abstract={This paper considers the design, fabrication, and characterization of very small Mosfet switching devices suitable for digital integrated circuits, using dimensions of the order of 1 /spl mu/. Scaling relationships are presented which show how a conventional MOSFET can be reduced in size. An improved small device structure is presented that uses ion implantation, to provide shallow source and drain regions and a nonuniform substrate doping profile. One-dimensional models are used to predict the substrate doping profile and the corresponding threshold voltage versus source voltage characteristic. A two-dimensional current transport model is used to predict the relative degree of short-channel effects for different device parameter combinations. Polysilicon-gate MOSFET's with channel lengths as short as 0.5 /spl mu/ were fabricated, and the device characteristics measured and compared with predicted values. The performance improvement expected from using these very small devices in highly miniaturized integrated circuits is projected.},
+  keywords={},
+  doi={10.1109/JSSC.1974.1050511},
+  ISSN={1558-173X},
+  month={Oct},
+}
+
+@article{Wulf1995_MemoryWall,
+    author = {Wulf, Wm. A. and McKee, Sally A.},
+    title = {Hitting the Memory Wall: Implications of the Obvious},
+    year = {1995},
+    issue_date = {March 1995},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {23},
+    number = {1},
+    issn = {0163-5964},
+    url = {https://doi.org/10.1145/216585.216588},
+    doi = {10.1145/216585.216588},
+    journal = {SIGARCH Comput. Archit. News},
+    month = {mar},
+    pages = {20–24},
+    numpages = {5}
+}
+
+@INPROCEEDINGS{Baek2021_InnerSP,
+  author={Baek, Daehyeon and Hwang, Soojin and Heo, Taekyung and Kim, Daehoon and Huh, Jaehyuk},
+  booktitle={2021 30th International Conference on Parallel Architectures and Compilation Techniques (PACT)}, 
+  title={InnerSP: A Memory Efficient Sparse Matrix Multiplication Accelerator with Locality-Aware Inner Product Processing}, 
+  year={2021},
+  volume={},
+  number={},
+  pages={116-128},
+  doi={10.1109/PACT52795.2021.00016}
+}
+
+@INPROCEEDINGS{Balaji2021_Popt,
+  author={Balaji, Vignesh and Crago, Neal and Jaleel, Aamer and Lucia, Brandon},
+  booktitle={2021 IEEE International Symposium on High-Performance Computer Architecture (HPCA)}, 
+  title={P-OPT: Practical Optimal Cache Replacement for Graph Analytics}, 
+  year={2021},
+  volume={},
+  number={},
+  pages={668-681},
+  doi={10.1109/HPCA51647.2021.00062}
+}
+
+@book{Sze2020_FiberTree,
+    author = {Sze, Vivienne and Chen, Yu-Hsin and Yang, Tien-Ju and Emer, Joel},
+    title = {Efficient Processing of Deep Neural Networks},
+    publisher = {Springer Cham},
+    year = {2020},
+    doi = {10.1007/978-3-031-01766-7},
+    address = {},
+    edition   = {1},
+    URL = {https://doi.org/10.1007/978-3-031-01766-7},
+    eprint = {}
+}
+
+@Inbook{Baeza-Yates2010_Intersection,
+    author="Baeza-Yates, Ricardo
+    and Salinger, Alejandro",
+    editor="Elomaa, Tapio
+    and Mannila, Heikki
+    and Orponen, Pekka",
+    title="Fast Intersection Algorithms for Sorted Sequences",
+    bookTitle="Algorithms and Applications: Essays Dedicated to Esko Ukkonen on the Occasion of His 60th Birthday",
+    year="2010",
+    publisher="Springer Berlin Heidelberg",
+    address="Berlin, Heidelberg",
+    pages="45--61",
+    abstract="This paper presents and analyzes a simple intersection algorithm for sorted sequences that is fast on average. It is related to the multiple searching problem and to merging. We present the worst and average case analysis, showing that in the former, the complexity nicely adapts to the smallest list size. In the latter case, it performs less comparisons than the total number of elements on both inputs, n and m, when n{\thinspace}={\thinspace}$\alpha$m ($\alpha$>{\thinspace}1), achieving O(m log(n/m)) complexity. The algorithm is motivated by its application to fast query processing in Web search engines, where large intersections, or differences, must be performed fast. In this case we experimentally show that the algorithm is faster than previous solutions.",
+    isbn="978-3-642-12476-1",
+    doi="10.1007/978-3-642-12476-1_3",
+    url="https://doi.org/10.1007/978-3-642-12476-1_3"
 }
 
 @techreport{JESD235B,
@@ -111,6 +1129,316 @@
     institution = {JEDEC},
     url = {https://www.jedec.org/news/pressreleases/jedec-updates-groundbreaking-high-bandwidth-memory-hbm-standard}
 }
+
+@techreport{Brock2021_GraphBLAS,
+    author = {Benjamin Brock and Aydın Buluç and Timothy Mattson and Scott McMillan and José Moreira},
+    title = {The GraphBLAS C API Specification},
+    year = {2021},
+    url = {https://graphblas.org/},
+    month = {nov},
+}
+
+@techreport{Xilinx_Vitis_2021,
+   author = {Xilinx Corporation},
+   title = {Vitis Sparse Library},
+   year = {2021},
+   url = {https://xilinx.github.io/Vitis_Libraries/sparse/2021.1/index.html}
+}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% General Literature Introduction
+
+@inproceedings{Gale2020,
+    author = {Gale, Trevor and Zaharia, Matei and Young, Cliff and Elsen, Erich},
+    title = {Sparse GPU Kernels for Deep Learning},
+    year = {2020},
+    isbn = {9781728199986},
+    publisher = {IEEE Press},
+    booktitle = {Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis},
+    articleno = {17},
+    numpages = {14},
+    keywords = {graphics processing units, neural networks, sparse matrices},
+    location = {Atlanta, Georgia},
+    series = {SC '20},
+    url = {https://dl.acm.org/doi/10.5555/3433701.3433723}
+}
+
+@article{Vuduc2005,
+    doi = {10.1088/1742-6596/16/1/071},
+    url = {https://dx.doi.org/10.1088/1742-6596/16/1/071},
+    year = {2005},
+    month = {jan},
+    publisher = {},
+    volume = {16},
+    number = {1},
+    pages = {521},
+    author = {Richard Vuduc and  James W Demmel and  Katherine A Yelick},
+    title = {OSKI: A library of automatically tuned sparse matrix kernels},
+    journal = {Journal of Physics: Conference Series},
+    abstract = {The Optimized Sparse Kernel Interface (OSKI) is a collection of low-level primitives that provide automatically tuned computational kernels on sparse matrices, for use by solver libraries and applications. These kernels include sparse matrix-vector multiply and sparse triangular solve, among others. The primary aim of this interface is to hide the complex decisionmaking process needed to tune the performance of a kernel implementation for a particular user's sparse matrix and machine, while also exposing the steps and potentially non-trivial costs of tuning at run-time. This paper provides an overview of OSKI, which is based on our research on automatically tuned sparse kernels for modern cache-based superscalar machines.}
+}
+
+@INPROCEEDINGS{Williams2007,
+    author={Williams, Samuel and Oliker, Leonid and Vuduc, Richard and Shalf, John and Yelick, Katherine and Demmel, James},
+    booktitle={SC '07: Proceedings of the 2007 ACM/IEEE Conference on Supercomputing}, 
+    title={Optimization of sparse matrix-vector multiplication on emerging multicore platforms}, 
+    year={2007},
+    volume={},
+    number={},
+    pages={1-12},
+    doi={10.1145/1362622.1362674}
+}
+
+@INPROCEEDINGS{Liu2014,
+    author={Liu, Weifeng and Vinter, Brian},
+    booktitle={2014 IEEE 28th International Parallel and Distributed Processing Symposium}, 
+    title={An Efficient GPU General Sparse Matrix-Matrix Multiplication for Irregular Data}, 
+    year={2014},
+    volume={},
+    number={},
+    pages={370-381},
+    doi={10.1109/IPDPS.2014.47}
+}
+  
+@article{Gao2020,
+    author = {Gao, Jianhua and Ji, Weixing and Chang, Fangli and Han, Shiyu and Wei, Bingxin and Liu, Zeming and Wang, Yizhuo},
+    title = {A Systematic Survey of General Sparse Matrix-Matrix Multiplication},
+    year = {2023},
+    issue_date = {December 2023},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {55},
+    number = {12},
+    issn = {0360-0300},
+    url = {https://doi.org/10.1145/3571157},
+    doi = {10.1145/3571157},
+    journal = {ACM Comput. Surv.},
+    month = {mar},
+    articleno = {244},
+    numpages = {36},
+    keywords = {parallel architecture, sparse matrix, parallel computing, SpGEMM}
+}
+
+@inbook{Buluc2011,
+    author = {Aydın Buluç and John Gilbert and Viral B. Shah},
+    title = {13. Implementing Sparse Matrices for Graph Algorithms},
+    booktitle = {Graph Algorithms in the Language of Linear Algebra},
+    year = {2011},
+    chapter = {13},
+    pages = {287-313},
+    publisher = {Society for Industrial and Applied Mathematics},
+    doi = {10.1137/1.9780898719918.ch13},
+    URL = {https://epubs.siam.org/doi/abs/10.1137/1.9780898719918.ch13},
+    abstract = {Sparse matrices are a key data structure for implementing graph algorithms using linear algebra. This chapter reviews and evaluates storage formats for sparse matrices and their impact on primitive operations. We present complexity results of these operations on different sparse storage formats both in the random access memory (RAM) model and in the input/output (I/O) model. RAM complexity results were known except for the analysis of sparse matrix indexing. On the other hand, most of the I/O complexity results presented are new. The chapter focuses on different variations of the triples (coordinates) format and the widely used compressed sparse row (CSR) and compressed sparse column (CSC) formats. For most primitives, we provide detailed pseudocodes for implementing them on triples and CSR/CSC.}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Additional references for context
+
+% Graph analytic
+
+@article{Dongen2000,
+    author = {Dongen, Stijn},
+    year = {2000},
+    month = {05},
+    pages = {},
+    title = {Graph Clustering by Flow Simulation},
+    journal = {PhD thesis, Center for Math and Computer Science (CWI)}
+}
+
+@article{Kepner2015,
+    title = {Graphs, Matrices, and the GraphBLAS: Seven Good Reasons},
+    journal = {Procedia Computer Science},
+    volume = {51},
+    pages = {2453-2462},
+    year = {2015},
+    number = {International Conference On Computational Science, ICCS 2015},
+    issn = {1877-0509},
+    doi = {https://doi.org/10.1016/j.procs.2015.05.353},
+    url = {https://www.sciencedirect.com/science/article/pii/S1877050915011618},
+    author = {Jeremy Kepner and David Bader and Aydın Buluç and John Gilbert and Timothy Mattson and Henning Meyerhenke},
+    keywords = {graphs, algorithms, matrices, linear algebra, software standards},
+    abstract = {The analysis of graphs has become increasingly important to a wide range of applications. Graph analysis presents a number of unique challenges in the areas of (1) software complexity, (2) data complexity, (3) security, (4) mathematical complexity, (5) theoretical analysis, (6) serial performance, and (7) parallel performance. Implementing graph algorithms using matrix-based approaches provides a number of promising solutions to these challenges. The GraphBLAS standard (istc-bigdata.org/GraphBlas) is being developed to bring the potential of matrix based graph algorithms to the broadest possible audience. The GraphBLAS mathematically defines a core set of matrix-based graph operations that can be used to implement a wide class of graph algorithms in a wide range of programming environments. This paper provides an introduction to the GraphBLAS and describes how the GraphBLAS can be used to address many of the challenges associated with analysis of graphs.}
+}
+
+@inproceedings{Gilbert2007,
+    author = {Gilbert, John R. and Reinhardt, Steve and Shah, Viral B.},
+    title = {High-Performance Graph Algorithms from Parallel Sparse Matrices},
+    year = {2006},
+    isbn = {3540757546},
+    publisher = {Springer-Verlag},
+    address = {Berlin, Heidelberg},
+    abstract = {Large-scale computation on graphs and other discrete structures is becoming increasingly important in many applications, including computational biology, web search, and knowledge discovery. High-performance combinatorial computing is an infant field, in sharp contrast with numerical scientific computing.We argue that many of the tools of high-performance numerical computing - in particular, parallel algorithms and data structures for computation with sparse matrices - can form the nucleus of a robust infrastructure for parallel computing on graphs. We demonstrate this with an implementation of a graph analysis benchmark using the sparse matrix infrastructure in Star-P, our parallel dialect of the MATLAB programming language.},
+    booktitle = {Proceedings of the 8th International Conference on Applied Parallel Computing: State of the Art in Scientific Computing},
+    pages = {260–269},
+    numpages = {10},
+    location = {Ume\r{a}, Sweden},
+    series = {PARA'06},
+    url = {https://link.springer.com/chapter/10.1007/978-3-540-75755-9_32}
+}
+
+@article{Rabin1989,
+    title = {Maximum matchings in general graphs through randomization},
+    journal = {Journal of Algorithms},
+    volume = {10},
+    number = {4},
+    pages = {557-567},
+    year = {1989},
+    issn = {0196-6774},
+    doi = {https://doi.org/10.1016/0196-6774(89)90005-9},
+    url = {https://www.sciencedirect.com/science/article/pii/0196677489900059},
+    author = {Michael O Rabin and Vijay V Vazirani},
+    abstract = {A new randomized algorithm for the maximum matching problem is presented. Unlike conventional matching algorithms which are combinatorial, our algorithm is algebraic and works on the Tutte matrix of the given graph. Although slower than the best known matching algorithm, our algorithm has the advantage of being conceptually simple and easy to program.}
+}
+
+@inproceedings{Chan2007,
+    author = {Chan, Timothy M.},
+    title = {More Algorithms for All-Pairs Shortest Paths in Weighted Graphs},
+    year = {2007},
+    isbn = {9781595936318},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/1250790.1250877},
+    doi = {10.1145/1250790.1250877},
+    abstract = {In the first part of the paper, we reexamine the all-pairsshortest paths (APSP) problem and present a newalgorithm with running time approaching O(n3/log2n), which improves all known algorithms for general real-weighted dense graphs andis perhaps close to the best result possible without using fast matrix multiplication, modulo a few log log n factors.In the second part of the paper, we use fast matrix multiplication to obtain truly subcubic APSP algorithms for a large class of "geometrically weighted" graphs, where the weight of an edge is a function of the coordinates of its vertices. For example, for graphs embedded in Euclidean space of a constant dimension d, we obtain a time bound near O(n3-(3-Ω)/(2d+4)), where Ω &lt; 2.376 ; in two dimensions, this is O(n2.922). Our framework greatly extends the previously considered case of small-integer-weighted graphs, and incidentally also yields the first truly subcubic result (near O(n3-(3-Ω)/4)=O(n2.844) time) forAPSP in real-vertex-weighted graphs, as well as an improved result (near O(n(3+Ω)/2)=O(n2.688) time) for the all-pairs lightest shortest path problem for small-integer-weighted graphs.},
+    booktitle = {Proceedings of the Thirty-Ninth Annual ACM Symposium on Theory of Computing},
+    pages = {590–598},
+    numpages = {9},
+    keywords = {shortest paths, matrix multiplication, graph algorithms, computational geometry},
+    location = {San Diego, California, USA},
+    series = {STOC '07}
+}
+
+@INPROCEEDINGS{Azad2015,
+    author={Azad, Ariful and Buluç, Aydin and Gilbert, John},
+    booktitle={2015 IEEE International Parallel and Distributed Processing Symposium Workshop},
+    title={Parallel Triangle Counting and Enumeration Using Matrix Algebra},
+    year={2015},
+    volume={},
+    number={},
+    pages={804-811},
+    abstract={Triangle counting and enumeration are important kernels that are used to characterize graphs. They are also used to compute important statistics such as clustering coefficients. We provide a simple exact algorithm that is based on operations on sparse adjacency matrices. By parallelizing the individual sparse matrix operations, we achieve a parallel algorithm for triangle counting. The algorithm is generalizable to triangle enumeration by modifying the semiring that underlies the matrix algebra. We present a new primitive, masked matrix multiplication, that can be beneficial especially for the enumeration case. We provide results from an initial implementation for the counting case along with various optimizations for communication reduction and load balance.},
+    keywords={},
+    doi={10.1109/IPDPSW.2015.75},
+    ISSN={},
+    month={May},
+}
+
+@article{Brin1998,
+    title = {The anatomy of a large-scale hypertextual Web search engine},
+    journal = {Computer Networks and ISDN Systems},
+    volume = {30},
+    number = {1},
+    pages = {107-117},
+    year = {1998},
+    note = {Proceedings of the Seventh International World Wide Web Conference},
+    issn = {0169-7552},
+    doi = {https://doi.org/10.1016/S0169-7552(98)00110-X},
+    url = {https://www.sciencedirect.com/science/article/pii/S016975529800110X},
+    author = {Sergey Brin and Lawrence Page},
+    keywords = {World Wide Web, Search engines, Information retrieval, PageRank, Google},
+    abstract = {In this paper, we present Google, a prototype of a large-scale search engine which makes heavy use of the structure present in hypertext. Google is designed to crawl and index the Web efficiently and produce much more satisfying search results than existing systems. The prototype with a full text and hyperlink database of at least 24 million pages is available at http://google.stanford.edu/ To engineer a search engine is a challenging task. Search engines index tens to hundreds of millions of Web pages involving a comparable number of distinct terms. They answer tens of millions of queries every day. Despite the importance of large-scale search engines on the Web, very little academic research has been done on them. Furthermore, due to rapid advance in technology and Web proliferation, creating a Web search engine today is very different from three years ago. This paper provides an in-depth description of our large-scale Web search engine — the first such detailed public description we know of to date. Apart from the problems of scaling traditional search techniques to data of this magnitude, there are new technical challenges involved with using the additional information present in hypertext to produce better search results. This paper addresses this question of how to build a practical large-scale system which can exploit the additional information present in hypertext. Also we look at the problem of how to effectively deal with uncontrolled hypertext collections where anyone can publish anything they want.}
+}
+
+% HPC
+
+@ARTICLE{Gilbert2008,
+    author={Gilbert, John R. and Reinhardt, Steve and Shah, Viral B.},
+    journal={Computing in Science \& Engineering}, 
+    title={A Unified Framework for Numerical and Combinatorial Computing}, 
+    year={2008},
+    volume={10},
+    number={2},
+    pages={20-25},
+    abstract={A rich variety of tools help researchers with high-performance numerical computing, but few tools exist for large-scale combinatorial computing. The authors describe their efforts to build a common infrastructure for numerical and combinatorial computing by using parallel sparse matrices to implement parallel graph algorithms.},
+    keywords={},
+    doi={10.1109/MCSE.2008.45},
+    ISSN={1558-366X},
+    month={March},
+}
+
+@article{Duff2002,
+    author = {Duff, Iain S. and Heroux, Michael A. and Pozo, Roldan},
+    title = {An Overview of the Sparse Basic Linear Algebra Subprograms: The New Standard from the BLAS Technical Forum},
+    year = {2002},
+    issue_date = {June 2002},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {28},
+    number = {2},
+    issn = {0098-3500},
+    url = {https://doi.org/10.1145/567806.567810},
+    doi = {10.1145/567806.567810},
+    abstract = {We discuss the interface design for the Sparse Basic Linear Algebra Subprograms (BLAS), the kernels in the recent standard from the BLAS Technical Forum that are concerned with unstructured sparse matrices. The motivation for such a standard is to encourage portable programming while allowing for library-specific optimizations. In particular, we show how this interface can shield one from concern over the specific storage scheme for the sparse matrix. This design makes it easy to add further functionality to the sparse BLAS in the future.We illustrate the use of the Sparse BLAS with examples in the three supported programming languages, Fortran 95, Fortran 77, and C.},
+    journal = {ACM Trans. Math. Softw.},
+    month = {jun},
+    pages = {239–267},
+    numpages = {29},
+    keywords = {sparse matrices, software, Algorithms, sparse iterative methods, computational kernels, sparse BLAS}
+}
+
+@article{Penn2006,
+    title = {Efficient transitive closure of sparse matrices over closed semirings},
+    journal = {Theoretical Computer Science},
+    volume = {354},
+    number = {1},
+    pages = {72-81},
+    year = {2006},
+    note = {Algebraic Methods in Language Processing},
+    issn = {0304-3975},
+    doi = {https://doi.org/10.1016/j.tcs.2005.11.008},
+    url = {https://www.sciencedirect.com/science/article/pii/S0304397505008546},
+    author = {Gerald Penn},
+    keywords = {Sparse matrix multiplication, Semirings, Dijkstra's algorithm, Typed feature logic, Parsing},
+    abstract = {This paper surveys several alternative data structures and algorithms for multiplying sparse upper-triangular matrices over closed semirings, and evaluates their efficiency in computing transitive closures of matrices over the Boolean semiring. Two new variants are introduced that outperform previously known methods on a collection of large data-sets drawn from linguistic applications.}
+}
+
+@InProceedings{Yamazaki2011,
+    author="Yamazaki, Ichitaro and Li, Xiaoye S.",
+    editor="Palma, Jos{\'e} M. Laginha M. and Dayd{\'e}, Michel and Marques, Osni and Lopes, Jo{\~a}o Correia",
+    title="On Techniques to Improve Robustness and Scalability of a Parallel Hybrid Linear Solver",
+    booktitle="High Performance Computing for Computational Science -- VECPAR 2010",
+    year="2011",
+    publisher="Springer Berlin Heidelberg",
+    address="Berlin, Heidelberg",
+    pages="421--434",
+    abstract="A hybrid linear solver based on the Schur complement method has great potential to be a general purpose solver scalable on tens of thousands of processors. For this, it is imperative to exploit two levels of parallelism; namely, solving independent subdomains in parallel and using multiple processors per subdomain. This hierarchical parallelism can lead to a scalable implementation which maintains numerical stability at the same time. In this framework, load imbalance and excessive communication, which can lead to performance bottlenecks, occur at two levels: in an intra-processor group assigned to the same subdomain and among inter-processor groups assigned to different subdomains. We developed several techniques to address these issues, such as taking advantage of the sparsity of right-hand-sides during the triangular solutions with interfaces, load balancing sparse matrix-matrix multiplication to form update matrices, and designing an effective asynchronous point-to-point communication of the update matrices. We present numerical results to demonstrate that with the help of these techniques, our hybrid solver can efficiently solve large-scale highly-indefinite linear systems on thousands of processors.",
+    isbn="978-3-642-19328-6"
+}
+
+@article{Itoh1995,
+    title = {Order-N tight-binding molecular dynamics on parallel computers},
+    journal = {Computer Physics Communications},
+    volume = {88},
+    number = {2},
+    pages = {173-185},
+    year = {1995},
+    issn = {0010-4655},
+    doi = {https://doi.org/10.1016/0010-4655(95)00031-A},
+    url = {https://www.sciencedirect.com/science/article/pii/001046559500031A},
+    author = {Satoshi Itoh and Pablo Ordejón and Richard M. Martin},
+    abstract = {A recently proposed order-N method for tight-binding molecular dynamics is implemented on parallel machines. The Fortran code, written for the parallel computer CM-5, uses a general message passing library, being therefore highly portable. The main subjects of this implementation, which are matrix partition and sparse matrix multiplication, are discussed in detail. We describe the assignment of work to each processor and the parallelization of sparse matrix multiplications. The performance of our parallel programs is analyzed by timing tests on a CM-5. It is shown that the program is both weakly and strongly scalable. With the present code, tight-binding molecular dynamics simulations in systems with up to 85184 carbon atoms are possible on a CM-5 with 512 processors.}
+}
+
+@inproceedings{Hapla2013,
+    author = {Hapla, V\'{a}clav and Hor\'{a}k, David and Merta, Michal},
+    title = {Use of Direct Solvers in TFETI Massively Parallel Implementation},
+    year = {2012},
+    isbn = {9783642368028},
+    publisher = {Springer-Verlag},
+    address = {Berlin, Heidelberg},
+    url = {https://doi.org/10.1007/978-3-642-36803-5_14},
+    doi = {10.1007/978-3-642-36803-5_14},
+    abstract = {The FETI methods blend iterative and direct solvers. The dual problem is solved iteratively using e.g. CG method; in each iteration, the auxiliary problems related to the application of an unassembled system matrix (subdomain problems' solutions and projector application in dual operator) are solved directly. The paper deals with the comparison of the direct solvers available in PETSc on the Cray XE6 machine HECToR (PETSc, MUMPS, SuperLU) regarding their performance in the two most time consuming actions in TFETI --- the pseudoinverse application and the coarse problem solution. For the numerical experiments, our novel TFETI implementation in FLLOP (FETI Light Layer on top of PETSc) library was used.},
+    booktitle = {Proceedings of the 11th International Conference on Applied Parallel and Scientific Computing},
+    pages = {192–205},
+    numpages = {14},
+    keywords = {parallel direct solver, FLLOP, domain decomposition, PETSc, natural coarse space matrix, pseudoinverse, TFETI, FETI, coarse problem, total FETI},
+    location = {Helsinki, Finland},
+    series = {PARA'12}
+}
+
+% Multigrid solvers
 
 @Inbook{Brandt2003,
     author="Brandt, Achi and Ron, Dorit",
@@ -127,16 +1455,109 @@
     url="https://doi.org/10.1007/978-1-4757-3748-6_1"
 }
 
-@article{Deveci2018,
-    title = {Sparse Matrix-Matrix Multiplication on Multilevel Memory Architectures: Algorithms and Experiments},
-    author = {Deveci, Mehmet and Hammond, Simon David and Wolf, Michael M. and Rajamanickam, Sivasankaran},
-    abstractNote = {Architectures with multiple classes of memory media are becoming a common part of mainstream supercomputer deployments. So called multi-level memories offer differing characteristics for each memory component including variation in bandwidth, latency and capacity. This paper investigates the performance of sparse matrix multiplication kernels on two leading highperformance computing architectures — Intel's Knights Landing processor and NVIDIA's Pascal GPU. We describe a data placement method and a chunking-based algorithm for our kernels that exploits the existence of the multiple memory spaces in each hardware platform. We evaluate the performance of these methods w.r.t. standard algorithms using the auto-caching mechanisms Our results show that standard algorithms that exploit cache reuse performed as well as multi-memory-aware algorithms for architectures such as Ki\iLs where the memory subsystems have similar latencies. However, for architectures such as GPUS where memory subsystems differ significantly in both bandwidth and latency, multi-memory-aware methods are crucial for good performance. In addition, our new approaches permit the user to run problems that require larger capacities than the fastest memory of each compute node without depending on the software-managed cache mechanisms.},
-    doi = {10.2172/1435688},
-    url = {https://www.osti.gov/biblio/1435688},
-    journal = {},
-    number = {},
-    volume = {},
-    place = {United States},
+@article{Li2021,
+    author = {Li, Ruipeng and Sj\"{o}green, Bj\"{o}rn and Yang, Ulrike Meier},
+    title = {A New Class of AMG Interpolation Methods Based on Matrix-Matrix Multiplications},
+    journal = {SIAM Journal on Scientific Computing},
+    volume = {43},
+    number = {5},
+    pages = {S540-S564},
+    year = {2021},
+    doi = {10.1137/20M134931X},
+    URL = {https://doi.org/10.1137/20M134931X},
+    abstract = {A new class of distance-two interpolation methods for algebraic multigrid (AMG) that can be formulated in terms of sparse matrix-matrix multiplications is presented and analyzed. Compared with similar distance-two prolongation operators [H. De Sterck et al., Numer. Linear Algebra Appl., 15 (2008), pp. 115--139], the proposed algorithms exhibit improved efficiency and portability to various computing platforms, since they allow one to easily exploit existing high-performance sparse matrix kernels. The new interpolation methods have been implemented in hypre [R. D. Falgout and U. M. Yang, hypre: A library of high performance preconditioners, in Computational Science --- ICCS 2002, P. M. A. Sloot et al., eds., Springer, Berlin, Heidelberg, 2002, pp. 632--641], a widely used parallel multigrid solver library. With the proposed interpolations, the overall time of hypre's BoomerAMG setup can be considerably reduced, while sustaining equivalent, sometimes improved, convergence rates. Numerical results for a variety of test problems on parallel machines are presented that support the superiority of the proposed interpolation operators over the existing ones in hypre.}
+}
+
+@inproceedings{Ayyar2023,
+    author = "Ayyar, Venkitesh  and  Weinberg, Evan  and  Brower, Richard C.  and  Clark, M.A.  and  Wagner, Mathias",
+    title = "{Optimizing Staggered Multigrid for Exascale performance}",
+    abstract = {Adaptive multi-grid methods have proven very successful in dealing with critical slow down for the Wilson-Dirac solver in lattice gauge theory. Multi-grid algorithms developed for Staggered fermions using the Kähler-Dirac preconditioning [9] have shown remarkable success. In this work, we discuss the performance of this staggered multi-grid algorithm in four dimensions. We also demonstrate that offloading some components of a multi-shift solve to a multi-grid solver leads to a significant performance improvement in an existing MILC spectrum workflow on the Summit and Selene supercomputers. © Copyright owned by the author(s) under the terms of the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND 4.0).},
+    doi = "10.22323/1.430.0335",
+    booktitle = "Proceedings of The 39th International Symposium on Lattice Field Theory {\textemdash} PoS(LATTICE2022)",
+    year = 2023,
+    volume = "430",
+    pages = "335"
+}
+
+@InProceedings{Ryabkov2022,
+    author="Ryabkov, Oleg I.",
+    editor="Sokolinsky, Leonid and Zymbler, Mikhail",
+    title="Implementation of the Algebraic Multigrid Solver Designed for Graphics Processing Units Based on the AMGCL Framework",
+    booktitle="Parallel Computational Technologies",
+    year="2022",
+    publisher="Springer International Publishing",
+    address="Cham",
+    pages="131--142",
+    volume = "1618",
+    abstract="The implementation of the Algebraic Multigrid (AMG) solver designed specifically for Graphics Processing Units (GPUs) is presented. It is based on the well-known and highly efficient AMGCL header-only library designed and implemented by D. Demidov using C++. The original AMGCL approach for GPU speedup relies on the initialization (setup) phase performed purely on the CPU, while the solution (iteration process) is moved to the GPU. This approach works well for the case of transient solvers, when the system matrix does not change much during time-stepping. However, it does not fit for cases of highly nonlinear systems or stationary systems, especially when a linear system is formed in the device memory. For these systems it is better to use GPU-only solvers. To implement the GPU-oriented AMG solver, the design of the original framework had to be changed. The maximal independent set aggregation algorithm and derived smoothed aggregation operations are added to the framework. A number of smoothers on the intermediate levels are implemented with full support for GPUs. The full AMG hierarchy can now be constructed entirely on the GPU with no CPU invokes. The method is tested against the original AMGCL framework on matrices derived from elliptic and parabolic partial differential equations (PDEs). It is shown that the GPU-only approach can speed up the setup phase by up to 5-6 times compared to the original framework.",
+    isbn="978-3-031-11623-0",
+    doi = {https://doi.org/10.1007/978-3-031-11623-0_10}
+}
+
+% GPU
+
+@article{Zachariadis2020,
+    title = {Accelerating sparse matrix–matrix multiplication with GPU Tensor Cores},
+    journal = {Computers \& Electrical Engineering},
+    volume = {88},
+    pages = {106848},
+    year = {2020},
+    issn = {0045-7906},
+    doi = {https://doi.org/10.1016/j.compeleceng.2020.106848},
+    url = {https://www.sciencedirect.com/science/article/pii/S0045790620307011},
+    author = {Orestis Zachariadis and Nitin Satpute and Juan Gómez-Luna and Joaquín Olivares},
+    keywords = {Sparse matrix multiplication, GPU, Tensor Cores, Parallel computing, SpGEMM},
+    abstract = {Sparse general matrix–matrix multiplication (spGEMM) is an essential component in many scientific and data analytics applications. However, the sparsity pattern of the input matrices and the interaction of their patterns make spGEMM challenging. Modern GPUs include Tensor Core Units (TCUs), which specialize in dense matrix multiplication. Our aim is to re-purpose TCUs for sparse matrices. The key idea of our spGEMM algorithm, tSparse, is to multiply sparse rectangular blocks using the mixed precision mode of TCUs. tSparse partitions the input matrices into tiles and operates only on tiles which contain one or more elements. It creates a task list of the tiles, and performs matrix multiplication of these tiles using TCUs. To the best of our knowledge, this is the first time that TCUs are used in the context of spGEMM. We show that spGEMM, with our tiling approach, benefits from TCUs. Our approach significantly improves the performance of spGEMM in comparison to cuSPARSE, CUSP, RMerge2, Nsparse, AC-SpGEMM and spECK.}
+}
+
+@inproceedings{Nagasaka2018,
+    author = {Nagasaka, Yusuke and Matsuoka, Satoshi and Azad, Ariful and Bulu\c{c}, Ayd\i{}n},
+    title = {High-Performance Sparse Matrix-Matrix Products on Intel KNL and Multicore Architectures},
     year = {2018},
-    month = {4}
+    isbn = {9781450365239},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3229710.3229720},
+    doi = {10.1145/3229710.3229720},
+    abstract = {Sparse matrix-matrix multiplication (SpGEMM) is a computational primitive that is widely used in areas ranging from traditional numerical applications to recent big data analysis and machine learning. Although many SpGEMM algorithms have been proposed, hardware specific optimizations for multi- and many-core processors are lacking and a detailed analysis of their performance under various use cases and matrices is not available. We firstly identify and mitigate multiple bottlenecks with memory management and thread scheduling on Intel Xeon Phi (Knights Landing or KNL). Specifically targeting multi- and many-core processors, we develop a hash-table-based algorithm and optimize a heap-based shared-memory SpGEMM algorithm. We examine their performance together with other publicly available codes. Different from the literature, our evaluation also includes use cases that are representative of real graph algorithms, such as multi-source breadth-first search or triangle counting. Our hash-table and heap-based algorithms are showing significant speedups from libraries in the majority of the cases while different algorithms dominate the other scenarios with different matrix size, sparsity, compression factor and operation type. We wrap up in-depth evaluation results and make a recipe to give the best SpGEMM algorithm for target scenario. A critical finding is that hash-table-based SpGEMM gets a significant performance boost if the nonzeros are not required to be sorted within each row of the output matrix.},
+    booktitle = {Workshop Proceedings of the 47th International Conference on Parallel Processing},
+    articleno = {34},
+    numpages = {10},
+    keywords = {Sparse matrix, SpGEMM, Intel KNL},
+    location = {Eugene, OR, USA},
+    series = {ICPP Workshops '18}
+}
+
+@techreport{Deveci2018,
+    author = {Deveci, Mehmet and Hammond, Simon David and Wolf, Michael M. and Rajamanickam, Sivasankaran},
+    title = {Sparse Matrix-Matrix Multiplication on Multilevel Memory Architectures: Algorithms and Experiments},
+    year = {2018},
+    month = {4},
+    source = {https://www.osti.gov/biblio/1435688},
+    publisher = {Office of Scientific and Technical Information},
+    doi = {10.2172/1435688},
+    address = {United States},
+}
+
+%% Tiling
+
+@book{Grunbaum1987_Tiling,
+  title={Tilings and Patterns},
+  author={Grünbaum, Branko and Geoffrey C. Shephard},
+  volume={},
+  year={1987},
+  publisher={W. H. Freeman \& Co.},
+  address = {New York},
+  isbn = {0-7167-1193-1}
+}
+
+@inbook{Coxeter1973_Tiling,
+  title={Regular Polytopes},
+  author={Coxeter, H.S.M.},
+  chapter = {Section IV : Tessellations and Honeycombs},
+  volume={},
+  year={1973},
+  publisher={Dover Publications},
+  address = {USA},
+  isbn = {0-486-61480-8}
 }

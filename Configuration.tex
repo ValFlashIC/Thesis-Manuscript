@@ -44,7 +44,7 @@
 \else \usepackage[french]{babel} \fi
 \usepackage[T1]{fontenc}
 \usepackage{shorttoc}
-\usepackage[dvipsnames]{xcolor}
+\usepackage[dvipsnames, table]{xcolor}
 \usepackage{setspace}
 \usepackage{enumitem}
 \usepackage{caption}
@@ -69,6 +69,9 @@
 \if\DoMinitoc\YES \usepackage{minitoc}
 \else \usepackage{mtcoff} \fi
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For debug purposes
+\newcommand{\note}[1]{ {\color{red} \textbf{ #1 }} }
 %\usepackage{todonotes} % To mark TODO notes on the PDF
 \usepackage{lipsum} % Some text to fill in the template
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -285,6 +288,8 @@
 \makenoidxglossaries
 \input{Gloss&Acro}
 
+\usepackage{cleveref}
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Define Macros
 %% example of a new command to apply a specific style to some text. Try: \algo{some text}
@@ -303,4 +308,7 @@
 %% example of a new colors to use as variables. Ex.: \textcolor{amber}{some text}
 % \definecolor{lightGray}{gray}{0.75}
 % \definecolor{amber}{rgb}{1.0, 0.75, 0.0}
+\definecolor{veryLightGray}{gray}{0.85} % lighter
+\definecolor{lightGray}{gray}{0.75}
+\definecolor{darkGray}{gray}{0.50}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
