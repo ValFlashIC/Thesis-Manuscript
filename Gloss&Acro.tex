@@ -11,6 +11,7 @@
 %     firstplural=
 % }
 % __id__: id to use in the code with \gls{}, \Gls{}, \glspl{}, \Glspl{} and many others commands
+%         (\glslink{}{} to write custom text but link it to an entry)
 % name: main text used by the above commands (to access: \glsentrytext{__id__})
 % description: printed in the glossary (to access: \glsentrydesc{__id__})
 % first: to redefine the text printed at the first call (default: name content)
@@ -19,63 +20,81 @@
 % firstplural: to redefine the text printed at the first call if its plural form (default: name content with an s added at the end)
 % there is many other fields, see documentation if needed
 
-% \newglossaryentry{latex}{
-%     name=latex,
-%     description={Is a mark up language specially suited for scientific documents}
-% }
+\newglossaryentry{latex}{
+    name=latex,
+    description={Is a mark up language specially suited for scientific documents}
+}
 
-% \newglossaryentry{gl1}{
-%     name=glossary test 1,
-%     description={Is the glossary test entry number one},
-%     plural=glossary test 1 in plural form,
-%     firstplural=First call of gl1 in plural form
-% }
+\newglossaryentry{seqAccesses}{
+    name=sequential accesses,
+    description={Are a group of memory accesses (from a data array, for example) that occur on conscutive memory addresses, in order through time},
+    plural=sequential accesses
+}
 
-% \newglossaryentry{gl2}{
-%     name=glossary test 2,
-%     description={Is the glossary test entry number two}
-%     plural=glossary test 2 in plural form,
-%     firstplural=First call of gl2 in plural form
-% }
+\newglossaryentry{randAccess}{
+    name=``random'' access,
+    description={Is a memory access that occurs on an arbitrary memory address (not necessarily conscutive in memory with previous and next accesses)},
+    plural=``random'' accesses
+}
 
-% \newglossaryentry{gl3}{
-%     name=glossary test 3,
-%     description={Is the glossary test entry number three}
-%     plural=glossary test 3 in plural form,
-%     firstplural=First call of gl3 in plural form
-% }
+\newglossaryentry{irrAccess}{
+    name=irregular access,
+    description={See `\gls{randAccess}'},
+    plural=irregular accesses
+}
 
-% \newglossaryentry{gl4}{
-%     name=glossary test 4,
-%     description={Is the glossary test entry number four}
-%     plural=glossary test 4 in plural form,
-%     firstplural=First call of gl4 in plural form
-% }
+\newglossaryentry{spFormat}{
+    name=\emph{sparse format},
+    description={Is a compression format for sparse matrices, which avoids storing zeros},
+    plural=\emph{sparse formats}
+}
+
+\newglossaryentry{metadata}{
+    name=\emph{metadata},
+    description={Is data that provides information about other data, such as index arrays of \glspl{spFormat}},
+    plural=\emph{metadata}
+}
+
+\newglossaryentry{tiling}{
+    name=\emph{tiling},
+    description={Is a method consisting in splitting data into several independent sub-regions to be processed separately},
+    plural=\emph{tiling}
+}
+
+\newglossaryentry{tile}{
+    name=\emph{tile},
+    description={Refers to a sub-region of a \gls{tiling} process},
+    plural=\emph{tiles}
+}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Use \acrshort{}, \acrlong{} and \acrfull{}
 
-% \newacronym{op}{OP}{Outer-Product}
+% Kernels
+\newacronym{mv}{MV}{Matrix-Vector}
+\newacronym{mm}{MM}{Matrix-Matrix}
+\newacronym[
+    first=\glsentrydesc{spmv} (\glsentrytext{spmv}),
+    plural=SpMVs,
+    firstplural=Sparse Matrix-Vector multiplications (\glsentryplural{spmv})
+]{spmv}{SpMV}{Sparse Matrix-Vector multiplication}
+\newacronym{spmspv}{SpMSpV}{Sparse Matrix-Sparse Vector multiplication}
+\newacronym{spgemv}{SpGEMV}{General Sparse Matrix-Vector multiplication}
+\newacronym{spmm}{SpMM}{Sparse Matrix-Matrix multiplication}
+\newacronym{spmspm}{SpMSpM}{Sparse Matrix-Sparse Matrix multiplication}
+\newacronym{spgemm}{SpGEMM}{General Sparse Matrix-Matrix multiplication}
 
-% \newacronym[
-%     first=\glsentrydesc{aptest1} (\glsentrytext{aptest1}),
-%     plural=APTestPL1,
-%     firstplural=This is the plural form of APTest1! (\glsentryplural{aptest1})
-% ]{aptest1}{APTest1}{Acronym Plural Form Test Number One}
+% Algos
+\newacronym{op}{\algo{OP}}{\emph{Outer-Product}}
+\newacronym{ip}{\algo{IP}}{\emph{Inner-Product}}
+\newacronym{gust}{\algo{Gust}}{\emph{Gustavson}}
 
-% \newacronym[
-%     first=\glsentrydesc{aptest2} (\glsentrytext{aptest2}),
-%     plural=APTestPL2,
-%     firstplural=This is the plural form of APTest2! (\glsentryplural{aptest2})
-% ]{aptest2}{APTest2}{Acronym Plural Form Test Number Two}
-
-% \newacronym[
-%     first=\glsentrydesc{aptest3} (\glsentrytext{aptest3}),
-%     plural=APTestPL3,
-%     firstplural=This is the plural form of APTest3! (\glsentryplural{aptest3})
-% ]{aptest3}{APTest3}{Acronym Plural Form Test Number Three}
-
-% \newacronym[
-%     first=\glsentrydesc{aptest4} (\glsentrytext{aptest4}),
-%     plural=APTestPL4,
-%     firstplural=This is the plural form of APTest4! (\glsentryplural{aptest4})
-% ]{aptest4}{APTest4}{Acronym Plural Form Test Number Four}
+% Sparse Formats
+\newacronym{coo}{COO}{\emph{COOrdinate}}
+\newacronym{csr}{CSR}{\emph{Compressed Sparse Row}}
+\newacronym{csc}{CSC}{\emph{Compressed Sparse Column}}
+\newacronym{bcsr}{BCSR}{\emph{Blocked Compressed Sparse Row}}
+\newacronym{dia}{DIA}{\emph{DIAgonal}}
+\newacronym{ell}{ELL}{\emph{ELLPACK}}
+\newacronym{hyb}{HYB}{\emph{HYBbrid}}
+\newacronym{bacsc}{BaCSC}{\emph{Banded Compressed Sparse Column}}

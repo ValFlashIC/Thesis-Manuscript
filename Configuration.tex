@@ -282,18 +282,13 @@
 }
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Exception: need to be loaded after the hyperref package (don't ask me why)
-\usepackage[acronym, toc]{glossaries}
-
-\makenoidxglossaries
-\input{Gloss&Acro}
-
-\usepackage{cleveref}
-
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Define Macros
 %% example of a new command to apply a specific style to some text. Try: \algo{some text}
 \newcommand{\algo}[1]{{\fontfamily{qcr}\selectfont #1}}
+\def\ldb{[\![}
+\def\rdb{]\!]}
+\def\acc{\mathit{\,+\!\!=\,}}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -312,3 +307,9 @@
 \definecolor{lightGray}{gray}{0.75}
 \definecolor{darkGray}{gray}{0.50}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Exception: need to be loaded after the hyperref package (don't ask me why)
+\usepackage[acronym, toc]{glossaries}
+
+\makenoidxglossaries
+\input{Gloss&Acro}
