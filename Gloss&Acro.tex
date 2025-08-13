@@ -43,9 +43,15 @@
     plural=irregular accesses
 }
 
+\newglossaryentry{dFormat}{
+    name=\emph{dense format},
+    description={Is the uncompressed format where all zeros and non-zeros are stored, without any use of \gls{metadata}},
+    plural=\emph{dense formats}
+}
+
 \newglossaryentry{spFormat}{
     name=\emph{sparse format},
-    description={Is a compression format for sparse matrices, which avoids storing zeros},
+    description={Is a compression format for sparse matrices, which avoids storing zeros by using \gls{metadata}},
     plural=\emph{sparse formats}
 }
 
@@ -67,16 +73,45 @@
     plural=\emph{tiles}
 }
 
+\newglossaryentry{rank}{
+    name=\emph{rank},
+    description={Refers to a dimension of the kernel},
+    plural=\emph{ranks}
+}
+
+\newglossaryentry{crank}{
+    name=\emph{common rank},
+    description={Refers to a \gls{rank} that is common between two data-entries, when computing a kernel},
+    plural=\emph{common ranks}
+}
+
+\newglossaryentry{psum}{
+    name=\emph{partial sum},
+    description={Refers to the intermediary result before updating the output, when computing a matrix multiplication},
+    plural=\emph{partial sums}
+}
+
+\newglossaryentry{intersection}{
+    name=\emph{intersection},
+    description={Refers to the process of finding non-zero \glspl{psum}, when computing a matrix multiplication},
+    plural=\emph{intersections}
+}
+
+\newglossaryentry{reduction}{
+    name=\emph{reduction},
+    description={Refers to the process of updating an entry},
+    plural=\emph{reductions}
+}
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Use \acrshort{}, \acrlong{} and \acrfull{}
+% Use \acrshort{}, \acrlong{}, \acrfull{}, \acrshortpl{}, \acrlongpl{} and \acrfullpl{}
 
 % Kernels
 \newacronym{mv}{MV}{Matrix-Vector}
 \newacronym{mm}{MM}{Matrix-Matrix}
 \newacronym[
-    first=\glsentrydesc{spmv} (\glsentrytext{spmv}),
-    plural=SpMVs,
-    firstplural=Sparse Matrix-Vector multiplications (\glsentryplural{spmv})
+    \glsshortpluralkey=SpMVs,
+    \glslongpluralkey=Sparse Matrix-Vector multiplications
 ]{spmv}{SpMV}{Sparse Matrix-Vector multiplication}
 \newacronym{spmspv}{SpMSpV}{Sparse Matrix-Sparse Vector multiplication}
 \newacronym{spgemv}{SpGEMV}{General Sparse Matrix-Vector multiplication}
@@ -98,3 +133,9 @@
 \newacronym{ell}{ELL}{\emph{ELLPACK}}
 \newacronym{hyb}{HYB}{\emph{HYBbrid}}
 \newacronym{bacsc}{BaCSC}{\emph{Banded Compressed Sparse Column}}
+
+%Background related
+\newacronym[
+    \glsshortpluralkey=\emph{POs},
+    \glslongpluralkey=\emph{partial outputs}
+]{po}{\emph{PO}}{\emph{partial output}}

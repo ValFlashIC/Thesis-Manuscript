@@ -10,9 +10,9 @@
 
 The accelerators described in this paper address sparse \acrshort{mv} and \acrshort{mm}.
 For \acrshort{mv} we use the notation $A(M,K) \times b(K) = c(M)$ and for \acrshort{mm} the notation $A(M,K) \times B(K,N) = C(M,N)$.
-The \emph{rank} $K$ is the \emph{common rank} between the two inputs.
+The \gls{rank} $K$ is the \gls{crank} between the two inputs.
 
-The existence of different \emph{ranks} allows several algorithmic possibilities to compute matrix multiplication: the \acrfull{ip} algorithm, the \acrfull{op} algorithm and \acrlong{gust}'s (\acrshort{gust}) algorithm~\cite{Faddeev1981_InnerOuter, Gustavson1978_GustAlgo}.
+The existence of different \glspl{rank} allows several algorithmic possibilities to compute matrix multiplication: the \acrfull{ip} algorithm, the \acrfull{op} algorithm and \acrlong{gust}'s (\acrshort{gust}) algorithm~\cite{Faddeev1981_InnerOuter, Gustavson1978_GustAlgo}.
 In all cases, the matrix $A$ is traversed sequentially.
 The three algorithms, however, impose different access patterns for $B$ (or $b$) and $C$ (or $c$).
 Indeed, in many cases, they have to be accessed multiple times, as discussed in the following sections.
@@ -31,10 +31,10 @@ The \acrlong{ip} algorithm~\cite{Faddeev1981_InnerOuter} is an intuitive way to 
     \label{eq:bg:MMinner}
 \end{equation}
 
-The \emph{common rank} $K$ is the inner-most loop of the algorithm (see Algorithms~\ref{alg:bg:MVinner} and~\ref{alg:bg:MMinner}).
+The \gls{crank} $K$ is the inner-most loop of the algorithm (see Algorithms~\ref{alg:bg:MVinner} and~\ref{alg:bg:MMinner}).
 The output $C$ (or $c$) is updated sequentially, but the $B$-matrix (or $b$-vector) will be entirely read $M$ times.
 In the context of sparse matrices, the reads of $B$ (or $b$) are conditioned by the non-zero elements of $A$, which requires indirect accesses.
-If $B$ (or $b$) is also sparse, the algorithm needs to perform \emph{intersections} between the non-zero elements in the rows of $A$ and the columns of $B$ (or in the $b$-vector) (see Section~\ref{sec:bg:hwchallenges}).
+If $B$ (or $b$) is also sparse, the algorithm needs to perform \glspl{intersection} between the non-zero elements in the rows of $A$ and the columns of $B$ (or in the $b$-vector) (see Section~\ref{sec:bg:hwchallenges}).
 In Algorithm~\ref{alg:bg:MMinner}, exchanging $M$ and $N$ simply causes the output to be updated \emph{column-wise}.
 
 \begin{figure}
@@ -69,10 +69,10 @@ In Algorithm~\ref{alg:bg:MMinner}, exchanging $M$ and $N$ simply causes the outp
 
 \subsubsection{Outer-Product Algorithm}
 
-The \acrlong{op} algorithm~\cite{Faddeev1981_InnerOuter} has the opposite \emph{rank} loop order than the \acrlong{ip}.
+The \acrlong{op} algorithm~\cite{Faddeev1981_InnerOuter} has the opposite \gls{rank} loop order than the \acrlong{ip}.
 It changes nothing mathematically except that the computation is separated into two phases.
-First, during the \emph{multiply} phase, we compute several \emph{partial outputs} (\emph{POs}) consisting of the \emph{partial sums} $A_{j,k} \times b_{k}$, then during the \emph{merge} phase, we accumulate all the \emph{POs} to form the final $C$-matrix (or $c$-vector).
-Algorithms~\ref{alg:bg:MVouter} and~\ref{alg:bg:MMouter} show that the \emph{common rank} $K$ is the outer-most loop.
+First, during the \emph{multiply} phase, we compute several \acrfullpl{po} consisting of the \glspl{psum} $A_{j,k} \times b_{k}$, then during the \emph{merge} phase, we accumulate all the \acrshortpl{po} to form the final $C$-matrix (or $c$-vector).
+Algorithms~\ref{alg:bg:MVouter} and~\ref{alg:bg:MMouter} show that the \gls{crank} $K$ is the outer-most loop.
 Inverting $M$ and $N$ affects whether the output $C$ (or $c$) is updated by rows or by columns, but has no influence on the indirect accesses to the inputs.
 
 \begin{figure}
@@ -106,15 +106,15 @@ Inverting $M$ and $N$ affects whether the output $C$ (or $c$) is updated by rows
 \end{figure}
 
 With \acrlong{op}, the $B$-matrix (or $b$-vector) is read sequentially.
-This algorithm necessitates the generation of $K$ \emph{POs}.
-Moreover, in the context of sparse input matrices, the \emph{PO} element updates are conditioned by the non-zeros elements of both inputs.
-Thus, a \emph{partial sum} could potentially be zero, reducing the number of \emph{PO} element updates, and making them non-sequential.
-If the output $C$ (or $c$) is stored in a \emph{sparse format}, then it is necessary to repeatedly access and update each \emph{partial sum}.
+This algorithm necessitates the generation of $K$ \acrshortpl{po}.
+Moreover, in the context of sparse input matrices, the \acrshort{po} element updates are conditioned by the non-zeros elements of both inputs.
+Thus, a \gls{psum} could potentially be zero, reducing the number of \acrshort{po} element updates, and making them non-sequential.
+If the output $C$ (or $c$) is stored in a \gls{spFormat}, then it is necessary to repeatedly access and update each \gls{psum}.
 
 \subsubsection{Gustavson's Algorithm}
 
-As the \acrshort{mm} algorithm has three \emph{ranks} instead of two for \acrshort{mv}, there is a third ordering, known as \acrlong{gust}'s algorithm~\cite{Gustavson1978_GustAlgo} where the \emph{common rank} $K$ is the middle loop (see Algorithm~\ref{alg:bg:MMgustavson}).
-With this approach, the output is computed row-by-row with \emph{PO}-rows generated and accumulated for each output $C$-row.
+As the \acrshort{mm} algorithm has three \glspl{rank} instead of two for \acrshort{mv}, there is a third ordering, known as \acrlong{gust}'s algorithm~\cite{Gustavson1978_GustAlgo} where the \gls{crank} $K$ is the middle-loop (see Algorithm~\ref{alg:bg:MMgustavson}).
+With this approach, the output is computed row-by-row with \acrshort{po}-rows generated and accumulated for each output $C$-row.
 
 \begin{figure}
     \centering
@@ -133,10 +133,10 @@ With this approach, the output is computed row-by-row with \emph{PO}-rows genera
     \end{minipage}
 \end{figure}
 
-With this algorithm, updates of the $C$-rows are sequential, but, in the dense case, the $B$-matrix is entirely read $M$ times and $K$ \emph{PO}-rows of size $N$ are generated.
+With this algorithm, updates of the $C$-rows are sequential, but, in the dense case, the $B$-matrix is entirely read $M$ times and $K$ \acrshort{po}-rows of size $N$ are generated.
 In the context of sparse matrices, the selection of the rows in $B$ is indirect, however, within a row the accesses are sequential.
-The \emph{intersection} operations are only needed for the $B$-rows and not each element.
-The \emph{PO}-rows can be accumulated before computing the next $C$-row.
+The \gls{intersection} operations are only needed for the $B$-rows and not each element.
+The \acrshort{po}-rows can be accumulated before computing the next $C$-row.
 For this algorithm, exchanging $M$ and $N$ causes the three matrices to be accessed \emph{column-wise} instead of \emph{row-wise}.
 
 \subsubsection{Algorithms Comparison}
@@ -150,18 +150,43 @@ TODO
     \centering
     \caption{Comparison of Matrix Multiplication Algorithms}
     \footnotesize
-    \begin{tabular}{|>{\centering\arraybackslash}m{1.5cm}|| *{3}{>{\arraybackslash}m{4.2cm}|}}
+    \begin{tabular}{|>{\centering\arraybackslash}m{1.49cm}|| *{3}{>{\arraybackslash}m{4.22cm}|}}
         \hhline{-||---}
-        & \textbf{\acrfull{ip}} & \textbf{\acrfull{op}} & \textbf{\acrfull{gust}} \\
+        &
+        \textbf{\acrfull{ip}}\hyperlink{fn1}{$^{\mathrm{1}}$} &
+        \textbf{\acrfull{op}}\hyperlink{fn1}{$^{\mathrm{1}}$} &
+        \textbf{\acrfull{gust}}\hyperlink{fn1}{$^{\mathrm{2}}$} \\
+        %
         \hhline{=::===}
-        \textbf{A$(M, K)$} \newline \textbf{Accesses} & $\bullet$ read $N$ times\hyperlink{fn3}{$^{\mathrm{1}}$} \newline $\bullet$ \emph{row-wise} \newline $\bullet$ sequential & $\bullet$ read once \newline $\bullet$ \emph{column-wise} \newline $\bullet$ sequential & $\bullet$ read once \newline $\bullet$ \emph{row-wise} \newline $\bullet$ sequential \\
+        \textbf{A$(M, K)$} \newline \textbf{Accesses} &
+        $\bullet$ \emph{row-wise} \newline $\bullet$ read $N$ times\hyperlink{fn2}{$^{\mathrm{3}}$}\hyperlink{fn3}{$^{\mathrm{4}}$} \newline $\bullet$ sequential &
+        $\bullet$ \emph{column-wise} \newline $\bullet$ read once \newline $\bullet$ sequential &
+        $\bullet$ \emph{row-wise} \newline $\bullet$ read once \newline $\bullet$ sequential \\
+        %
         \hhline{-||---}
-        \textbf{B$(K, N)$} \newline \textbf{Accesses} & $\bullet$ read $\overline{nnz_{r}}(A) \times M$ times \newline $\bullet$ \emph{column-wise} \newline $\bullet$ not sequential & $\bullet$ read $\overline{nnz_{c}}(A)$ times\hyperlink{fn4}{$^{\mathrm{2}}$} \newline $\bullet$ \emph{row-wise} \newline $\bullet$ sequential & $\bullet$ read $\overline{nnz_{r}}(A)$ times\hyperlink{fn4}{$^{\mathrm{2}}$} \newline $\bullet$ \emph{row-wise} \newline $\bullet$ sequential within rows \\
+        \textbf{B$(K, N)$} \newline \textbf{Accesses} &
+        $\bullet$ \emph{column-wise} \newline $\bullet$ read $M$ times\hyperlink{fn4}{$^{\mathrm{5}}$} \newline $\bullet$ not sequential &
+        $\bullet$ \emph{row-wise}\hyperlink{fn5}{$^{\mathrm{6}}$} \newline $\bullet$ read $M \times d(A)$ times\hyperlink{fn3}{$^{\mathrm{4}}$}\hyperlink{fn6}{$^{\mathrm{7}}$} \newline $\bullet$ sequential &
+        $\bullet$ \emph{row-wise} \newline $\bullet$ read $M \times d(A)$ times\hyperlink{fn6}{$^{\mathrm{7}}$} \newline $\bullet$ sequential within rows \\
+        %
         \hhline{-||---}
-        \textbf{C$(M, N)$} \newline \textbf{Accesses} & $\bullet$ sequential \newline $\bullet$ generated \emph{row-wise} & $\bullet$ generated without specific structure \newline $\bullet$ $K$ \emph{POs} produced (each \emph{PO} has $nnz_{c}(A) \times nnz_{r}(B)$ non-zero elements) & $\bullet$ generated \emph{row-wise} \newline $\bullet$ for each row, $nnz_{r}(A)$ \emph{PO} rows produced (each \emph{PO} rows has $nnz_{r}(B)$ non-zero elements) \\
+        \textbf{C$(M, N)$} \newline \textbf{Accesses} &
+        $\bullet$ generated \emph{row-wise}\hyperlink{fn5}{$^{\mathrm{6}}$} \newline $\bullet$ one sequential traversal &
+        $\bullet$ generated without specific structure \newline $\bullet$ $K$ \acrshortpl{po} produced\hyperlink{fn7}{$^{\mathrm{8}}$} (each \acrshort{po} has $\overline{nnz_c}(A) \times \overline{nnz_r}(B)$ non-zero elements\hyperlink{fn8}{$^{\mathrm{9}}$}) &
+        % $\bullet$ generated \emph{row-wise} \newline $\bullet$ for each row of $A$ ($M$), $\overline{nnz_r}(A)$ \acrshort{po}-rows produced (each \acrshort{po}-rows has $\overline{nnz_r}(B)$ non-zero elements) \\
+        $\bullet$ generated \emph{row-wise} \newline $\bullet$ for each row of $A$ ($M$), $K \times d(A)$ \acrshort{po}-rows produced\hyperlink{fn9}{$^{\mathrm{10}}$} (each \acrshort{po}-rows has $\overline{nnz_r}(B)$ non-zero elements) \\
+        %
         \hhline{-||---}
-        \multicolumn{4}{l}{\hypertarget{fn3}{$^{\mathrm{1}}$}In the case of \acrshort{mv} multiplication, $N=1$.} \\
-        \multicolumn{4}{l}{\hypertarget{fn4}{$^{\mathrm{2}}$}Average number of non-zero entries in the rows/columns of $A$.}
+        \multicolumn{4}{l}{\hypertarget{fn0}{$^{\mathrm{1}}$}Considering $N = 1$ in the case of \acrshort{mv} multiplication.} \\
+        \multicolumn{4}{l}{\hypertarget{fn1}{$^{\mathrm{2}}$}Only for \acrshort{mm} multiplication.} \\
+        \multicolumn{4}{l}{\hypertarget{fn2}{$^{\mathrm{3}}$}Or less than $N$ times if $B$ has empty columns.} \\
+        \multicolumn{4}{l}{\hypertarget{fn3}{$^{\mathrm{4}}$}Read once in the case of \acrshort{mv} multiplication.} \\
+        \multicolumn{4}{l}{\hypertarget{fn4}{$^{\mathrm{5}}$}If $B$ is stored with a sorted \gls{spFormat}, else it would be read $\overline{nnz_r}(A) \times M = nnz(A)$ times.} \\
+        \multicolumn{4}{l}{\hypertarget{fn5}{$^{\mathrm{6}}$}\emph{element-wise} in the case of \acrshort{mv} multiplication (there is no row).} \\
+        \multicolumn{4}{l}{\hypertarget{fn6}{$^{\mathrm{7}}$}Which is equal to $\overline{nnz_c}(A)$, the average number of non-zero elements in the columns of $A$.} \\
+        \multicolumn{4}{l}{\hypertarget{fn7}{$^{\mathrm{8}}$}Or less than $K$ times if $A$ has empty columns or $B$ has empty rows.} \\
+        \multicolumn{4}{l}{\hypertarget{fn8}{$^{\mathrm{9}}$}$\overline{nnz_c}(A)$ in the case of \acrshort{mv} multiplication.} \\
+        \multicolumn{4}{l}{\hypertarget{fn9}{$^{\mathrm{10}}$}Which is equal to $\overline{nnz_r}(A)$, the average number of non-zero elements in the rows of $A$.}
     \end{tabular}
     \label{tab:AlgosCompSum}
 \end{table}
