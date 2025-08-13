@@ -47,8 +47,6 @@ In Algorithm~\ref{alg:bg:MMinner}, exchanging $M$ and $N$ simply causes the outp
                 $c_{i} \acc A_{i,k} \times b_{k}$
             }
         }
-        $ $\\
-        $ $
         \end{algorithm}
     \end{minipage}
     \hfill
@@ -85,8 +83,6 @@ Inverting $M$ and $N$ affects whether the output $C$ (or $c$) is updated by rows
                 $c_{i} \acc A_{i,k} \times b_{k}$
             }
         }
-        $ $\\
-        $ $
         \end{algorithm}
     \end{minipage}
     \hfill
@@ -149,46 +145,59 @@ TODO
 \begin{table}
     \centering
     \caption{Comparison of Matrix Multiplication Algorithms}
-    \footnotesize
-    \begin{tabular}{|>{\centering\arraybackslash}m{1.49cm}|| *{3}{>{\arraybackslash}m{4.22cm}|}}
-        \hhline{-||---}
-        &
-        \textbf{\acrfull{ip}}\hyperlink{fn1}{$^{\mathrm{1}}$} &
-        \textbf{\acrfull{op}}\hyperlink{fn1}{$^{\mathrm{1}}$} &
-        \textbf{\acrfull{gust}}\hyperlink{fn1}{$^{\mathrm{2}}$} \\
-        %
-        \hhline{=::===}
-        \textbf{A$(M, K)$} \newline \textbf{Accesses} &
-        $\bullet$ \emph{row-wise} \newline $\bullet$ read $N$ times\hyperlink{fn2}{$^{\mathrm{3}}$}\hyperlink{fn3}{$^{\mathrm{4}}$} \newline $\bullet$ sequential &
-        $\bullet$ \emph{column-wise} \newline $\bullet$ read once \newline $\bullet$ sequential &
-        $\bullet$ \emph{row-wise} \newline $\bullet$ read once \newline $\bullet$ sequential \\
-        %
-        \hhline{-||---}
-        \textbf{B$(K, N)$} \newline \textbf{Accesses} &
-        $\bullet$ \emph{column-wise} \newline $\bullet$ read $M$ times\hyperlink{fn4}{$^{\mathrm{5}}$} \newline $\bullet$ not sequential &
-        $\bullet$ \emph{row-wise}\hyperlink{fn5}{$^{\mathrm{6}}$} \newline $\bullet$ read $M \times d(A)$ times\hyperlink{fn3}{$^{\mathrm{4}}$}\hyperlink{fn6}{$^{\mathrm{7}}$} \newline $\bullet$ sequential &
-        $\bullet$ \emph{row-wise} \newline $\bullet$ read $M \times d(A)$ times\hyperlink{fn6}{$^{\mathrm{7}}$} \newline $\bullet$ sequential within rows \\
-        %
-        \hhline{-||---}
-        \textbf{C$(M, N)$} \newline \textbf{Accesses} &
-        $\bullet$ generated \emph{row-wise}\hyperlink{fn5}{$^{\mathrm{6}}$} \newline $\bullet$ one sequential traversal &
-        $\bullet$ generated without specific structure \newline $\bullet$ $K$ \acrshortpl{po} produced\hyperlink{fn7}{$^{\mathrm{8}}$} (each \acrshort{po} has $\overline{nnz_c}(A) \times \overline{nnz_r}(B)$ non-zero elements\hyperlink{fn8}{$^{\mathrm{9}}$}) &
-        % $\bullet$ generated \emph{row-wise} \newline $\bullet$ for each row of $A$ ($M$), $\overline{nnz_r}(A)$ \acrshort{po}-rows produced (each \acrshort{po}-rows has $\overline{nnz_r}(B)$ non-zero elements) \\
-        $\bullet$ generated \emph{row-wise} \newline $\bullet$ for each row of $A$ ($M$), $K \times d(A)$ \acrshort{po}-rows produced\hyperlink{fn9}{$^{\mathrm{10}}$} (each \acrshort{po}-rows has $\overline{nnz_r}(B)$ non-zero elements) \\
-        %
-        \hhline{-||---}
-        \multicolumn{4}{l}{\hypertarget{fn0}{$^{\mathrm{1}}$}Considering $N = 1$ in the case of \acrshort{mv} multiplication.} \\
-        \multicolumn{4}{l}{\hypertarget{fn1}{$^{\mathrm{2}}$}Only for \acrshort{mm} multiplication.} \\
-        \multicolumn{4}{l}{\hypertarget{fn2}{$^{\mathrm{3}}$}Or less than $N$ times if $B$ has empty columns.} \\
-        \multicolumn{4}{l}{\hypertarget{fn3}{$^{\mathrm{4}}$}Read once in the case of \acrshort{mv} multiplication.} \\
-        \multicolumn{4}{l}{\hypertarget{fn4}{$^{\mathrm{5}}$}If $B$ is stored with a sorted \gls{spFormat}, else it would be read $\overline{nnz_r}(A) \times M = nnz(A)$ times.} \\
-        \multicolumn{4}{l}{\hypertarget{fn5}{$^{\mathrm{6}}$}\emph{element-wise} in the case of \acrshort{mv} multiplication (there is no row).} \\
-        \multicolumn{4}{l}{\hypertarget{fn6}{$^{\mathrm{7}}$}Which is equal to $\overline{nnz_c}(A)$, the average number of non-zero elements in the columns of $A$.} \\
-        \multicolumn{4}{l}{\hypertarget{fn7}{$^{\mathrm{8}}$}Or less than $K$ times if $A$ has empty columns or $B$ has empty rows.} \\
-        \multicolumn{4}{l}{\hypertarget{fn8}{$^{\mathrm{9}}$}$\overline{nnz_c}(A)$ in the case of \acrshort{mv} multiplication.} \\
-        \multicolumn{4}{l}{\hypertarget{fn9}{$^{\mathrm{10}}$}Which is equal to $\overline{nnz_r}(A)$, the average number of non-zero elements in the rows of $A$.}
-    \end{tabular}
     \label{tab:AlgosCompSum}
+    \begin{tblr}{
+            width = {\linewidth},
+            colspec = {X[-1,c] *{3}{X[j]}}, % rowspec
+            rows = {m, font=\footnotesize},
+            colsep = {4pt},
+            row{1-4} = {rowsep=2pt, black!2},
+            row{1} = {font=\bfseries, black!5},
+            row{5-Z} = {rowsep=-2pt},
+            row{5} = {abovesep=2pt},
+            row{Z} = {belowsep=2pt},
+            cell{2-4}{1} = {font=\bfseries},
+            cell{5-Z}{1} = {c=4}{l},
+            % hlines, vlines,
+            % rulesep = {-1pt},
+            hline{1,5} = {2pt}, % Z for last
+            hline{2} = {1pt},
+            hline{3-4} = {0.5pt},
+            hline{Z} = {1pt, dashed},
+            % vline{2} = {1}{0.5pt, black!5},
+            vline{2} = {2-4}{0.5pt},
+        }
+        &
+        \acrfull{ip}\hyperlink{fn1}{$^{\mathrm{1}}$} &
+        \acrfull{op}\hyperlink{fn1}{$^{\mathrm{1}}$} &
+        \acrfull{gust}\hyperlink{fn1}{$^{\mathrm{2}}$} \\
+        %
+        {A$(M, K)$ \\ Accesses} &
+        {$\bullet$ \emph{row-wise} \\ $\bullet$ read $N$ times\hyperlink{fn2}{$^{\mathrm{3}}$}$^,$\hyperlink{fn3}{$^{\mathrm{4}}$} \\ $\bullet$ sequential} &
+        {$\bullet$ \emph{column-wise} \newline $\bullet$ read once \newline $\bullet$ sequential} &
+        {$\bullet$ \emph{row-wise} \newline $\bullet$ read once \newline $\bullet$ sequential} \\
+        %
+        {B$(K, N)$ \\ Accesses} &
+        {$\bullet$ \emph{column-wise} \newline $\bullet$ read $M$ times\hyperlink{fn4}{$^{\mathrm{5}}$} \newline $\bullet$ not sequential} &
+        {$\bullet$ \emph{row-wise}\hyperlink{fn5}{$^{\mathrm{6}}$} \newline $\bullet$ read $M \times d(A)$ times\hyperlink{fn3}{$^{\mathrm{4}}$}$^,$\hyperlink{fn6}{$^{\mathrm{7}}$} \newline $\bullet$ sequential} &
+        {$\bullet$ \emph{row-wise} \newline $\bullet$ read $M \times d(A)$ times\hyperlink{fn6}{$^{\mathrm{7}}$} \newline $\bullet$ sequential within rows} \\
+        %
+        {C$(M, N)$ \\ Accesses} &
+        {$\bullet$ generated \emph{row-wise}\hyperlink{fn5}{$^{\mathrm{6}}$} \newline $\bullet$ one sequential traversal} &
+        {$\bullet$ generated without specific structure \newline $\bullet$ $K$ \acrshortpl{po} produced\hyperlink{fn7}{$^{\mathrm{8}}$} (each \acrshort{po} has $\overline{nnz_c}(A) \times \overline{nnz_r}(B)$ non-zero elements\hyperlink{fn8}{$^{\mathrm{9}}$})} &
+        {$\bullet$ generated \emph{row-wise} \newline $\bullet$ for each row of $A$ ($M$), \mbox{$K \times d(A)$} \acrshort{po}-rows produced\hyperlink{fn9}{$^{\mathrm{10}}$} (each \acrshort{po}-rows has $\overline{nnz_r}(B)$ non-zero elements)} \\
+        %
+        \hypertarget{fn0}{$^{\mathrm{1}}$} Considering $N = 1$ in the case of \acrshort{mv} multiplication. \\
+        \hypertarget{fn1}{$^{\mathrm{2}}$} Only for \acrshort{mm} multiplication. \\
+        \hypertarget{fn2}{$^{\mathrm{3}}$} Or less than $N$ times if $B$ has empty columns. \\
+        \hypertarget{fn3}{$^{\mathrm{4}}$} Read once in the case of \acrshort{mv} multiplication. \\
+        \hypertarget{fn4}{$^{\mathrm{5}}$} If $B$ is stored with a sorted \gls{spFormat}, else it would be read $\overline{nnz_r}(A) \times M = nnz(A)$ times. \\
+        \hypertarget{fn5}{$^{\mathrm{6}}$} \emph{element-wise} in the case of \acrshort{mv} multiplication (there is no row). \\
+        \hypertarget{fn6}{$^{\mathrm{7}}$} Which is equal to $\overline{nnz_c}(A)$, the average number of non-zero elements in the columns of $A$. \\
+        \hypertarget{fn7}{$^{\mathrm{8}}$} Or less than $K$ times if $A$ has empty columns or $B$ has empty rows. \\
+        \hypertarget{fn8}{$^{\mathrm{9}}$} $\overline{nnz_c}(A)$ in the case of \acrshort{mv} multiplication. \\
+        \hypertarget{fn9}{$^{\mathrm{10}}$} Which is equal to $\overline{nnz_r}(A)$, the average number of non-zero elements in the rows of $A$.
+    \end{tblr}
 \end{table}
 
 \subsection{Tiling}

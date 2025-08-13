@@ -49,9 +49,10 @@
 \usepackage{enumitem}
 \usepackage{caption}
 \usepackage{subcaption}
-\usepackage[ruled, algochapter, linesnumbered]{algorithm2e}
-\usepackage{hhline}
-\usepackage{multirow}
+\usepackage[ruled, algochapter, linesnumbered, noend]{algorithm2e}
+\usepackage{tabularray}
+\usepackage{hhline} %remove
+\usepackage{multirow} %remove
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
@@ -96,6 +97,11 @@
   \end{subfigure}
 }
 \newcounter{subsubfigure}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Caption global setup
+\captionsetup{labelfont=bf}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -308,8 +314,10 @@
 \definecolor{darkGray}{gray}{0.50}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Exception: need to be loaded after the hyperref package (don't ask me why)
 \usepackage[acronym, toc]{glossaries}
 
 \makenoidxglossaries
 \input{Gloss&Acro}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
