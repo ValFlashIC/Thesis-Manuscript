@@ -6,7 +6,13 @@
 \section{Hardware Challenges for Sparse Matrix Computation}
 \label{sec:bg:hwchallenges}
 
-In the previous section we presented a brief background on matrix multiplication without considering the underlying hardware. Although the various \emph{sparse formats} reduce the memory footprint, they have the disadvantage that indirect accesses are required, which creates data-dependencies and reduces the effectiveness of caches. As we have seen, with all three algorithms, at least some of the accesses are non-sequential. The lack of spatial locality for these accesses reduces the benefit of having caches. In other words, a full cache line is loaded, but only a few entries are read or modified. Moreover, the matrices of interest are extremely large and even the non-zero elements, and associated \emph{metadata}, can not generally fit in the cache. Depending on the algorithm, successive accesses to the same element may be too far apart to benefit from temporal locality in the cache.
+In the previous section we presented a brief background on matrix multiplication without considering the underlying hardware.
+Although the various \emph{sparse formats} reduce the memory footprint, they have the disadvantage that indirect accesses are required, which creates data-dependencies and reduces the effectiveness of caches.
+As we have seen, with all three algorithms, at least some of the accesses are non-sequential.
+The lack of spatial locality for these accesses reduces the benefit of having caches.
+In other words, a full cache line is loaded, but only a few entries are read or modified.
+Moreover, the matrices of interest are extremely large and even the non-zero elements, and associated \emph{metadata}, can not generally fit in the cache.
+Depending on the algorithm, successive accesses to the same element may be too far apart to benefit from temporal locality in the cache.
 % TODO: find the reference
 
 % Perhaps we can add a reference to Yves's background paper where it was stated
@@ -14,165 +20,351 @@ In the previous section we presented a brief background on matrix multiplication
 % cache is unused.
 
 %% INNER PRODUCT
-In an \algo{IP} algorithm, the $A$-\emph{metadata} needs to be read to indirectly access the $B$-matrix (or $b$-vector), which may itself be stored in a \emph{sparse format}. In this case, the algorithm needs to check if the non-zero $A$-indices are present in $B$ (or $b$). If an index appears in neither list, there is no need to perform the multiplication (\emph{ineffectual operation}). More generally, this problem applies to \emph{fibers} and is called the \emph{intersection} search. As a minimum, this requires reading all the \emph{metadata} for $A$ and $B$ (or $b$), and identifying those present in both.
+In an \algo{IP} algorithm, the $A$-\emph{metadata} needs to be read to indirectly access the $B$-matrix (or $b$-vector), which may itself be stored in a \emph{sparse format}.
+In this case, the algorithm needs to check if the non-zero $A$-indices are present in $B$ (or $b$). If an index appears in neither list, there is no need to perform the multiplication (\emph{ineffectual operation}).
+More generally, this problem applies to \emph{fibers} and is called the \emph{intersection} search. As a minimum, this requires reading all the \emph{metadata} for $A$ and $B$ (or $b$), and identifying those present in both.
 
 %%%% VL %%%%
-% In Algorithm~\ref{alg:InnerCSR}, we present the pseudo-code for an \emph{inner-product} SpMSpM with $A$ and $B$ stored in \emph{(UOP, CP) row-major} (\emph{CSR}) and \emph{column-major} (\emph{CSC}) formats, respectively. The outer loop~(\emph{M}), iterates over the rows of $A$, and the first step is to identify the start (\emph{A\_current\_ptr}) and end column (\emph{A\_next\_ptr}) in the \emph{CSR} \emph{metadata}. The middle-loop (\emph{n}) iterates over the columns of $B$. The inner-loop iterates over the elements of the current row of $A$, and for each index (\emph{A\_pos}), a search is performed in the \emph{metadata} of $B$, to see if the corresponding index in $B$ is present. Assuming it is ($B\_pos \neq -1$), the \emph{partial sum} is computed and then accumulated. This example highlights the need to efficiently search for the intersection of indices in the \emph{metadata} of the inputs.
+In Algorithm~\ref{alg:bg:IPSpMSpMCSR}, we present the pseudo-code for an \emph{inner-product} SpMSpM with $A$ and $B$ stored in \emph{(UOP, CP) row-major} (\emph{CSR}) and \emph{column-major} (\emph{CSC}) formats, respectively.
+The outer loop~(\emph{M}), iterates over the rows of $A$, and the first step is to identify the start (\emph{A\_current\_ptr}) and end column (\emph{A\_next\_ptr}) in the \emph{CSR} \emph{metadata}.
+The middle-loop (\emph{n}) iterates over the columns of $B$.
+The inner-loop iterates over the elements of the current row of $A$, and for each index (\emph{A\_pos}), a search is performed in the \emph{metadata} of $B$, to see if the corresponding index in $B$ is present.
+Assuming it is ($B\_pos \neq -1$), the \emph{partial sum} is computed and then accumulated.
+This example highlights the need to efficiently search for the intersection of indices in the \emph{metadata} of the inputs.
 
-% Different algorithms can be used to address the \emph{intersection} search, depending on whether the elements are sorted. When the elements are sorted, the \emph{intersection} becomes a merge and generally requires $2 \times k-1$ comparisons (in some cases the number of comparisons can be reduced~\cite{Baeza-Yates2010_Intersection}). As we will see in Section~\ref{sec:hw_accelerators}, certain accelerators provide support for performing this intersection operation directly in hardware.
+Different algorithms can be used to address the \emph{intersection} search, depending on whether the elements are sorted.
+When the elements are sorted, the \emph{intersection} becomes a merge and generally requires $2 \times k-1$ comparisons (in some cases the number of comparisons can be reduced~\cite{Baeza-Yates2010_Intersection}).
+As we will see in Section~\ref{cha:soa}, certain accelerators provide support for performing this intersection operation directly in hardware.
 
-% \begin{algorithm}
-% \caption{Inner-Product SpMSpM Performing \emph{Intersection} Searches with \emph{(UOP, CP)} Format}\label{alg:InnerCSR}
-% \KwData{$A$ in \emph{(UOP, CP) row-maj.} format (CSR): $A_{DATA}, A_{IND}, A_{PTR}$}
-% \KwData{$B$ in \emph{(UOP, CP) column-maj.} format (CSC): $B_{DATA}, B_{IND}, B_{PTR}$}
-% \KwData{$C$ in dense format (for simplicity of code)}
-% \KwResult{$C = A \times B$}
-% \For(\Comment*[f]{Iterations over the rows of A}){$m \in \left[ 0, M \right[$}{
-%     $A\_current\_ptr \gets A_{PTR}(m)$\Comment*[r]{Get pointer of the current row of A}
-%     $A\_next\_ptr \gets A_{PTR}(m+1)$\Comment*[r]{Get pointer of the next row of A}
-%     \For(\Comment*[f]{Iterations over the columns of B}){$n \in \left[ 0, N \right[$}{
-%         $acc \gets 0$\;
-%         \For(\Comment*[f]{Iterations over the elements of the current row of A}){$A\_pos \in \left[ A\_current\_ptr, A\_next\_ptr \right[$}{
-%             $ind \gets A_{IND}(A\_pos)$\Comment*[r]{Get index from table position}
-%             $B\_pos \gets SEARCH(ind, B_{IND}, B_{PTR}, n)$\Comment*[r]{If $ind$ exists in the n-th column of B, $SEARCH()$ return the corresponding $B\_pos$ in $B_{DATA}$. Else, it return $-1$.}
-%             \If(\Comment*[f]{If indices did match}){$B\_pos \neq -1$}{
-%                 $partial\_sum \gets A_{DATA}(A\_pos) \times B_{DATA}(B\_pos)$\Comment*[r]{Partial sum computation}
-%                 $acc \gets acc + partial\_sum$\Comment*[r]{Accumulation}
-%             }
-%         }
-%         $C_{m,n} \gets acc$\Comment*[r]{The result is written in memory}
-%     }
-% }
-% \end{algorithm}
+\begin{algorithm}
+    \caption{\acrshort{ip} \acrshort{spmspm} Performing \Gls{intersection} Searches with \acrshort{csr} and \acrshort{csc} Formats}
+    \label{alg:bg:IPSpMSpMCSR}
+    %
+    \KwData{$A(M, K)$ in \acrshort{csr}: $\mathit{A.val}, \mathit{A.idx}, \mathit{A.ptr}$}
+    \KwData{$B(K, N)$ in \acrshort{csc}: $\mathit{B.val}, \mathit{B.idx}, \mathit{B.ptr}$}
+    \KwData{$C(M, N)$ in \gls{dFormat} (for readability)}
+    \KwResult{$C = A \times B$}
+    \BlankLine
+    \For(\tcp*[f]{Iterations over the rows of A}){$i \in \ldb 0, M-1 \rdb$}{
+        \For(\tcp*[f]{Iterations over the columns of B}){$j \in \ldb 0, N-1 \rdb$}{
+            $acc \gets 0$; $pos_B \gets \mathit{B.ptr}_j$\;
+            \For{$pos_A \in \ldb \mathit{A.ptr}_i, \mathit{A.ptr}_{i+1}-1 \rdb$}{
+                \tcp{Iterations over the non-zero elements of the i-th row of A}
+                $k_A \gets \mathit{A.idx}_{pos_A}$\;
+                \tcp{Column-index of the (i, $pos_A$) non-zero element of A}
+                $(\mathit{isMatch}, pos_B) \gets \mathit{IntersectionSearch}(k_A, j, pos_B, \mathit{B.idx}, \mathit{B.ptr})$\;
+                \tcp{Return true and the matching $pos_B$ if $idx$ exists in the j-th column of B}
+                \If(\tcp*[f]{If indices did match}){$\mathit{isMatch}$}{
+                    $acc \gets acc + \mathit{A.val}_{pos_A} \times \mathit{B.val}_{pos_B}$\;
+                    \tcp{Local partial sum accumulation}
+                }
+            }
+            $C_{i,j} \gets acc$\tcp*[r]{Write in memory of the resulting (i, j) element of C}
+        }
+    }
+    \BlankLine
+    \Fn{$\mathit{IntersectionSearch}(k_A, j, pos_B, \mathit{B.idx}, \mathit{B.ptr})$}{
+        \tcp{Naive intersection search allowing the i-th row of A and the j-th column of B to be traversed only once at iteration (i, j)}
+        \While{$\mathit{B.idx}_{pos_B} < k_A$ \textbf{and} $pos_B < \mathit{B.ptr}_{j+1}$}{
+            $pos_B \gets pos_B + 1$\;
+        }
+        \If(\tcp*[f]{Returns true if indices from A and B match}){$\mathit{B.idx}_{pos_B} = k_A$}{
+            \textbf{return} $(true, pos_B)$\;
+        }
+        \textbf{return} $(false, pos_B)$\;
+    }
+\end{algorithm}
 %%%%%%%%%%%%
 
 %% OUTER PRODUCT
-In an \algo{OP} algorithm, the inputs are accessed sequentially, but the updates of the output require indirect accesses. The pattern of the accesses, while the output is generated, is non-sequential and determined by the structure of the input. Furthermore, if these \emph{random}\footnote{We use the term \emph{random} to mean accesses are irregular and difficult to predict.} updates provoke cache misses where only one word within a cache-line is modified, the bandwidth to external memory is poorly utilized. 
-The \algo{OP} algorithm generates several \emph{partial outputs} (\emph{POs}) that must be accumulated to obtain the final output. We can identify two strategies: \emph{immediate update} and \emph{deferred update}. In the former, the final output is immediately updated as each \emph{partial sum} is generated. If the output is stored using a \emph{sparse format}, either the index being updated does not yet exist, and the new \emph{partial sum} must be inserted. Or, if it exists, a lookup must be done to locate it, the update performed and the result written back. The problem associated with combining the \emph{POs} is called \emph{reduction}.
+In an \algo{OP} algorithm, the inputs are accessed sequentially, but the updates of the output require indirect accesses.
+The pattern of the accesses, while the output is generated, is non-sequential and determined by the structure of the input.
+Furthermore, if these \emph{random}\footnote{We use the term \emph{random} to mean accesses are irregular and difficult to predict.} updates provoke cache misses where only one word within a cache-line is modified, the bandwidth to external memory is poorly utilized.
+The \algo{OP} algorithm generates several \emph{partial outputs} (\emph{POs}) that must be accumulated to obtain the final output.
+We can identify two strategies: \emph{immediate update} and \emph{deferred update}.
+In the former, the final output is immediately updated as each \emph{partial sum} is generated.
+If the output is stored using a \emph{sparse format}, either the index being updated does not yet exist, and the new \emph{partial sum} must be inserted.
+Or, if it exists, a lookup must be done to locate it, the update performed and the result written back.
+The problem associated with combining the \emph{POs} is called \emph{reduction}.
 
 %%%% VL %%%%
-% In Algorithm~\ref{alg:OuterCSR}, we present the pseudo-code for an \emph{outer-product} SpMSpM using \emph{immediate update} with A and $B$ stored in \emph{(UOP, CP) column-major} (\emph{CSC}) and \emph{row-major} (\emph{CSR}) formats, respectively. The outer loop~(\emph{K}), iterates over the rows of A and the columns of $B$ (common rank), and the first step is to identify the start (\emph{A\_current\_ptr, B\_current\_ptr}) and end fibers (\emph{A\_next\_ptr},\emph{B\_next\_ptr}) in the \emph{metadata}. The middle-loop (\emph{A\_pos}) iterates over the elements of the current column of A. The inner-loop (\emph{B\_pos}) iterates over the elements of the current row of $B$. Because we only iterate over the non-zero values, there is no need for a search. The \emph{partial sum} is then computed. Finally, it must be accumulated to $C_{A\_ind,B\_ind}$. These accesses are non-sequential, making it necessary to lookup the value in $C$, update it, and write it back, which is performed by the \emph{REDUCTION()} function in the pseudo-code.
+In Algorithm~\ref{alg:bg:OPSpMSpMCSR}, we present the pseudo-code for an \emph{outer-product} SpMSpM using \emph{immediate update} with A and $B$ stored in \emph{(UOP, CP) column-major} (\emph{CSC}) and \emph{row-major} (\emph{CSR}) formats, respectively.
+The outer loop~(\emph{K}), iterates over the rows of A and the columns of $B$ (common rank), and the first step is to identify the start (\emph{A\_current\_ptr, B\_current\_ptr}) and end fibers (\emph{A\_next\_ptr},\emph{B\_next\_ptr}) in the \emph{metadata}.
+The middle-loop (\emph{A\_pos}) iterates over the elements of the current column of A.
+The inner-loop (\emph{B\_pos}) iterates over the elements of the current row of $B$.
+Because we only iterate over the non-zero values, there is no need for a search.
+The \emph{partial sum} is then computed. Finally, it must be accumulated to $C_{A\_ind,B\_ind}$.
+These accesses are non-sequential, making it necessary to lookup the value in $C$, update it, and write it back, which is performed by the \emph{REDUCTION()} function in the pseudo-code.
 
-% \begin{algorithm}
-% \caption{Outer-Product SpMSpM Performing \emph{Reductions} with \emph{(UOP, CP)} Format}\label{alg:OuterCSR}
-% \KwData{$A$ in \emph{(UOP, CP) column-maj.} format (CSC): $A_{DATA}, A_{IND}, A_{PTR}$}
-% \KwData{$B$ in \emph{(UOP, CP) row-maj.} format (CSR): $B_{DATA}, B_{IND}, B_{PTR}$}
-% \KwData{$C$ in dense format (for simplicity of code)}
-% \KwResult{$C = A \times B$}
-% \For(\Comment*[f]{Iterations over the columns of A and the rows of $B$}){$k \in \left[ 0, K \right[$}{
-%     $A\_current\_ptr \gets A_{PTR}(k)$\Comment*[r]{Get pointer of the current column of A}
-%     $A\_next\_ptr \gets A_{PTR}(k+1)$\Comment*[r]{Get pointer of the next column of A}
-%     $B\_current\_ptr \gets B_{PTR}(k)$\Comment*[r]{Get pointer of the current row of $B$}
-%     $B\_next\_ptr \gets B_{PTR}(k+1)$\Comment*[r]{Get pointer of the next row of $B$}
-%     \For(\Comment*[f]{Iterations over the elements of the current column of A}){$A\_pos \in \left[ A\_current\_ptr, A\_next\_ptr \right[$}{
-%         $A\_ind \gets A_{IND}(A\_pos)$\Comment*[r]{Get index from table position}
-%         \For(\Comment*[f]{Iterations over the elements of the current row of $B$}){$B\_pos \in \left[ B\_current\_ptr, B\_next\_ptr \right[$}{
-%             $B\_ind \gets B_{IND}(B\_pos)$\Comment*[r]{Get index from table position}
-%             $partial\_sum \gets A_{DATA}(A\_pos) \times B_{DATA}(B\_pos)$\Comment*[r]{Partial sum computation}
-%             $REDUCTION(partial\_sum, C, A\_ind, B\_ind)$\Comment*[r]{Accumulate $partial\_sum$ with the $C_{A\_ind, B\_ind}$ element ($C_{A\_ind, B\_ind} \gets C_{A\_ind, B\_ind} + partial\_sum$) (read, update and write operation).}
-%         }
-%     }
-% }
-% \end{algorithm}
+% ref for merging methods to add?
+
+\begin{algorithm}
+    \caption{\acrshort{op} \acrshort{spmspm} Performing \Gls{reduction} with \acrshort{csr} and \acrshort{csc} Formats}
+    \label{alg:bg:OPSpMSpMCSR}
+    %
+    \KwData{$A(M, K)$ in \acrshort{csr}: $\mathit{A.val}, \mathit{A.idx}, \mathit{A.ptr}$}
+    \KwData{$B(K, N)$ in \acrshort{csc}: $\mathit{B.val}, \mathit{B.idx}, \mathit{B.ptr}$}
+    \KwData{$\mathit{PO}_k(M, N)$ for all $k \in \ldb 0, K-1 \rdb$ in \acrshort{coo}: $\mathit{PO_k.val}, \mathit{PO_k.row}, \mathit{PO_k.col}$}
+    \KwData{$C(M, N)$ in \gls{dFormat} (for readability)}
+    \KwResult{$C = A \times B$}
+    \BlankLine
+    \tcp{* * * `Immediate updates' version * * *}
+    \For(\tcp*[f]{Iterations over the columns of A and the rows of $B$}){$k \in \ldb 0, K-1 \rdb$}{
+        \For{$pos_A \in \ldb \mathit{A.ptr}_k, \mathit{A.ptr}_{k+1} \rdb$}{
+            \tcp{Iterations over the non-zero elements of the k-th column of A}
+            $i_A \gets \mathit{A.idx}_{pos_A}$\tcp*[r]{Row-index of the ($pos_A$, k) non-zero element of A}
+            \For{$pos_B \in \ldb \mathit{B.ptr}_k, \mathit{B.ptr}_{k+1} \rdb$}{
+                \tcp{Iterations over the non-zero elements of the k-th row of B}
+                $j_B \gets \mathit{B.idx}_{pos_B}$\;
+                \tcp{Column-index of the (k, $pos_B$) non-zero element of B}
+                $C_{i_A, j_B} \gets C_{i_A, j_B} + \mathit{A.val}_{pos_A} \times \mathit{B.val}_{pos_B}$\;
+                \tcp{Reduction (to memory) of the partial sum into the ($i_A$, $j_B$) element of C (immediate update)}
+            }
+        }
+    }
+    \BlankLine
+    \tcp{* * * `Deffered updates' version * * *}
+    \tcp{Multiply phase}
+    \For(\tcp*[f]{Iterations over the columns of A and the rows of $B$}){$k \in \ldb 0, K-1 \rdb$}{
+        $pos_\mathit{PO} \gets 0$\;
+        \For{$pos_A \in \ldb \mathit{A.ptr}_k, \mathit{A.ptr}_{k+1} \rdb$}{
+            \tcp{Iterations over the non-zero elements of the k-th column of A}
+            $i_A \gets \mathit{A.idx}_{pos_A}$\tcp*[r]{Row-index of the ($pos_A$, k) non-zero element of A}
+            \For{$pos_B \in \ldb \mathit{B.ptr}_k, \mathit{B.ptr}_{k+1} \rdb$}{
+                \tcp{Iterations over the non-zero elements of the k-th row of B}
+                $j_B \gets \mathit{B.idx}_{pos_B}$\;
+                \tcp{Column-index of the (k, $pos_B$) non-zero element of B}
+                $\mathit{PO_k.row}_{pos_\mathit{PO}} \gets i_A$\;
+                $\mathit{PO_k.col}_{pos_\mathit{PO}} \gets j_B$\;
+                $\mathit{PO_k.val}_{pos_\mathit{PO}} \gets \mathit{A.val}_{pos_A} \times \mathit{B.val}_{pos_B}$\; 
+                \tcp{The k-th partial sum of the ($i_A$, $j_B$) element of C is stored in memory in the k-th partial output}
+                $pos_\mathit{PO} \gets pos_\mathit{PO} + 1$\;
+            }
+        }
+        \tcp{Each partial output is generated sorted, row-wise}
+    }
+    \tcp{Merge phase}
+    \For(\tcp*[f]{Naive serial merge of the K partial outputs}){$k \in \ldb 0, K-2 \rdb$}{
+        % $\mathit{MergedPO} \gets \{\}$\;
+        % $pos_1 \gets 0$; $pos_2 \gets 0$; $pos_M \gets 0$\;
+        % \While{$pos_1 < length(\mathit{PO}_k)$ \textbf{and} $pos_2 < length(\mathit{PO}_{k+1})$}{
+        %     \If{$\mathit{PO_k.row}_{pos_1} < \mathit{PO_{k+1}.row}_{pos_2}$}{
+        %         $\mathit{MergedPO}_{pos_M} \gets \mathit{PO_k}_{pos_1}$\;
+        %         $pos_1 \gets pos_1 + 1$\;
+        %     }
+        %     \ElseIf{$\mathit{PO_k.row}_{pos_1} > \mathit{PO_{k+1}.row}_{pos_2}$}{
+        %         $\mathit{MergedPO}_{pos_M} \gets \mathit{PO_{k+1}}_{pos_2}$\;
+        %         $pos_2 \gets pos_2 + 1$\;
+        %     }
+        %     \Else{
+        %         \If{$\mathit{PO_k.col}_{pos_1} < \mathit{PO_{k+1}.col}_{pos_2}$}{
+        %             $\mathit{MergedPO}_{pos_M} \gets \mathit{PO_k}_{pos_1}$\;
+        %             $pos_1 \gets pos_1 + 1$\;
+        %         }
+        %         \ElseIf{$\mathit{PO_k.col}_{pos_1} > \mathit{PO_{k+1}.col}_{pos_2}$}{
+        %             $\mathit{MergedPO}_{pos_M} \gets \mathit{PO_{k+1}}_{pos_2}$\;
+        %             $pos_2 \gets pos_2 + 1$\;
+        %         }
+        %         \Else{
+        %             $\mathit{MergedPO}_{pos_M} \gets \mathit{PO_k}_{pos_1} + \mathit{PO_{k+1}}_{pos_2}$\;
+        %             $pos_1 \gets pos_1 + 1$\;
+        %             $pos_2 \gets pos_2 + 1$\;
+        %         }
+        %     }
+        %     $pos_M \gets pos_M + 1$\;
+        % }
+        % \While{$pos_1 < length(\mathit{PO}_k)$}{
+        %     $\mathit{MergedPO}_{pos_M} \gets \mathit{PO_k}_{pos_1}$\;
+        %     $pos_1 \gets pos_1 + 1$; $pos_M \gets pos_M + 1$\;
+        % }
+        % \While{$pos_2 < length(\mathit{PO}_{k+1})$}{
+        %     $\mathit{MergedPO}_{pos_M} \gets \mathit{PO_{k+1}}_{pos_2}$\;
+        %     $pos_2 \gets pos_2 + 1$; $pos_M \gets pos_M + 1$\;
+        % }
+        $\mathit{PO}_{k+1} \gets \mathit{2DListsMerge}(\mathit{PO}_k, \mathit{PO}_{k+1})$\;
+        % $\mathit{PO}_{k+1} \gets \mathit{MergedPO}$\;
+    }
+    \tcp{$\mathit{PO}_{K-1}$ is C stored in COO format}
+    \For{$pos \in \ldb 0, length(\mathit{PO}_{K-1})-1 \rdb$}{
+        \tcp{Update C (dense) from the fully merged partial outputs}
+        $i \gets \mathit{PO_{K-1}.row}_{pos}$\;
+        $j \gets \mathit{PO_{K-1}.col}_{pos}$\;
+        $C_{i, j} \gets \mathit{PO_{K-1}.val}_{pos}$\tcp*[r]{Write in memory of the (i, j) element of C}
+    }
+\end{algorithm}
 %%%%%%%%%%%%
 
 % This paragraph covers deferred updates
 To avoid the complexities of the indirect accesses with \emph{immediate updates}, the \emph{partial sums} can be stored and the accumulation can be deferred. One such technique is called \emph{output batching}~\cite{Kiriansky2016_Milk}. With this technique, tuples containing the index and the \emph{partial sum} are streamed sequentially to memory. Then, during a second pass, they are read back and the accumulations are performed, an approach which results in sequential memory accesses during the first pass, with the downside that the volume of data transferred to memory is increased.
 %%%% VL %%%%
-% The different strategies for dealing with these updates are shown in Figure~\ref{fig:OutputUpdatesStategies}.
+The different strategies for dealing with these updates are shown in Figure~\ref{fig:bg:OutputUpdatesStategies}.
 %%%%%%%%%%%%
 As we will see, hardware accelerators may combine the \emph{immediate} and \emph{deferred update} techniques to optimize memory bandwidth.
 %%%% VL %%%%
-% \begin{figure}
-%     \begin{minipage}[b]{0.69\linewidth}
-%         \begin{figure}[H]% Does it go with a taxonomy in the comparison section?
-%             \centering
-%             \includegraphics[width=\textwidth]{Figures/PDF/OutputUpdates.pdf}
-%             \caption{Strategies for Dealing with Random Output Updates in Outer Product Algorithms}
-%             \label{fig:OutputUpdatesStategies}
-%         \end{figure}
-%     \end{minipage}
-%     \hfill
-%     \begin{minipage}[b]{0.29\linewidth}
-%         \begin{figure}[H]
-%             \centering
-%             \includegraphics[width=\textwidth]{Figures/PDF/GatherScatter.pdf}
-%             \caption{\emph{Gather} and \emph{Scatter} Illustration}
-%             \label{fig:gatherscatter}
-%         \end{figure}
-%     \end{minipage}
-% \end{figure}
+\begin{figure}
+    \begin{minipage}[b]{0.69\linewidth}
+        \begin{figure}[H]% Does it go with a taxonomy in the comparison section?
+            \centering
+            \includegraphics[width=\textwidth]{Chapter_Background/Figures/PDF/OutputUpdates.pdf}
+            \caption{Strategies for Dealing with Random Output Updates in Outer Product Algorithms}
+            \label{fig:bg:OutputUpdatesStategies}
+        \end{figure}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[b]{0.29\linewidth}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\textwidth]{Chapter_Background/Figures/PDF/GatherScatter.pdf}
+            \caption{\emph{Gather} and \emph{Scatter} Illustration}
+            \label{fig:bg:gatherscatter}
+        \end{figure}
+    \end{minipage}
+\end{figure}
 %%%%%%%%%%%%
 In Table~\ref{tab:bg:AlgosHWComp}, we summarize the previously discussed advantages and hardware challenges for each algorithm, including \algo{Gust} which presents a trade-off between \algo{IP} and \algo{OP}.
 
 \begin{table}
-    \newlength{\fstC}
-    \setlength{\fstC}{1.00cm}
-    \newlength{\scdC}
-    \setlength{\scdC}{0.65cm}
-    \newlength{\fstAndScdC}
-    \setlength{\fstAndScdC}{2.00cm}
-    \newlength{\lstC}
-    \setlength{\lstC}{4.03cm}
     \centering
     \caption{Comparison of Advantages and Challenges with Matrix Multiplication Algorithms}
     \label{tab:bg:AlgosHWComp}
-    % \footnotesize
-    \scriptsize
-    \begin{tabular}{|>{\arraybackslash\centering}m{\fstC} >{\arraybackslash\centering}m{\scdC}|| *{3}{>{\arraybackslash}m{\lstC}|}}
-        \hhline{--||---}
+    \begin{tblr}{
+            width = {\linewidth},
+            colspec = {X[-1,c] X[-1,c] *{3}{X[j]}}, % rowspec
+            rows = {m, font=\scriptsize},
+            colsep = {4pt},
+            row{1-Z} = {rowsep=1pt, black!2},
+            row{1} = {c, font=\bfseries\scriptsize, black!5},
+            column{1-2} = {font=\bfseries\scriptsize},
+            cell{2}{1} = {r=2}{c},
+            cell{4-Z}{1} = {c=2}{c},
+            cell{5}{3} = {c=2}{l},
+            cell{2}{Z} = {c},
+            % hlines, vlines,
+            % rulesep = {-1pt},
+            hline{1,Z} = {2pt}, % Z for last
+            hline{2} = {1pt},
+            hline{3} = {2-Z}{0.5pt},
+            hline{4-Y} = {0.5pt},
+            vline{3} = {2-Z}{0.5pt},
+        }
         &
         &
-        \multicolumn{1}{c|}{\textbf{\acrfull{ip}}} &
-        \multicolumn{1}{c|}{\textbf{\acrfull{op}}} &
-        \multicolumn{1}{c|}{\textbf{\acrfull{gust}}} \\
+        \acrfull{ip} &
+        \acrfull{op} &
+        \acrfull{gust} \\
         %
-        \hhline{==::===}
-        \multirow{3}{\fstC}{\centering\textbf{Access Count}} &
-        \multicolumn{1}{|>{\arraybackslash\centering}m{\scdC}||}{\textbf{MV}} &
+        {Access \\ Count} &
+        \acrshort{mv} &
         \textbf{\textit{A}:} once ; \textbf{\textit{b}:} $nnz(A)$ ; \textbf{\textit{c}:} once &
         \textbf{\textit{A}:} once ; \textbf{\textit{b}:} once ; \textbf{\textit{c}:} $nnz_{r}(A)$ &
-        \multicolumn{1}{c|}{\emph{N/A}} \\
+        \emph{N/A} \\
         %
-        \hhline{~-||---}
         &
-        \multicolumn{1}{|>{\arraybackslash\centering}m{\scdC}||}{\textbf{MM}} &
+        \acrshort{mm} &
         \textbf{\textit{A}:} $N$ ; \textbf{\textit{B}:} $nnz_{r}(A).M$ ; \newline \textbf{\textit{C}:} once &
         \textbf{\textit{A}:} once ; \textbf{\textit{B}:} $nnz_{c}(A)$ \newline \textbf{\textit{C}:} $\sim nnz_{r}(A).nnz_{c}(B)/K$ &
         \textbf{\textit{A}:} once ; \textbf{\textit{B}:} $nnz_{c}(A)$ \newline \textbf{\textit{C}:} $\sim nnz_{r}(A).nnz_{c}(B)/K$ \\
         %
-        \hhline{--||---}
-        \multicolumn{2}{|>{\arraybackslash\centering}m{\fstAndScdC}||}{\textbf{Sequential Accesses}} &
+        {Sequential \\ Accesses} &
+        &
         Accesses to $A$ and $C$ &
         Accesses to $A$ and $B$ &
         Accesses to $A$ and $C$ \newline Accesses to $B$-rows \\
         %
-        \hhline{--||---}
-        \multicolumn{2}{|>{\arraybackslash\centering}m{\fstAndScdC}||}{\textbf{Input Format}} &
-        \multicolumn{2}{l|}{\begin{minipage}{7.00cm} Accesses to $A$ and $B$ benefit from alternate formats (\emph{CSR} and \emph{CSC}) \end{minipage}} & 
+        {Input \\ Format} &
+        &
+        {Accesses to $A$ and $B$ benefit from alternate formats (\emph{CSR} and \\ \emph{CSC})}&
+        &
         Allows consistent format for $A$ and $B$ \\
         %
-        \hhline{--||---}
-        \multicolumn{2}{|>{\arraybackslash\centering}m{\fstAndScdC}||}{\textbf{Parallelism Opportunity}} &
+        {Parallelism \\ Opportunity} &
+        &
         Possible with \gls{tiling} &
         Generation of \emph{POs} over \emph{common rank} of $A$ and $B$ &
         Reading $A$-rows and updating $C$-rows \\
         %
-        \hhline{--||---}
-        \multicolumn{2}{|>{\arraybackslash\centering}m{\fstAndScdC}||}{\textbf{Reuse Opportunity}} &
+        {Reuse \\ Opportunity} &
+        &
         Potentially $B$, but limited by its size &
         An $A$-column or $B$-row while computing \emph{POs} &
         $A$ set of $B$-rows, based on non-zero elements of $A$-rows \\ %Based on non-zero elements of $A$-rows, a set of $B$-rows are reused
         %
-        \hhline{--||---}
-        \multicolumn{2}{|>{\arraybackslash\centering}m{\fstAndScdC}||}{\textbf{Challenges}} &
+        Challenges &
+        &
         \emph{Intersection} search between non-zero elements in $A$ and $B$ &
         Storage for \emph{POs} or in-place  \emph{merge} and \emph{reduce} &
         \emph{Merge} and \emph{reduce} of  \emph{PO rows} \\
-        %
-        \hhline{--||---}
-    \end{tabular}
+    \end{tblr}
 \end{table}
+
+% \begin{table}
+%     \newlength{\fstC}
+%     \setlength{\fstC}{1.00cm}
+%     \newlength{\scdC}
+%     \setlength{\scdC}{0.65cm}
+%     \newlength{\fstAndScdC}
+%     \setlength{\fstAndScdC}{2.00cm}
+%     \newlength{\lstC}
+%     \setlength{\lstC}{4.03cm}
+%     \centering
+%     \caption{Comparison of Advantages and Challenges with Matrix Multiplication Algorithms}
+%     \label{tab:bg:AlgosHWComp}
+%     % \footnotesize
+%     \scriptsize
+%     \begin{tabular}{|>{\arraybackslash\centering}m{\fstC} >{\arraybackslash\centering}m{\scdC}|| *{3}{>{\arraybackslash}m{\lstC}|}}
+%         \hhline{--||---}
+%         &
+%         &
+%         \multicolumn{1}{c|}{\textbf{\acrfull{ip}}} &
+%         \multicolumn{1}{c|}{\textbf{\acrfull{op}}} &
+%         \multicolumn{1}{c|}{\textbf{\acrfull{gust}}} \\
+%         %
+%         \hhline{==::===}
+%         \multirow{3}{\fstC}{\centering\textbf{Access Count}} &
+%         \multicolumn{1}{|>{\arraybackslash\centering}m{\scdC}||}{\textbf{MV}} &
+%         \textbf{\textit{A}:} once ; \textbf{\textit{b}:} $nnz(A)$ ; \textbf{\textit{c}:} once &
+%         \textbf{\textit{A}:} once ; \textbf{\textit{b}:} once ; \textbf{\textit{c}:} $nnz_{r}(A)$ &
+%         \multicolumn{1}{c|}{\emph{N/A}} \\
+%         %
+%         \hhline{~-||---}
+%         &
+%         \multicolumn{1}{|>{\arraybackslash\centering}m{\scdC}||}{\textbf{MM}} &
+%         \textbf{\textit{A}:} $N$ ; \textbf{\textit{B}:} $nnz_{r}(A).M$ ; \newline \textbf{\textit{C}:} once &
+%         \textbf{\textit{A}:} once ; \textbf{\textit{B}:} $nnz_{c}(A)$ \newline \textbf{\textit{C}:} $\sim nnz_{r}(A).nnz_{c}(B)/K$ &
+%         \textbf{\textit{A}:} once ; \textbf{\textit{B}:} $nnz_{c}(A)$ \newline \textbf{\textit{C}:} $\sim nnz_{r}(A).nnz_{c}(B)/K$ \\
+%         %
+%         \hhline{--||---}
+%         \multicolumn{2}{|>{\arraybackslash\centering}m{\fstAndScdC}||}{\textbf{Sequential Accesses}} &
+%         Accesses to $A$ and $C$ &
+%         Accesses to $A$ and $B$ &
+%         Accesses to $A$ and $C$ \newline Accesses to $B$-rows \\
+%         %
+%         \hhline{--||---}
+%         \multicolumn{2}{|>{\arraybackslash\centering}m{\fstAndScdC}||}{\textbf{Input Format}} &
+%         \multicolumn{2}{l|}{\begin{minipage}{7.00cm} Accesses to $A$ and $B$ benefit from alternate formats (\emph{CSR} and \emph{CSC}) \end{minipage}} & 
+%         Allows consistent format for $A$ and $B$ \\
+%         %
+%         \hhline{--||---}
+%         \multicolumn{2}{|>{\arraybackslash\centering}m{\fstAndScdC}||}{\textbf{Parallelism Opportunity}} &
+%         Possible with \gls{tiling} &
+%         Generation of \emph{POs} over \emph{common rank} of $A$ and $B$ &
+%         Reading $A$-rows and updating $C$-rows \\
+%         %
+%         \hhline{--||---}
+%         \multicolumn{2}{|>{\arraybackslash\centering}m{\fstAndScdC}||}{\textbf{Reuse Opportunity}} &
+%         Potentially $B$, but limited by its size &
+%         An $A$-column or $B$-row while computing \emph{POs} &
+%         $A$ set of $B$-rows, based on non-zero elements of $A$-rows \\ %Based on non-zero elements of $A$-rows, a set of $B$-rows are reused
+%         %
+%         \hhline{--||---}
+%         \multicolumn{2}{|>{\arraybackslash\centering}m{\fstAndScdC}||}{\textbf{Challenges}} &
+%         \emph{Intersection} search between non-zero elements in $A$ and $B$ &
+%         Storage for \emph{POs} or in-place  \emph{merge} and \emph{reduce} &
+%         \emph{Merge} and \emph{reduce} of  \emph{PO rows} \\
+%         %
+%         \hhline{--||---}
+%     \end{tabular}
+% \end{table}
 
 %%%% VC %%%%
 The issues presented with \algo{IP} and \algo{OP} can be generalized to two concepts: \emph{gather} and \emph{scatter}.
