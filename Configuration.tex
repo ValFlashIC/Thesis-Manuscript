@@ -12,8 +12,8 @@
 \def\NO{0}
 \def\DoMinitoc{\YES}
 
-\def\TopMargin{0.70cm}
-\def\BottomMargin{1.90cm}
+\def\TopMargin{0.00cm}
+\def\BottomMargin{1.80cm}
 \def\LeftMargin{2.50cm}
 \def\RightMargin{2.50cm}
 
@@ -43,6 +43,8 @@
 \if\Language\EN \usepackage[english]{babel}
 \else \usepackage[french]{babel} \fi
 \usepackage[T1]{fontenc}
+% \usepackage{palatino}
+\usepackage{bookman}
 \usepackage{shorttoc}
 \usepackage[dvipsnames, table]{xcolor}
 \usepackage{setspace}
@@ -66,7 +68,7 @@
 \usepackage[absolute, overlay]{textpos}
 \usepackage[titles]{tocloft} % add subfigure option if the subfigure package is used
 \usepackage{listings}
-\usepackage{tcolorbox}
+\usepackage[most]{tcolorbox}
 \if\DoMinitoc\YES \usepackage{minitoc}
 \else \usepackage{mtcoff} \fi
 
@@ -79,9 +81,9 @@
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Water mark (comment this to remove the watermark)
-\usepackage{draftwatermark}
-\SetWatermarkText{DRAFT}
-\SetWatermarkScale{4}
+% \usepackage{draftwatermark}
+% \SetWatermarkText{DRAFT}
+% \SetWatermarkScale{4}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,6 +99,32 @@
   \end{subfigure}
 }
 \newcounter{subsubfigure}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Add takeaways environment
+\newtcolorbox{takeaways}[1]{
+	sharp corners,
+	frame hidden,
+	interior hidden,
+	boxrule=0pt,
+	boxsep=0pt,
+	toptitle=6pt,
+	bottomtitle=6pt,
+	left=6pt,
+	right=0pt,
+	bottom=0pt,
+	lower separated=false,
+	fonttitle=\scshape\bfseries\large,
+	title style={draw=none, fill=none, left color=SkyBlue!10, right color=white},
+	coltitle=SkyBlue,
+	enhanced,
+	colframe=SkyBlue,
+	colback=SkyBlue!2,
+	borderline west={1mm}{0mm}{SkyBlue},
+	title={#1},
+	breakable
+}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -238,15 +266,15 @@
 %     \!
 %     \includegraphics[width=0.15\linewidth]{Figures/PDF/LIST.pdf}
 % }
-\def\HeadPageLogos{
-    % Version with CEA, UGA and TIMA
-    \begin{minipage}[b]{0.072\linewidth}
-        \includegraphics[width=\linewidth]{Figures/PDF/LogoUGA.pdf}
-        \includegraphics[width=\linewidth]{Figures/PDF/LogoTIMA.pdf}
-    \end{minipage}
-    \!
-    \includegraphics[width=0.15\linewidth]{Figures/PDF/LIST.pdf}
-}
+% \def\HeadPageLogos{
+%     % Version with CEA, UGA and TIMA
+%     \begin{minipage}[b]{0.072\linewidth}
+%         \includegraphics[width=\linewidth]{Figures/PDF/LogoUGA.pdf}
+%         \includegraphics[width=\linewidth]{Figures/PDF/LogoTIMA.pdf}
+%     \end{minipage}
+%     \!
+%     \includegraphics[width=0.15\linewidth]{Figures/PDF/LIST.pdf}
+% }
 % \def\HeadPageLogos{
 %     % Version with CEA and UGA
 %     \includegraphics[scale=0.5]{Figures/PDF/LogoUGA.pdf}
@@ -262,13 +290,22 @@
 \renewcommand\headrulewidth{0.4pt}
 \renewcommand\footrulewidth{0.4pt}
 
-\fancyhead[R]{\HeadPageLogos}
-\newcommand{\FancyHeadLeft}[1]{
-    \fancyhead[L]{
+% \fancyhead[R]{\HeadPageLogos}
+% \newcommand{\FancyHeadLeft}[1]{
+%     \fancyhead[L]{
+%         \begin{minipage}[b]{0.7\linewidth}
+%             \textsc{\doctype}
+%             \newline
+%             {\footnotesize \textit{\MakeUppercase{#1}}}
+%         \end{minipage}
+%     }
+% }
+\fancyhead[L]{\textsc{\doctype}}
+\newcommand{\FancyHeadRight}[1]{
+    \fancyhead[R]{
         \begin{minipage}[b]{0.7\linewidth}
-            \textsc{\doctype}
-            \newline
-            {\footnotesize \textit{\MakeUppercase{#1}}}
+			\raggedleft
+            \textit{\MakeUppercase{#1}}
         \end{minipage}
     }
 }
@@ -295,7 +332,7 @@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Define Macros
 %% example of a new command to apply a specific style to some text. Try: \algo{some text}
-\newcommand{\algo}[1]{{\fontfamily{qcr}\selectfont #1}}
+\newcommand{\algo}[1]{{\fontfamily{lmtt}\selectfont#1}}
 \def\ldb{[\![}
 \def\rdb{]\!]}
 \def\acc{\mathit{\,+\!\!=\,}}
