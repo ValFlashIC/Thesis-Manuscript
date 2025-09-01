@@ -71,7 +71,7 @@ The \acrlong{op} algorithm~\cite{Faddeev1981_InnerOuter} has the opposite \gls{r
 It changes nothing mathematically except that the computation is separated into two phases.
 First, during the \emph{multiply} phase, we compute several \acrfullpl{po} consisting of the \glspl{psum} $A_{j,k} \times b_{k}$, then during the \emph{merge} phase, we accumulate all the \acrshortpl{po} to form the final $C$-matrix (or $c$-vector).
 Algorithms~\ref{alg:bg:MVouter} and~\ref{alg:bg:MMouter} show that the \gls{crank} $K$ is the outer-most loop.
-Inverting $M$ and $N$ affects whether the output $C$ (or $c$) is updated by rows or by columns, but has no influence on the indirect accesses to the inputs.
+Inverting $M$ and $N$ affects whether the output $C$ (or $c$) is updated by rows or by columns, but has no influence on the indirect accesses presence.
 
 \begin{figure}
     \begin{minipage}[t]{0.49\linewidth}
@@ -139,6 +139,7 @@ For this algorithm, exchanging $M$ and $N$ causes the three matrices to be acces
 
 Note that these algorithms are available in dense as well as in sparse \acrshort{mv} and \acrshort{mm} multiplications.
 In sparse, the above algorithms (from \ref{alg:bg:MVinner} to \ref{alg:bg:MMgustavson}) have the same behavior from a software point-of-view, but need adjustments to traverse a \gls{spFormat} instead of a dense matrix.
+%see sparse algos for SpMSpM?
 
 TODO
 
@@ -168,8 +169,8 @@ TODO
             vline{2} = {2-4}{0.5pt},
         }
         &
-        \acrfull{ip}\hyperlink{fn1}{$^{\mathrm{1}}$} &
-        \acrfull{op}\hyperlink{fn1}{$^{\mathrm{1}}$} &
+        \acrfull{ip}\hyperlink{fn0}{$^{\mathrm{1}}$} &
+        \acrfull{op}\hyperlink{fn0}{$^{\mathrm{1}}$} &
         \acrfull{gust}\hyperlink{fn1}{$^{\mathrm{2}}$} \\
         %
         {A$(M, K)$ \\ Accesses} &
@@ -203,20 +204,21 @@ TODO
 \subsection{Tiling}
 \label{sec:bg:tiling}
 
-The \emph{tiling} process~\cite{Grunbaum1987_Tiling} consists in matrix partitioning: a matrix may be divided into \emph{tiles}, non-overlapping sub-matrices.
-In other words, this method consists of adding \emph{ranks} to delimit the \emph{tiles}, and thus adding loop iterations in the kernel algorithm.
+The \gls{tiling} process~\cite{Grunbaum1987_Tiling} consists in matrix partitioning: a matrix may be divided into \glspl{tile}, non-overlapping sub-matrices.
+In other words, this method consists of adding \glspl{rank} to delimit the \glspl{tile}, and thus adding loop iterations in the kernel algorithm.
 
-\emph{Tiling} methods allow to locally reduce the dimensions of data and thus to adapt the working set to the size of the local memory~\cite{Lam1991_Tiling}, particularly when the matrix has a structure with denser regions.
-Tiling can also increase parallelism opportunities.
-Software optimizations for sparse matrix computation, such as OSKI~\cite{Vuduc2005}, are based on \emph{tiling}.
-In previous sections, the study of the \algo{IP}, \algo{OP} and \algo{Gust} algorithms highlighted the influence of \emph{rank} ordering on the sequentiality and data movement, and thus, adding intermediate \emph{ranks} with \emph{tiling} breaks the regularity of pure \algo{IP} or \algo{OP} algorithms, requiring additional hardware support (see Section~\ref{sec:bg:hwchallenges}).
+\Gls{tiling} methods allow to locally reduce the dimensions of data and thus to adapt the working set to the size of the local memory~\cite{Lam1991_Tiling}, particularly when the matrix has a structure with denser regions.
+\Gls{tiling} can also increase parallelism opportunities.
+Software optimizations for sparse matrix computation, such as OSKI~\cite{Vuduc2005}, are based on \gls{tiling}.
+In previous sections, the study of the \acrshort{ip}, \acrshort{op} and \acrshort{gust} algorithms highlighted the influence of \gls{rank} ordering on the sequentiality and data movement, and thus, adding intermediate \glspl{rank} with \gls{tiling} breaks the regularity of pure \acrshort{ip} or \acrshort{op} algorithms, requiring additional hardware support (see Section~\ref{sec:bg:hwchallenges}).
 
-For example, let us consider the $A$-matrix in Figure~\ref{fig:bg:tiling_ex} which is divided into four tiles (one level of \emph{tiling}).
-For a SpMV, two new \emph{ranks} appear for a total of four \emph{ranks}: $M_1$ and $K_1$ allow \emph{tile} selection and $M_2$ and $K_2$ allow data access within a \emph{tile}.
-Thus, we could decide to apply an \algo{OP} on \emph{tiles} and conversely an \algo{IP} within \emph{tiles}, mixing-up the pros and cons of these two algorithms at different \emph{rank} levels.
-In the case of the example in Figure~\ref{fig:bg:tiling_ex}, the upper-left $A$-\emph{tile} (red) is evaluated first, sequentially updating the upper tile of the $c$-vector in an \algo{IP} manner.
-The lower-left $A$-\emph{tile} (yellow) is then computed the same way. At this point, \emph{intersections} have been done with only the upper $b$-\emph{tile}, and $c$ has been updated sequentially.
-The two next $A$-\emph{tiles} (green, then blue) will compute \emph{intersections} with the lower $b$-\emph{tile} and update the entire $c$-vector sequentially, showing the \algo{OP} characteristic of having \emph{POs} to \emph{merge}, two in this case.
+For example, let us consider the $A$-matrix in Figure~\ref{fig:bg:tiling_ex} which is divided into four \glspl{tile} (one level of \gls{tiling}).
+For a \acrshort{spmv}, two new \glspl{rank} appear for a total of four \glspl{rank}: $M_1$ and $K_1$ allow \gls{tile} selection and $M_2$ and $K_2$ allow data access within a \gls{tile}.
+Thus, we could decide to apply an \acrshort{op} on \glspl{tile} and conversely an \acrshort{ip} within \glspl{tile}, mixing-up the pros and cons of these two algorithms at different \gls{rank} levels.
+In the case of the example in Figure~\ref{fig:bg:tiling_ex}, the upper-left $A$-\gls{tile} (\textit{red}) is evaluated first, sequentially updating the upper \gls{tile} of the $c$-vector in an \acrshort{ip} manner.
+The lower-left $A$-\gls{tile} (\textit{yellow}) is then computed the same way.
+At this point, \glspl{intersection} have been done with only the upper $b$-\gls{tile}, and $c$ has been updated sequentially.
+The two next $A$-\glspl{tile} (\textit{green}, then \textit{blue}) will compute \glspl{intersection} with the lower $b$-\gls{tile} and update the entire $c$-vector sequentially, showing the \acrshort{op} characteristic of having \acrshortpl{po} to \emph{merge}, two in this case.
 % add ref to algo
 
 \begin{figure}
@@ -250,5 +252,5 @@ The two next $A$-\emph{tiles} (green, then blue) will compute \emph{intersection
     \end{minipage}
 \end{figure}
 
-Note that in case of \emph{tiling}, the $A$-matrix is no longer read sequentially, which can be problematic if it is stored in a classical \emph{sparse format} like \emph{CSR} that is specifically made for \emph{row-wise} accesses.
-Custom \emph{sparse formats} adapted for \emph{tiling} can be used \cite{Im2004_TilingBCSR}, but this requires a preprocessing conversion.
+Note that in case of \gls{tiling}, the $A$-matrix is no longer read sequentially, which can be problematic if it is stored in a classical \gls{spFormat} like \acrshort{csr} that is specifically made for \emph{row-wise} accesses.
+Custom \glspl{spFormat} adapted for \gls{tiling} can be used \cite{Im2004_TilingBCSR}, but this requires a preprocessing conversion.
