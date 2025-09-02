@@ -22,7 +22,7 @@ Ref to Appendix~\ref{app:sparse_formats}. (mention others here but refer to app 
 
 Mention that there is many derivate from above main categories. We can create any format we want/need.
 
-\begin{figure}
+\begin{figure}[htbp]
     \centering
     \begin{subfigure}[t]{0.32\linewidth}
         \centering
@@ -48,12 +48,25 @@ Mention that there is many derivate from above main categories. We can create an
     \label{fig:bg:FormatEx}
 \end{figure}
 
-Describe an example of custom sparse format that we made to better exploit banded matrices, \acrshort{bacsc} \ref{fig:bg:FormatEx:BaCSC}.
+Describe an example of custom sparse format that we made to better exploit \gls{banded} matrices, \acrshort{bacsc} \ref{fig:bg:FormatEx:BaCSC}.
 % IB and OB -> acronyms
 
-\begin{figure}
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{Chapter_Background/Figures/PDF/SparseFormats/SpFormats_BaCSC.pdf}
     \caption{Example of a Sparse Matrix in \acrshort{bacsc} Format}
     \label{fig:bg:FormatEx:BaCSC}
 \end{figure}
+
+\begin{highlight}{Definition}{LimeGreen}
+    A \gls{spFormat} is a compression format for sparse matrices, which avoids storing zeros by using \gls{metadata}.
+\end{highlight}
+
+\begin{highlight}{Note}{SkyBlue}
+    The mostly used \glspl{spFormat} are \acrshort{coo}, \acrshort{csr} and \acrshort{csc}.
+\end{highlight}
+
+\begin{highlight}{Conclusion}{Red}
+    With the use of \glspl{spFormat}, it is possible to greatly decrease memory footprints while increasing the data dimensions.
+    It allows great flexibility to manage data structure in software.
+\end{highlight}

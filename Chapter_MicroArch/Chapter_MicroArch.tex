@@ -1,0 +1,119 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CHAPTER Microarchitecture
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter[Microarchitecture]{Microarchitecture}
+\label{cha:microarch}
+
+\minitoc
+
+% \input{}
+
+
+
+%%%%%%%%%%%%%%%%%
+%%from HPCA
+% In light of the above analysis, this section describes the architecture of a \textit{reduction cache} capable of supporting multiple regions with distinct characteristics.
+% We introduce OBaMMA, an \textit{\underline{O}uter-Product} \underline{Ba}nded \underline{M}atrix \underline{M}emory \underline{A}ccelerator.
+% OBaMMA features two primary capabilities.
+% First, as a \textit{reduction cache}, it supports \textit{reduction} instructions, enabling the accumulation of data near-memory.
+% Second, it implements a region-based cache where regions have different data-granularity, levels of associativity and overall behavior.
+
+% The OBaMMA cache has three regions:
+% \begin{itemize}
+%     \item The GRC (\textit{Generic Region Cache}) functions as a generic cache region.
+%     It is useful for processing sequential memory accesses that occur during the computation of sparse kernels.
+%     For example, in the \algo{OP} SpMV kernel, the GRC manages the sequential reads of matrix $A$ and vector $b$.
+%     %
+%     \item The DRC (\textit{Dense Region Cache}) operates as a line-wise set-associative \textit{reduction cache}.
+%     It exclusively processes \textit{reduction} instructions, in a write-back manner.
+%     Data to be accumulated is held only in the cache.
+%     Memory transactions, to synchronize main memory, are issued only on data eviction.
+%     This region is beneficial for matrix areas which exhibit high locality despite the apparent randomness of accesses, such as within the matrix band.
+%     %
+%     \item The SRT (\textit{Sparse Region Table}) functions as an element-wise fully-associative \textit{reduction cache}.
+%     Like the DRC, it processes \textit{reduction} instructions in a write-back manner but employs atomic element-wise memory transactions instead of the conventional line-wise read and write transactions.
+%     This region is advantageous for matrix areas where elements are isolated, having minimal spatial locality, such as outside the band of a matrix.
+% \end{itemize}
+
+% This approach is similar to~\cite{Isaac2024_SpDCache} which already suggested that splitting a cache can reduce memory traffic, however, the analysis was empirical, based on a high-level Python model and the sizing of the regions was not addressed.
+% Our work extends this by providing an analytical study that strengthens the concept and offers insights into region dimensioning.
+% Additionally, OBaMMA includes a fully functional RTL implementation, enabling accurate performance and area evaluation, as presented in Section~\ref{sec:evaluation}.
+
+% OBaMMA is implemented in the L1 data-cache for a CVA6 RISC-V core, starting from an existing open-source high-performance set-associative data-cache called HPDcache~\cite{Fuguet2023_HPDcache}.
+% HPDcache employs a three-stage pipeline to process instructions.
+% The first stage (\textit{st0}) decodes instructions and issues reads to the cache directory and data RAMs (\textit{Dir} and \textit{Data}).
+% These reads require one cycle to respond.
+% In the second stage (\textit{st1}), the response indicates whether a hit or miss occurred and if an eviction is necessary.
+% The instruction proceeds to the final stage (\textit{st2}) only if a miss or eviction must be processed.
+% At \textit{st0}, the instruction is not yet consumed.
+% Depending on the response and the availability of cache resources at \textit{st1}, a \textit{nop} (\textit{no operation}) may be inserted in the pipeline, and the instruction may be placed in a \textit{replay table}.
+% The instruction is then replayed with the highest priority once its dependencies are cleared.
+% If the instruction does not need to be replayed at \textit{st1}, it is consumed and processed.
+% This system minimizes pipeline stalls and enables out-of-order cache execution.
+
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.7\linewidth]{Figures/PDF/SpDC_MicroArchi.pdf}
+%     \caption{OBaMMA Microarchitecture, based on HPDcache}
+%     \label{fig:microarch}
+% \end{figure}
+
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=\linewidth]{Figures/PDF/Sets_redirection.pdf}
+%     \caption{Set Redirection Depending on the Region}
+%     \label{fig:set_redirection}
+% \end{figure}
+
+% We configure the original HPDcache as a 4-way set-associative cache with 128 \textit{sets} and 64-byte cache-lines, resulting in a total cache size of 32~kiB.
+% We extend the three-stage pipeline to handle the new RED instruction.
+% Figure~\ref{fig:microarch} provides an overview of OBaMMA's microarchitecture, highlighting new blocks in \textit{red}, modified blocks in \textit{blue}, and untouched components in \textit{black}.
+% Let us briefly describe the operation of the DRC under three scenarios: hits, misses with available cache-lines, and misses requiring eviction.
+
+% \textbf{In the case of a hit}, the value of the RED instruction is accumulated with its corresponding value in the cache.
+% At \textit{st1}, the cache value, read in \textit{st0} from \textit{Data}, is accumulated with the RED value using a dedicated accumulator (\textit{Acc}).
+% The result is written back to \textit{Data} at \textit{st2}.
+
+% \textbf{In the case of a miss}, if there is an available cache-line, the value of the RED instruction is simply stored in this free entry of the cache.
+% A free cache-line is selected at \textit{st1}, and at \textit{st2}, the RED value is written to \textit{Data} along with zeros to reset the selected cache-line.
+% A write to \textit{Dir} is also performed to change the state of the cache-line from free to valid.
+
+% \textbf{If a miss occurs but no cache-line is free}, an eviction must be processed before handling the RED instruction.
+% The RED instruction is placed in the \textit{PrioRED table} to be replayed with higher priority than the \textit{replay table}.
+% Meanwhile, at \textit{st2}, the \textit{miss handler}, \textit{flush controller}, and \textit{accumulation table} are allocated to process the eviction.
+% The eviction is a ``fire-and-forget'' operation, meaning the RED instruction only needs to wait for the entry in \textit{Data} to be freed, not for the entire eviction to finish.
+% The eviction process begins by fetching and resetting the chosen 64~B cache-line from \textit{Data}, which is done in one cycle by the \textit{flush controller}.
+% Simultaneously, the \textit{miss handler} issues a read to the main memory, which in our performance simulations, we assume will take 64 cycles to respond.
+% The \textit{accumulation table} waits and temporarily stores both the old cache-line from the \textit{flush controller} and the 64~B response data from the \textit{miss handler}.
+% It then accumulates the cache-line with the data, word by word, and sends the 64~B results back to the main memory using the existing write interface.
+
+% With the changes described above, we have transformed \mbox{HPDcache} into a \textit{reduction cache}.
+% To achieve multiple cache regions, we virtually separate the cache RAMs.
+% To maintain HPDcache's set-associative operation, we divide the cache memory along its \textit{sets}.
+% Thus, each region of the cache has the same structure as the overall cache but is smaller in size: each \textit{set} contains a fixed number (the number of ways) of 64-byte cache-lines, as depicted in Figure~\ref{fig:set_redirection}.
+% Each region can map any possible address.
+% To ensure that every address matches a unique \textit{set} within each region, we allocate a power-of-two number of consecutive \textit{sets} to a region.
+% Considering the total number of \textit{sets} $S_T$ and our region $R$ mapping on $S_R < S_T$ of them, starting at the \textit{set} $s_\mathit{offset}$, if an address matches one of the \textit{sets} of this region, no action is required.
+% However, if the address matches a \textit{set} $s_\mathit{addr}$ outside the region, we need to map it to a unique \textit{set} in the region such that $s_\mathit{region} = (s_\mathit{addr} \% S_R) + s_\mathit{offset}$, as illustrated in Figure~\ref{fig:set_redirection}.
+% The three regions GRC, DRC, and SRT are each defined by their number of \textit{sets} $S_R$ and their first \textit{set}, $s_\mathit{offset}$.
+% OBaMMA can thus be dynamically reconfigured to operate as a generic cache, a traditional \textit{reduction cache} or a region-based \textit{reduction cache} based on the needs of the application (\textit{config} in Figure~\ref{fig:microarch}).
+
+% The SRT region requires additional adjustments to function as an element-wise fully-associative cache.
+% This region operates as if all the \textit{sets} were combined into a single \textit{set}, containing numerous elements.
+% Each element requires its own directory entry.
+% Therefore, we replace the \textit{Dir} RAMs of this region with a \textit{CAM} (\textit{Content-Addressable Memory}) containing the addresses of each valid element in the SRT region.
+% With the \textit{CAM}, we can check for a hit across the entire region and retrieve the matching value stored in the \textit{Data} RAMs.
+% We also added a queue (\textit{RED AMO Queue}) to manage the element-wise read-modify-write memory transactions.
+
+% To avoid address duplication between regions, the \textit{MultiHit fetcher} in Figure~\ref{fig:microarch} manages coherency between the DRC and SRT.
+% Since software selects the region, this can be necessary.
+
+% We have added several custom instructions to the CVA6 RISC-V core~\cite{Waterman2016_RISCV_ISA}.
+% The primary addition is the \textit{reduction} instruction (\textit{RED}), which takes an address and a value as arguments and expects no response.
+% This instruction is accompanied by a region instruction (\textit{REG}) that specifies in which region subsequent \textit{reductions} should be processed.
+% We have also added an instruction to flush the \textit{reduction} regions (DRC and SRT) of the cache, which is necessary at the end of the algorithm.
+% It is performed in the cache by the \textit{CMO handler}.
+% Finally, we have included an instruction to enable and disable the \textit{reduction} mode of OBaMMA.
+
+\clearpage

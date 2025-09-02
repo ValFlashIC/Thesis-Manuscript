@@ -6,11 +6,85 @@
 \section{Sparse Matrices}
 \label{sec:bg:spMatrices}
 
-TODO
-
 % sparse matrices / base def (A nnz M N aij ...)
 
+Irregular data are commonly found in sparse matrix computing, where large matrices filled with many zeros are stored in compressed format in memory.
+
+A matrix is defined as a two dimensional array.
+
+Density $d$, $nnz$
+Square $(M, M)$
+
+\begin{highlight}{Definition}{LimeGreen}
+    A sparse matrix is a matrix filled with many zeros.
+    In general, we consider a matrix to be sparse (or highly sparse) when its number of non-zero elements has the same order of magnitude than its dimension, $nnz \sim M$.
+\end{highlight}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Banded Matrices}
 \label{sec:bg:bandedMatrices}
 
-TODO
+Matrices used in scientific computation originate from physical modelling where a system of partial differential equations is discretized, resulting in a large sparse matrix.
+The regularity of this generation process naturally creates \gls{banded} matrices.
+Moreover, numerical techniques exist to transform matrices into \gls{banded} matrices~\cite{Luo1992_MatrixStruct, Mafteiu2014_MatrixStruct, Wang2014_MatrixStruct}.
+
+A \gls{banded} matrix is a matrix which has a dense region around its main diagonal and which is sparser away from the diagonal.
+To give few visual examples, Figure~\ref{fig:bg:example_matrix_structure} shows the structure plots for four typical matrices found in the SuiteSparse Matrix Collection~\cite{Kolodziej2019_SuiteSparse}, having a high-density \gls{band} along the diagonal.
+In Figure~\ref{fig:bg:banded_mat_def}, we illustrate a \gls{banded}, square matrix of dimension $M$.
+We define $w_B$ as the width of the \gls{banded} region, or \gls{bandwidth}, as shown in \textit{red} in the figure.
+Sometimes it is easier to refer to the half-\gls{bandwidth}, $w_{hB}$, which respects the relation $w_B = 2 \times w_\mathit{hB} - 1$.
+The average density in the \gls{band} and out of the \gls{band} is defined as $d_\mathit{IB}$ and $d_\mathit{OB}$, respectively.
+As in Figure~\ref{fig:bg:raefsky3}, in a \gls{PBanded} matrix, there are no elements outside the \gls{band}, thus $d_\mathit{OB} = 0$.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}[b]{0.76\linewidth}
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}[t]{0.24\linewidth}
+                \centering
+                \includegraphics[width=\linewidth]{Chapter_Background/Figures/PDF/roadNet-CA.pdf}
+                \caption{\textit{roadNet-CA}}
+                \label{fig:bg:roadNet-CA}
+            \end{subfigure}
+            \hfill
+            \begin{subfigure}[t]{0.24\linewidth}
+                \centering
+                \includegraphics[width=\linewidth]{Chapter_Background/Figures/PDF/scircuit.pdf}
+                \caption{\textit{scircuit}}
+                \label{fig:bg:scircuit}
+            \end{subfigure}
+            \hfill
+            \begin{subfigure}[t]{0.24\linewidth}
+                \centering
+                \includegraphics[width=\linewidth]{Chapter_Background/Figures/PDF/msc10848.pdf}
+                \caption{\textit{msc10848}}
+                \label{fig:bg:msc10848}
+            \end{subfigure}
+            \hfill
+            \begin{subfigure}[t]{0.24\linewidth}
+                \centering
+                \includegraphics[width=\linewidth]{Chapter_Background/Figures/PDF/raefsky3.pdf}
+                \caption{\textit{raefsky3}}
+                \label{fig:bg:raefsky3}
+            \end{subfigure}
+            \caption{Examples of \Gls{banded} Matrix Structure}
+            \label{fig:bg:example_matrix_structure}
+        \end{figure}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[b]{0.22\linewidth}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.88\linewidth]{Chapter_Background/Figures/PDF/MatrixDef.pdf}
+            \caption{Banded Matrix Definition}
+            \label{fig:bg:banded_mat_def}
+        \end{figure} 
+    \end{minipage}
+\end{figure}
+
+\begin{highlight}{Definition}{LimeGreen}
+    A \gls{banded} matrix is a sparse matrix which has a higher density of non-zero elements around the diagonal.
+    A \gls{PBanded} matrix is a \gls{banded} matrix which concentrates all its non-zero elements within a delimitated region around the diagonal.
+    This region is called the \gls{band}.
+\end{highlight}

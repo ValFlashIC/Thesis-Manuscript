@@ -40,7 +40,7 @@ In Algorithm~\ref{alg:bg:IPSpMSpMCSR}, we use sorted \glspl{spFormat} (\acrshort
 Thus, the ma\"ive \gls{intersection} search proposed (line 10) does at most one traversal of each the current row of $A$ ($i$) and the current column of $B$ ($j$).
 As we will see in Section~\ref{cha:soa}, certain accelerators provide support for performing this \gls{intersection} operation directly in hardware.
 
-\begin{algorithm}
+\begin{algorithm}[htbp]
     \caption{\acrshort{ip} \acrshort{spmspm} Performing \Gls{intersection} Searches with \acrshort{csr} and \acrshort{csc} Formats}
     \label{alg:bg:IPSpMSpMCSR}
     %
@@ -110,7 +110,7 @@ As we will see, hardware accelerators may combine the \emph{immediate} and \emph
 
 % ref for merging methods to add?
 
-\begin{algorithm}
+\begin{algorithm}[htbp]
     \caption{\acrshort{op} \acrshort{spmspm} Performing \Gls{reduction} with \acrshort{csr} and \acrshort{csc} Formats}
     \label{alg:bg:OPSpMSpMCSR}
     %
@@ -211,7 +211,7 @@ As we will see, hardware accelerators may combine the \emph{immediate} and \emph
 
 In Table~\ref{tab:bg:AlgosHWComp}, we summarize the previously discussed advantages and hardware challenges for each algorithm, including \acrshort{gust} which presents a trade-off between \acrshort{ip} and \acrshort{op}.
 
-\begin{table}
+\begin{table}[htbp]
     \centering
     \caption{Comparison of Advantages and Challenges with Matrix Multiplication Algorithms}
     \label{tab:bg:AlgosHWComp}
@@ -293,6 +293,10 @@ Typically, with \acrshort{ip}, the \gls{gather} problem is more difficult.
 The \gls{scatter} problem exists when the order in which the output matrix/vector is generated is not sequential and is typically associated with the \acrshort{op} algorithm.
 In the case of \gls{tiling}, a hardware accelerator must handle both \gls{gather} and \gls{scatter}, creating a need for hardware support for both \gls{intersection} searches and \glspl{reduction}.
 
+\begin{highlight}{Conclusion}{Red}
+    HW challenges
+\end{highlight}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{SpMSpM Algorithm Analysis}
 \label{sec:bg:AnalyticalModel}
@@ -314,7 +318,7 @@ Whereas for \acrshort{op} and \acrshort{gust}, the $A$-matrix is read only once 
 For \acrshort{op} and \acrshort{gust} the total number of accesses is the same, however, with \acrshort{op} (graph~\ding{193}), the accesses to $C$ are ``random'' (\textit{red}).
 With \acrshort{gust} (graph~\ding{194}), the accesses to $B$ are sequential within the rows (\textit{orange}) and the $C$-rows are generated sequentially (\textit{yellow}), thus \acrshort{gust} avoids having any fully ``random'' accesses (\textit{red}).
 
-\begin{figure}
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{Chapter_Background/Figures/PDF/RawSpMSpMAccessesCountAnalysis.pdf}
     \caption{Model of Memory Access Counts Depending on Algorithm and Local Memory Size}
@@ -347,7 +351,7 @@ Based on this analysis, it is clear that \acrshort{gust} is the best algorithm f
 
 % note that uniform --> with real structure -> depend of matrix -> but in mean Gust best (see ref)
 
-\begin{table}
+\begin{table}[htbp]
     \centering
     \caption{Memory Access Count for Each Matrices of \acrshort{ip}, \acrshort{op} and \acrshort{gust} \acrshort{spmspm}}
     \label{tab:bg:spmspm_access_count}
@@ -398,3 +402,7 @@ Based on this analysis, it is clear that \acrshort{gust} is the best algorithm f
         \hypertarget{fn0}{$^{\mathrm{1}}$} We can not easily quantify $nnz(C)$ knowing $nnz(A)$ and $nnz(B)$.
     \end{tblr}
 \end{table}
+
+\begin{highlight}{Conclusion}{Red}
+    Algos comparison
+\end{highlight}

@@ -42,6 +42,7 @@
 \usepackage[square,numbers,sort&compress]{natbib}
 \if\Language\EN \usepackage[english]{babel}
 \else \usepackage[french]{babel} \fi
+% \usepackage{courierten}
 \usepackage[T1]{fontenc}
 % \usepackage{palatino}
 \usepackage{bookman}
@@ -103,7 +104,7 @@
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add takeaways environment
-\newtcolorbox{takeaways}[1]{
+\newtcolorbox{highlight}[2]{
 	sharp corners,
 	frame hidden,
 	interior hidden,
@@ -116,12 +117,12 @@
 	bottom=0pt,
 	lower separated=false,
 	fonttitle=\scshape\bfseries\large,
-	title style={draw=none, fill=none, left color=SkyBlue!10, right color=white},
-	coltitle=SkyBlue,
+	title style={draw=none, fill=none, left color=#2!10, right color=white},
+	coltitle=#2,
 	enhanced,
-	colframe=SkyBlue,
-	colback=SkyBlue!2,
-	borderline west={1mm}{0mm}{SkyBlue},
+	colframe=#2,
+	colback=#2!2,
+	borderline west={1mm}{0mm}{#2},
 	title={#1},
 	breakable
 }
@@ -332,7 +333,7 @@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Define Macros
 %% example of a new command to apply a specific style to some text. Try: \algo{some text}
-\newcommand{\algo}[1]{{\fontfamily{lmtt}\selectfont#1}}
+\newcommand{\algo}[1]{{\fontfamily{qcr}\selectfont\bfseries#1}}
 \def\ldb{[\![}
 \def\rdb{]\!]}
 \def\acc{\mathit{\,+\!\!=\,}}
