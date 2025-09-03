@@ -27,9 +27,14 @@
 
 \note{From SoA paper}
 
-The execution time of modern scientific and engineering applications is dominated by the manipulation of large sparse matrices, \emph{i.e.} matrices whose number of non-zero entries $NNZ$ is much smaller than their dimensions $M \times N$. Matrices derived from computational physics problems are often sparse and regular because they derive from a relatively small number of differential terms.
-Algebraic graph problems produce matrices which are still sparse but usually less regular~\cite{Buluc2011}. Similarly, the weight and activation matrices used by Convolutional Neural Networks (CNN) may hold millions of terms, but most of them are explicitly set to zero (\emph{e.g.} \emph{rectified}) without loss of information~\cite{Gale2020}.
-It was recognized early in the 1960s~\cite{Saad2003_COO_CSR_DIA_ELL} that working on these sparse data sets using dense array representations was inefficient. The seminal work of OSKI~\cite{Vuduc2005} in 2003 formalized the sparse representation alternatives and identified many optimizations. This opened the path for specialized software libraries for sparse algebra~\cite{Williams2007}. However, the single-core performance of software implementations can be deceiving, often only reaching 10\% of peak performance~\cite{Gale2020}.
+The execution time of modern scientific and engineering applications is dominated by the manipulation of large sparse matrices, \emph{i.e.} matrices whose number of non-zero entries $NNZ$ is much smaller than their dimensions $M \times N$.
+Matrices derived from computational physics problems are often sparse and regular because they derive from a relatively small number of differential terms.
+Algebraic graph problems produce matrices which are still sparse but usually less regular~\cite{Buluc2011}.
+Similarly, the weight and activation matrices used by Convolutional Neural Networks (CNN) may hold millions of terms, but most of them are explicitly set to zero (\emph{e.g.} \emph{rectified}) without loss of information~\cite{Gale2020}.
+It was recognized early in the 1960s~\cite{Saad2003_COO_CSR_DIA_ELL} that working on these sparse data sets using dense array representations was inefficient.
+The seminal work of OSKI~\cite{Vuduc2005} in 2003 formalized the sparse representation alternatives and identified many optimizations.
+This opened the path for specialized software libraries for sparse algebra~\cite{Williams2007}.
+However, the single-core performance of software implementations can be deceiving, often only reaching 10\% of peak performance~\cite{Gale2020}.
 
 %%%% VC %%%%
 The main matrix multiplication kernels that are of interest are matrix-vector (MV) and matrix-matrix (MM), which include \acrshort{spmv} and SpMSpV ($A \times b = c$), SpGEMV ($A \times b + d = c$), SpMM and SpMSpM ($A \times B = C$), and SpGEMM ($A \times B + D = C$), with \emph{Sp} for \emph{sparse} and \emph{GE} for \emph{general}.

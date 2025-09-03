@@ -34,31 +34,38 @@
 \newglossaryentry{randAccess}{
     name=``random'' access,
     description={Is a memory access that occurs on an arbitrary memory address (not necessarily conscutive in memory with previous and next accesses)},
-    plural=``random'' accesses
+    plural=``random'' accesses,
+    sort=randomaccess
 }
 
 \newglossaryentry{irrAccess}{
     name=irregular access,
-    description={See `\gls{randAccess}'},
+    description={See \gls{randAccess}},
     plural=irregular accesses
 }
 
+\newglossaryentry{irrData}{
+    name=irregular data,
+    description={Refers to data that has low spatial and temporal locality, thus being more likely to generate \glspl{irrAccess}},
+    plural=irregular data
+}
+
 \newglossaryentry{dFormat}{
-    name=\emph{dense format},
+    name=dense format,
     description={Is the uncompressed format where all zeros and non-zeros are stored, without any use of \gls{metadata}},
-    plural=\emph{dense formats}
+    plural=dense formats
 }
 
 \newglossaryentry{spFormat}{
-    name=\emph{sparse format},
+    name=sparse format,
     description={Is a compression format for sparse matrices, which avoids storing zeros by using \gls{metadata}},
-    plural=\emph{sparse formats}
+    plural=sparse formats
 }
 
 \newglossaryentry{metadata}{
-    name=\emph{metadata},
+    name=metadata,
     description={Is data that provides information about other data, such as index arrays of \glspl{spFormat}},
-    plural=\emph{metadata}
+    plural=metadata
 }
 
 \newglossaryentry{tiling}{
@@ -74,21 +81,21 @@
 }
 
 \newglossaryentry{rank}{
-    name=\emph{rank},
+    name=rank,
     description={Refers to a dimension of the kernel},
-    plural=\emph{ranks}
+    plural=ranks
 }
 
 \newglossaryentry{crank}{
-    name=\emph{common rank},
+    name=common rank,
     description={Refers to a \gls{rank} that is common between two data-entries, when computing a kernel},
-    plural=\emph{common ranks}
+    plural=common ranks
 }
 
 \newglossaryentry{psum}{
-    name=\emph{partial sum},
+    name=partial sum,
     description={Refers to the intermediary result before updating the output, when computing a matrix multiplication},
-    plural=\emph{partial sums}
+    plural=partial sums
 }
 
 \newglossaryentry{intersection}{
@@ -122,21 +129,22 @@
 }
 
 \newglossaryentry{band}{
-    name=\emph{band},
+    name=band,
     description={Refers to an area of a matrix that is concentrated around the diagonal},
-    plural=\emph{bands}
+    plural=bands
 }
 
 \newglossaryentry{banded}{
-    name=\emph{banded},
+    name=banded,
     description={Refers to a matrix structure where the non-zero elements are concentrated around the diagonal},
-    plural=\emph{banded}
+    plural=banded
 }
 
 \newglossaryentry{PBanded}{
-    name=\emph{`perfectly' banded},
+    name=`perfectly' banded,
     description={Refers to a matrix structure where all the non-zero elements are concentrated within a delimitated area around the diagonal (the \gls{band})},
-    plural=\emph{`perfectly' banded}
+    plural=`perfectly' banded,
+    sort=perfectlybanded
 }
 
 \newglossaryentry{bandwidth}{
@@ -181,3 +189,7 @@
     \glsshortpluralkey=\emph{POs},
     \glslongpluralkey=\emph{partial outputs}
 ]{po}{\emph{PO}}{\emph{partial output}}
+\newacronym[
+    \glsshortpluralkey=\emph{CNNs},
+    \glslongpluralkey=\emph{Convolutional Neural Networks}
+]{cnn}{\emph{CNN}}{\emph{Convolutional Neural Network}}

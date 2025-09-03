@@ -3,22 +3,23 @@
 % Kernels and Algorithms
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% rank / OP / IP / Gust / tile / tiling / partial outputs / partial sums / intersections
-
 \section{Algorithms for Dense and Sparse Matrix Multiplication}
 \label{sec:bg:algos}
 
-The accelerators described in this paper address sparse \acrshort{mv} and \acrshort{mm}.
-For \acrshort{mv} we use the notation $A(M,K) \times b(K) = c(M)$ and for \acrshort{mm} the notation $A(M,K) \times B(K,N) = C(M,N)$.
-The \gls{rank} $K$ is the \gls{crank} between the two inputs.
+The main matrix multiplication kernels that are of interest are \acrfull{mv} and \acrfull{mm}, which include \acrshort{spmv} and \acrshort{spmspv} ($A \times b = c$), \acrshort{spgemv} ($A \times b + d = c$), \acrshort{spmm} and \acrshort{spmspm} ($A \times B = C$), and \acrshort{spgemm} ($A \times B + D = C$), with `Sp' for \emph{sparse} and `GE' for \emph{general}.
+In the following sections, we focus on \acrshort{spmv} and \acrshort{spmspm}, with the notation $A(M,K) \times b(K) = c(M)$ and  $A(M,K) \times B(K,N) = C(M,N)$, respectively.
+The \gls{rank} $K$ is the \gls{crank} between the two inputs $A$ and $B$ (or $b$).
 
 The existence of different \glspl{rank} allows several algorithmic possibilities to compute matrix multiplication: the \acrfull{ip} algorithm, the \acrfull{op} algorithm and \acrlong{gust}'s (\acrshort{gust}) algorithm~\cite{Faddeev1981_InnerOuter, Gustavson1978_GustAlgo}.
 In all cases, the matrix $A$ is traversed sequentially.
 The three algorithms, however, impose different access patterns for $B$ (or $b$) and $C$ (or $c$).
 Indeed, in many cases, they have to be accessed multiple times, as discussed in the following sections.
 
-\begin{highlight}{Definition}{LimeGreen}
-    The 3 algos
+\begin{highlight}{Note}{SkyBlue}
+    In this manuscript, we focus on only two kernels, \acrshort{spmv} and \acrshort{spmspm}.
+    Note that, among \acrshort{mv} kernels, \acrshort{spmv} is the most used and we specifically work on this kernel in Chapter~\ref{cha:eval}.
+    Similarly, \acrshort{spmspm} is widely used among \acrshort{mm} kernels, and serves as a great case study to understand the limitations of sparse \acrshort{mm} computing.
+    Also note that the \emph{general} (`GE') versions of these kernels do not fundamentally affect the hereafter analysis and conclusions.
 \end{highlight}
 
 \subsubsection{Inner-Product Algorithm}

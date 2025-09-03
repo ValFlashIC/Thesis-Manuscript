@@ -6,18 +6,24 @@
 \section{Sparse Matrices}
 \label{sec:bg:spMatrices}
 
-% sparse matrices / base def (A nnz M N aij ...)
-
-Irregular data are commonly found in sparse matrix computing, where large matrices filled with many zeros are stored in compressed format in memory.
+In most applications, irregular data can be found in matrix computing, where large matrices filled with many zeros are stored in compressed format in memory.
+These sparse matrices are commonly used in diverse fields such as linear algebra, where sparse matrix multiplication is used to solve linear systems of equations for scientific purposes or simulation [ref], as well as graph analytics where the vertices of a graph are represented as a sparse matrix that can be easily analysed with matrix operations~\cite{Buluc2011}, or finally \acrfullpl{cnn} or other similar AI features where weights and activations can be represented and processed as sparse matrices~\cite{Gale2020}.%TODO add refs
 
 A matrix is defined as a two dimensional array.
-
-Density $d$, $nnz$
-Square $(M, M)$
+We note matrices with capital letters $A$, $B$, $C$, conversely to vectors $a$, $b$, $c$.
+Their dimension are denoted using $M$, $N$ and $K$.
+For example, we can define a square matrix $A$ of dimension $M$, or a matrix $B$ of dimension $(K, N)$.
+We note $nnz$ the number of non-zero elements of a matrix, and $d$ the associated density.
+With the example of a matrix $A(M, N)$: $$d_A = \frac{nnz_A}{M \times N}$$
 
 \begin{highlight}{Definition}{LimeGreen}
-    A sparse matrix is a matrix filled with many zeros.
-    In general, we consider a matrix to be sparse (or highly sparse) when its number of non-zero elements has the same order of magnitude than its dimension, $nnz \sim M$.
+    A \textbf{sparse matrix} is a matrix filled with many zeros.
+\end{highlight}
+
+\begin{highlight}{Note}{SkyBlue}
+    In general, we consider a matrix to be highly sparse when its number of non-zero elements has the same order of magnitude than its dimension, $nnz \sim M$.
+    But there is no intrinsic definition of the frontier between a sparse and a dense matrix.
+    In this manuscript, we consider a matrix as sparse when it needs to be compressed in memory (see Section~\ref{sec:bg:sparse_formats}).
 \end{highlight}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +90,12 @@ As in Figure~\ref{fig:bg:raefsky3}, in a \gls{PBanded} matrix, there are no elem
 \end{figure}
 
 \begin{highlight}{Definition}{LimeGreen}
-    A \gls{banded} matrix is a sparse matrix which has a higher density of non-zero elements around the diagonal.
-    A \gls{PBanded} matrix is a \gls{banded} matrix which concentrates all its non-zero elements within a delimitated region around the diagonal.
+    A \textbf{\gls{banded} matrix} is a sparse matrix which has a higher density of non-zero elements around the diagonal.
+    A \textbf{\gls{PBanded} matrix} is a \gls{banded} matrix which concentrates all its non-zero elements within a delimitated region around the diagonal.
     This region is called the \gls{band}.
+\end{highlight}
+
+\begin{highlight}{Note}{SkyBlue}
+    The SuiteSparse Matrix Collection~\cite{Kolodziej2019_SuiteSparse} is a large, open source data-base of real application sparse matrices coming from various domains.
+    It gathers around 3,000 matrices of various sizes, densities and structure, which are extensively used for benchmarking (see Chapter~\ref{cha:soa}).
 \end{highlight}
