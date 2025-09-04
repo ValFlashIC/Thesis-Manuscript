@@ -36,16 +36,16 @@ The \acrlong{ip} algorithm~\cite{Faddeev1981_InnerOuter} is an intuitive way to 
     \label{eq:bg:MMinner}
 \end{equation}
 
-The \gls{crank} $K$ is the inner-most loop of the algorithm (see Algorithms~\ref{alg:bg:MVinner} and~\ref{alg:bg:MMinner}).
-The output $C$ (or $c$) is updated sequentially, but the $B$-matrix (or $b$-vector) will be entirely read $M$ times.
+The \gls{crank} $K$ is the inner-most loop of the algorithm (see Algorithms~\ref{alg:bg:MVinner} and~\ref{alg:bg:MMinner}, line 2 and 3, respectively).
+The output $C$ (or $c$) is always updated sequentially, but the $B$-matrix (or $b$-vector) will be entirely read $M$ times.
 In the context of sparse matrices, the reads of $B$ (or $b$) are conditioned by the non-zero elements of $A$, which requires indirect accesses.
 If $B$ (or $b$) is also sparse, the algorithm needs to perform \glspl{intersection} between the non-zero elements in the rows of $A$ and the columns of $B$ (or in the $b$-vector) (see Section~\ref{sec:bg:hwchallenges}).
-In Algorithm~\ref{alg:bg:MMinner}, exchanging $M$ and $N$ simply causes the output to be updated \emph{column-wise}.
+In Algorithm~\ref{alg:bg:MMinner}, exchanging $M$ and $N$ (lines 1 and 2) simply causes the output to be updated \emph{column-wise}.
 
 \begin{figure}[htbp]
     \begin{minipage}[t]{0.49\linewidth}
         \begin{algorithm}[H]
-        \caption{\acrlong{mv} \acrlong{ip} Algorithm}
+        \caption{Dense \acrlong{mv} \acrlong{ip} Algorithm}
         \label{alg:bg:MVinner}
         \For{$i \in \ldb 0, M-1 \rdb$}{
             \For{$k \in \ldb 0, K-1 \rdb$}{
@@ -57,7 +57,7 @@ In Algorithm~\ref{alg:bg:MMinner}, exchanging $M$ and $N$ simply causes the outp
     \hfill
     \begin{minipage}[t]{0.49\linewidth}
         \begin{algorithm}[H]
-        \caption{\acrlong{mm} \acrlong{ip} Algorithm}
+        \caption{Dense \acrlong{mm} \acrlong{ip} Algorithm}
         \label{alg:bg:MMinner}
         \For{$i \in \ldb 0, M-1 \rdb$}{
             \For{$j \in \ldb 0, N-1 \rdb$}{
@@ -73,15 +73,18 @@ In Algorithm~\ref{alg:bg:MMinner}, exchanging $M$ and $N$ simply causes the outp
 \subsubsection{Outer-Product Algorithm}
 
 The \acrlong{op} algorithm~\cite{Faddeev1981_InnerOuter} has the opposite \gls{rank} loop order than the \acrlong{ip}.
-It changes nothing mathematically except that the computation is separated into two phases.
-First, during the \emph{multiply} phase, we compute several \acrfullpl{po} consisting of the \glspl{psum} $A_{j,k} \times b_{k}$, then during the \emph{merge} phase, we accumulate all the \acrshortpl{po} to form the final $C$-matrix (or $c$-vector).
-Algorithms~\ref{alg:bg:MVouter} and~\ref{alg:bg:MMouter} show that the \gls{crank} $K$ is the outer-most loop.
-Inverting $M$ and $N$ affects whether the output $C$ (or $c$) is updated by rows or by columns, but has no influence on the indirect accesses presence.
+Indeed, Algorithms~\ref{alg:bg:MVouter} and~\ref{alg:bg:MMouter} show that the \gls{crank} $K$ is the outer-most loop (line 1).
+It changes nothing mathematically except that the $B$-matrix (or $b$-vector) is always read sequentially.
+In the context of sparse matrices, the output $C$ (or $c$) is updated with indirect accesses.
+The algorithm needs to perform \glspl{reduction} of the \glspl{psum} $A_{j,k} \times B_{k,j}$ (or $A_{j,k} \times b_{k}$), as we show in Section~\ref{sec:bg:hwchallenges}.
+To avoid irregularity when updating $C$ (or $c$), the \acrshort{op} algorithm is often separated into two phases.
+First, during the \emph{multiply} phase, we compute several \acrfullpl{po} consisting of intermediate matrices (or vectors) of \glspl{psum} $A_{j,k} \times B_{k,j}$ (or $A_{j,k} \times b_{k}$), then during the \emph{merge} phase, we accumulate all the \acrshortpl{po} to form the final $C$-matrix (or $c$-vector).
+With this method, \acrshort{op} necessitates the generation of at most $K$ \acrshortpl{po} of densities conditioned by the non-zeros elements of both inputs $A$ and $B$ (or $b$).
 
 \begin{figure}[htbp]
     \begin{minipage}[t]{0.49\linewidth}
         \begin{algorithm}[H]
-        \caption{\acrlong{mv} \acrlong{op} Algorithm}
+        \caption{Dense \acrlong{mv} \acrlong{op} Algorithm}
         \label{alg:bg:MVouter}
         \For{$k \in \ldb 0, K-1 \rdb$}{
             \For{$i \in \ldb 0, M-1 \rdb$}{
@@ -93,7 +96,7 @@ Inverting $M$ and $N$ affects whether the output $C$ (or $c$) is updated by rows
     \hfill
     \begin{minipage}[t]{0.49\linewidth}
         \begin{algorithm}[H]
-        \caption{\acrlong{mm} \acrlong{op} Algorithm}
+        \caption{Dense \acrlong{mm} \acrlong{op} Algorithm}
         \label{alg:bg:MMouter}
         \For{$k \in \ldb 0, K-1 \rdb$}{
             \For{$i \in \ldb 0, M-1 \rdb$}{
@@ -106,22 +109,22 @@ Inverting $M$ and $N$ affects whether the output $C$ (or $c$) is updated by rows
     \end{minipage}
 \end{figure}
 
-With \acrlong{op}, the $B$-matrix (or $b$-vector) is read sequentially.
-This algorithm necessitates the generation of $K$ \acrshortpl{po}.
-Moreover, in the context of sparse input matrices, the \acrshort{po} element updates are conditioned by the non-zeros elements of both inputs.
-Thus, a \gls{psum} could potentially be zero, reducing the number of \acrshort{po} element updates, and making them non-sequential.
-If the output $C$ (or $c$) is stored in a \gls{spFormat}, then it is necessary to repeatedly access and update each \gls{psum}.
-
 \subsubsection{Gustavson's Algorithm}
 
-As the \acrshort{mm} algorithm has three \glspl{rank} instead of two for \acrshort{mv}, there is a third ordering, known as \acrlong{gust}'s algorithm~\cite{Gustavson1978_GustAlgo} where the \gls{crank} $K$ is the middle-loop (see Algorithm~\ref{alg:bg:MMgustavson}).
+As the \acrshort{mm} algorithms have three \glspl{rank} instead of two for \acrshort{mv}, there is a third ordering, known as \acrlong{gust}'s algorithm~\cite{Gustavson1978_GustAlgo} where the \gls{crank} $K$ is the middle-loop (see line 2 in Algorithm~\ref{alg:bg:MMgustavson}).
 With this approach, the output is computed row-by-row with \acrshort{po}-rows generated and accumulated for each output $C$-row.
+With this algorithm, updates of the $C$-rows are sequential, but elements within the rows are updated with indirect accesses.
+In the dense case, the $B$-matrix is entirely read $M$ times and $K$ \acrshort{po}-rows of size $N$ are generated.
+In the context of sparse matrices, conversely to the $C$-rows, the selection of the rows in $B$ is indirect, but the accesses are sequential within a row.
+Thus, the \gls{intersection} search is only needed for the $B$-rows and not each element.
+The \acrshort{po}-rows can be accumulated before computing the next $C$-row.
+For this algorithm, exchanging $M$ and $N$ causes the three matrices to be accessed \emph{column-wise} instead of \emph{row-wise}.
 
 \begin{figure}[htbp]
     \centering
     \begin{minipage}[t]{0.49\linewidth}
         \begin{algorithm}[H]
-        \caption{\acrlong{mm} \acrlong{gust}'s Algorithm}
+        \caption{Dense \acrlong{mm} \acrlong{gust}'s Algorithm}
         \label{alg:bg:MMgustavson}
         \For{$i \in \ldb 0, M-1 \rdb$}{
             \For{$k \in \ldb 0, K-1 \rdb$}{
@@ -134,19 +137,17 @@ With this approach, the output is computed row-by-row with \acrshort{po}-rows ge
     \end{minipage}
 \end{figure}
 
-With this algorithm, updates of the $C$-rows are sequential, but, in the dense case, the $B$-matrix is entirely read $M$ times and $K$ \acrshort{po}-rows of size $N$ are generated.
-In the context of sparse matrices, the selection of the rows in $B$ is indirect, however, within a row the accesses are sequential.
-The \gls{intersection} operations are only needed for the $B$-rows and not each element.
-The \acrshort{po}-rows can be accumulated before computing the next $C$-row.
-For this algorithm, exchanging $M$ and $N$ causes the three matrices to be accessed \emph{column-wise} instead of \emph{row-wise}.
-
 \subsubsection{Algorithms Comparison}
 
-Note that these algorithms are available in dense as well as in sparse \acrshort{mv} and \acrshort{mm} multiplications.
-In sparse, the above algorithms (from \ref{alg:bg:MVinner} to \ref{alg:bg:MMgustavson}) have the same behavior from a software point-of-view, but need adjustments to traverse a \gls{spFormat} instead of a dense matrix.
-%see sparse algos for SpMSpM?
+In Table~\ref{tab:AlgosCompSum}, we summarize the main features of \acrshort{ip}, \acrshort{op} and \acrshort{gust} in terms of accesses to the matrix $A$, $B$ (or $b$) and $C$ (or $c$).
+With this high level analysis, we can easily see that the data that is accessed with indirections shifts depending of the algorithms, from the input $B$ (or $b$) to the output $C$ (or $c$), with \acrshort{gust} being a trade-off between \acrshort{ip} and \acrshort{op} for \acrshort{mm} multiplication.
+To have a better understanding of the consequences on the actual number of memory accesses, we propose a more detailed analysis in Section~\ref{sec:bg:AnalyticalModel}, for the case of \acrshort{spmspm}.
 
-TODO
+\begin{highlight}{Note}{SkyBlue}
+    Note that these algorithms are available in dense as well as in sparse \acrshort{mv} and \acrshort{mm} multiplications.
+    In sparse, the above algorithms (from \ref{alg:bg:MVinner} to \ref{alg:bg:MMgustavson}) have the same behavior from a software point-of-view, but need adjustments to traverse a \gls{spFormat} instead of a dense matrix.
+    Sparse versions of these algorithms are presented in Section~\ref{sec:bg:hwchallenges}.
+\end{highlight}
 
 \begin{table}[htbp]
     \centering
@@ -155,7 +156,7 @@ TODO
     \begin{tblr}{
             width = {\linewidth},
             colspec = {X[-1,c] *{3}{X[j]}}, % rowspec
-            rows = {m, font=\footnotesize},
+            rows = {m},
             colsep = {4pt},
             row{1-4} = {rowsep=2pt, black!2},
             row{1} = {font=\bfseries, black!5},
@@ -191,7 +192,7 @@ TODO
         {C$(M, N)$ \\ Accesses} &
         {$\bullet$ generated \emph{row-wise}\hyperlink{fn5}{$^{\mathrm{6}}$} \newline $\bullet$ one sequential traversal} &
         {$\bullet$ generated without specific structure \newline $\bullet$ $K$ \acrshortpl{po} produced\hyperlink{fn7}{$^{\mathrm{8}}$} (each \acrshort{po} has $\overline{nnz_c}(A) \times \overline{nnz_r}(B)$ non-zero elements\hyperlink{fn8}{$^{\mathrm{9}}$})} &
-        {$\bullet$ generated \emph{row-wise} \newline $\bullet$ for each row of $A$ ($M$), \mbox{$K \times d(A)$} \acrshort{po}-rows produced\hyperlink{fn9}{$^{\mathrm{10}}$} (each \acrshort{po}-rows has $\overline{nnz_r}(B)$ non-zero elements)} \\
+        {$\bullet$ generated \emph{row-wise} \newline $\bullet$ \mbox{$K \times d(A)$} \acrshort{po}-rows produced\hyperlink{fn9}{$^{\mathrm{10}}$} for each row of $A$ ($M$) ($\overline{nnz_r}(B)$ non-zero elements per \acrshort{po}-row)} \\
         %
         \hypertarget{fn0}{$^{\mathrm{1}}$} Considering $N = 1$ in the case of \acrshort{mv} multiplication. \\
         \hypertarget{fn1}{$^{\mathrm{2}}$} Only for \acrshort{mm} multiplication. \\
@@ -207,7 +208,8 @@ TODO
 \end{table}
 
 \begin{highlight}{Conclusion}{Red}
-    Algos and comparison
+    There are \textit{three main algorithms} to handle sparse \acrshort{mv} and \acrshort{mm} kernels, \textbf{\acrfull{ip}}, \textbf{\acrfull{op}} and \textbf{\acrfull{gust}}.
+    Each presents different characteristics, the main one being the \textbf{irregularity of the accesses}: on the \textbf{input} matrix $B$ (or vector $b$) with \acrshort{ip}; on the \textbf{output} matrix $C$ (or vector $c$) with \acrshort{op}; on both with \acrshort{gust} but at \textbf{row scale}.
 \end{highlight}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
