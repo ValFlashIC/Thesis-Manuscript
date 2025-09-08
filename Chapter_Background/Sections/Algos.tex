@@ -219,23 +219,22 @@ To have a better understanding of the consequences on the actual number of memor
 The \gls{tiling} process~\cite{Grunbaum1987_Tiling} consists in matrix partitioning: a matrix may be divided into \glspl{tile}, non-overlapping sub-matrices.
 In other words, this method consists of adding \glspl{rank} to delimit the \glspl{tile}, and thus adding loop iterations in the kernel algorithm.
 
-\Gls{tiling} methods allow to locally reduce the dimensions of data and thus to adapt the working set to the size of the local memory~\cite{Lam1991_Tiling}, particularly when the matrix has a structure with denser regions.
+\Gls{tiling} methods allow to locally reduce the dimensions of data and thus to adapt the working set to the size of the local memory~\cite{Lam1991_Tiling, Wilkinson2023_Tiling}, particularly when the matrix has a structure with denser regions.
 \Gls{tiling} can also increase parallelism opportunities.
-Software optimizations for sparse matrix computation, such as OSKI~\cite{Vuduc2005}, are based on \gls{tiling}.
+Software optimizations for sparse matrix computation, such as OSKI~\cite{Vuduc2005} and Sparse BLAS~\cite{Duff2002}, are based on \gls{tiling}.
 In previous sections, the study of the \acrshort{ip}, \acrshort{op} and \acrshort{gust} algorithms highlighted the influence of \gls{rank} ordering on the sequentiality and data movement, and thus, adding intermediate \glspl{rank} with \gls{tiling} breaks the regularity of pure \acrshort{ip} or \acrshort{op} algorithms, requiring additional hardware support (see Section~\ref{sec:bg:hwchallenges}).
 
 For example, let us consider the $A$-matrix in Figure~\ref{fig:bg:tiling_ex} which is divided into four \glspl{tile} (one level of \gls{tiling}).
-For a \acrshort{spmv}, two new \glspl{rank} appear for a total of four \glspl{rank}: $M_1$ and $K_1$ allow \gls{tile} selection and $M_2$ and $K_2$ allow data access within a \gls{tile}.
+For a \acrshort{spmv}, two new \glspl{rank} appear for a total of four \glspl{rank}, as shown in Algorithm~\ref{alg:bg:tiling_ex}: $M_1$ and $K_1$ allow \gls{tile} selection and $M_2$ and $K_2$ allow data access within a \gls{tile}.
 Thus, we could decide to apply an \acrshort{op} on \glspl{tile} and conversely an \acrshort{ip} within \glspl{tile}, mixing-up the pros and cons of these two algorithms at different \gls{rank} levels.
 In the case of the example in Figure~\ref{fig:bg:tiling_ex}, the upper-left $A$-\gls{tile} (\textit{red}) is evaluated first, sequentially updating the upper \gls{tile} of the $c$-vector in an \acrshort{ip} manner.
 The lower-left $A$-\gls{tile} (\textit{yellow}) is then computed the same way.
-At this point, \glspl{intersection} have been done with only the upper $b$-\gls{tile}, and $c$ has been updated sequentially.
+At this point, \glspl{intersection} have been done with only the upper $b$-\gls{tile}, and $c$ has been updated sequentially (first \acrshort{po}).
 The two next $A$-\glspl{tile} (\textit{green}, then \textit{blue}) will compute \glspl{intersection} with the lower $b$-\gls{tile} and update the entire $c$-vector sequentially, showing the \acrshort{op} characteristic of having \acrshortpl{po} to \emph{merge}, two in this case.
-% add ref to algo
 
 \begin{figure}[htbp]
     \centering
-    \begin{minipage}[t]{0.28\linewidth}
+    \begin{minipage}[t]{0.49\linewidth}
         \begin{figure}[H]
             \centering
             \includegraphics[width=\linewidth]{Chapter_Background/Figures/PDF/TilingExample.pdf}
@@ -244,7 +243,7 @@ The two next $A$-\glspl{tile} (\textit{green}, then \textit{blue}) will compute 
         \end{figure}
     \end{minipage}
     \hfill
-    \begin{minipage}[t]{0.60\linewidth}
+    \begin{minipage}[t]{0.49\linewidth}
         \bigskip\bigskip
         \begin{algorithm}[H]
         \caption{\acrlong{mv} Algorithm with Custom \Gls{tiling} of Figure~\ref{fig:bg:tiling_ex}}
@@ -264,13 +263,16 @@ The two next $A$-\glspl{tile} (\textit{green}, then \textit{blue}) will compute 
     \end{minipage}
 \end{figure}
 
-Note that in case of \gls{tiling}, the $A$-matrix is no longer read sequentially, which can be problematic if it is stored in a classical \gls{spFormat} like \acrshort{csr} that is specifically made for \emph{row-wise} accesses.
-Custom \glspl{spFormat} adapted for \gls{tiling} can be used \cite{Im2004_TilingBCSR}, but this requires a preprocessing conversion.
-
 \begin{highlight}{Definition}{LimeGreen}
-    \Gls{tiling}
+    \textbf{\Gls{tiling}} is a method for partitioning matrices in non-overlapping sub-matrices, called \textbf{\glspl{tile}}.
+\end{highlight}
+
+\begin{highlight}{Note}{SkyBlue}
+    Note that in case of \gls{tiling}, the $A$-matrix is no longer read sequentially, which can be problematic if it is stored in a classical \gls{spFormat} like \acrshort{csr} that is specifically made for \emph{row-wise} accesses.
+    Custom \glspl{spFormat} adapted for \gls{tiling} can be used \cite{Im2004_TilingBCSR}, but this requires a preprocessing conversion.
 \end{highlight}
 
 \begin{highlight}{Conclusion}{Red}
-    \Gls{tiling}
+    \Gls{tiling} methods are widely used to \textbf{distribute workloads} across multicore systems, and to \textbf{locally reduce the data dimensions}.
+    Complex \gls{tiling} algorithms with many possible \gls{rank} ordering \textbf{inherits the behaviors of \acrshort{ip} and \acrshort{op}}, and can be described as a combinations of both at different \gls{tile} levels.
 \end{highlight}

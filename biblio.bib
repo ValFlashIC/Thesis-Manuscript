@@ -1271,6 +1271,21 @@
     abstract = {Sparse matrices are a key data structure for implementing graph algorithms using linear algebra. This chapter reviews and evaluates storage formats for sparse matrices and their impact on primitive operations. We present complexity results of these operations on different sparse storage formats both in the random access memory (RAM) model and in the input/output (I/O) model. RAM complexity results were known except for the analysis of sparse matrix indexing. On the other hand, most of the I/O complexity results presented are new. The chapter focuses on different variations of the triples (coordinates) format and the widely used compressed sparse row (CSR) and compressed sparse column (CSC) formats. For most primitives, we provide detailed pseudocodes for implementing them on triples and CSR/CSC.}
 }
 
+@INPROCEEDINGS{Matam2012,  
+    author={Matam, Kiran and Krishna Bharadwaj Indarapu, Siva Rama and Kothapalli, Kishore},  
+    booktitle={2012 19th International Conference on High Performance Computing},  
+    title={Sparse matrix-matrix multiplication on modern architectures},  
+    year={2012},  
+    volume={},  
+    number={},  
+    pages={1-10},  
+    abstract={Sparse matrix-sparse/dense matrix multiplications, spgemm and csrmm, respectively, among other applications find usage in various matrix formulations of graph problems. Considering the difficulties in executing graph problems and the duality between graphs and matrices, computations such as spgemm and csrmm have recently caught the attention of HPC community. These computations pose challenges such as load balancing, irregular nature of the computation, and difficulty in predicting the output size. It is even more challenging when combined with the GPU architectural constraints such as memory accesses, limited shared memory, strict SIMD and thread execution. To address these challenges on a GPU, we evaluate three possible variations of matrix multiplication (Row-Column, Column-Row, Row-Row) and perform suitable optimizations targeted at sparse matrices. Our experiments indicate that the Row-Row formulation, which mostly outperforms the other formulations, is 3.5x faster on average compared to an optimized multi-core implementation in the Intel MKL library. We extend the Row-Row formulation to a CPU+GPU hybrid algorithm that simultaneously utilizes the CPU also. In this direction, we present heuristics to find the right amount of work division between the CPU and the GPU. Our hybrid row-row formulation of the spgemm operation performs 5.5x faster on average when compared to the optimized multi-core implementation in the Intel MKL library. Our experience indicates that it is difficult to identify right amount of work division between the CPU and the GPU. We therefore investigate a subclass of sparse matrices, band matrices, and present an analytical method to identify a good work division when multiplying two band matrices. Our GPU csrmm operation performs 2.5x faster on average when compared to a corresponding implementation in the cusparse library, which outperforms the Intel MKL library implementation.},  
+    keywords={},  
+    doi={10.1109/HiPC.2012.6507483},  
+    ISSN={},  
+    month={Dec},
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Additional references for context
 
@@ -1599,4 +1614,23 @@
   publisher={Dover Publications},
   address = {USA},
   isbn = {0-486-61480-8}
+}
+
+@article{Wilkinson2023_Tiling,
+    author = {Wilkinson, Lucas and Cheshmi, Kazem and Dehnavi, Maryam Mehri},
+    title = {Register Tiling for Unstructured Sparsity in Neural Network Inference},
+    year = {2023},
+    issue_date = {June 2023},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {7},
+    number = {PLDI},
+    url = {https://doi.org/10.1145/3591302},
+    doi = {10.1145/3591302},
+    abstract = {Unstructured sparse neural networks are an important class of machine learning (ML) models, as they compact model size and reduce floating point operations. The execution time of these models is frequently dominated by the sparse matrix multiplication (SpMM) kernel, C=A\texttimes{} B, where A is a sparse matrix, and B and C are dense matrices. The unstructured sparsity pattern of matrices in pruned machine learning models along with their sparsity ratio has rendered useless the large class of libraries and systems that optimize sparse matrix multiplications. Reusing registers is particularly difficult because accesses to memory locations should be known statically. This paper proposes Sparse Register Tiling, a new technique composed of an unroll-and-sparse-jam transformation followed by data compression that is specifically tailored to sparsity patterns in ML matrices. Unroll-and-sparse-jam uses sparsity information to jam the code while improving register reuse. Sparse register tiling is evaluated across 2396 weight matrices from transformer and convolutional models with a sparsity range of 60-95\% and provides an average speedup of 1.72\texttimes{} and 2.65\texttimes{} over MKL SpMM and dense matrix multiplication, respectively, on a multicore CPU processor. It also provides an end-to-end speedup of 2.12\texttimes{} for MobileNetV1 with 70\% sparsity on an ARM processor commonly used in edge devices.},
+    journal = {Proc. ACM Program. Lang.},
+    month = jun,
+    articleno = {188},
+    numpages = {26},
+    keywords = {Loop Tiling, Pruned Neural Networks, Sparse Matrix}
 }

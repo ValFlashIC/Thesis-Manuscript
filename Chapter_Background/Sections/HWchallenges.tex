@@ -9,22 +9,17 @@
 In the previous section we presented a brief background on matrix multiplication without considering the underlying hardware.
 Although the various \glspl{spFormat} reduce the memory footprint, they have the disadvantage that indirect accesses are required, which creates data-dependencies and reduces the effectiveness of caches.
 As we have seen, with all three algorithms, at least some of the accesses are irregular.
-The lack of spatial locality for these accesses reduces the benefit of having caches.
+The lack of spatial locality for these accesses reduces the benefit of having caches~\cite{Wulf1995_MemoryWall, Matam2012}.
 In other words, a full cache-line is loaded, but only a few entries are read or modified.
 Moreover, the matrices of interest are extremely large and even the non-zero elements, and associated \gls{metadata}, can not generally fit in the cache.
 Depending on the algorithm, successive accesses to the same element may be too far apart to benefit from temporal locality in the cache.
-% TODO: find the reference
-
-% Perhaps we can add a reference to Yves's background paper where it was stated
-% that with typical sparse matrix formats ~50% of the data brought into the
-% cache is unused.
 
 \subsection{Inner-Product Algorithm}
 
 In an \acrshort{ip} algorithm, the $A$-\gls{metadata} needs to be read to indirectly access the $B$-matrix (or $b$-vector), which may itself be stored in a \gls{spFormat}.
 In this case, the algorithm needs to check if the non-zero $A$-indices are present in $B$ (or $b$).
 If an index appears in neither list, there is no need to perform the multiplication (\emph{ineffectual operation}). %put in glossary?
-More generally, this problem applies to \glspl{fiber} and is called the \gls{intersection} search.
+More generally, this problem applies to any \gls{fiber} and is called the \gls{intersection} search.
 As a minimum, this requires reading all the \gls{metadata} for $A$ and $B$ (or $b$), and identifying those present in both.
 
 In Algorithm~\ref{alg:bg:IPSpMSpMCSR}, we present the pseudo-code for an \acrfull{ip} \acrshort{spmspm} with $A$ and $B$ stored in \acrshort{csr} and \acrshort{csc} formats, respectively.
@@ -38,7 +33,8 @@ Different algorithms can be used to address the \gls{intersection} search, depen
 When the elements are sorted, the \gls{intersection} becomes a \emph{merge} and generally requires at most $2 \times nnz - 1$ comparisons (in some cases the number of comparisons can be reduced~\cite{Baeza-Yates2010_Intersection}).
 In Algorithm~\ref{alg:bg:IPSpMSpMCSR}, we use sorted \glspl{spFormat} (\acrshort{csr} and \acrshort{csc}).
 Thus, the ma\"ive \gls{intersection} search proposed (line 10) does at most one traversal of each the current row of $A$ ($i$) and the current column of $B$ ($j$).
-As we will see in Section~\ref{cha:soa}, certain accelerators provide support for performing this \gls{intersection} operation directly in hardware.
+Note that computing an \gls{intersection} in software induces the use of conditional loops and branches, which can be costly for classical CPU branch predictors.
+As we see in Chapter~\ref{cha:soa}, certain accelerators provide support for performing this \gls{intersection} operation directly in hardware.
 
 \begin{algorithm}[htbp]
     \caption{\acrshort{ip} \acrshort{spmspm} Performing \Gls{intersection} Searches with \acrshort{csr} and \acrshort{csc} Formats}
@@ -79,11 +75,16 @@ As we will see in Section~\ref{cha:soa}, certain accelerators provide support fo
     }
 \end{algorithm}
 
+\begin{highlight}{Definition}{LimeGreen}
+    The \textbf{\gls{intersection} search} consists in founding non-zero elements of two sparse arrays that have matching indices.
+    This search is costly in software on classical CPUs, thus being key to improve performance of \acrshort{ip} algorithm.
+\end{highlight}
+
 \subsection{Outer-Product Algorithm}
 
-In an \acrshort{op} algorithm, the inputs are accessed sequentially, but the updates of the output require indirect accesses.
+In an \acrshort{op} algorithm, the inputs $A$ and $B$ (or $b$) are accessed sequentially, but the updates of the output $C$ (or $c$) require indirect accesses.
 The pattern of the accesses, while the output is generated, is irregular and determined by the structure of the inputs.
-Furthermore, if these ``random''\footnote{We use the term ``random'' to mean accesses are irregular and difficult to predict.} updates provoke cache misses where only one word within a cache-line is modified, the bandwidth to external memory is poorly utilized.
+Furthermore, if these \glspl{randUpdt} provoke cache misses where only one word within a cache-line is modified, the bandwidth to external memory is poorly utilized.
 The \acrshort{op} algorithm generates several \acrfullpl{po} that must be accumulated to obtain the final output.
 We can identify two strategies: \emph{immediate update} and \emph{deferred update}.
 In the former, the final output is immediately updated as each \gls{psum} is generated.
@@ -95,20 +96,17 @@ In Algorithm~\ref{alg:bg:OPSpMSpMCSR}, we present two pseudo-codes for an \acrfu
 The outer-loop ($K$, line 1 or 7) iterates over the columns of $A$ and the rows of $B$ (\gls{crank}).
 The middle-loop (line 2 or 9) iterates over the non-zero elements of the current column ($k$) of $A$.
 The inner-loop (line 4 or 11) iterates over the non-zero elements of the current row ($k$) of $B$.
-Because we only iterate over the non-zero values, there is no need for a search.
+Because we only iterate over the non-zero values, there is no need for an \gls{intersection} search.
 The \gls{psum} is then computed (line 6 or 15).
 Finally, in the \emph{immediate update} version, the \gls{psum} must be accumulated to $C$ (line 6).
 These accesses are irregular, making it necessary to lookup the value in $C$, update it, and write it back.
 This is a \gls{reduction} operation, performed on irregular data.
 
-To avoid the complexities of the ``random'' \glspl{reduction} with \emph{immediate updates}, the \emph{deferred update} version postpones the accumulation and simply stores the \glspl{psum} in memory.
+To avoid the complexities of these ``random'' \glspl{reduction} with \emph{immediate updates}, the \emph{deferred update} version postpones the accumulation and simply stores the \glspl{psum} in memory.
 One such technique is called \emph{output batching}~\cite{Kiriansky2016_Milk}.
 With this technique, arrays containing the indices and the \gls{psum} are streamed sequentially to memory ($\mathit{PO}_k$, lines 13-15).
 Then, during a second pass (line 17), they are read back and the accumulations are performed, an approach which results in sequential memory accesses during both the first and second passes, with the downside that the volume of data transferred to memory is increased.
-
-As we will see, hardware accelerators may combine the \emph{immediate} and \emph{deferred update} techniques to optimize memory bandwidth.
-
-% ref for merging methods to add?
+As we see in Chapter~\ref{cha:soa}, hardware accelerators may combine the \emph{immediate} and \emph{deferred update} techniques to optimize memory bandwidth.
 
 \begin{algorithm}[htbp]
     \caption{\acrshort{op} \acrshort{spmspm} Performing \Gls{reduction} with \acrshort{csr} and \acrshort{csc} Formats}
@@ -207,9 +205,18 @@ As we will see, hardware accelerators may combine the \emph{immediate} and \emph
     }
 \end{algorithm}
 
+\begin{highlight}{Definition}{LimeGreen}
+    \textbf{\textit{``Random'' \glspl{reduction}}} occur when updating data from memory on irregular addresses, which happen on \emph{immediate update} \acrshort{op}.
+    With \emph{deferred update} \acrshort{op}, the \glspl{reduction} are sequential but large sets of data need to be buffered in memory.
+    Optimizing \gls{reduction} operations is key to improve performance on \acrshort{op} algorithm.
+\end{highlight}
+
 \subsection{Summary}
 
 In Table~\ref{tab:bg:AlgosHWComp}, we summarize the previously discussed advantages and hardware challenges for each algorithm, including \acrshort{gust} which presents a trade-off between \acrshort{ip} and \acrshort{op}.
+The potential for parallelism and data-reuse varies across algorithms, \acrshort{ip} being the most limited unless \gls{tiling} methods are used.
+With \acrshort{op}, \acrshortpl{po} can easily be generated across a multicore system but at the cost of transferring many data to memory.
+With \emph{immediate updates}, \acrshort{op} transfers less data but all accesses on the output are ``random'' \glspl{reduction}.
 
 \begin{table}[htbp]
     \centering
@@ -217,12 +224,12 @@ In Table~\ref{tab:bg:AlgosHWComp}, we summarize the previously discussed advanta
     \label{tab:bg:AlgosHWComp}
     \begin{tblr}{
             width = {\linewidth},
-            colspec = {X[-1,c] X[-1,c] *{3}{X[l]}}, % rowspec
-            rows = {m, font=\scriptsize},
+            colspec = {X[-1,c] X[-1,c] *{3}{X[j]}}, % rowspec
+            rows = {m, font=\small},
             colsep = {4pt},
             row{1-Z} = {rowsep=1pt, black!2},
-            row{1} = {c, font=\bfseries\scriptsize, black!5},
-            column{1-2} = {font=\bfseries\scriptsize},
+            row{1} = {c, font=\bfseries\small, black!5},
+            column{1-2} = {font=\bfseries\small},
             cell{2}{1} = {r=2}{c},
             cell{4-Z}{1} = {c=2}{c},
             cell{5}{3} = {c=2}{l},
@@ -287,17 +294,21 @@ In Table~\ref{tab:bg:AlgosHWComp}, we summarize the previously discussed advanta
 \end{table}
 
 The issues presented with \acrshort{ip} and \acrshort{op} can be generalized to two concepts: \gls{gather} and \gls{scatter}.
-
 The \gls{gather} problem exists when the inputs are indirectly accessed, and need to be read from memory using \gls{metadata} to present the processor with the correct terms for computing the \glspl{psum}.
 Typically, with \acrshort{ip}, the \gls{gather} problem is more difficult.
 The \gls{scatter} problem exists when the order in which the output matrix/vector is generated is not sequential and is typically associated with the \acrshort{op} algorithm.
 In the case of \gls{tiling}, a hardware accelerator must handle both \gls{gather} and \gls{scatter}, creating a need for hardware support for both \gls{intersection} searches and \glspl{reduction}.
 
 \begin{highlight}{Conclusion}{Red}
-    HW challenges
+    There are \textbf{two main challenges} to address when computing sparse matrices.
+    When reading irregular data from memory, addressing the \textbf{\gls{gather}} problem is key.
+    It mainly consists in processing efficient \textbf{\gls{intersection} searches}.
+    When updating irregular data from memory, addressing the \textbf{\gls{scatter}} problem is key.
+    It mainly consists in \textbf{managing \acrshortpl{po}} in memory or processing efficient \textbf{``random'' \glspl{reduction}}.
+    These two challenges are tied to \acrshort{ip} an \acrshort{op}, respectively, and are present in any higher \gls{rank} algorithm for sparse matrix computing.
 \end{highlight}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{SpMSpM Algorithm Analysis}
 \label{sec:bg:AnalyticalModel}
 
