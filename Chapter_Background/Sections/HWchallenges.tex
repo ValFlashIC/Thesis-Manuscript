@@ -6,7 +6,7 @@
 \section{Hardware Challenges for Sparse Matrix Computation}
 \label{sec:bg:hwchallenges}
 
-In the previous section we presented a brief background on matrix multiplication without considering the underlying hardware.
+\lettrine{I}{n} the previous section we presented a brief background on matrix multiplication without considering the underlying hardware.
 Although the various \glspl{spFormat} reduce the memory footprint, they have the disadvantage that indirect accesses are required, which creates data-dependencies and reduces the effectiveness of caches.
 As we have seen, with all three algorithms, at least some of the accesses are irregular.
 The lack of spatial locality for these accesses reduces the benefit of having caches~\cite{Wulf1995_MemoryWall, Matam2012}.
@@ -316,51 +316,12 @@ To better understand how the algorithms impact the number and types of memory ac
 We identify five memory access patterns: (1) those where a matrix is read only once, thus there is no opportunity for reuse, (2) where the accesses are sequential, but a \gls{fiber} is read multiple times, (3) where \glspl{fiber} are read consecutively, but the accesses within a \gls{fiber} are ``random'', (4) where the \glspl{fiber} are accessed ``randomly'', but within a \gls{fiber} the accesses are sequential, and (5) where the matrix elements are accessed multiple times, and with a ``random'' access pattern.
 
 For each of the three algorithms, we counted the number of read and write accesses, based on the density of the input matrices, and the local memory storage available (``OD'', ``1D'' and ``2D''), as resumed in Table~\ref{tab:bg:spmspm_access_count}.
-We plotted the number of memory accesses in logarithmic scale for \acrshort{spmspm}, based on a square matrix with $M = 10,000$.
+In Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}, we plotted the number of memory accesses in logarithmic scale for \acrshort{spmspm}, based on a square matrix with $M = 10,000$.
 Indeed, the number of non-zero elements in $C$ depends on the structure of the input matrices and in this model, we have assumed the non-zero entries in the input matrices are uniformly, randomly distributed.
 This corresponds to a \emph{worst case} for sparse matrices (no spatial and temporal locality).
 Banded input matrices would, for example, have fewer non-zero elements in $C$.
 In each graph, we have separated the accesses into $A$ (\textit{bottom}), $B$ (\textit{middle}) and $C$ (\textit{top}).
 The color code shows the access pattern, based on the five categories described above.
-
-In the top-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM} (graphs~\ding{192}, \ding{193} and~\ding{194}), we start by considering a na\"ive accelerator which has no local storage (``OD''), thus all data comes from main memory.
-From these figures, we clearly see that \acrshort{ip} requires more accesses at low density, as the $A$-matrix must be read $N$ times (graph~\ding{192}).
-Whereas for \acrshort{op} and \acrshort{gust}, the $A$-matrix is read only once (thus the \textit{grey} color).
-For \acrshort{op} and \acrshort{gust} the total number of accesses is the same, however, with \acrshort{op} (graph~\ding{193}), the accesses to $C$ are ``random'' (\textit{red}).
-With \acrshort{gust} (graph~\ding{194}), the accesses to $B$ are sequential within the rows (\textit{orange}) and the $C$-rows are generated sequentially (\textit{yellow}), thus \acrshort{gust} avoids having any fully ``random'' accesses (\textit{red}).
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\linewidth]{Chapter_Background/Figures/PDF/RawSpMSpMAccessesCountAnalysis.pdf}
-    \caption{Model of Memory Access Counts Depending on Algorithm and Local Memory Size}
-    \label{fig:bg:AnalyticalModel_SpMSpM}
-\end{figure}
-
-Since main memory accesses are the principal bottleneck, accelerators integrate local storage (such as buffers or caches).
-Thus, we consider the case of an accelerator with sufficient local memory to store one full row, per matrix (few sparse rows, ``1D'').
-We assume this local storage is perfect (no misses) and re-calculate the number of remaining main memory accesses, as shown in the middle-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM} (graphs~\ding{195}, \ding{196} and~\ding{197}).
-The matrices are assumed to be initially stored in main memory, thus they must be accessed at least once.
-As can be seen, for \acrshort{ip} (graph~\ding{195}), the number of $A$-accesses is reduced, because rows are reused, thus the total number of $A$-accesses becomes equal to that in \acrshort{op} and \acrshort{gust}.
-For \acrshort{op} (graph~\ding{196}), the single row buffer greatly reduces the number of $B$-accesses, however, it does nothing for $C$ (despite the appearance, due to the logarithmic scale).
-For \acrshort{gust} (graph~\ding{197}), the single row buffer is sufficient to cache the \gls{reduction} operations in $C$, and thus, it now has fewer overall accesses than \acrshort{op}.
-It is also interesting to note that \acrshort{op} and \acrshort{gust} scale better than \acrshort{ip} with lower densities, as seen by the shallower slope.
-
-Finally, we have considered the extreme case where an accelerator has a buffer of sufficient size to store two sparse matrices (``2D''), which is shown in the bottom-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM} (graphs~\ding{198}, \ding{199} and~\ding{200}).
-Although this case is not practical for large matrices, through the proper use of \gls{tiling} to locally reduce the dimensions of a sub-matrix, this case can be achieved at the level of a \gls{tile}.
-In this case, the total number of external accesses is equal for the three algorithms, as each matrix is accessed only once from main memory.
-For \acrshort{ip} (graph~\ding{198}), it is interesting to note that such a large buffer is needed to locally address the \gls{intersection} search in $B$.
-Similarly for \acrshort{op} (graph~\ding{199}), a large storage is required to address the \glspl{reduction} in $C$.
-For \acrshort{gust}, in fact, it is not necessary to buffer the entire $B$-matrix.
-Indeed, buffering a few rows (corresponding to $nnz_r(A)$) is sufficient to achieve the number of accesses shown in graph~\ding{200}.
-This corresponds to an intermediate design point (multiple row buffers for $B$) not explicitly shown in the figure (between graphs~\ding{197} and~\ding{200}).
-
-When viewed overall, Figure~\ref{fig:bg:AnalyticalModel_SpMSpM} highlights the benefits of \acrshort{gust}.
-We clearly see that \acrshort{gust} does not require any fully ``random'' accesses (\textit{red}).
-With a single row buffer, it is possible to address the \glspl{reduction} in $C$.
-And, with a limited number of row buffers, the number of external memory accesses for $B$ can be reduced.
-Based on this analysis, it is clear that \acrshort{gust} is the best algorithm for hardware implementation of \acrshort{spmspm}.
-
-% note that uniform --> with real structure -> depend of matrix -> but in mean Gust best (see ref)
 
 \begin{table}[htbp]
     \centering
@@ -369,13 +330,13 @@ Based on this analysis, it is clear that \acrshort{gust} is the best algorithm f
     \begin{tblr}{
             width = {\linewidth},
             colspec = {X[-1,c] *{3}{X[l]}}, % rowspec
-            rows = {m, font=\scriptsize},
+            rows = {m, font=\small},
             colsep = {4pt},
             row{1-Y} = {rowsep=1pt, black!2},
-            row{1} = {c, font=\bfseries\scriptsize, black!5},
-            column{1} = {font=\bfseries\scriptsize},
+            row{1} = {c, font=\bfseries\small, black!5},
+            column{1} = {font=\bfseries\small},
             row{Z} = {abovesep=2pt, belowsep=2pt},
-            cell{Z}{1} = {c=4}{l, font=\scriptsize},
+            cell{Z}{1} = {c=4}{l, font=\small},
             % hlines, vlines,
             % rulesep = {-1pt},
             hline{1,Y} = {2pt}, % Z for last
@@ -410,10 +371,53 @@ Based on this analysis, it is clear that \acrshort{gust} is the best algorithm f
         {\textbf{0D}: $2 \times M \times d(A) \times nnz(B)$ \\
          \textbf{1D}-\textbf{2D}: $nnz(C)$ (max: $M \times N$)\hyperlink{fn0}{$^{\mathrm{1}}$}} \\
         %
-        \hypertarget{fn0}{$^{\mathrm{1}}$} We can not easily quantify $nnz(C)$ knowing $nnz(A)$ and $nnz(B)$.
+        \hypertarget{fn0}{$^{\mathrm{1}}$} We can not easily quantify $nnz(C)$ knowing $nnz(A)$ and $nnz(B)$. We thus use a statistic approximation.
     \end{tblr}
 \end{table}
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{Chapter_Background/Figures/PDF/RawSpMSpMAccessesCountAnalysis.pdf}
+    \caption{Model of Memory Access Counts Depending on Algorithm and Local Memory Size}
+    \label{fig:bg:AnalyticalModel_SpMSpM}
+\end{figure}
+
+In the top-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM} (graphs~\ding{192}, \ding{193} and~\ding{194}), we start by considering a na\"ive system which has no local storage (``OD''), thus all data comes from main memory.
+From these figures, we clearly see that \acrshort{ip} requires more accesses at low density, as the $A$-matrix must be read $N$ times (graph~\ding{192}).
+Whereas for \acrshort{op} and \acrshort{gust}, the $A$-matrix is read only once (thus the \textit{grey} color).
+For \acrshort{op} and \acrshort{gust} the total number of accesses is the same, however, with \acrshort{op} (graph~\ding{193}), the accesses to $C$ are ``random'' (\textit{red}).
+With \acrshort{gust} (graph~\ding{194}), the accesses to $B$ are sequential within the rows (\textit{orange}) and the $C$-rows are generated sequentially (\textit{yellow}), thus \acrshort{gust} avoids having any fully ``random'' accesses (\textit{red}).
+
+Since main memory accesses are the principal bottleneck, systems integrate local storage (such as buffers or caches).
+Thus, we consider the case of an system with sufficient local memory to store one full row, per matrix (few sparse rows, ``1D'').
+We assume this local storage is perfect (no misses) and we re-calculate the number of remaining main memory accesses, as shown in the middle-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM} (graphs~\ding{195}, \ding{196} and~\ding{197}).
+The matrices are assumed to be initially stored in main memory, thus they must be accessed at least once.
+As can be seen, for \acrshort{ip} (graph~\ding{195}), the number of $A$-accesses is reduced, because rows are reused, thus the total number of $A$-accesses becomes equal to that in \acrshort{op} and \acrshort{gust}.
+For \acrshort{op} (graph~\ding{196}), the single row buffer greatly reduces the number of $B$-accesses, however, it does nothing for $C$ (despite the appearance, due to the logarithmic scale).
+For \acrshort{gust} (graph~\ding{197}), the single row buffer is sufficient to cache the \gls{reduction} operations in $C$, and thus, it now has fewer overall accesses than \acrshort{op}.
+It is also interesting to note that \acrshort{op} and \acrshort{gust} scale better than \acrshort{ip} with lower densities, as seen by the shallower slope.
+
+Finally, we have considered the extreme case where an system has a buffer of sufficient size to store two sparse matrices (``2D''), which is shown in the bottom-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM} (graphs~\ding{198}, \ding{199} and~\ding{200}).
+Although this case is not practical for large matrices, through the proper use of \gls{tiling} to locally reduce the dimensions of a sub-matrix, this case can be achieved at the level of a \gls{tile}.
+In this case, the total number of external accesses is equal for the three algorithms, as each matrix is accessed only once from main memory.
+For \acrshort{ip} (graph~\ding{198}), it is interesting to note that such a large buffer is needed to locally address the \gls{intersection} search in $B$.
+Similarly for \acrshort{op} (graph~\ding{199}), a large storage is required to address the \glspl{reduction} in $C$.
+For \acrshort{gust}, in fact, it is not necessary to buffer the entire $B$-matrix.
+Indeed, buffering a few rows (corresponding to $nnz_r(A)$) is sufficient to achieve the number of accesses shown in graph~\ding{200}.
+This corresponds to an intermediate design point (multiple row buffers for $B$) not explicitly shown in the figure (between graphs~\ding{197} and~\ding{200}).
+
+When viewed overall, Figure~\ref{fig:bg:AnalyticalModel_SpMSpM} highlights the benefits of \acrshort{gust}.
+We clearly see that \acrshort{gust} does not require any fully ``random'' accesses (\textit{red}).
+With a single row buffer, it is possible to address the \glspl{reduction} in $C$.
+And, with a limited number of row buffers, the number of external memory accesses for $B$ can be reduced.
+Based on this analysis, it is clear that, among the three base algorithms, \acrshort{gust} is the best candidate for hardware implementation of \acrshort{spmspm}.
+
+\begin{highlight}{Note}{SkyBlue}
+    This analysis is extremely high level: we do not consider the real behavior of memory instances such as caches; we do not consider the structure of matrices.
+    We do more precise analysis later in this manuscript.
+\end{highlight}
+
 \begin{highlight}{Conclusion}{Red}
-    Algos comparison
+    Based on a basic analysis of the memory accesses on \acrshort{spmspm}, the \textbf{\acrlong{gust}'s algorithm} appears as the \textbf{best trade-off} to minimize memory traffic with reasonable amount of storage.
+    Second best is \acrshort{op} which behaves better than \acrshort{ip} at low density.
 \end{highlight}

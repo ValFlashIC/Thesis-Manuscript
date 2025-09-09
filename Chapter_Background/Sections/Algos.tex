@@ -6,7 +6,7 @@
 \section{Algorithms for Dense and Sparse Matrix Multiplication}
 \label{sec:bg:algos}
 
-The main matrix multiplication kernels that are of interest are \acrfull{mv} and \acrfull{mm}, which include \acrshort{spmv} and \acrshort{spmspv} ($A \times b = c$), \acrshort{spgemv} ($A \times b + d = c$), \acrshort{spmm} and \acrshort{spmspm} ($A \times B = C$), and \acrshort{spgemm} ($A \times B + D = C$), with `Sp' for \emph{sparse} and `GE' for \emph{general}.
+\lettrine{T}{he} main matrix multiplication kernels that are of interest are \acrfull{mv} and \acrfull{mm}, which include \acrshort{spmv} and \acrshort{spmspv} ($A \times b = c$), \acrshort{spgemv} ($A \times b + d = c$), \acrshort{spmm} and \acrshort{spmspm} ($A \times B = C$), and \acrshort{spgemm} ($A \times B + D = C$), with `Sp' for \emph{sparse} and `GE' for \emph{general}.
 In the following sections, we focus on \acrshort{spmv} and \acrshort{spmspm}, with the notation $A(M,K) \times b(K) = c(M)$ and  $A(M,K) \times B(K,N) = C(M,N)$, respectively.
 The \gls{rank} $K$ is the \gls{crank} between the two inputs $A$ and $B$ (or $b$).
 

@@ -6,43 +6,30 @@
 \section{Conclusion}
 \label{sec:bg:conclu}
 
-TODO
+\lettrine{I}{n} this chapter, we established the foundation for understanding the relationship between applications working with \gls{irrData} and the underlying challenges in hardware.
+\Glspl{irrAccess} are common in sparse computing and cause reduced cache efficiency, limited parallelism, and higher memory latency exposure.
+We analysed the most representative algorithms for sparse matrix multiplication kernels, and identified their key operations that suffer from irregularities.
+\Glspl{intersection} and \glspl{reduction} on \gls{irrData} with classical systems are costly, thus being the central challenges of sparse computation, and driving motivation for designing specialized hardware as we show in the next chapter.
 
 \begin{highlight}{Takeaways}{Mulberry}
-    takeaways
+    \raggedright
+    \colorbf{Mulberry}{Sparse matrices:} large, highly sparse, structured (such as \gls{banded} matrices) \\
+    \colorbf{Mulberry}{Sparse formats:} diverse, reduce memory footprint
+    \begin{itemize}
+        \item \acrshort{coo}, the simplest
+        \item \acrshort{csr} and \acrshort{csc}, the mostly used
+        \item \acrshort{bacsc}, our own \gls{spFormat} for \gls{banded} matrices
+    \end{itemize}
+    \colorbf{Mulberry}{Sparse kernels:} sparse \acrshort{mv} and \acrshort{mm} multiplications (such as \acrshort{spmv} and \acrshort{spmspm}), generate indirect accesses \\
+    \colorbf{Mulberry}{Algorithms:} \acrfull{ip}, \acrfull{op} and \acrfull{gust}, extended with \gls{tiling} methods
+    \begin{itemize}
+        \item Best potential to reduce memory transfers: \acrshort{gust}, followed by \acrshort{op} at low density
+    \end{itemize}
+    \bigskip
+    \colorbf{Mulberry}{Problem:} \glspl{irrAccess}, generate high memory transaction latencies \\
+    \colorbf{Mulberry}{Challenges:}
+    \begin{itemize}
+        \item \gls{gather}: \gls{intersection} searches
+        \item \gls{scatter}: ``random'' \glspl{reduction}, or storing and \emph{merging} \acrfullpl{po}
+    \end{itemize}
 \end{highlight}
-
-%%from ASAP
-%intro that can be used as short conclu
-% Many recent high performance sparse accelerators (SpArch~\cite{Zhekai2020_SpArch}, Gamma~\cite{Zhang2021_Gamma}, ASA~\cite{Zhang2022_ASA}, Flexagon~\cite{Munoz-Martinez2023_Flexagon})
-% support different algorithms to process the kernel, such as
-% \emph{inner-product} (\algo{IP}), \emph{outer-product} (\algo{OP}) and \emph{Gustavson} (\algo{Gust})
-%  algorithms~\cite{Faddeev1981_InnerOuter, Gustavson1978_GustAlgo}, obtaining better performance with \algo{OP} and \algo{Gust}.
-% In theory, \algo{OP} and \algo{Gust} require fewer memory accesses than \algo{IP}. However, they require performing
-% efficient \emph{reduction} operations on the output vector ($c_{key} \acc
-% value$) which is accessed in a non-consecutive fashion that depends on the
-% matrix structure.
-% Indeed, when processing a SpMV ($A.b = c$) calculated as
-% $\forall (m, n) \in \ldb 0, M \ldb \times \ldb 0, N \ldb, c_m \acc A_{m,n} \times b_n$,
-% the \algo{OP} basically consists in iterating over $\ldb 0, N-1 \rdb$ first, while accumulating $c_m$ out-of-order.
-% With a conventional memory system, these \emph{reductions} cause
-% excessive memory traffic. With a specialized \emph{reduction cache}, this
-% memory traffic is reduced, making \algo{OP} solutions very attractive.
-
-
-%%%%%%%%%%%%%%%%
-% \begin{highlight}{Definition}{LimeGreen}
-%     text
-% \end{highlight}
-
-% \begin{highlight}{Note}{SkyBlue}
-%     text
-% \end{highlight}
-
-% \begin{highlight}{Warning}{Orange}
-%     text
-% \end{highlight}
-
-% \begin{highlight}{Conclusion}{Red}
-%     text
-% \end{highlight}

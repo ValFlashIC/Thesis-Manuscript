@@ -6,8 +6,9 @@
 \section{Sparse Matrices}
 \label{sec:bg:spMatrices}
 
-In most applications, irregular data can be found in matrix computing, where large matrices filled with many zeros are stored in compressed format in memory.
-These sparse matrices are commonly used in diverse fields such as linear algebra, where sparse matrix multiplication is used to solve linear systems of equations for scientific purposes or simulation [ref], as well as graph analytics where the vertices of a graph are represented as a sparse matrix that can be easily analysed with matrix operations~\cite{Buluc2011}, or finally \acrfullpl{cnn} or other similar AI features where weights and activations can be represented and processed as sparse matrices~\cite{Gale2020}.%TODO add refs
+\lettrine{I}{n} most applications, irregular data can be found in matrix computing, where large matrices filled with many zeros are stored in compressed format in memory.
+These sparse matrices are commonly used in diverse fields such as linear algebra, where sparse matrix multiplication is used to solve linear systems of equations for scientific purposes or simulation, as well as graph analytics where the vertices of a graph are represented as a sparse matrix that can be easily analysed with matrix operations~\cite{Buluc2011}, or finally \acrfullpl{cnn} or other similar AI features where weights and activations can be represented and processed as sparse matrices~\cite{Gale2020}.
+In these contexts, matrices are large, with dimensions up to billions of elements, and highly sparse, with non-zero densities down to $10^{-7}$.
 
 A matrix is defined as a two dimensional array.
 We note matrices with capital letters $A$, $B$, $C$, conversely to vectors $a$, $b$, $c$.

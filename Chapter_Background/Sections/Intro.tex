@@ -6,8 +6,21 @@
 \section{Introduction}
 \label{sec:background:intro}
 
-TODO
+\lettrine{M}{odern} computing systems are designed to deliver high performance by exploiting memory hierarchies, parallelism, and increasingly sophisticated hardware features.
+However, the efficiency of these systems is strongly tied to the regularity of memory access patterns.
+Applications with predictable, sequential data access can fully benefit from cache locality, prefetching mechanisms, and vectorization.
+In contrast, applications characterized by \glspl{irrAccess}, where memory locations are not known in advance or follow non-contiguous patterns, pose significant challenges.
 
-(Common knowledge on sparse matrices / definitions)
+\Gls{irrAccess} patterns are common in domains such as graph analytics, sparse linear algebra, unstructured mesh computations, and database queries.
+In these scenarios, pointer chasing, indirect indexing, and dynamically changing data structures disrupt spatial and temporal locality.
+As a result, the hardware struggles to hide memory latencies, leading to poor cache utilization and underutilization of available parallelism.
 
-Ref to papers \ref{publ:SoA} and \ref{publ:SpDC} backgrounds.
+The impact of \glspl{irrAccess} extends beyond raw performance.
+They also complicate algorithm design, hinder scalability on many-core architectures, and increase energy consumption due to repeated off-chip memory requests.
+Understanding and addressing these challenges is therefore a central concern in both system design and application optimization.
+This chapter provides the necessary background for analyzing \glspl{irrAccess}, highlighting their sources, effects, and the architectural considerations they expose.
+Most of the information of this chapter are based on already published content from Papers~\ref{publ:SoA} and~\ref{publ:SpDC}.
+
+\begin{highlight}{Definition}{LimeGreen}
+    \textbf{\Glspl{irrAccess}}, or \glspl{randAccess}, occurs when memory is accessed on non-consecutive addresses.
+\end{highlight}

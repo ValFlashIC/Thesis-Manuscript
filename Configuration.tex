@@ -65,6 +65,7 @@
 \usepackage{array, float}
 \usepackage[Lenny]{fncychap}
 \usepackage{fancyhdr}
+\usepackage{lettrine}
 \usepackage{lastpage}
 \usepackage[absolute, overlay]{textpos}
 \usepackage[titles]{tocloft} % add subfigure option if the subfigure package is used
@@ -103,7 +104,7 @@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Add takeaways environment
+% Add highlights environment
 \newtcolorbox{highlight}[2]{
 	sharp corners,
 	frame hidden,
@@ -126,6 +127,8 @@
 	title={#1},
 	breakable
 }
+
+\newcommand{\colorbf}[2]{{\color{#1}\bfseries#2}}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
