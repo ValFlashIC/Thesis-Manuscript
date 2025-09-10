@@ -10,18 +10,18 @@
 \chapter*{\sectitle}
 \addstarredchapter{\sectitle}
 
-\setcounter{mtc}{10} %For the first minitoc. Position of first chapter that needs a minitoc.
-\minitoc
+% \setcounter{mtc}{10} %For the first minitoc. Position of first chapter that needs a minitoc.
+% \minitoc
 
-\newcounter{introCnt}
-\setcounter{introCnt}{0}
-\renewcommand{\thesection}{\arabic{introCnt}}
+% \newcounter{introCnt}
+% \setcounter{introCnt}{0}
+% \renewcommand{\thesection}{\arabic{introCnt}}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Intro 1
 
-\addtocounter{introCnt}{1}
-\section{Remove intro section title and minitoc if not needed}
+% \addtocounter{introCnt}{1}
+% \section{Remove intro section title and minitoc if not needed}
 
 %%%%%%%%%%%%%%%%%%%%
 
@@ -83,7 +83,89 @@ The main motivation to use custom hardware accelerators is to make better use of
 %%%%%%%%%%%%%%%%%%%%
 
 
+\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
 
+\lettrine{T}{he} rapid growth of data-intensive applications has made sparse and irregular data structures increasingly prevalent in scientific computing, machine learning, and graph analytics.
+However, efficiently processing sparse matrices remains a fundamental challenge due to their inherent irregularity, which leads to unpredictable memory access patterns, limited opportunities for data reuse, and suboptimal utilization of hardware resources.
+Existing hardware accelerators have demonstrated partial solutions, yet they often rely on specialized assumptions, exhibit limited scalability, or fail to fully exploit reduction and memory access locality.
+
+This thesis addresses the following central question:
+
+\bigskip
+\begin{highlight}{Problematic}{Mulberry}
+    \colorbf{Mulberry}{\emph{How can hardware and architectural mechanisms be designed to efficiently support the computation of irregular sparse data, in particular random reductions, while ensuring scalability, adaptability, and performance across diverse workloads?}}
+\end{highlight}
+\bigskip
+
+To tackle this problem, we investigate the limitations of existing algorithms and accelerators, propose a novel cache architecture with reduction support tailored to sparse data, and evaluate its behavior through modeling, simulation, and hardware prototyping.
+
+\bigskip\bigskip
+
+This manuscript is structured around several key contributions.
+We begin with an in-depth discussion of irregular data, with a particular emphasis on sparse matrices (Chapter~\ref{cha:background}).
+This includes a study of fundamental sparse matrix multiplication kernels and their associated algorithms, highlighting the main hardware challenges that arise when dealing with sparse data.
+A high-level analysis of algorithms for sparse data computing is provided, with a focus on basic storage schemes and opportunities for data reuse.
+Building on this foundation, we review the state-of-the-art in hardware accelerators designed for efficient sparse matrix computing (Chapter~\ref{cha:soa}).
+This review identifies common characteristics, proposes a classification of existing accelerators and design tendencies, and offers a comparative analysis to better understand the rationale behind specific architectural choices under different objectives and constraints.
+
+Following this survey, we introduce a novel cache architecture specifically designed to address the challenge of “random” reductions (Chapter~\ref{cha:spdc}).
+The proposed cache integrates reduction support and organizes its memory into multiple regions tailored to denser and sparser data patterns.
+A Python model was developed to simulate memory transactions in this cache and to compare its behavior against that of a generic cache.
+To further investigate its performance, we complement this analysis with a probabilistic model, implemented in C, that enables rapid simulation and design space exploration (Chapter~\ref{cha:theory}).
+At the micro-architectural level, we detail the virtual partitioning of cache memory into multiple configurable regions, which ensures both flexibility and adaptability to diverse workloads (Chapter~\ref{cha:microarch}).
+
+The proposed cache is then evaluated through RTL simulation, which reveals two distinct groups of matrices that exhibit different performance profiles (Chapter~\ref{cha:eval}).
+Finally, the manuscript outlines potential future enhancements to improve both performance and scalability, including a multicore extension of the cache architecture and optimizations targeting bandwidth efficiency (Chapter~\ref{cha:optim}).
+
+\section*{Contributions of the Thesis}
+
+The main contributions of this thesis can be summarized as follows:
+
+\begin{enumerate}
+    \item \textbf{Analysis of irregular and sparse data computing} {\raggedleft \hfill (Chapter~\ref{cha:background})}
+    \begin{itemize}
+        \item Study of fundamental sparse matrix multiplication kernels and algorithms.
+        \item Identification of the key hardware challenges associated with sparse data processing.
+        \item High-level analysis of algorithms for sparse data computing, with emphasis on storage schemes and data reuse opportunities.
+    \end{itemize}
+
+    \item \textbf{Survey and classification of state-of-the-art accelerators} {\raggedleft \hfill (Chapter~\ref{cha:soa})}
+    \begin{itemize}
+        \item Comprehensive review of hardware accelerators for sparse matrix computing.
+        \item Identification of common architectural features and design tendencies.
+        \item Comparative analysis to explain design choices under varying objectives and constraints.
+    \end{itemize}
+
+    \item \textbf{Design of a cache architecture for random reductions} {\raggedleft \hfill (Chapter~\ref{cha:spdc})}
+    \begin{itemize}
+        \item Proposal of a cache with native reduction support, capable of handling both dense and sparse data via multiple cache regions.
+        \item Development of a Python-based simulation model to analyze memory transactions and benchmark against a generic cache.
+    \end{itemize}
+
+    \item \textbf{Probabilistic modeling and exploration of cache behavior} {\raggedleft \hfill (Chapter~\ref{cha:theory})}
+    \begin{itemize}
+        \item Implementation of a lightweight C-based probabilistic model for rapid simulation.
+        \item Exploration of cache dimensioning and behavior across diverse workloads.
+    \end{itemize}
+
+    \item \textbf{Micro-architecture of the reduction cache} {\raggedleft \hfill (Chapter~\ref{cha:microarch})}
+    \begin{itemize}
+        \item Introduction of a virtual memory partitioning scheme enabling multiple configurable regions.
+        \item Emphasis on flexibility and adaptability in cache design.
+    \end{itemize}
+
+    \item \textbf{Evaluation through RTL simulation} {\raggedleft \hfill (Chapter~\ref{cha:eval})}
+    \begin{itemize}
+        \item Assessment of the proposed cache architecture using RTL-level simulation.
+        \item Identification of two distinct groups of sparse matrices leading to different performance profiles.
+    \end{itemize}
+
+    \item \textbf{Future directions for performance and scalability} {\raggedleft \hfill (Chapter~\ref{cha:optim})}
+    \begin{itemize}
+        \item Proposal of a multicore version of the cache to extend scalability.
+        \item Exploration of bandwidth optimization strategies.
+    \end{itemize}
+\end{enumerate}
 
 % \subsection{A Section}
 
@@ -101,6 +183,6 @@ The main motivation to use custom hardware accelerators is to make better use of
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
+% \renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
 
 \cleardoublepage %% Comment this line if this section occupies the last pages
