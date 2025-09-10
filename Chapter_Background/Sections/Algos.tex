@@ -24,7 +24,12 @@ Indeed, in many cases, they have to be accessed multiple times, as discussed in 
 
 \subsubsection{Inner-Product Algorithm}
 
-The \acrlong{ip} algorithm~\cite{Faddeev1981_InnerOuter} is an intuitive way to calculate a matrix multiplication because it follows the loop order of the mathematical formulas~(\ref{eq:bg:MVinner}) and~(\ref{eq:bg:MMinner}) for \acrshort{mv} and \acrshort{mm}, respectively.
+The \acrlong{ip} algorithm~\cite{Faddeev1981_InnerOuter} is an intuitive way to calculate a matrix multiplication because it follows the loop order of the mathematical formulas~\eqref{eq:bg:MVinner} and~\eqref{eq:bg:MMinner} for \acrshort{mv} and \acrshort{mm}, respectively.
+The \gls{crank} $K$ is the innermost loop of the algorithm (see Algorithms~\ref{alg:bg:MVinner} and~\ref{alg:bg:MMinner}, lines 2 and 3, respectively).
+The output $C$ (or $c$) is always updated sequentially, but the $B$-matrix (or $b$-vector) will be entirely read $M$ times.
+In the context of sparse matrices, the reads of $B$ (or $b$) are conditioned by the non-zero elements of $A$, which requires indirect accesses.
+If $B$ (or $b$) is also sparse, the algorithm needs to perform \glspl{intersection} between the non-zero elements in the rows of $A$ and the columns of $B$ (or in the $b$-vector) (see Section~\ref{sec:bg:hwchallenges}).
+In Algorithm~\ref{alg:bg:MMinner}, exchanging $M$ and $N$ (lines 1 and 2) simply causes the output to be updated \emph{column-wise}.
 
 \begin{equation}
     \forall i \in \ldb0, M-1\rdb, \; c_{i} = \sum_{k = 0}^{K-1} A_{i,k} \times b_{k}
@@ -35,12 +40,6 @@ The \acrlong{ip} algorithm~\cite{Faddeev1981_InnerOuter} is an intuitive way to 
     \forall (i, j) \in \ldb0, M-1\rdb \times \ldb0, N-1\rdb, \; C_{i, j} = \sum_{k = 0}^{K-1} A_{i,k} \times B_{k,j}
     \label{eq:bg:MMinner}
 \end{equation}
-
-The \gls{crank} $K$ is the inner-most loop of the algorithm (see Algorithms~\ref{alg:bg:MVinner} and~\ref{alg:bg:MMinner}, line 2 and 3, respectively).
-The output $C$ (or $c$) is always updated sequentially, but the $B$-matrix (or $b$-vector) will be entirely read $M$ times.
-In the context of sparse matrices, the reads of $B$ (or $b$) are conditioned by the non-zero elements of $A$, which requires indirect accesses.
-If $B$ (or $b$) is also sparse, the algorithm needs to perform \glspl{intersection} between the non-zero elements in the rows of $A$ and the columns of $B$ (or in the $b$-vector) (see Section~\ref{sec:bg:hwchallenges}).
-In Algorithm~\ref{alg:bg:MMinner}, exchanging $M$ and $N$ (lines 1 and 2) simply causes the output to be updated \emph{column-wise}.
 
 \begin{figure}[htbp]
     \begin{minipage}[t]{0.49\linewidth}
@@ -73,7 +72,7 @@ In Algorithm~\ref{alg:bg:MMinner}, exchanging $M$ and $N$ (lines 1 and 2) simply
 \subsubsection{Outer-Product Algorithm}
 
 The \acrlong{op} algorithm~\cite{Faddeev1981_InnerOuter} has the opposite \gls{rank} loop order than the \acrlong{ip}.
-Indeed, Algorithms~\ref{alg:bg:MVouter} and~\ref{alg:bg:MMouter} show that the \gls{crank} $K$ is the outer-most loop (line 1).
+Indeed, Algorithms~\ref{alg:bg:MVouter} and~\ref{alg:bg:MMouter} show that the \gls{crank} $K$ is the outermost loop (line 1).
 It changes nothing mathematically except that the $B$-matrix (or $b$-vector) is always read sequentially.
 In the context of sparse matrices, the output $C$ (or $c$) is updated with indirect accesses.
 The algorithm needs to perform \glspl{reduction} of the \glspl{psum} $A_{j,k} \times B_{k,j}$ (or $A_{j,k} \times b_{k}$), as we show in Section~\ref{sec:bg:hwchallenges}.

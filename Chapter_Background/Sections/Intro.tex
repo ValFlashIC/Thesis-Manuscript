@@ -18,9 +18,11 @@ As a result, the hardware struggles to hide memory latencies, leading to poor ca
 The impact of \glspl{irrAccess} extends beyond raw performance.
 They also complicate algorithm design, hinder scalability on many-core architectures, and increase energy consumption due to repeated off-chip memory requests.
 Understanding and addressing these challenges is therefore a central concern in both system design and application optimization.
-This chapter provides the necessary background for analyzing \glspl{irrAccess}, highlighting their sources, effects, and the architectural considerations they expose.
+This chapter provides the necessary background for analyzing \glspl{irrAccess}, highlighting their sources, effects, and the architectural considerations they expose, focusing on the case of indirect indexing in sparse matrix computing.
 Most of the information of this chapter are based on already published content from Papers~\ref{publ:SoA} and~\ref{publ:SpDC}.
 
 \begin{highlight}{Definition}{LimeGreen}
-    \textbf{\Glspl{irrAccess}}, or \glspl{randAccess}, occurs when memory is accessed on non-consecutive addresses.
+    \textbf{\Glspl{irrAccess}}, or \textbf{\glspl{randAccess}}, occurs when memory is accessed on non-consecutive, hard-to-predict addresses.
 \end{highlight}
+
+\clearpage

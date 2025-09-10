@@ -32,7 +32,7 @@ This example highlights the need to efficiently search for the \gls{intersection
 Different algorithms can be used to address the \gls{intersection} search, depending on whether the elements are sorted.
 When the elements are sorted, the \gls{intersection} becomes a \emph{merge} and generally requires at most $2 \times nnz - 1$ comparisons (in some cases the number of comparisons can be reduced~\cite{Baeza-Yates2010_Intersection}).
 In Algorithm~\ref{alg:bg:IPSpMSpMCSR}, we use sorted \glspl{spFormat} (\acrshort{csr} and \acrshort{csc}).
-Thus, the ma\"ive \gls{intersection} search proposed (line 10) does at most one traversal of each the current row of $A$ ($i$) and the current column of $B$ ($j$).
+Thus, the na\"ive \gls{intersection} search proposed (line 10) does at most one traversal of each the current row of $A$ ($i$) and the current column of $B$ ($j$).
 Note that computing an \gls{intersection} in software induces the use of conditional loops and branches, which can be costly for classical CPU branch predictors.
 As we see in Chapter~\ref{cha:soa}, certain accelerators provide support for performing this \gls{intersection} operation directly in hardware.
 
