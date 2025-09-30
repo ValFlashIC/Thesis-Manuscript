@@ -7,9 +7,13 @@
 \label{sec:bg:algos}
 
 \lettrine{T}{he} main matrix multiplication kernels that are of interest are \acrfull{mv} and \acrfull{mm}, which include \acrshort{spmv} and \acrshort{spmspv} ($A \times b = c$), \acrshort{spgemv} ($A \times b + d = c$), \acrshort{spmm} and \acrshort{spmspm} ($A \times B = C$), and \acrshort{spgemm} ($A \times B + D = C$), with `Sp' for \emph{sparse} and `GE' for \emph{general}.
+\acrshort{spmv}, as well as its variant \acrshort{spgemv}, are by far the dominant operations in modern algebraic kernels (linear solvers, eigensolvers) which have been explicitly based on them~\cite{Gilbert2008, Duff2002, Penn2006, Yamazaki2011, Itoh1995, Kjolstad2017_TACO, Hapla2013}.
+Since these kernels are ubiquitous, their efficient implementation is primordial.
+In contrast, the \acrshort{spmspm} multiplication is less frequent in standard algebraic kernels, but it is extensively used in algebraic graph manipulation~\cite{Dongen2000, Kepner2015, Gilbert2007, Rabin1989, Chan2007, Azad2015, Brin1998}, as well as in multigrid solvers~\cite{Brandt2003, Li2021, Ryabkov2022, Ayyar2023}.
+The growing importance of large graphs has motivated new research on optimizing \acrshort{spmspm} applications.
+
 In the following sections, we focus on \acrshort{spmv} and \acrshort{spmspm}, with the notation $A(M,K) \times b(K) = c(M)$ and  $A(M,K) \times B(K,N) = C(M,N)$, respectively.
 The \gls{rank} $K$ is the \gls{crank} between the two inputs $A$ and $B$ (or $b$).
-
 The existence of different \glspl{rank} allows several algorithmic possibilities to compute matrix multiplication: the \acrfull{ip} algorithm, the \acrfull{op} algorithm and \acrlong{gust}'s (\acrshort{gust}) algorithm~\cite{Faddeev1981_InnerOuter, Gustavson1978_GustAlgo}.
 In all cases, the matrix $A$ is traversed sequentially.
 The three algorithms, however, impose different access patterns for $B$ (or $b$) and $C$ (or $c$).
@@ -18,15 +22,17 @@ Indeed, in many cases, they have to be accessed multiple times, as discussed in 
 \begin{highlight}{Note}{SkyBlue}
     In this manuscript, we focus on only two kernels, \acrshort{spmv} and \acrshort{spmspm}.
     Note that, among \acrshort{mv} kernels, \acrshort{spmv} is the most used and we specifically work on this kernel in Chapter~\ref{cha:eval}.
-    Similarly, \acrshort{spmspm} is widely used among \acrshort{mm} kernels, and serves as a great case study to understand the limitations of sparse \acrshort{mm} computing.
-    Also note that the \emph{general} (`GE') versions of these kernels do not fundamentally affect the hereafter analysis and conclusions.
+    \acrshort{spmspm} is also widely used and studying this \acrshort{mm} kernel is of interest as the memory access patterns in both matrices are irregular.
+
+    The \emph{general} (`GE') version of these kernels is not fundamentally different, as the majority of the compute operations are in the matrix multiplication, so going forward, we will ignore the `GE' variants.
+
 \end{highlight}
 
 \subsubsection{Inner-Product Algorithm}
 
 The \acrlong{ip} algorithm~\cite{Faddeev1981_InnerOuter} is an intuitive way to calculate a matrix multiplication because it follows the loop order of the mathematical formulas~\eqref{eq:bg:MVinner} and~\eqref{eq:bg:MMinner} for \acrshort{mv} and \acrshort{mm}, respectively.
 The \gls{crank} $K$ is the innermost loop of the algorithm (see Algorithms~\ref{alg:bg:MVinner} and~\ref{alg:bg:MMinner}, lines 2 and 3, respectively).
-The output $C$ (or $c$) is always updated sequentially, but the $B$-matrix (or $b$-vector) will be entirely read $M$ times.
+The output $C$ (or $c$) is always updated sequentially, but the $B$-matrix (or $b$-vector) will be read entirely $M$ times.
 In the context of sparse matrices, the reads of $B$ (or $b$) are conditioned by the non-zero elements of $A$, which requires indirect accesses.
 If $B$ (or $b$) is also sparse, the algorithm needs to perform \glspl{intersection} between the non-zero elements in the rows of $A$ and the columns of $B$ (or in the $b$-vector) (see Section~\ref{sec:bg:hwchallenges}).
 In Algorithm~\ref{alg:bg:MMinner}, exchanging $M$ and $N$ (lines 1 and 2) simply causes the output to be updated \emph{column-wise}.
@@ -110,14 +116,14 @@ With this method, \acrshort{op} necessitates the generation of at most $K$ \acrs
 
 \subsubsection{Gustavson's Algorithm}
 
-As the \acrshort{mm} algorithms have three \glspl{rank} instead of two for \acrshort{mv}, there is a third ordering, known as \acrlong{gust}'s algorithm~\cite{Gustavson1978_GustAlgo} where the \gls{crank} $K$ is the middle-loop (see line 2 in Algorithm~\ref{alg:bg:MMgustavson}).
+As the \acrshort{mm} algorithms have three \glspl{rank} instead of two for \acrshort{mv}, there is a third loop ordering, known as \acrlong{gust}'s algorithm~\cite{Gustavson1978_GustAlgo} where the \gls{crank} $K$ is the middle-loop (see line 2 in Algorithm~\ref{alg:bg:MMgustavson}).
 With this approach, the output is computed row-by-row with \acrshort{po}-rows generated and accumulated for each output $C$-row.
 With this algorithm, updates of the $C$-rows are sequential, but elements within the rows are updated with indirect accesses.
-In the dense case, the $B$-matrix is entirely read $M$ times and $K$ \acrshort{po}-rows of size $N$ are generated.
+In the dense case, the $B$-matrix is entirely read $M$ times and $K$ \acrshort{po}-rows, of size $N$, are generated.
 In the context of sparse matrices, conversely to the $C$-rows, the selection of the rows in $B$ is indirect, but the accesses are sequential within a row.
 Thus, the \gls{intersection} search is only needed for the $B$-rows and not each element.
 The \acrshort{po}-rows can be accumulated before computing the next $C$-row.
-For this algorithm, exchanging $M$ and $N$ causes the three matrices to be accessed \emph{column-wise} instead of \emph{row-wise}.
+Again, for this algorithm, exchanging $M$ and $N$ causes the three matrices to be accessed \emph{column-wise} instead of \emph{row-wise}.
 
 \begin{figure}[htbp]
     \centering
@@ -136,15 +142,15 @@ For this algorithm, exchanging $M$ and $N$ causes the three matrices to be acces
     \end{minipage}
 \end{figure}
 
-\subsubsection{Algorithms Comparison}
+\subsubsection{Comparison of the Algorithms}
 
 In Table~\ref{tab:AlgosCompSum}, we summarize the main features of \acrshort{ip}, \acrshort{op} and \acrshort{gust} in terms of accesses to the matrix $A$, $B$ (or $b$) and $C$ (or $c$).
-With this high level analysis, we can easily see that the data that is accessed with indirections shifts depending of the algorithms, from the input $B$ (or $b$) to the output $C$ (or $c$), with \acrshort{gust} being a trade-off between \acrshort{ip} and \acrshort{op} for \acrshort{mm} multiplication.
+From this high level analysis, we can easily see that the data that is accessed with indirections shifts depending on the algorithm, from the input $B$ (or $b$) to the output $C$ (or $c$), with \acrshort{gust} being a trade-off between \acrshort{ip} and \acrshort{op} for \acrshort{mm} multiplication.
 To have a better understanding of the consequences on the actual number of memory accesses, we propose a more detailed analysis in Section~\ref{sec:bg:AnalyticalModel}, for the case of \acrshort{spmspm}.
 
 \begin{highlight}{Note}{SkyBlue}
     Note that these algorithms are available in dense as well as in sparse \acrshort{mv} and \acrshort{mm} multiplications.
-    In sparse, the above algorithms (from \ref{alg:bg:MVinner} to \ref{alg:bg:MMgustavson}) have the same behavior from a software point-of-view, but need adjustments to traverse a \gls{spFormat} instead of a dense matrix.
+    In the sparse variants, the above algorithms (from \ref{alg:bg:MVinner} to \ref{alg:bg:MMgustavson}) have the same behavior from a mathematical point-of-view, but need adjustments to traverse a \gls{spFormat} instead of a dense matrix.
     Sparse versions of these algorithms are presented in Section~\ref{sec:bg:hwchallenges}.
 \end{highlight}
 
@@ -207,7 +213,7 @@ To have a better understanding of the consequences on the actual number of memor
 \end{table}
 
 \begin{highlight}{Conclusion}{Red}
-    There are \textit{three main algorithms} to handle sparse \acrshort{mv} and \acrshort{mm} kernels, \textbf{\acrfull{ip}}, \textbf{\acrfull{op}} and \textbf{\acrfull{gust}}.
+    There are \textit{three main algorithms} to compute sparse \acrshort{mv} and \acrshort{mm} kernels, \textbf{\acrfull{ip}}, \textbf{\acrfull{op}} and \textbf{\acrfull{gust}}.
     Each presents different characteristics, the main one being the \textbf{irregularity of the accesses}: on the \textbf{input} matrix $B$ (or vector $b$) with \acrshort{ip}; on the \textbf{output} matrix $C$ (or vector $c$) with \acrshort{op}; on both with \acrshort{gust} but at \textbf{row scale}.
 \end{highlight}
 
@@ -215,10 +221,10 @@ To have a better understanding of the consequences on the actual number of memor
 \subsection{Tiling}
 \label{sec:bg:tiling}
 
-The \gls{tiling} process~\cite{Grunbaum1987_Tiling} consists in matrix partitioning: a matrix may be divided into \glspl{tile}, non-overlapping sub-matrices.
+The \gls{tiling} process~\cite{Grunbaum1987_Tiling} consists in partitioning a matrix: a matrix may be divided into \glspl{tile}, non-overlapping sub-matrices.
 In other words, this method consists of adding \glspl{rank} to delimit the \glspl{tile}, and thus adding loop iterations in the kernel algorithm.
 
-\Gls{tiling} methods allow to locally reduce the dimensions of data and thus to adapt the working set to the size of the local memory~\cite{Lam1991_Tiling, Wilkinson2023_Tiling}, particularly when the matrix has a structure with denser regions.
+\Gls{tiling} methods make it possible to process smaller portions of the matrix and thus to adapt the working set to the size of the local memory~\cite{Lam1991_Tiling, Wilkinson2023_Tiling}, particularly when the matrix has a structure with denser regions.
 \Gls{tiling} can also increase parallelism opportunities.
 Software optimizations for sparse matrix computation, such as OSKI~\cite{Vuduc2005} and Sparse BLAS~\cite{Duff2002}, are based on \gls{tiling}.
 In previous sections, the study of the \acrshort{ip}, \acrshort{op} and \acrshort{gust} algorithms highlighted the influence of \gls{rank} ordering on the sequentiality and data movement, and thus, adding intermediate \glspl{rank} with \gls{tiling} breaks the regularity of pure \acrshort{ip} or \acrshort{op} algorithms, requiring additional hardware support (see Section~\ref{sec:bg:hwchallenges}).
@@ -268,10 +274,10 @@ The two next $A$-\glspl{tile} (\textit{green}, then \textit{blue}) will compute 
 
 \begin{highlight}{Note}{SkyBlue}
     Note that in case of \gls{tiling}, the $A$-matrix is no longer read sequentially, which can be problematic if it is stored in a classical \gls{spFormat} like \acrshort{csr} that is specifically made for \emph{row-wise} accesses.
-    Custom \glspl{spFormat} adapted for \gls{tiling} can be used \cite{Im2004_TilingBCSR}, but this requires a preprocessing conversion.
+    Custom \glspl{spFormat} adapted for \gls{tiling} can be used \cite{Im2004_TilingBCSR}, but this requires preprocessing to perform the conversion.
 \end{highlight}
 
 \begin{highlight}{Conclusion}{Red}
     \Gls{tiling} methods are widely used to \textbf{distribute workloads} across multicore systems, and to \textbf{locally reduce the data dimensions}.
-    Complex \gls{tiling} algorithms with many possible \gls{rank} ordering \textbf{inherits the behaviors of \acrshort{ip} and \acrshort{op}}, and can be described as a combinations of both at different \gls{tile} levels.
+    Complex \gls{tiling} algorithms with many possible \gls{rank} ordering \textbf{inherit the behaviors of \acrshort{ip} and \acrshort{op}}, and can be described as a combinations of both at different \gls{tile} levels.
 \end{highlight}

@@ -9,20 +9,20 @@
 \lettrine{M}{odern} computing systems are designed to deliver high performance by exploiting memory hierarchies, parallelism, and increasingly sophisticated hardware features.
 However, the efficiency of these systems is strongly tied to the regularity of memory access patterns.
 Applications with predictable, sequential data access can fully benefit from cache locality, prefetching mechanisms, and vectorization.
-In contrast, applications characterized by \glspl{irrAccess}, where memory locations are not known in advance or follow non-contiguous patterns, pose significant challenges.
+In contrast, applications characterized by \glspl{irrAccess}, where memory locations are not known in advance or follow non-contiguous patterns, are not able to achieve peak performance.
 
-\Gls{irrAccess} patterns are common in domains such as graph analytics, sparse linear algebra, unstructured mesh computations, and database queries.
-In these scenarios, pointer chasing, indirect indexing, and dynamically changing data structures disrupt spatial and temporal locality.
-As a result, the hardware struggles to hide memory latencies, leading to poor cache utilization and underutilization of available parallelism.
+In domains such as graph analytics, sparse linear algebra, unstructured mesh computations, and database queries, the memory access patterns are often irregular.
+In these applications, pointer chasing, indirect indexing, and dynamically changing data structures disrupt spatial and temporal locality.
+As a result, the hardware struggles to hide the latency of memory accesses, leading to poor cache utilization and underutilization of compute ressources.
 
 The impact of \glspl{irrAccess} extends beyond raw performance.
 They also complicate algorithm design, hinder scalability on many-core architectures, and increase energy consumption due to repeated off-chip memory requests.
-Understanding and addressing these challenges is therefore a central concern in both system design and application optimization.
-This chapter provides the necessary background for analyzing \glspl{irrAccess}, highlighting their sources, effects, and the architectural considerations they expose, focusing on the case of indirect indexing in sparse matrix computing.
-Most of the information of this chapter are based on already published content from Papers~\ref{publ:SoA} and~\ref{publ:SpDC}.
+Understanding and addressing these challenges is therefore a central concern in both computer design and application optimization.
+This chapter provides the necessary background for analyzing \glspl{irrAccess}, highlighting their sources, effects, and the architectural considerations they expose, focusing on the case of indirect indexing in sparse matrix computation.
+The content of this chapter is partially based on the content from Papers~\ref{publ:SoA} and~\ref{publ:SpDC}.
 
 \begin{highlight}{Definition}{LimeGreen}
-    \textbf{\Glspl{irrAccess}}, or \textbf{\glspl{randAccess}}, occurs when memory is accessed on non-consecutive, hard-to-predict addresses.
+    \textbf{\Glspl{irrAccess}}, or \textbf{\glspl{randAccess}}, are sequences of accesses where the sequence can not be easily predicted.
 \end{highlight}
 
 \clearpage

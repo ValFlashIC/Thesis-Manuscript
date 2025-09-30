@@ -6,8 +6,8 @@
 \section{Sparse Matrices}
 \label{sec:bg:spMatrices}
 
-\lettrine{I}{n} most applications, irregular data can be found in matrix computing, where large matrices filled with many zeros are stored in compressed format in memory.
-These sparse matrices are commonly used in diverse fields such as linear algebra, where sparse matrix multiplication is used to solve linear systems of equations for scientific purposes or simulation, as well as graph analytics where the vertices of a graph are represented as a sparse matrix that can be easily analysed with matrix operations~\cite{Buluc2011}, or finally \acrfullpl{cnn} or other similar AI features where weights and activations can be represented and processed as sparse matrices~\cite{Gale2020}.
+\lettrine{I}{n} most applications, \gls{irrData} can be found in matrix computing, where large matrices filled with many zeros are stored in compressed format in memory.
+These sparse matrices are commonly used in diverse fields such as linear algebra, where sparse matrix multiplication is used to solve linear systems of equations for scientific purposes or simulation, as well as graph analytics where the vertices of a graph are represented as a sparse matrix~\cite{Buluc2011}, or finally transformers or other similar AI features where weights and activations can be represented and processed as sparse matrices~\cite{Gale2020, Farina2024}.
 In these contexts, matrices are large, with dimensions up to billions of elements, and highly sparse, with non-zero densities down to $10^{-7}$~\cite{Kolodziej2019_SuiteSparse}.
 
 A matrix is defined as a two dimensional array.
@@ -32,11 +32,11 @@ With the example of a matrix $A(M, N)$: $$d_A = \frac{nnz_A}{M \times N}$$
 \label{sec:bg:bandedMatrices}
 
 Matrices used in scientific computation originate from physical modelling where a system of partial differential equations is discretized, resulting in a large sparse matrix.
-The regularity of this generation process naturally creates \gls{banded} matrices.
+In these systems, the forces between elements decreases quickly with their distance, creating \gls{banded} matrices.
 Moreover, numerical techniques exist to transform matrices into \gls{banded} matrices~\cite{Luo1992_MatrixStruct, Mafteiu2014_MatrixStruct, Wang2014_MatrixStruct}.
 
 A \gls{banded} matrix is a matrix which has a dense region around its main diagonal and which is sparser away from the diagonal.
-To give few visual examples, Figure~\ref{fig:bg:example_matrix_structure} shows the structure plots for four typical matrices found in the SuiteSparse Matrix Collection~\cite{Kolodziej2019_SuiteSparse}, having a high-density \gls{band} along the diagonal.
+To give a few visual examples, Figure~\ref{fig:bg:example_matrix_structure} shows the structure plots for four typical matrices found in the SuiteSparse Matrix Collection~\cite{Kolodziej2019_SuiteSparse}, having a high-density \gls{band} along the diagonal.
 In Figure~\ref{fig:bg:banded_mat_def}, we illustrate a \gls{banded}, square matrix of dimension $M$.
 We define $w_B$ as the width of the \gls{banded} region, or \gls{bandwidth}, as shown in \textit{red} in the figure.
 Sometimes it is easier to refer to the half-\gls{bandwidth}, $w_{hB}$, which respects the relation $w_B = 2 \times w_\mathit{hB} - 1$.
@@ -97,6 +97,6 @@ As in Figure~\ref{fig:bg:raefsky3}, in a \gls{PBanded} matrix, there are no elem
 \end{highlight}
 
 \begin{highlight}{Note}{SkyBlue}
-    The SuiteSparse Matrix Collection~\cite{Kolodziej2019_SuiteSparse} is a large, open source data-base of real application sparse matrices coming from various domains.
+    The SuiteSparse Matrix Collection~\cite{Kolodziej2019_SuiteSparse} is a large, open source data base of sparse matrices from multiple real-world applications, many of which were provided by companies such as Boeing.
     It gathers around 3,000 matrices of various sizes, densities and structure, which are extensively used for benchmarking (see Chapter~\ref{cha:soa}).
 \end{highlight}

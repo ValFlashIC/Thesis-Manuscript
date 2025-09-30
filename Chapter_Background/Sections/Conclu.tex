@@ -10,8 +10,9 @@
 
 \lettrine{I}{n} this chapter, we established the foundation for understanding the relationship between applications working with \gls{irrData} and the underlying challenges in hardware.
 \Glspl{irrAccess} are common in sparse computing and cause reduced cache efficiency, limited parallelism, and higher memory latency exposure.
-We analysed the most representative algorithms for sparse matrix multiplication kernels, and identified their key operations that suffer from irregularities.
-\Glspl{intersection} and \glspl{reduction} on \gls{irrData} with classical systems are costly, thus being the central challenges of sparse computation, and driving motivation for designing specialized hardware as we show in the next chapter.
+We analysed the most representative algorithms for sparse matrix multiplication kernels, and identified the operation that provoke \glspl{irrAccess}.
+\Glspl{intersection} and \glspl{reduction} on \gls{irrData} with classical systems are costly, thus they represent the central challenge for efficient computation on sparse data.
+To improve the performance of these operations, specialized hardware has been proposed as will be seen in the next chapter.
 
 \bigskip\bigskip
 

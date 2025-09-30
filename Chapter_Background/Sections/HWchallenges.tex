@@ -18,7 +18,7 @@ Depending on the algorithm, successive accesses to the same element may be too f
 
 In an \acrshort{ip} algorithm, the $A$-\gls{metadata} needs to be read to indirectly access the $B$-matrix (or $b$-vector), which may itself be stored in a \gls{spFormat}.
 In this case, the algorithm needs to check if the non-zero $A$-indices are present in $B$ (or $b$).
-If an index appears in neither list, there is no need to perform the multiplication (\emph{ineffectual operation}). %put in glossary?
+If an index appears in neither list, there is no need to perform the multiplication (\gls{innefOp}).
 More generally, this problem applies to any \gls{fiber} and is called the \gls{intersection} search.
 As a minimum, this requires reading all the \gls{metadata} for $A$ and $B$ (or $b$), and identifying those present in both.
 
@@ -92,7 +92,7 @@ If the output is stored using a \gls{spFormat}, either the index being updated d
 Or, if it exists, a lookup must be done to locate it, the update performed and the result written back.
 The problem associated with combining the \acrshortpl{po} is called \gls{reduction}.
 
-In Algorithm~\ref{alg:bg:OPSpMSpMCSR}, we present two pseudo-codes for an \acrfull{op} \acrshort{spmspm} using \emph{immediate update} (from line 1) and \emph{deferred update} (from line 7) with $A$ and $B$ stored in \acrshort{csc} and \acrshort{csr} formats, respectively.
+In Algorithm~\ref{alg:bg:OPSpMSpMCSR}, we present two pseudo-code for an \acrfull{op} \acrshort{spmspm} using \emph{immediate update} (from line 1) and \emph{deferred update} (from line 7) with $A$ and $B$ stored in \acrshort{csc} and \acrshort{csr} formats, respectively.
 The outer-loop ($K$, line 1 or 7) iterates over the columns of $A$ and the rows of $B$ (\gls{crank}).
 The middle-loop (line 2 or 9) iterates over the non-zero elements of the current column ($k$) of $A$.
 The inner-loop (line 4 or 11) iterates over the non-zero elements of the current row ($k$) of $B$.
@@ -206,16 +206,16 @@ As we see in Chapter~\ref{cha:soa}, hardware accelerators may combine the \emph{
 \end{algorithm}
 
 \begin{highlight}{Definition}{LimeGreen}
-    \textbf{\textit{``Random'' \glspl{reduction}}} occur when updating data from memory on irregular addresses, which happen on \emph{immediate update} \acrshort{op}.
+    \textbf{\textit{``Random'' \glspl{reduction}}} occur when updating data from memory at irregular addresses, which happen on \emph{immediate update} \acrshort{op}.
     With \emph{deferred update} \acrshort{op}, the \glspl{reduction} are sequential but large sets of data need to be buffered in memory.
-    Optimizing \gls{reduction} operations is key to improve performance on \acrshort{op} algorithm.
+    Optimizing \gls{reduction} operations is key to improving the performance on \acrshort{op} algorithm.
 \end{highlight}
 
 \subsection{Summary}
 
-In Table~\ref{tab:bg:AlgosHWComp}, we summarize the previously discussed advantages and hardware challenges for each algorithm, including \acrshort{gust} which presents a trade-off between \acrshort{ip} and \acrshort{op}.
+In Table~\ref{tab:bg:AlgosHWComp}, we summarize the advantages and hardware challenges for each algorithm, including \acrshort{gust} which presents a trade-off between \acrshort{ip} and \acrshort{op}.
 The potential for parallelism and data-reuse varies across algorithms, \acrshort{ip} being the most limited unless \gls{tiling} methods are used.
-With \acrshort{op}, \acrshortpl{po} can easily be generated across a multicore system but at the cost of transferring many data to memory.
+With \acrshort{op}, \acrshortpl{po} can easily be generated across a multicore system but at the cost of transferring a large volume of data to memory.
 With \emph{immediate updates}, \acrshort{op} transfers less data but all accesses on the output are ``random'' \glspl{reduction}.
 
 \begin{table}[htbp]
@@ -297,15 +297,15 @@ The issues presented with \acrshort{ip} and \acrshort{op} can be generalized to 
 The \gls{gather} problem exists when the inputs are indirectly accessed, and need to be read from memory using \gls{metadata} to present the processor with the correct terms for computing the \glspl{psum}.
 Typically, with \acrshort{ip}, the \gls{gather} problem is more difficult.
 The \gls{scatter} problem exists when the order in which the output matrix/vector is generated is not sequential and is typically associated with the \acrshort{op} algorithm.
-In the case of \gls{tiling}, a hardware accelerator must handle both \gls{gather} and \gls{scatter}, creating a need for hardware support for both \gls{intersection} searches and \glspl{reduction}.
+In the case of \gls{tiling}, both \gls{gather} and \gls{scatter} must be performed creating a need for efficient \gls{intersection} searches and random \glspl{reduction}.
 
 \begin{highlight}{Conclusion}{Red}
     There are \textbf{two main challenges} to address when computing sparse matrices.
     When reading irregular data from memory, addressing the \textbf{\gls{gather}} problem is key.
-    It mainly consists in processing efficient \textbf{\gls{intersection} searches}.
+    It consists of processing efficient \textbf{\gls{intersection} searches}.
     When updating irregular data from memory, addressing the \textbf{\gls{scatter}} problem is key.
-    It mainly consists in \textbf{managing \acrshortpl{po}} in memory or processing efficient \textbf{``random'' \glspl{reduction}}.
-    These two challenges are tied to \acrshort{ip} an \acrshort{op}, respectively, and are present in any higher \gls{rank} algorithm for sparse matrix computing.
+    It consists of \textbf{managing \acrshortpl{po}} in memory or processing efficient \textbf{``random'' \glspl{reduction}}.
+    These two challenges are tied to \acrshort{ip} an \acrshort{op}, respectively, and are present in any higher \gls{rank} algorithms for sparse matrix computing.
 \end{highlight}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -315,11 +315,12 @@ In the case of \gls{tiling}, a hardware accelerator must handle both \gls{gather
 To better understand how the algorithms impact the number and types of memory accesses, we developed, and presented in Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}, a model based on memory accesses counts.
 We identify five memory access patterns: (1) those where a matrix is read only once, thus there is no opportunity for reuse, (2) where the accesses are sequential, but a \gls{fiber} is read multiple times, (3) where \glspl{fiber} are read consecutively, but the accesses within a \gls{fiber} are ``random'', (4) where the \glspl{fiber} are accessed ``randomly'', but within a \gls{fiber} the accesses are sequential, and (5) where the matrix elements are accessed multiple times, and with a ``random'' access pattern.
 
-For each of the three algorithms, we counted the number of read and write accesses, based on the density of the input matrices, and the local memory storage available (``OD'', ``1D'' and ``2D''), as resumed in Table~\ref{tab:bg:spmspm_access_count}.
-In Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}, we plotted the number of memory accesses in logarithmic scale for \acrshort{spmspm}, based on a square matrix with $M = 10,000$.
+For each of the three algorithms, we counted the number of read and write accesses, based on the density of the input matrices, and the local memory storage available (``0D'', ``1D'' and ``2D''), as presented in Table~\ref{tab:bg:spmspm_access_count}.
+We refer to a system with no local storage or cache as `0 Dimensional' (``0D''), a system which has local storage that is sufficient to hold a single row or column as `1 Dimensional' (``1D''), and a system which can cache an entire matrix as `2 Dimensional' (``2D'').
+In Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}, we plotted the number of memory accesses for \acrshort{spmspm}, in a logarithmic scale, based on a square matrix with $M = 10,000$.
 Indeed, the number of non-zero elements in $C$ depends on the structure of the input matrices and in this model, we have assumed the non-zero entries in the input matrices are uniformly, randomly distributed.
 This corresponds to a \emph{worst case} for sparse matrices (no spatial and temporal locality).
-Banded input matrices would, for example, have fewer non-zero elements in $C$.
+If $A$ or $B$ are \gls{banded} matrices, for example, there would be fewer non-zero elements in $C$.
 In each graph, we have separated the accesses into $A$ (\textit{bottom}), $B$ (\textit{middle}) and $C$ (\textit{top}).
 The color code shows the access pattern, based on the five categories described above.
 
@@ -382,14 +383,14 @@ The color code shows the access pattern, based on the five categories described 
     \label{fig:bg:AnalyticalModel_SpMSpM}
 \end{figure}
 
-In the top-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM} (graphs~\ding{192}, \ding{193} and~\ding{194}), we start by considering a na\"ive system which has no local storage (``OD''), thus all data comes from main memory.
-From these figures, we clearly see that \acrshort{ip} requires more accesses at low density, as the $A$-matrix must be read $N$ times (graph~\ding{192}).
+In the top-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM} (graphs~\ding{192}, \ding{193} and~\ding{194}), we start by considering a na\"ive system which has no local storage (``0D''), thus all data comes from main memory.
+From the graphs in this row, we clearly see that \acrshort{ip} requires more accesses at low density, as the $A$-matrix must be read $N$ times (graph~\ding{192}).
 Whereas for \acrshort{op} and \acrshort{gust}, the $A$-matrix is read only once (thus the \textit{grey} color).
 For \acrshort{op} and \acrshort{gust} the total number of accesses is the same, however, with \acrshort{op} (graph~\ding{193}), the accesses to $C$ are ``random'' (\textit{red}).
 With \acrshort{gust} (graph~\ding{194}), the accesses to $B$ are sequential within the rows (\textit{orange}) and the $C$-rows are generated sequentially (\textit{yellow}), thus \acrshort{gust} avoids having any fully ``random'' accesses (\textit{red}).
 
 Since main memory accesses are the principal bottleneck, systems integrate local storage (such as buffers or caches).
-Thus, we consider the case of an system with sufficient local memory to store one full row, per matrix (few sparse rows, ``1D'').
+Thus, we consider the case of a system with sufficient local memory to store one full row, per matrix (equivalent to few sparse rows, ``1D'').
 We assume this local storage is perfect (no misses) and we re-calculate the number of remaining main memory accesses, as shown in the middle-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM} (graphs~\ding{195}, \ding{196} and~\ding{197}).
 The matrices are assumed to be initially stored in main memory, thus they must be accessed at least once.
 As can be seen, for \acrshort{ip} (graph~\ding{195}), the number of $A$-accesses is reduced, because rows are reused, thus the total number of $A$-accesses becomes equal to that in \acrshort{op} and \acrshort{gust}.
@@ -412,12 +413,12 @@ With a single row buffer, it is possible to address the \glspl{reduction} in $C$
 And, with a limited number of row buffers, the number of external memory accesses for $B$ can be reduced.
 Based on this analysis, it is clear that, among the three base algorithms, \acrshort{gust} is the best candidate for hardware implementation of \acrshort{spmspm}.
 
-\begin{highlight}{Note}{SkyBlue}
-    This analysis is extremely high level: we do not consider the real behavior of memory instances such as caches; we do not consider the structure of matrices.
-    We do more precise analysis later in this manuscript.
-\end{highlight}
+% \begin{highlight}{Note}{SkyBlue}
+%     This analysis is extremely high level: we do not consider the real behavior of memory instances such as caches; we do not consider the structure of matrices.
+%     We do more precise analysis later in this manuscript.
+% \end{highlight}
 
 \begin{highlight}{Conclusion}{Red}
-    Based on a basic analysis of the memory accesses on \acrshort{spmspm}, the \textbf{\acrlong{gust}'s algorithm} appears as the \textbf{best trade-off} to minimize memory traffic with reasonable amount of storage.
-    Second best is \acrshort{op} which behaves better than \acrshort{ip} at low density.
+    Based on a high level analysis of the memory accesses on \acrshort{spmspm}, \textbf{\acrlong{gust}'s algorithm} appears as the \textbf{best trade-off} to minimize memory traffic with reasonable amount of local storage.
+    The second best option is \acrshort{op}, which requires fewer memory accesses than \acrshort{ip} when the matrices have a low density.
 \end{highlight}
