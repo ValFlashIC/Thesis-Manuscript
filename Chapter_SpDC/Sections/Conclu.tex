@@ -1,0 +1,25 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %% SpDCache %%
+% Conclusion
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Conclusion}
+\label{sec:spdc:conclu}
+
+% \lettrine{M}{odern}
+
+We have presented the concept of SpDCache, a \emph{reduction cache} that has optimized storage and compute techniques for the sparser and denser regions of \emph{banded} matrices.
+This approach does not reduce the number of compute operations, however, it significantly decreases memory traffic ($8.1\times$).
+These benefits can be attributed to three techniques: (1) blocking the dense part of the \emph{band} in the \emph{IBRC}, (2) using fine-grained storage in the \emph{OBRT} and (3) off-loading the \emph{reductions} for isolated elements to the downstream caches, to prevent local \emph{evictions} and reduce traffic.
+
+Exploiting the coarse-grain structure of matrices is key to design hardware optimized for sparse matrix kernels.
+In future work, we plan to also take advantage of local fine-grain density in the \emph{OBR}, to further reduce memory traffic, and evaluate speedup on a clock-accurate model.
+
+\bigskip\bigskip
+
+\begin{highlight}{Takeaways}{Mulberry}
+    \raggedright
+    \colorbf{Mulberry}{ra} tata
+\end{highlight}
+
+\clearpage

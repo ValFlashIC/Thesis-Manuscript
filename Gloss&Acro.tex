@@ -166,6 +166,30 @@
     plural=ineffectual operations
 }
 
+\newglossaryentry{hit}{
+    name=hit,
+    description={Is a cache event where a given address does match one of the valid cache entries},
+    plural=hits
+}
+
+\newglossaryentry{miss}{
+    name=miss,
+    description={Is a cache event where a given address does not match any of the valid cache entries},
+    plural=misses
+}
+
+\newglossaryentry{eviction}{
+    name=eviction,
+    description={Is a cache event where a valid cache entry is flushed and freed},
+    plural=evictions
+}
+
+\newglossaryentry{redC}{
+    name=\emph{reduction cache},
+    description={Is a data-cache supporting \gls{reduction} operations},
+    plural=\emph{reduction caches}
+}
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Use \acrshort{}, \acrlong{}, \acrfull{}, \acrshortpl{}, \acrlongpl{} and \acrfullpl{}
 

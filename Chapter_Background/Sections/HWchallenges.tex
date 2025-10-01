@@ -84,7 +84,7 @@ As we see in Chapter~\ref{cha:soa}, certain accelerators provide support for per
 
 In an \acrshort{op} algorithm, the inputs $A$ and $B$ (or $b$) are accessed sequentially, but the updates of the output $C$ (or $c$) require indirect accesses.
 The pattern of the accesses, while the output is generated, is irregular and determined by the structure of the inputs.
-Furthermore, if these \glspl{randUpdt} provoke cache misses where only one word within a cache-line is modified, the bandwidth to external memory is poorly utilized.
+Furthermore, if these \glspl{randUpdt} provoke cache \glspl{miss} where only one word within a cache-line is modified, the bandwidth to external memory is poorly utilized.
 The \acrshort{op} algorithm generates several \acrfullpl{po} that must be accumulated to obtain the final output.
 We can identify two strategies: \emph{immediate update} and \emph{deferred update}.
 In the former, the final output is immediately updated as each \gls{psum} is generated.
@@ -391,7 +391,7 @@ With \acrshort{gust} (graph~\ding{194}), the accesses to $B$ are sequential with
 
 Since main memory accesses are the principal bottleneck, systems integrate local storage (such as buffers or caches).
 Thus, we consider the case of a system with sufficient local memory to store one full row, per matrix (equivalent to few sparse rows, ``1D'').
-We assume this local storage is perfect (no misses) and we re-calculate the number of remaining main memory accesses, as shown in the middle-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM} (graphs~\ding{195}, \ding{196} and~\ding{197}).
+We assume this local storage is perfect (no \glspl{miss}) and we re-calculate the number of remaining main memory accesses, as shown in the middle-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM} (graphs~\ding{195}, \ding{196} and~\ding{197}).
 The matrices are assumed to be initially stored in main memory, thus they must be accessed at least once.
 As can be seen, for \acrshort{ip} (graph~\ding{195}), the number of $A$-accesses is reduced, because rows are reused, thus the total number of $A$-accesses becomes equal to that in \acrshort{op} and \acrshort{gust}.
 For \acrshort{op} (graph~\ding{196}), the single row buffer greatly reduces the number of $B$-accesses, however, it does nothing for $C$ (despite the appearance, due to the logarithmic scale).
