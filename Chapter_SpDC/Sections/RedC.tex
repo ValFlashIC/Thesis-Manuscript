@@ -46,5 +46,9 @@ At the end of the algorithm, the \gls{redC} must be flushed.
 \end{figure}
 
 \begin{highlight}{Definition}{LimeGreen}
-    A \textbf{\gls{redC}} is a data-cache containing an \textbf{arithmetic unit} and a dedicated \textbf{support for \gls{reduction} operations}, via single ``fire-and-forget'' \emph{RED} instructions.
+    A \textbf{\gls{redC}} is a data-cache containing an arithmetic unit and a dedicated support for \gls{reduction} operations, via single ``fire-and-forget'' \emph{RED} instructions.
+\end{highlight}
+
+\begin{highlight}{Conclusion}{Red}
+    In order to process efficient \gls{reduction} operations, a \textbf{\gls{redC}} can be used to \textbf{avoid unnecessary memory transactions and stalls}, by offloading the accumulation near-memory, and updating the main memory only at \gls{eviction}.
 \end{highlight}

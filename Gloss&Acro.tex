@@ -190,6 +190,24 @@
     plural=\emph{reduction caches}
 }
 
+\newglossaryentry{tag}{
+    name=\emph{tag},
+    description={Refers to cache metadata that allows identification of cache-line memory addresses},
+    plural=\emph{tags}
+}
+
+\newglossaryentry{set}{
+    name=\emph{set},
+    description={Refers to a fixed number of cache-lines, a subdivision related to set-associative caches},
+    plural=\emph{sets}
+}
+
+\newglossaryentry{way}{
+    name=\emph{way},
+    description={Refers to the number of cache-lines that a \gls{set} contains},
+    plural=\emph{ways}
+}
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Use \acrshort{}, \acrlong{}, \acrfull{}, \acrshortpl{}, \acrlongpl{} and \acrfullpl{}
 
@@ -221,7 +239,7 @@
 \newacronym{hyb}{HYB}{\emph{HYBbrid}}
 \newacronym{bacsc}{BaCSC}{\emph{Banded Compressed Sparse Column}}
 
-%Background related
+% Background Related
 \newacronym[
     \glsshortpluralkey=\emph{POs},
     \glslongpluralkey=\emph{partial outputs}
@@ -230,3 +248,27 @@
     \glsshortpluralkey=\emph{CNNs},
     \glslongpluralkey=\emph{Convolutional Neural Networks}
 ]{cnn}{\emph{CNN}}{\emph{Convolutional Neural Network}}
+
+% Banded Regions
+\newacronym{ibr}{\emph{IBR}}{\emph{In-Band Region}}
+\newacronym{obr}{\emph{OBR}}{\emph{Out-of-Band Region}}
+
+% SpDC Regions
+\newacronym{grc}{\emph{GRC}}{\emph{Generic Region Cache}}
+\newacronym{drc}{\emph{DRC}}{\emph{Dense Region Cache}}
+\newacronym{srt}{\emph{SRT}}{\emph{Sparse Region Table}}
+
+% SpDC Components
+\newacronym{rmwq}{\emph{RMWQ}}{\emph{Read-Modify-Write Queue}}
+
+% SpDC Configs
+\newacronym{gc}{GC}{Generic Cache}
+\newacronym{redc}{RedC}{Reduction Cache}
+\newacronym{spdc}{SpDC}{SpDCache}
+\newacronym{lru}{\emph{LRU}}{\emph{Least Recently Used}}
+
+% Transactions / Instructions
+\newacronym[
+    \glsshortpluralkey=\emph{RMWs},
+    \glslongpluralkey=\emph{Read-Modify-Write}
+]{rmw}{\emph{RMW}}{\emph{Read-Modify-Write}}

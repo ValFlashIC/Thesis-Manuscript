@@ -1,0 +1,114 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %% SpDCache %%
+% Evaluation
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{High Level Evaluation of SpDCache}
+\label{sec:spdc:eval}
+
+\lettrine{W}{e} modelled the behavior of SpDCache, based on the flowchart in Figure~\ref{fig:spdc:spdc_archi}, using a transaction level model in Python, for a single-core, single-thread system executing a \acrshort{op} \acrshort{spmv} kernel (Algorithm~\ref{alg:spdc:spmv_with_red}).
+We do not model timing, as the order of the memory accesses determines the behavior of the cache (\glspl{hit}, \glspl{miss}, \glspl{eviction}), which depends only on the \acrshort{spmv} algorithm.
+The model checks the final numerical result and reports the main memory traffic associated with the \emph{updates} to the output vector (\emph{Output Memory Traffic}), where we count the bytes transferred (64B for each read and write, and 8B per atomic \acrshort{rmw}, with our configuration).
+For each write transaction, it tracks how many words in the line were actually used (\emph{Evicted Cache Line Utilization}) and it tracks how many words in the cache held useful data (\emph{Cache Memory Utilization}).
+We consider a word in the cache to be useful if it is updated or inserted by the processor.
+Our goal is to validate the principle of SpDCache using real application matrices from the SuiteSparse Matrix Collection~\cite{Kolodziej2019_SuiteSparse}.
+
+As baselines, we implemented a fully generic cache (\acrshort{gc}) that handle reads and writes for both inputs ($A$, $b$) and output ($c$), following the data movements shown in Figure~\ref{fig:spdc:GC_cache_WB}, and a simple \gls{redC} (\acrshort{redc}) that processes \emph{RED} transactions in a dedicated region using the flow shown in Figure~\ref{fig:spdc:red_based_cache}.
+In the \acrshort{redc}, 25\% of the memory is allocated for the inputs and the other 75\% for \emph{REDs} on $c$.
+In SpDCache (\acrshort{spdc}), 25\% is allocated for the \acrshort{grc}, 50\% for the \acrshort{drc} and 25\% for the \acrshort{srt}.
+All three caches use a \emph{random} eviction policy and have a total data storage of 32~kiB, and we do not account for the \emph{TAG} storage.
+The \gls{set}-associative regions have 4~\glspl{way} and 64B cache-lines (8 \emph{double} words per line).
+
+We simulated 48 matrices that have been used by the state-of-the-art accelerators~\cite{Pal2018_OuterSPACE, Hegde2019_ExTensor, Srivastava2020_MatRaptor, Baek2021_InnerSP, Zhang2021_Gamma, Srikanth2021_SortCache, Zhang2022_ASA}.
+In Table~\ref{tab:spdc:results}, we report the results for a representative subset; the gains with the full \gls{set} are similar.
+Most, but not all, of the matrices have a dense \gls{band} and even some matrices without an obvious \gls{band} benefit from the blocking effect in the \acrshort{drc}.
+
+\begin{table}[htbp]
+    \caption{Decrease in Memory Traffic and Improvement in Cache Utilization from Python Simulation}
+    \label{tab:spdc:results}
+    \centering
+    \begin{tblr}{
+            width = {\linewidth},
+            colspec = {*{1}{X[2.5,c]} *{2}{X[-1,c]} *{9}{X[c]}}, % rowspec
+            rows = {m, font=\small},
+            colsep = {1pt},
+            column{1-3} = {colsep=4pt},
+            column{1} = {l, font=\itshape\small},
+            row{1-W} = {rowsep=1pt, black!2},
+            row{1} = {c, font=\bfseries\small, black!5},
+            row{2-3} = {c, black!5},
+            row{3} = {font=\itshape\small},
+            row{15} = {c, black!5},
+            row{X-Z} = {rowsep=-2pt},
+            row{X} = {abovesep=2pt},
+            row{Z} = {belowsep=2pt},
+            cell{1}{1} = {l},
+            cell{1}{1-3} = {r=3}{},
+            cell{1}{4,7,10} = {c=3}{font=\bfseries\small},
+            cell{2}{5} = {c=2}{},
+            cell{15}{1} = {c=3}{font=\bfseries\small},
+            cell{X-Z}{1} = {c=12}{l},
+            cell{16}{5,6,12} = {fg=Red},
+            cell{17}{6} = {fg=Red},
+            hspan = {minimal},
+            % hlines, vlines,
+            % rulesep = {-1pt},
+            hline{1,W} = {2pt}, % Z for last
+            hline{4,15,16} = {1pt},
+            % hline{3-X} = {0.5pt},
+            hline{Z} = {1pt, dashed},
+            vline{4,7,10} = {1-X}{0.5pt},
+        }
+        %
+        Matrix & NNZ & M & {Output Memory \\ Traffic} & & & {Evicted Cache \\ Line Utilization} & & & {Cache Memory \\ Utilization (\%)} \\
+        %
+        & & & \acrshort{redc} & \acrshort{spdc} & & GC & \acrshort{redc} & \acrshort{spdc} & GC & \acrshort{redc} & \acrshort{spdc} \\
+        & & & \%/GC & \%/GC & \% ATO & Avg & Avg & Avg & Avg & Avg & Avg \\
+        %
+        consph & $6.0M$ & $83k$ & $23.5$ & $14.6$ & $27.9$ & $6.17$ & $6.60$ & $7.87$ & $48.5$ & $89.7$ & $96.8$ \\
+        roadNet-CA & $5.5M$ & $2.0M$ & $61.9$ & $25.3$ & $14.0$ & $4.31$ & $3.75$ & $7.64$ & $39.6$ & $50.1$ & $83.0$ \\
+        pdb1HYS & $4.3M$ & $36k$ & $11.9$ & $8.10$ & $22.5$ & $5.89$ & $6.97$ & $7.89$ & $48.7$ & $86.8$ & $95.3$ \\
+        offshore & $4.2M$ & $0.3M$ & $77.9$ & $8.40$ & $43.4$ & $1.96$ & $1.87$ & $7.23$ & $31.7$ & $27.1$ & $80.1$ \\
+        webbase-1M & $3.1M$ & $1.0M$ & $71.5$ & $34.9$ & $37.0$ & $5.77$ & $5.40$ & $8.00$ & $42.4$ & $65.7$ & $90.4$ \\
+        ramage02 & $2.9M$ & $17k$ & $9.50$ & $4.60$ & $44.1$ & $5.21$ & $6.42$ & $7.85$ & $47.7$ & $81.9$ & $94.1$ \\
+        filter3D & $2.7M$ & $0.1M$ & $50.9$ & $10.6$ & $35.3$ & $2.72$ & $3.28$ & $7.14$ & $35.9$ & $50.4$ & $86.0$ \\
+        2cubes\_sphere & $1.6M$ & $0.1M$ & $58.0$ & $8.70$ & $33.5$ & $2.29$ & $2.24$ & $7.49$ & $36.5$ & $31.2$ & $79.7$ \\
+        mac\_econ\_fwd500 & $1.3M$ & $0.2M$ & $28.3$ & $22.9$ & $4.60$ & $4.40$ & $6.04$ & $7.62$ & $42.4$ & $70.7$ & $73.6$ \\
+        scircuit & $1.0M$ & $0.2M$ & $71.0$ & $22.6$ & $35.4$ & $3.95$ & $3.60$ & $7.94$ & $40.2$ & $46.7$ & $91.0$ \\
+        wiki-Vote & $0.1M$ & $8.3k$ & $62.1$ & $5.10$ & $29.5$ & $1.74$ & $1.81$ & $5.68$ & $29.4$ & $25.0$ & $62.2$ \\
+        %
+        Geometric Mean & & & $\mathbf{39.2}$ & \hspace{0.9mm} $\mathbf{12.3}$ \!\!\! \hyperlink{fn0}{$^\mathrm{a}$} & $\mathbf{25.9}$ & $\mathbf{3.69}$ & $\mathbf{3.91}$ & \hspace{0.9mm} $\mathbf{7.46}$ \!\!\! \hyperlink{fn1}{$^\mathrm{b}$} & $\mathbf{39.7}$ & $\mathbf{51.9}$ & \hspace{0.9mm} $\mathbf{84.1}$ \!\!\! \hyperlink{fn2}{$^\mathrm{c}$} \\
+        %
+        raefsky3 & $1.5M$ & $21k$ & $19.7$ & $26.3$ & $0.00$ & $7.98$ & $8.00$ & $8.00$ & $49.5$ & $95.4$ & $65.0$ \\
+        msc10848 & $1.2M$ & $11k$ & $35.9$ & $14.4$ & $70.9$ & $4.96$ & $5.73$ & $7.86$ & $47.5$ & $72.0$ & $92.6$ \\
+        %
+        \hypertarget{fn0}{$^\mathrm{a}$Decrease by $8.1\times$ compared to GC. Same result on the 48 matrices.} \\
+        %
+        \hypertarget{fn1}{$^\mathrm{b}$Increase by $2.0\times$ compared to GC. Same result on the 48 matrices.} \\
+        %
+        \hypertarget{fn2}{$^\mathrm{c}$Increase by $2.1\times$ compared to GC. Same result on the 48 matrices.}
+    \end{tblr}
+\end{table}
+
+As expected, the simple \gls{redC} (\acrshort{redc}) decreases the main memory traffic to 39.2\% of the \acrshort{gc} baseline.
+SpDCache has significantly better performance than the \acrshort{redc}, reducing the traffic to 12.3\%.
+
+The benefits of SpDCache can be partly explained by the improved utilization of the cache-lines.
+On average, a line evicted from the \acrshort{drc} has 7.46 modified words, compared to 3.69 and 3.91 with the baselines.
+This improved utilization is the result of blocking the dense region in the \acrshort{drc}.
+
+We need to consider an additional metric, the percentage of traffic sent as atomic \acrshort{rmw} transactions (\textit{\%~ATO}).
+If this value is too high, it means we have simply shifted the workload to the lower level caches, which inherently have limited compute capability.
+This is the case for the \emph{msc10848} matrix where 70.9\% of the traffic is atomic \acrshortpl{rmw}, where a very large fraction of the non-zero values are outside the \gls{band}.
+Conversely, the \emph{raefsky3} matrix is an example were no atomic \acrshortpl{rmw} are used, as the region outside the \gls{band} was empty.
+In this case, 25\% of the available memory was unused.
+
+To facilitate comparison with other accelerators, we simulated the \gls{set} of matrices used by OuterSPACE~\cite{Pal2018_OuterSPACE}, a commonly used baseline (not shown in Table~\ref{tab:spdc:results}).
+On these matrices, SpDCache's memory traffic is 8.8$\times$ lower than \acrshort{gc}.
+
+\begin{highlight}{Conclusion}{Red}
+    SpDCache achieves a 8.1$\times$ \textbf{decrease in memory traffic} on the output vector $c$ compared to a generic cache, over a \gls{set} of 48 matrices.
+    It also \textbf{outperforms a simple \gls{redC}} by 3.8$\times$, showing the importance of having separate dedicated cache regions for the in- and out-of-band of a matrix.
+\end{highlight}
+
+\clearpage

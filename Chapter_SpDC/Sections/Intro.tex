@@ -6,11 +6,21 @@
 \section{Introduction}
 \label{sec:spdc:intro}
 
-% \lettrine{M}{odern}
-% The content of this chapter is partially based on the content from Papers~\ref{publ:SoA} and~\ref{publ:SpDC}.
+\lettrine{I}{n} the previous chapters, we analyzed the causes and effects of \glspl{irrAccess} in sparse computations and identified the \acrfull{op} algorithm of \acrfull{spmv} ($A \times b = c$) as a key case.
+The \acrshort{op} algorithm generates irregular updates on the output vector $c$, as each non-zero element of the input matrix $A$ contributes to distinct, and often distant, memory locations.
+These ``random'' \glspl{reduction} are a major challenge for cache-based architectures.
 
-% \begin{highlight}{Definition}{LimeGreen}
-%     \textbf{\Glspl{irrAccess}}, or \textbf{\glspl{randAccess}}, are sequences of accesses where the sequence can not be easily predicted.
-% \end{highlight}
+Conventional cache hierarchies are designed for regular, predictable access streams that exploit spatial and temporal locality.
+In contrast, \acrshort{op} \acrshort{spmv} exhibits poor locality, leading to low cache utilization, frequent evictions, and inefficient bandwidth use.
+
+Previous works, such as PHI~\cite{Mukkara2019_PHI}, SortCache~\cite{Srikanth2021_SortCache}, and ASA~\cite{Zhang2022_ASA}, have proposed \gls{reduction}-aware cache mechanisms to alleviate irregularity by improving accumulation and storage efficiency.
+However, these solutions do not exploit the structural properties of the processed matrices, and therefore miss optimization opportunities when partial regularity is present.
+This observation motivates our focus on \gls{banded} sparse matrices, which combine overall sparsity with localized dense regions near the diagonal.
+Such matrices provide a controlled environment to study how structure and locality can be leveraged to enhance cache performance.
+
+This chapter begins by recalling the main concepts of generic data-caches, introducing the terminology and mechanisms required to discuss caching behavior under \gls{irrAccess} conditions.
+It then presents a \gls{reduction}-aware cache architecture, designed to efficiently support ``random'' \glspl{reduction} in \acrshort{op} \acrshort{spmv}.
+The proposed design, SpDCache (presented in Paper~\ref{publ:SpDC}), extends traditional caching models with region-based organization and native \gls{reduction} support.
+Finally, we evaluate its performance through high-level modeling on \gls{banded} matrices, highlighting the influence of data regularity on cache efficiency.
 
 \clearpage

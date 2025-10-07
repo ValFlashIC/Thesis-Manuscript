@@ -51,9 +51,9 @@ As we see in Chapter~\ref{cha:soa}, certain accelerators provide support for per
             \For{$pos_A \in \ldb \mathit{A.ptr}_i, \mathit{A.ptr}_{i+1}-1 \rdb$}{
                 \tcp{Iterations over the non-zero elements of the i-th row of A}
                 $k_A \gets \mathit{A.idx}_{pos_A}$\;
-                \tcp{Column-index of the (i, $pos_A$) non-zero element of A}
+                \tcp{Column-index of the (i, pos\textsubscript{A}) non-zero element of A}
                 $(\mathit{isMatch}, pos_B) \gets \mathit{IntersectionSearch}(k_A, j, pos_B, \mathit{B.idx}, \mathit{B.ptr})$\;
-                \tcp{Return true and the matching $pos_B$ if $idx$ exists in the j-th column of B}
+                \tcp{Return true and the matching pos\textsubscript{B} if idx exists in the j-th column of B}
                 \If(\tcp*[f]{If indices did match}){$\mathit{isMatch}$}{
                     $acc \gets acc + \mathit{A.val}_{pos_A} \times \mathit{B.val}_{pos_B}$\;
                     \tcp{Local partial sum accumulation}
@@ -120,16 +120,16 @@ As we see in Chapter~\ref{cha:soa}, hardware accelerators may combine the \emph{
     \BlankLine
     \tcp{* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *}
     \tcp{* * * `Immediate updates' version * * * * * * * * * * * * * * * * * * * * * *}
-    \For(\tcp*[f]{Iterations over the columns of A and the rows of $B$}){$k \in \ldb 0, K-1 \rdb$}{
+    \For(\tcp*[f]{Iterations over the columns of A and the rows of B}){$k \in \ldb 0, K-1 \rdb$}{
         \For{$pos_A \in \ldb \mathit{A.ptr}_k, \mathit{A.ptr}_{k+1} \rdb$}{
             \tcp{Iterations over the non-zero elements of the k-th column of A}
-            $i_A \gets \mathit{A.idx}_{pos_A}$\tcp*[r]{Row-index of the ($pos_A$, k) non-zero element of A}
+            $i_A \gets \mathit{A.idx}_{pos_A}$\tcp*[r]{Row-index of the (pos\textsubscript{A}, k) non-zero element of A}
             \For{$pos_B \in \ldb \mathit{B.ptr}_k, \mathit{B.ptr}_{k+1} \rdb$}{
                 \tcp{Iterations over the non-zero elements of the k-th row of B}
                 $j_B \gets \mathit{B.idx}_{pos_B}$\;
-                \tcp{Column-index of the (k, $pos_B$) non-zero element of B}
+                \tcp{Column-index of the (k, pos\textsubscript{B}) non-zero element of B}
                 $C_{i_A, j_B} \gets C_{i_A, j_B} + \mathit{A.val}_{pos_A} \times \mathit{B.val}_{pos_B}$\;
-                \tcp{Reduction (to memory) of the partial sum into the ($i_A$, $j_B$) element of C (immediate update)}
+                \tcp{Reduction (to memory) of the partial sum into the (i\textsubscript{A}, j\textsubscript{B}) element of C (immediate update)}
             }
         }
     }
@@ -137,19 +137,19 @@ As we see in Chapter~\ref{cha:soa}, hardware accelerators may combine the \emph{
     \tcp{* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *}
     \tcp{* * * `Deferred updates' version~~* * * * * * * * * * * * * * * * * * * * * *}
     \tcp{Multiply phase}
-    \For(\tcp*[f]{Iterations over the columns of A and the rows of $B$}){$k \in \ldb 0, K-1 \rdb$}{
+    \For(\tcp*[f]{Iterations over the columns of A and the rows of B}){$k \in \ldb 0, K-1 \rdb$}{
         $pos_\mathit{PO} \gets 0$\;
         \For{$pos_A \in \ldb \mathit{A.ptr}_k, \mathit{A.ptr}_{k+1} \rdb$}{
             \tcp{Iterations over the non-zero elements of the k-th column of A}
-            $i_A \gets \mathit{A.idx}_{pos_A}$\tcp*[r]{Row-index of the ($pos_A$, k) non-zero element of A}
+            $i_A \gets \mathit{A.idx}_{pos_A}$\tcp*[r]{Row-index of the (pos\textsubscript{A}, k) non-zero element of A}
             \For{$pos_B \in \ldb \mathit{B.ptr}_k, \mathit{B.ptr}_{k+1} \rdb$}{
                 \tcp{Iterations over the non-zero elements of the k-th row of B}
                 $j_B \gets \mathit{B.idx}_{pos_B}$\;
-                \tcp{Column-index of the (k, $pos_B$) non-zero element of B}
+                \tcp{Column-index of the (k, pos\textsubscript{B}) non-zero element of B}
                 $\mathit{PO_k.row}_{pos_\mathit{PO}} \gets i_A$\;
                 $\mathit{PO_k.col}_{pos_\mathit{PO}} \gets j_B$\;
                 $\mathit{PO_k.val}_{pos_\mathit{PO}} \gets \mathit{A.val}_{pos_A} \times \mathit{B.val}_{pos_B}$\; 
-                \tcp{The k-th partial sum of the ($i_A$, $j_B$) element of C is stored in memory in the k-th partial output}
+                \tcp{The k-th partial sum of the (i\textsubscript{A}, j\textsubscript{B}) element of C is stored in memory in the k-th partial output}
                 $pos_\mathit{PO} \gets pos_\mathit{PO} + 1$\;
             }
         }
@@ -196,7 +196,7 @@ As we see in Chapter~\ref{cha:soa}, hardware accelerators may combine the \emph{
         $\mathit{PO}_{k+1} \gets \mathit{2DListsMerge}(\mathit{PO}_k, \mathit{PO}_{k+1})$\;
         % $\mathit{PO}_{k+1} \gets \mathit{MergedPO}$\;
     }
-    \tcp{$\mathit{PO}_{K-1}$ is C stored in COO format}
+    \tcp{PO\textsubscript{K-1} is C stored in COO format}
     \For{$pos \in \ldb 0, length(\mathit{PO}_{K-1})-1 \rdb$}{
         \tcp{Update C (dense) from the fully merged partial outputs}
         $i \gets \mathit{PO_{K-1}.row}_{pos}$\;
