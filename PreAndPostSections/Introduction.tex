@@ -35,10 +35,10 @@ Building on this foundation, we review the state-of-the-art in hardware accelera
 This review identifies common characteristics, proposes a classification of existing accelerators and design tendencies, offers a comparative analysis, and identifies the major tendencies across designs.
 This analysis of the state of the art guided our subsequent architectural choices.
 
-Following this survey, we introduce a novel cache architecture specifically designed to address the challenge of “random” reductions (Chapter~\ref{cha:spdc}).
+Following this survey, we introduce a novel cache architecture specifically designed to address the challenge of ``random'' reductions (Chapter~\ref{cha:spdc}).
 The proposed cache integrates reduction support and organizes its memory into multiple regions optimized for denser and sparser data regions.
 A Python model was developed to simulate memory transactions in this cache and to compare its behavior with that of a generic cache.
-To further investigate its performance, we complement this analysis with a probabilistic model, implemented in C, that enables rapid simulation and design space exploration (Chapter~\ref{cha:theory}).
+To further investigate its performance, we complement this analysis with a probabilistic model, implemented in C, that enables rapid simulation and sizing parameters exploration depending on matrices structure (Chapter~\ref{cha:theory}).
 At the micro-architectural level, we detail the virtual partitioning of cache memory into multiple configurable regions, which ensures both flexibility and adaptability to diverse workloads (Chapter~\ref{cha:microarch}).
 
 The proposed cache is then evaluated through RTL simulation, which reveals two distinct classes of matrices that exhibit different performance profiles (Chapter~\ref{cha:eval}).

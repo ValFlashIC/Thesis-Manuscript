@@ -34,7 +34,8 @@ When the elements are sorted, the \gls{intersection} becomes a \emph{merge} and 
 In Algorithm~\ref{alg:bg:IPSpMSpMCSR}, we use sorted \glspl{spFormat} (\acrshort{csr} and \acrshort{csc}).
 Thus, the na\"ive \gls{intersection} search proposed (line 10) does at most one traversal of each the current row of $A$ ($i$) and the current column of $B$ ($j$).
 Note that computing an \gls{intersection} in software induces the use of conditional loops and branches, which can be costly for classical CPU branch predictors.
-As we see in Chapter~\ref{cha:soa}, certain accelerators provide support for performing this \gls{intersection} operation directly in hardware.
+In case the matrix $B$ (or vector $b$) is stored in a dense format, the \gls{intersection} search is simplified, since all indices are implicitly present, but the accesses to $B$ (or $b$) remain indirect.
+As we see in Chapter~\ref{cha:soa}, certain accelerators provide support for performing the \gls{intersection} operation directly in hardware.
 
 \begin{algorithm}[htbp]
     \caption{\acrshort{ip} \acrshort{spmspm} Performing \Gls{intersection} Searches with \acrshort{csr} and \acrshort{csc} Formats}
@@ -206,12 +207,13 @@ As we see in Chapter~\ref{cha:soa}, hardware accelerators may combine the \emph{
 \end{algorithm}
 
 \begin{highlight}{Definition}{LimeGreen}
-    \textbf{\textit{``Random'' \glspl{reduction}}} occur when updating data from memory at irregular addresses, which happen on \emph{immediate update} \acrshort{op}.
+    \textbf{``Random'' \glspl{reduction}} occur when updating data from memory at irregular addresses, which happen on \emph{immediate update} \acrshort{op}.
     With \emph{deferred update} \acrshort{op}, the \glspl{reduction} are sequential but large sets of data need to be buffered in memory.
     Optimizing \gls{reduction} operations is key to improving the performance on \acrshort{op} algorithm.
 \end{highlight}
 
 \subsection{Summary}
+\label{sec:bg:AlgosHWComp}
 
 In Table~\ref{tab:bg:AlgosHWComp}, we summarize the advantages and hardware challenges for each algorithm, including \acrshort{gust} which presents a trade-off between \acrshort{ip} and \acrshort{op}.
 The potential for parallelism and data-reuse varies across algorithms, \acrshort{ip} being the most limited unless \gls{tiling} methods are used.
@@ -297,7 +299,7 @@ The issues presented with \acrshort{ip} and \acrshort{op} can be generalized to 
 The \gls{gather} problem exists when the inputs are indirectly accessed, and need to be read from memory using \gls{metadata} to present the processor with the correct terms for computing the \glspl{psum}.
 Typically, with \acrshort{ip}, the \gls{gather} problem is more difficult.
 The \gls{scatter} problem exists when the order in which the output matrix/vector is generated is not sequential and is typically associated with the \acrshort{op} algorithm.
-In the case of \gls{tiling}, both \gls{gather} and \gls{scatter} must be performed creating a need for efficient \gls{intersection} searches and random \glspl{reduction}.
+In the case of \gls{tiling} or with \acrshort{gust}, both \gls{gather} and \gls{scatter} must be performed creating a need for efficient \gls{intersection} searches and random \glspl{reduction}.
 
 \begin{highlight}{Conclusion}{Red}
     There are \textbf{two main challenges} to address when computing sparse matrices.
@@ -312,7 +314,7 @@ In the case of \gls{tiling}, both \gls{gather} and \gls{scatter} must be perform
 \subsection{SpMSpM Algorithm Analysis}
 \label{sec:bg:AnalyticalModel}
 
-To better understand how the algorithms impact the number and types of memory accesses, we developed, and presented in Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}, a model based on memory accesses counts.
+To better understand how the algorithms impact the number and types of memory accesses, we developed, and presented in Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}, a model based on memory accesses counts for \acrshort{spmspm}.
 We identify five memory access patterns: (1) those where a matrix is read only once, thus there is no opportunity for reuse, (2) where the accesses are sequential, but a \gls{fiber} is read multiple times, (3) where \glspl{fiber} are read consecutively, but the accesses within a \gls{fiber} are ``random'', (4) where the \glspl{fiber} are accessed ``randomly'', but within a \gls{fiber} the accesses are sequential, and (5) where the matrix elements are accessed multiple times, and with a ``random'' access pattern.
 
 For each of the three algorithms, we counted the number of read and write accesses, based on the density of the input matrices, and the local memory storage available (``0D'', ``1D'' and ``2D''), as presented in Table~\ref{tab:bg:spmspm_access_count}.
@@ -413,10 +415,10 @@ With a single row buffer, it is possible to address the \glspl{reduction} in $C$
 And, with a limited number of row buffers, the number of external memory accesses for $B$ can be reduced.
 Based on this analysis, it is clear that, among the three base algorithms, \acrshort{gust} is the best candidate for hardware implementation of \acrshort{spmspm}.
 
-% \begin{highlight}{Note}{SkyBlue}
-%     This analysis is extremely high level: we do not consider the real behavior of memory instances such as caches; we do not consider the structure of matrices.
-%     We do more precise analysis later in this manuscript.
-% \end{highlight}
+\begin{highlight}{Note}{SkyBlue}
+    For \acrshort{spmv}, such an analysis does not show significant differences between \acrshort{ip} and \acrshort{op}, as both algorithms require similar number of memory accesses.
+    However, \acrshort{op} shows more potential for parallelism and data-reuse as seen in the previous section (\ref{sec:bg:AlgosHWComp}), thus being preferred for \acrshort{spmv} hardware accelerators.
+\end{highlight}
 
 \begin{highlight}{Conclusion}{Red}
     Based on a high level analysis of the memory accesses on \acrshort{spmspm}, \textbf{\acrlong{gust}'s algorithm} appears as the \textbf{best trade-off} to minimize memory traffic with reasonable amount of local storage.

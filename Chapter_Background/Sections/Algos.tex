@@ -25,7 +25,6 @@ Indeed, in many cases, they have to be accessed multiple times, as discussed in 
     \acrshort{spmspm} is also widely used and studying this \acrshort{mm} kernel is of interest as the memory access patterns in both matrices are irregular.
 
     The \emph{general} (`GE') version of these kernels is not fundamentally different, as the majority of the compute operations are in the matrix multiplication, so going forward, we will ignore the `GE' variants.
-
 \end{highlight}
 
 \subsubsection{Inner-Product Algorithm}
@@ -52,7 +51,7 @@ In Algorithm~\ref{alg:bg:MMinner}, exchanging $M$ and $N$ (lines 1 and 2) simply
         \begin{algorithm}[H]
         \caption{Dense \acrlong{mv} \acrlong{ip} Algorithm}
         \label{alg:bg:MVinner}
-        \For{$i \in \ldb 0, M-1 \rdb$}{
+        \For(\tcp*[f]{row first}){$i \in \ldb 0, M-1 \rdb$}{
             \For{$k \in \ldb 0, K-1 \rdb$}{
                 $c_{i} \acc A_{i,k} \times b_{k}$
             }
@@ -64,7 +63,7 @@ In Algorithm~\ref{alg:bg:MMinner}, exchanging $M$ and $N$ (lines 1 and 2) simply
         \begin{algorithm}[H]
         \caption{Dense \acrlong{mm} \acrlong{ip} Algorithm}
         \label{alg:bg:MMinner}
-        \For{$i \in \ldb 0, M-1 \rdb$}{
+        \For(\tcp*[f]{A-row first}){$i \in \ldb 0, M-1 \rdb$}{
             \For{$j \in \ldb 0, N-1 \rdb$}{
                 \For{$k \in \ldb 0, K-1 \rdb$}{
                     $C_{i,j} \acc A_{i,k} \times B_{k,j}$
@@ -91,7 +90,7 @@ With this method, \acrshort{op} necessitates the generation of at most $K$ \acrs
         \begin{algorithm}[H]
         \caption{Dense \acrlong{mv} \acrlong{op} Algorithm}
         \label{alg:bg:MVouter}
-        \For{$k \in \ldb 0, K-1 \rdb$}{
+        \For(\tcp*[f]{common rank first}){$k \in \ldb 0, K-1 \rdb$}{
             \For{$i \in \ldb 0, M-1 \rdb$}{
                 $c_{i} \acc A_{i,k} \times b_{k}$
             }
@@ -103,7 +102,7 @@ With this method, \acrshort{op} necessitates the generation of at most $K$ \acrs
         \begin{algorithm}[H]
         \caption{Dense \acrlong{mm} \acrlong{op} Algorithm}
         \label{alg:bg:MMouter}
-        \For{$k \in \ldb 0, K-1 \rdb$}{
+        \For(\tcp*[f]{common rank first}){$k \in \ldb 0, K-1 \rdb$}{
             \For{$i \in \ldb 0, M-1 \rdb$}{
                 \For{$j \in \ldb 0, N-1 \rdb$}{
                     $C_{i,j} \acc A_{i,k} \times B_{k,j}$
@@ -121,8 +120,9 @@ With this approach, the output is computed row-by-row with \acrshort{po}-rows ge
 With this algorithm, updates of the $C$-rows are sequential, but elements within the rows are updated with indirect accesses.
 In the dense case, the $B$-matrix is entirely read $M$ times and $K$ \acrshort{po}-rows, of size $N$, are generated.
 In the context of sparse matrices, conversely to the $C$-rows, the selection of the rows in $B$ is indirect, but the accesses are sequential within a row.
-Thus, the \gls{intersection} search is only needed for the $B$-rows and not each element.
+Thus, the \gls{intersection} search is only needed for the $B$-rows and not each element within rows.
 The \acrshort{po}-rows can be accumulated before computing the next $C$-row.
+Overall, this algorithm can be seen as a trade-off between \acrshort{ip} and \acrshort{op} for \acrshort{mm} kernels, since the indirect accesses are shared between $B$ and $C$.
 Again, for this algorithm, exchanging $M$ and $N$ causes the three matrices to be accessed \emph{column-wise} instead of \emph{row-wise}.
 
 \begin{figure}[htbp]
@@ -132,7 +132,7 @@ Again, for this algorithm, exchanging $M$ and $N$ causes the three matrices to b
         \caption{Dense \acrlong{mm} \acrlong{gust}'s Algorithm}
         \label{alg:bg:MMgustavson}
         \For{$i \in \ldb 0, M-1 \rdb$}{
-            \For{$k \in \ldb 0, K-1 \rdb$}{
+            \For(\tcp*[f]{common rank}){$k \in \ldb 0, K-1 \rdb$}{
                 \For{$j \in \ldb 0, N-1 \rdb$}{
                     $C_{i,j} \acc A_{i,k} \times B_{k,j}$
                 }

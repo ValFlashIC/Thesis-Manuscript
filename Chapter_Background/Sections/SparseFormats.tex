@@ -20,10 +20,13 @@ It consists of three tables of size $nnz$ with only the non-zero elements ($val$
 The tuples do not necessarily need to be sorted, which makes it easy to append new entries.
 However, if the tuples are not sorted, this format is not well suited for sequential traversal or locating a specific matrix entry.
 This format can be sorted \emph{row-wise} as in the example in Figure~\ref{fig:bg:FormatEx:COO} or \emph{column-wise} if needed, but in this case, it is less efficient than the two other widely used \glspl{spFormat} \acrfull{csr} (Figure~\ref{fig:bg:FormatEx:CSR}) and its \emph{column-major} counterpart \acrfull{csc} (Figure~\ref{fig:bg:FormatEx:CSC}), which are sorted by construction.
-With \acrshort{csc}, the $val$ table of size $nnz$ stores the non-zero elements sorted \emph{column-wise} and the $idx$ table of size $nnz$ stores the corresponding row indices, similarly to \acrshort{coo}.
-The third table $ptr$ of size $M+1$ stores the positions of the columns.
-For example, in Figure~\ref{fig:bg:FormatEx:CSC}, the second column of index $1$ (\textit{green}) has non-zero elements between positions $2$ and $4$ (\textit{blue}, $4$ excluded) of tables $idx$ and $val$.
-This $ptr$ table allows \acrshort{csr} and \acrshort{csc} to have a lower memory footprint than \acrshort{coo}.
+With \acrshort{csr}, the $val$ table of size $nnz$ stores the non-zero elements sorted \emph{row-wise} and the $idx$ table of size $nnz$ stores the corresponding column indices, similarly to \acrshort{coo}.
+The third table $ptr$ of size $M+1$ stores the positions of the rows.
+For example, in Figure~\ref{fig:bg:FormatEx:CSR}, the second row of index 1 (\textit{green}) has one non-zero element between positions 2 and 3 (\textit{blue}, 3 excluded) of tables $idx$ and $val$.
+The \acrshort{csc} format works similarly but in a \emph{column-wise} manner: the $val$ table of size $nnz$ is sorted \emph{column-wise} and the $idx$ table of size $nnz$ stores column indices.
+The $ptr$ table of size $N+1$ stores the positions of the columns.
+In the example in Figure~\ref{fig:bg:FormatEx:CSC}, the second column of index 1 (\textit{green}) has non-zero elements between positions 2 and 4 (\textit{blue}, 4 excluded) of tables $idx$ and $val$.
+The $ptr$ table allows \acrshort{csr} and \acrshort{csc} to have a lower memory footprint than \acrshort{coo}.
 
 \begin{figure}[htbp]
     \centering

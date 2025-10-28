@@ -172,8 +172,27 @@ In Table~\ref{tab:spdc:results_overall}, we report the results for PHI alongside
     \end{tblr}
 \end{table}
 
-% comments on PHI res
+As expected, PHI achieves a significant reduction in memory traffic compared to the \acrshort{gc}, down to 50.4\% on average.
+This represents a 2.0$\times$ decrease compared to the \acrshort{gc}, which is consistent with the results reported in the original PHI paper~\cite{Mukkara2019_PHI}, and a 1.8$\times$ decrease compared to the \acrshort{redc}.
+However, \acrlong{spdc} still outperforms PHI, cutting memory traffic by 2.1$\times$.
+The improved performance of \acrshort{spdc} can again be explained by the better utilization of the cache-lines, with 7.21 useful words per evicted line, compared to 5.00 for PHI.
+The overall cache memory utilization is also significantly better with \acrshort{spdc}, with 75.2\% of the cache holding useful data, compared to only 30.6\% for PHI.
 
-% About region sizing
+We also explored different region sizing for \acrlong{spdc}, varying the sizes of the \acrshort{grc}, \acrshort{drc} and \acrshort{srt} while keeping the total cache size constant at 32~KiB.
+The results are also reported in Table~\ref{tab:spdc:results_overall}.
+Reducing the size of the \acrshort{grc} from 8~KiB (32 \glspl{set}) to 2~KiB (8 \glspl{set}) and 1~KiB (4 \glspl{set}) has little impact on performance, as the \acrshort{grc} is mainly used for temporary storage of input vector elements.
+However, reducing it under 1~KiB would increase the total memory traffic, as more frequent evictions would occur before the data is used, an effect already noticeable when going from 2~KiB to 1~KiB.
+With constant \acrshort{grc} size, when reducing the size of the \acrshort{srt}, which means allocating more space to the \acrshort{drc}, we observe a slight increase in memory traffic, as the \acrshort{srt} becomes less effective at capturing irregular accesses.
+Thus, the \acrshort{srt} sizing appears to be more critical than the \acrshort{drc} sizing.
+We will explore the reasons behind this effect in the next chapter.
+Overall, fine tuning the region sizes can lead to small performance improvements, but the original sizing of 8~KiB for the \acrshort{grc}, 16~KiB for the \acrshort{drc} and 8~KiB for the \acrshort{srt} appears to be a good compromise for the set of matrices we evaluated.
+
+About the \acrshort{redc}, we also explored different sizing strategies.
+We observed that allocating more than 75\% of the cache (96 \glspl{set}) to store \emph{RED} transactions slightly improves performance, as it increases the likelihood of capturing multiple updates to the same output element before eviction, without overly compromising the storage of input elements.
+
+\begin{highlight}{Conclusion}{Red}
+    \textbf{\acrlong{spdc} outperforms PHI}, a state-of-the-art \gls{reduction} cache, by achieving a 2.1$\times$ decrease in memory traffic, thanks to its dedicated regions for in- and out-of-band accesses that improve cache-line and overall cache utilization.
+    Additionally, we found that the simple 25/50/25\% region sizing of \acrshort{spdc} provides good performance with only minor variations observed when adjusting the sizes of the \acrshort{grc}, \acrshort{drc}, and \acrshort{srt}.
+\end{highlight}
 
 \clearpage
