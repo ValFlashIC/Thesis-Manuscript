@@ -35,8 +35,8 @@ As we continue, we then \gls{hit} another value \ding{196} on the row $\mathit{k
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.8\linewidth]{Chapter_SpDC/Figures/PDF/HardwareSpecs_SpMVonMatrix.pdf}
-    \caption{Traversal of Non-Zero Elements of Input Matrix for \acrshort{op} \acrshort{spmv} (left) and Impact on Cache (right) \note{(TODO use remaining place to clarify figure / add the pink line which is brought back)}}
+    \includegraphics[width=\linewidth]{Chapter_SpDC/Figures/PDF/REDonSpMV.pdf}
+    \caption{Traversal of Non-Zero Elements of Input Matrix for \acrshort{op} \acrshort{spmv} (left) and Impact on Cache (right)}
     \label{fig:spdc:spmv_on_matrix}
 \end{figure}
 
@@ -64,12 +64,12 @@ On the contrary, the sparser rows of the matrix would not stayed long in the ``s
 
 We focus on the case of \gls{banded} matrices which have a denser region around the diagonal.
 For a \gls{redC} to work efficiently with such matrices, the dense \gls{band} should be prioritized, and the isolated elements out of the band should be processed separately to avoid disturbance.
-This is the main idea of SpDCache (Paper~\ref{publ:SpDC}), which is a \gls{redC} with dedicated memory regions for the in-band and out-of-band of a matrix.
+This is the main idea of \acrlong{spdc} (Paper~\ref{publ:SpDC}), which is a \gls{redC} with dedicated memory regions for the in-band and out-of-band of a matrix.
 We describe its behavior int the following sections.
 
 \begin{highlight}{Conclusion}{Red}
     When computing an \textbf{\acrshort{op} \acrshort{spmv}}, a \textbf{conventional \gls{redC} is not enough} for the available cache memory to be efficiently utilized.
     Compared to the size of a cache, matrices have too large dimensions for \emph{keys} to be reused from one column iteration to an other, leading to mostly empty cache-lines being prematurely evicted.
     \bigskip \\
-    We propose \textbf{SpDCache}, a \gls{redC} with dedicated memory regions, \textbf{leveraging matrix structure} with denser and sparser regions, such as \textbf{\gls{banded} matrices}.
+    We propose \textbf{\acrlong{spdc}}, a \gls{redC} with dedicated memory regions, \textbf{leveraging matrix structure} with denser and sparser regions, such as \textbf{\gls{banded} matrices}.
 \end{highlight}

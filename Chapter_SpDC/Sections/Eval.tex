@@ -22,7 +22,7 @@ All three caches have a total data storage of 32~KiB, and we do not account for 
 The \gls{set}-associative regions have 4~\glspl{way} and 64B cache-lines (8 \emph{double} words per line).
 
 We simulated 48 matrices that have been used by the state-of-the-art accelerators~\cite{Pal2018_OuterSPACE, Hegde2019_ExTensor, Srivastava2020_MatRaptor, Baek2021_InnerSP, Zhang2021_Gamma, Srikanth2021_SortCache, Zhang2022_ASA}, which are listed in Appendix~\ref{app:mat_list}.
-We removed matrices which their output vector $c$ fits entirely in the cache (less than 4096 elements), as they do not stress the cache.
+We excluded matrices whose output vector $c$ fits entirely in the cache (fewer than 4096 elements), since they do not stress the cache.
 In Table~\ref{tab:spdc:results}, we report the results for all three caches, along with statistical indicators.
 Most, but not all, of the matrices have a dense \gls{band} and even some matrices without an obvious \gls{band} benefit from the blocking effect in the \acrshort{drc}.
 
@@ -79,26 +79,27 @@ Most, but not all, of the matrices have a dense \gls{band} and even some matrice
 \end{table}
 
 As expected, the simple \gls{redC} (\acrshort{redc}) decreases the main memory traffic to 89.2\% of the \acrshort{gc} baseline.
-\acrlong{spdc} has significantly better performance than the \acrshort{redc}, reducing the traffic to 24.5\%.
-\acrlong{spdc} thus achieves a 4.1$\times$ decrease in memory traffic compared to the \acrshort{gc}, and a 3.6$\times$ decrease compared to the \acrshort{redc}, on average over the set of matrices.
-\acrshort{spdc} outperforms the \acrshort{gc} on all matrices, and the \acrshort{redc} on 93.8\% of them.
+\acrlong{spdc} has significantly better performance than \acrshort{redc}, reducing the traffic to 24.5\%.
+\acrlong{spdc} thus achieves a 4.1$\times$ decrease in memory traffic compared to \acrshort{gc}, and a 3.6$\times$ decrease compared to \acrshort{redc}, on average over the set of matrices.
+\acrshort{spdc} outperforms \acrshort{gc} on all matrices, and \acrshort{redc} on 93.8\% of them.
 
 The benefits of \acrlong{spdc} can be partly explained by the improved utilization of the cache-lines.
 On average, a cache-line evicted from \acrshort{spdc} has 7.21 modified words, compared to 3.56 and 3.60 with the baselines.
 This improved utilization is the result of blocking the dense region in the \acrshort{drc}, where multiple \glspl{reduction} have the time to accumulate in the cache before being evicted.
 The \acrshort{srt} also contributes to this effect, as it captures irregular accesses outside the \gls{band}, which would otherwise evict useful data from the \acrshort{drc}.
-The overall cache memory utilization is also significantly improved, with 75.2\% of the cache holding useful data in \acrshort{spdc}, compared to 45.8\% and 36.4\% for the \acrshort{redc} and \acrshort{gc}, respectively.
+The overall cache memory utilization is also significantly improved, with 75.2\% of the cache holding useful data in \acrshort{spdc}, compared to 45.8\% and 36.4\% for \acrshort{redc} and \acrshort{gc}, respectively.
 
 We need to consider an additional metric, the percentage of traffic sent as atomic \acrshort{rmw} transactions (\textit{\%~\acrshort{rmw}}).
 If this value is too high, it means we have simply shifted the workload to the lower level caches, which inherently have limited compute capability.
 In mean, 40.5\% of the memory traffic of \acrlong{spdc} is composed of atomic \acrshortpl{rmw}, which is acceptable given the significant overall reduction in memory traffic.
 However, this ratio varies widely between matrices.
-There is some matrices where most of the traffic is composed of atomic \acrshortpl{rmw}, meaning that most of the non-zero values are outside the \gls{band}.
+There is some matrices where most of the traffic is composed of atomic \acrshortpl{rmw}, meaning that most of their non-zero values are outside the \gls{band}.
 For such matrices, which are basically not banded, \acrshort{spdc} still greatly decrease the memory traffic, but better performance could be achieved by choosing a matrix-fitting region partitioning strategy.
-For example, the matrix \emph{cit-Patents} has no elements in the \gls{band}, and all non-zero values are scattered under bottom part of the matrix (an unusual extreme case).
-While having a memory traffic decreased to 7.2\% compared to \acrshort{gc}, it could benefit from a better use of the \acrshort{drc} by choosing a vertical band covering the non-zero elements.
+For example, the matrix \emph{cit-Patents} has no elements in the \gls{band}, and all non-zero values are scattered under the bottom part of the matrix (an unusual extreme case).
+While having a memory traffic decreased to 7.2\% compared to \acrshort{gc}, it could benefit from a better use of the \acrshort{drc} by choosing a horizontal band covering the non-zero elements, with correct sizing to leverage the blocking effect.
 On the other hand, some matrices have very low \acrshort{rmw} usage, indicating that most non-zero values are within the \gls{band} and efficiently handled by the \acrshort{drc}.
 In this case, 25\% of the available memory was unused.
+The \acrshort{srt} size could be adjusted to gain performance.
 
 \begin{highlight}{Conclusion}{Red}
     \acrlong{spdc} achieves a 4.1$\times$ \textbf{decrease in memory traffic} on the output vector $c$ compared to a generic cache, over a set of 48 matrices.
@@ -192,7 +193,7 @@ We observed that allocating more than 75\% of the cache (96 \glspl{set}) to stor
 
 \begin{highlight}{Conclusion}{Red}
     \textbf{\acrlong{spdc} outperforms PHI}, a state-of-the-art \gls{reduction} cache, by achieving a 2.1$\times$ decrease in memory traffic, thanks to its dedicated regions for in- and out-of-band accesses that improve cache-line and overall cache utilization.
-    Additionally, we found that the simple 25/50/25\% region sizing of \acrshort{spdc} provides good performance with only minor variations observed when adjusting the sizes of the \acrshort{grc}, \acrshort{drc}, and \acrshort{srt}.
+    Additionally, we found that the simple 25/50/25\% region sizing of \acrlong{spdc} provides good performance with only minor variations observed when adjusting the sizes of the \acrshort{grc}, \acrshort{drc}, and \acrshort{srt}.
 \end{highlight}
 
 \clearpage

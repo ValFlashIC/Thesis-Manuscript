@@ -90,7 +90,7 @@ With this method, \acrshort{op} necessitates the generation of at most $K$ \acrs
         \begin{algorithm}[H]
         \caption{Dense \acrlong{mv} \acrlong{op} Algorithm}
         \label{alg:bg:MVouter}
-        \For(\tcp*[f]{common rank first}){$k \in \ldb 0, K-1 \rdb$}{
+        \For(\tcp*[f]{column first}){$k \in \ldb 0, K-1 \rdb$}{
             \For{$i \in \ldb 0, M-1 \rdb$}{
                 $c_{i} \acc A_{i,k} \times b_{k}$
             }

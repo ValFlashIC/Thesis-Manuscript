@@ -11,7 +11,7 @@ This approach does not reduce the number of compute operations, however, it sign
 These benefits can be attributed to three techniques: (1) blocking the dense part of the \gls{band} in the \acrshort{drc}, (2) using fine-grained storage in the \acrshort{srt} and (3) off-loading the \glspl{reduction} for isolated elements to the downstream caches, to prevent local \glspl{eviction} and reduce traffic.
 
 Exploiting the coarse-grain structure of matrices is key to design hardware optimized for sparse matrix kernels.
-In the next chapter, we demonstrate this with a more theoretical approach, allowing us to go further into SpDCache analysis, and identify appropriate region sizing, before going into a cycle-accurate evaluation.
+In the next chapter, we demonstrate this with a more theoretical approach, allowing us to go further into \acrlong{spdc} analysis, and justify appropriate region sizing, before going into a cycle-accurate evaluation.
 
 \bigskip\bigskip
 
