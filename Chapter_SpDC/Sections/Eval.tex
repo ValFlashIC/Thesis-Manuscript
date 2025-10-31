@@ -179,6 +179,17 @@ However, \acrlong{spdc} still outperforms PHI, cutting memory traffic by 2.1$\ti
 The improved performance of \acrshort{spdc} can again be explained by the better utilization of the cache-lines, with 7.21 useful words per evicted line, compared to 5.00 for PHI.
 The overall cache memory utilization is also significantly better with \acrshort{spdc}, with 75.2\% of the cache holding useful data, compared to only 30.6\% for PHI.
 
+As explained in Chapter~\ref{cha:soa}, PHI mixes the `immediate updates' and `deferred updates' strategies for \acrshort{op} \acrshort{spmv}.
+In the first phase of the algorithm, it processes \emph{RED} transactions as `immediate updates', and PHI handles them with a mechanism similar to a classical \gls{redC}.
+The main differences are that the \acrshort{grc} and \acrshort{drc} are merged, which can cause unnecessary evictions of useful data, and more importantly, PHI uses a batching mechanism at \gls{eviction} to `defer' some updates to the second phase.
+When a cache-line is evicted and contains fewer non-zero entries than a fixed threshold, PHI batches the entries in \acrfullpl{po} defined by the software and stored in memory.
+These \acrshortpl{po} are processed in the second phase of the algorithm, as in the `deferred updates' variant.
+If the threshold is set too high, PHI batches many entries and increases second-phase memory traffic.
+If it is set too low, PHI batches few entries, reducing batching effectiveness and increasing the number of `immediate updates', making PHI behavior closer to a simple \gls{redC}.
+PHI sets this threshold to one non-zero word per eight words in a cache-line, meaning that for each batched evicted line, PHI reduces bytes transferred by 4$\times$ (4 (word, address) tuples fitting in a single 64~B cache-line, instead of 4 full 64~B lines with 7 unused words each).
+However, we observed that, on the geometric mean over the 48 matrices, only 4.2\% of PHI's output memory traffic comes from these batched updates (maximum 28.6\%), indicating that PHI's overall behavior remains close to a simple \gls{redC}.
+In contrast, \acrlong{spdc} addresses the drawbacks of a simple \gls{redC} by using dedicated regions for denser and sparser accesses, avoiding unnecessary \glspl{eviction}, without incurring the additional second-phase traffic introduced by PHI's batching mechanism.
+
 We also explored different region sizing for \acrlong{spdc}, varying the sizes of the \acrshort{grc}, \acrshort{drc} and \acrshort{srt} while keeping the total cache size constant at 32~KiB.
 The results are also reported in Table~\ref{tab:spdc:results_overall}.
 Reducing the size of the \acrshort{grc} from 8~KiB (32 \glspl{set}) to 2~KiB (8 \glspl{set}) and 1~KiB (4 \glspl{set}) has little impact on performance, as the \acrshort{grc} is mainly used for temporary storage of input vector elements.
@@ -188,8 +199,8 @@ Thus, the \acrshort{srt} sizing appears to be more critical than the \acrshort{d
 We will explore the reasons behind this effect in the next chapter.
 Overall, fine tuning the region sizes can lead to small performance improvements, but the original sizing of 8~KiB for the \acrshort{grc}, 16~KiB for the \acrshort{drc} and 8~KiB for the \acrshort{srt} appears to be a good compromise for the set of matrices we evaluated.
 
-About the \acrshort{redc}, we also explored different sizing strategies.
-We observed that allocating more than 75\% of the cache (96 \glspl{set}) to store \emph{RED} transactions slightly improves performance, as it increases the likelihood of capturing multiple updates to the same output element before eviction, without overly compromising the storage of input elements.
+We also explored different sizing strategies for the \acrshort{redc} baseline, varying the size of its single \gls{reduction} region while keeping the total cache size constant at 32~KiB.
+Allocating more than 75\% of the cache (96 \glspl{set}) to store \emph{RED} transactions slightly improves performance, as it increases the likelihood of capturing multiple updates to the same output element before eviction, without overly compromising the storage of input elements.
 
 \begin{highlight}{Conclusion}{Red}
     \textbf{\acrlong{spdc} outperforms PHI}, a state-of-the-art \gls{reduction} cache, by achieving a 2.1$\times$ decrease in memory traffic, thanks to its dedicated regions for in- and out-of-band accesses that improve cache-line and overall cache utilization.
