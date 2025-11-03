@@ -400,7 +400,7 @@ For \acrshort{op} (graph~\ding{196}), the single row buffer greatly reduces the 
 For \acrshort{gust} (graph~\ding{197}), the single row buffer is sufficient to cache the \gls{reduction} operations in $C$, and thus, it now has fewer overall accesses than \acrshort{op}.
 It is also interesting to note that \acrshort{op} and \acrshort{gust} scale better than \acrshort{ip} with lower densities, as seen by the shallower slope.
 
-Finally, we have considered the extreme case where an system has a buffer of sufficient size to store two sparse matrices (``2D''), which is shown in the bottom-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM} (graphs~\ding{198}, \ding{199} and~\ding{200}).
+Finally, we have considered the extreme case where an system has a buffer of sufficient size to store an entire matrix (``2D''), which is shown in the bottom-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM} (graphs~\ding{198}, \ding{199} and~\ding{200}).
 Although this case is not practical for large matrices, through the proper use of \gls{tiling} to locally reduce the dimensions of a sub-matrix, this case can be achieved at the level of a \gls{tile}.
 In this case, the total number of external accesses is equal for the three algorithms, as each matrix is accessed only once from main memory.
 For \acrshort{ip} (graph~\ding{198}), it is interesting to note that such a large buffer is needed to locally address the \gls{intersection} search in $B$.
