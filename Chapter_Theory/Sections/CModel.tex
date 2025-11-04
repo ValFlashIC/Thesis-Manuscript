@@ -123,3 +123,11 @@ $\mathit{nbFlush}$ will never exceed \mbox{$S \times W$}.
 
 In a \gls{redC}, \glspl{eviction} and flushes result in a line-wise memory read, a modification, and a line-wise memory write.
 The update memory traffic is $2 l (\mathit{nbEvict} + \mathit{nbFlush})$ elements, and $\mathit{normMT}$ is this amount divided by $nnz$.
+
+\begin{highlight}{Conclusion}{Red}
+    We have presented a \textbf{hybrid probabilistic/fast simulation analytical model} for a \gls{redC}, processing \acrshort{op} \acrshort{spmv}, which predicts the volume of memory traffic issued by the L1 cache, starting from a \textbf{matrix density distribution} and a \textbf{cache configuration}.
+    The model represents the non-zero density both in the matrix and in the cache, with \textbf{cache-line granularity}.
+    Using these coarse grain densities, a \textbf{fast simulation} of the \acrshort{op} \acrshort{spmv} is performed.
+    In this way, we can quickly explore different \gls{redC} configurations to evaluate their impact on memory traffic.
+    % In this way, we can quickly explore different \gls{redC} configurations and matrix types to evaluate their impact on memory traffic.
+\end{highlight}
