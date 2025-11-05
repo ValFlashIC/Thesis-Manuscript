@@ -1,0 +1,49 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %% Theory %%
+% GRC
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Isolating the Input Reads in a Generic Cache}
+\label{sec:theory:isolate_input_reads}
+
+\lettrine{W}{hen} computing an \acrshort{op} \acrshort{spmv}, all the \glspl{irrAccess} come from updating the output vector $c$.
+However, the input matrix $A$ and vector $b$ are read sequentially, thus being efficiently cached by a generic cache that naturally exploits spatial locality.
+
+With the matrix $A$ stored in \acrshort{csc} format, each iteration of the \acrshort{op} algorithm necessitates reading four tables: $\mathit{A.ptr}$, $\mathit{A.idx}$, $\mathit{A.val}$ and $b$.
+In the same iteration, a fifth table is updated ``randomly'': $c$.
+If we consider cache-lines of size $l$ elements, then each cache-line read of the $\mathit{A.ptr}$ table brings $l$ consecutive entries, which are pointers to $l$ consecutive columns of the matrix.
+Similarly, each cache-line read of the $b$ table brings $l$ consecutive entries, which will be multiplied by the non-zero elements of $l$ consecutive columns of the matrix.
+These reads are needed in the outer-loop of the \acrshort{op} algorithm.
+In the inner-loop, each cache-line read of the $\mathit{A.idx}$ and $\mathit{A.val}$ tables brings $l$ consecutive non-zero elements of the matrix to process, which will generate $l$ ``random'' updates to the output vector $c$, thus $l$ entire cache-lines of $c$ may be accessed in the worst case.
+
+To avoid unnecessary \glspl{eviction}, at each iteration, the generic cache should obviously keep $\mathit{A.ptr}$, $\mathit{A.idx}$, $\mathit{A.val}$ and $b$ cache-lines up until they are no longer needed.
+That means $l$ iterations for $\mathit{A.idx}$ and $\mathit{A.val}$, and around $l \times \mathit{nnz}_c$ iterations for $\mathit{A.ptr}$ and $b$.
+However, the cache must also keep the cache-lines of $c$ that are being updated, which, over the course of $l \times \mathit{nnz}_c$ iterations, can necessitate up to the same amount of different cache-lines in the worst case, on unpredictable addresses.
+Thus, it would be difficult for a generic cache to keep all the useful data until it is no longer needed.
+Especially $\mathit{A.ptr}$ and $b$ cache-lines, which are accessed once every $\mathit{nnz}_c$ iterations, making \gls{eviction} policies such as \acrshort{lru} unaware of their future use.
+
+By isolating the input reads in a dedicated cache, as proposed with \acrlong{spdc} and the \gls{redC} baseline in the previous chapter, we greatly increase the chances that all the cache-lines of $A$ and $b$ remain in the cache until they are no longer needed.
+
+With a dedicated cache region for the inputs, the \acrshort{grc} in previous chapter, only the four sequentially read tables need to be considered.
+Each of these tables need to be read only once.
+With a classical \acrshort{lru} policy, $\mathit{A.ptr}$ and $b$ cache-lines have lower chances of being evicted since the only accesses occurring while processing a column are the $\sim \frac{\mathit{nnz}_c}{l}$ cache-line reads of $\mathit{A.idx}$ and $\mathit{A.val}$.
+$\mathit{A.idx}$ and $\mathit{A.val}$ themselves can not be undesirably evicted anymore.
+
+To avoid evicting $\mathit{A.ptr}$ and $b$ too soon, the \acrshort{grc} must have enough size to handle the $\frac{\mathit{nnz}_c}{l}$ cache-line reads while computing a column.
+Thus, we define in Equation~\ref{eq:theory:grc_size} the minimum size of the \acrshort{grc} in elements, which would be needed to achieve best performance in memory traffic.
+
+\begin{equation}
+    s_{C_\mathit{min}}(\mathit{GRC}) = 2 \times l + 2 \times \mathit{nnz}_c
+    \label{eq:theory:grc_size}
+\end{equation}
+
+This relationship is not exact, as it does not consider address alignment effects, but it gives a good approximation of the minimum size needed for the \acrshort{grc} to avoid unnecessary \glspl{eviction}.
+It explains why, in the previous chapter, the total memory traffic slightly drops when the \acrshort{grc} size is decreased.
+
+Separating the inputs in a dedicated cache region also has the advantage of allowing prefetching techniques to be used efficiently.
+It has no impact on memory traffic but can improve performance by hiding memory latencies.
+
+\begin{highlight}{Conclusion}{Red}
+    To avoid unnecessary \glspl{eviction}, it is profitable to \textbf{separate} the sequential reads of the inputs $A$ and $b$ from the ``random'' updates of the output $c$, into \textbf{dedicated cache regions}.
+    A generic cache of reasonable size can achieve \textbf{low memory traffic} when processing $A$ and $b$.
+\end{highlight}
