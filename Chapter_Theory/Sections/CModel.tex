@@ -6,11 +6,7 @@
 \section{Model for Reduction Cache}
 \label{sec:theory:cmodel}
 
-% cache parameters to define earlier: S, W, l
-% gc with prefetcher earlier too
-
-Many previous works~\cite{Zhang2021_Gamma, Isaac2024_SpDCache, Srikanth2021_SortCache, Isaac2024_SoA} observed the critical role played by the structure of the matrix in the efficiency of sparse hardware accelerators.
-To go beyond simply observing the behavior of a specific accelerator processing a given matrix, a model of the matrix and the cache is required.
+\lettrine{T}{o} go beyond simply observing the behavior of a specific accelerator processing a given matrix, a model of the matrix and the cache is required.
 We present a hybrid probabilistic/fast simulation model for a \gls{redC}, processing \acrshort{op} \acrshort{spmv}, which predicts the volume of memory traffic issued by the L1 cache, starting from a matrix density distribution and a cache configuration.
 
 The model represents the non-zero density both in the matrix and in the cache, with cache-line granularity.
@@ -21,11 +17,11 @@ We can thus predict the total number of memory accesses for different types of m
 
 We do not consider the sequential accesses to the input matrix $A$ and vector $b$ in our model.
 Indeed, the matrix tables $\mathit{val}$, $\mathit{idx}$ and $\mathit{ptr}$, and the vector $b$ are each read once, giving a total memory traffic of $2\mathit{nnz} + (M+1) + M$ elements.
-The latency for these sequential accesses can be masked with a linear prefetcher~\cite{Smith1982_Prefetcher}, and a small generic cache.
+We showed in previous section that a simple generic cache of reasonable size is enough to handle the inputs.
 
 Our model uses the cache configuration parameters $S$, $W$ and $l$.
-Although our model is not limited to banded matrices, they are the focus of this work.
-The matrix density distribution thus takes on two different values, either $d_\mathit{IB}$ in the band, or $d_\mathit{OB}$ outside of the band, as shown in Figure~\ref{fig:theory:model:banded_mat_def}.
+Although our model is not limited to \gls{banded} matrices, they are the focus of this work.
+The matrix density distribution thus takes on two different values, either $d_\mathit{IB}$ in the band, or $d_\mathit{OB}$ outside of the band.
 
 We normalize the memory traffic by dividing the number of elements that are read or written by the number of non-zero elements ($nnz$) in the matrix, so we can compare performance between matrices of different sizes and densities.
 Indeed, we can interpret the normalized memory traffic, $\mathit{normMT}$, as the number of elements transferred from/to memory per non-zero matrix element.
@@ -71,7 +67,7 @@ The state of the cache is thus represented with the dynamic table $\mathit{DCDT}
 Initially, all cache-lines are set to zero density, since the cache is considered empty.
 
 \paragraph{Iterative Process}
-In the fast simulation phase, the analytical model~\cite{FRIEDENTHAL2012_AnalyticalModel} iterates over the vertical-strips in the matrix, following the dense traversal of the \acrshort{op} algorithm, as described in Section~\ref{sec:background} \note{FIX} and shown with \textit{red} arrows in Figure~\ref{fig:theory:model:matrix_cache_rep}.
+In the fast simulation phase, the analytical model~\cite{FRIEDENTHAL2012_AnalyticalModel} iterates over the vertical-strips in the matrix, following the dense traversal of the \acrshort{op} algorithm, as described in Chapter~\ref{cha:background} and shown with \textit{red} arrows in Figure~\ref{fig:theory:model:matrix_cache_rep}.
 In a given iteration (column $j$, vertical-strip $\kappa$), we use the matrix density of the current vertical-strip, $\mathit{MDT}_{\kappa,j}$, and the current state of $\mathit{DCDT}$ to determine if an \gls{eviction} occurs, and update it for the next iteration, if necessary.
 
 \paragraph{Disjoint-Density of the Current Vertical-Strip}

@@ -191,6 +191,55 @@ Increasing the cache-size from $128$ (\textit{solid}) to $256$ (\textit{dashed})
 \end{highlight}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Impact of In-Band Density}
+\label{sec:theory:graph12}
+
+In the previous analysis, we considered a dense \gls{band} ($d_\mathit{IB} = 1$) to show the importance of having a rotating \gls{eviction} pattern to decrease memory traffic.
+However, matrices from real applications do not have fully dense \glspl{band}.
+Indeed, from our set of 48 matrices used in the previous chapter, considering a \gls{band} width of $w_B = 2041$ that fits into a \acrshort{drc} of 16~KiB ($s_C = 2048$ elements), the average in-\gls{band} density is $d_\mathit{IB} = 2.11 \times 10^{-3}$, oscillating between $2.00 \times 10^{-8}$ and $5.44 \times 10^{-2}$, against an average out-of-\gls{band} density $d_\mathit{OB} = 1.28 \times 10^{-4}$, oscillating between $0.00$ and $1.04 \times 10^{-2}$.
+Considering that a part of the matrices of our set are not considered as \gls{banded}, this order of magnitude difference between $d\mathit{IB}$ and $d_\mathit{OB}$ in average on all 48 matrices shows that choosing the \gls{band} as a region partitioning method has great chances to pick up the denser region of any matrix.
+
+Since the in-\gls{band} density is lower than 1 in practice, we use the model to analyse the impact on normalized memory traffic of $d_\mathit{IB}$ variations.
+We use the same parameters as in the previous sections, a matrix of dimension $M = 1000$ and a cache with four \glspl{way} ($W = 4$) and cache-lines of size $l = 8$.
+We do not consider the out-of-\gls{band} ($d_\mathit{OB} = 0$) since it is processed in a separate region.
+We focus on the in-\gls{band} region for several cache configurations, making sure that the \gls{band} width for each \gls{set} size follows the relationship in Equation~\ref{eq:theory:in_band_cond}.
+In Figure~\ref{fig:theory:theory_IBtraffic_vs_d_IB}, we plot $\mathit{normMT}$ for the output vector $c$, depending on $d_\mathit{IB}$, for varying cache configurations.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{Chapter_Theory/Figures/PDF/graph12_25.11.06.pdf}
+    \caption{Normalized Output Memory Traffic of the In-\Gls{band}, Depending on the Density for Several Cache-Sizes}
+    \label{fig:theory:theory_IBtraffic_vs_d_IB}
+\end{figure}
+
+We observe that $normMT$ increases as $d_\mathit{IB}$ decreases, generally following a constant negative slope (\textit{dashed}) on the right side of the graph for each cache size.
+Thus, across a broad range of in-\gls{band} densities, the raw memory traffic remains relatively constant.
+As noted in Section~\ref{sec:theory:graph1}, the $S = 32$ curve (\textit{yellow}) indicates the lower bound of memory traffic since the entire matrix can fit within the cache.
+In this scenario, there are no \gls{eviction} in the \gls{band} until the density drops sufficiently low ($< 10^{-3}$), resulting in isolated non-zero elements.
+For other cache sizes, variations around the constant raw memory traffic are observed.
+If a ideal \gls{eviction} policy were in place, allowing the rotating pattern to function as intended (refer to Section~\ref{sec:theory:perfectband_vs_cache}), we would expect all curves to align with their respective \textit{dashed} lines, indicating constant raw memory traffic.
+However, the model employs a \emph{random} policy, which disrupts the rotating pattern and accounts for the observed deviations.
+An \acrshort{lru} policy would likely yield improved results, aligning with the constant line for densities above $1/l$ and deviating for lower densities.
+The optimal policy would prioritize evicting lower addresses (the top of the \gls{band}), thereby maintaining the rotating pattern.
+
+For low $d_\mathit{IB}$ (left side of the graph), $normMT$ plateaus at 16 elements transferred per non-zero element for all cache sizes.
+With very low density the non-zeros are isolated and provide no reuse: each non-zero triggers a full cache-line read and a full-line write-back.
+With $l = 8$ this corresponds to 16 elements transferred per non-zero.
+
+It is therefore important to select the densest region of the matrix to be processed in a dedicated cache region such as the \acrshort{drc} of \acrlong{spdc}.
+However, the selected region need not be highly dense: for a \gls{PBanded} matrix with $M = 1000$, columns become nearly empty for $d_\mathit{IB} \lesssim 10^{-3}$, yet the raw memory traffic remains nearly constant in the range $10^{-2}$ to $10^{-3}$ depending on cache size.
+Because real, larger matrices often have a mean $d_\mathit{IB}$ around $10^{-3}$, a \acrshort{drc} sized to capture this denser region still provides good memory-traffic performance.
+
+\begin{highlight}{Note}{SkyBlue}
+    In the \acrlong{spdc} architecture, the \acrshort{drc} employs an \acrshort{lru} or pseudo-\acrshort{lru} eviction policy instead of an ideal custom policy.
+    Despite this, we show that these simple, well-known policies still deliver good performance.
+\end{highlight}
+
+\begin{highlight}{Conclusion}{Red}
+    The \textbf{in-\gls{band} density} has only a \textbf{marginal impact on memory traffic}, with real matrices typically exhibiting in-\gls{band} densities around $10^{-3}$.
+\end{highlight}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Resulting Approach and Discussion}
 \label{sec:theory:theory_conclu}
 
@@ -201,7 +250,7 @@ We thus validate the proposition to divide the available cache memory into two d
 
 To obtain the efficient rotating pattern for the in-\gls{band} region, which is the key to massively reducing memory traffic, Equation~\ref{eq:theory:in_band_cond} must be respected.
 In practice, this defines the size of the \gls{band} that can be allocated to the in-\gls{band} cache region.
-As we have seen, this cache region can operate efficiently with a set-associative line-wise configuration.
+As we have seen, this cache region can operate efficiently with a set-associative line-wise configuration, on a wide range of in-\gls{band} densities.
 
 For the out-of-\gls{band} region, a fully-associative element-wise cache with an element-wise memory interface can significantly reduce the memory traffic.
 
@@ -220,27 +269,4 @@ In other words, our uniform assumption leads to a pessimistic prediction of memo
     The \textbf{out-of-\gls{band} region} should be made as large as practical, as it has a greater impact on memory traffic than enlarging the in-\gls{band} region.
 \end{highlight}
 
-\subsection{Impact of In-Band Density}
-
-In the previous analysis, we considered a dense \gls{band} ($d_\mathit{IB} = 1$) to show the importance of having a rotating \gls{eviction} pattern to decrease memory traffic.
-However, matrices from real applications do not have fully dense \glspl{band}.
-Indeed, from our set of 48 matrices used in the previous chapter, considering a \gls{band} width of $w_B = 2041$ that fits into a \acrshort{drc} of 16~KiB ($s_C = 2048$ elements), the average in-\gls{band} density is $d_\mathit{IB} = 2.11 \times 10^{-3}$, oscillating between $2.00 \times 10^{-8}$ and $5.44 \times 10^{-2}$, against an average out-of-\gls{band} density $d_\mathit{OB} = 1.28 \times 10^{-4}$, oscillating between $0.00$ and $1.04 \times 10^{-2}$.
-Considering that a part of the matrices of our set are not considered as \gls{banded}, this order of magnitude difference between $d\mathit{IB}$ and $d_\mathit{OB}$ in average on all 48 matrices shows that choosing the \gls{band} as a region partitioning method has great chances to pick up the denser region of any matrix.
-
-Since the in-\gls{band} density is lower than 1 in practice, we use the model to analyse the impact on normalized memory traffic of $d_\mathit{IB}$ variations.
-% same parameters ...
-In Figure~\ref{fig:theory:theory_IBtraffic_vs_d_IB}, we plot $\mathit{normMT}$ for the output vector $c$, depending on $d_\mathit{IB}$, for varying cache configurations.
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\linewidth]{Chapter_Theory/Figures/PDF/graph12_25.11.06.pdf}
-    \caption{Normalized Output Memory Traffic of the In-\Gls{band}, Depending on the Density for Several Cache-Sizes}
-    \label{fig:theory:theory_IBtraffic_vs_d_IB}
-\end{figure}
-
-%expect cst mem traffic (= to -x curve with norm)
-%expect plateau at low density, mem traffic start to goes down
-
-\begin{highlight}{Conclusion}{Red}
-    ...
-\end{highlight}
+\clearpage

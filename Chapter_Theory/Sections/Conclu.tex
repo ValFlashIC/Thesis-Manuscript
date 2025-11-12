@@ -6,6 +6,46 @@
 \section{Conclusion}
 \label{sec:theory:conclu}
 
-TODO
+This chapter presented a theoretical model to analyze the behavior of \glspl{redC} when processing sparse matrices, specifically focusing on the \acrshort{op} \acrshort{spmv} kernel.
+Through a hybrid probabilistic/fast simulation model, we demonstrated how the structure of \gls{banded} matrices can be leveraged to optimize cache performance.
+
+Our analysis highlighted the importance of separating the in-\gls{band} and out-of-\gls{band} regions of the matrix into dedicated cache regions.
+For the in-\gls{band} region, a set-associative, line-wise cache configuration ensures efficient data reuse by maintaining a rotating \gls{eviction} pattern, minimizing unnecessary memory transactions.
+For the out-of-\gls{band} region, a fully-associative, element-wise cache with an element-wise memory interface significantly reduces memory traffic by avoiding the transfer of mostly empty cache-lines.
+
+The theoretical insights gained from this model validate the architectural choices of \acrlong{spdc}, particularly the use of distinct regions for denser and sparser data.
+These findings provide a robust foundation for designing and sizing cache regions to minimize memory traffic, ultimately improving the efficiency of sparse matrix computations.
+In the next chapter, we will delve into the microarchitectural details of \acrshort{spdc}, translating these theoretical insights into practical hardware design.
+
+\begin{highlight}{Takeaways}{Mulberry}
+    \colorbf{Mulberry}{Simulating \emph{reduction caches} and SpDCache}
+    \begin{itemize}
+        \item \textbf{High level probabilistic/fast model in C} (\ref{sec:theory:cmodel}):
+        \begin{itemize}
+            \item fast simulation, over generic matrix density distributions, easy parameter exploration, deep understanding of cache behaviors, but,
+            \item very high level (some approximations and hypothesis), limited on \gls{eviction} policies.
+        \end{itemize}
+        \item \textbf{Transaction level model in Python} (\ref{sec:spdc:eval}):
+        \begin{itemize}
+            \item faster than a full RTL simulation, accurate performance on memory traffic, functional testing, but,
+            \item slower than the probabilistic model, demands real matrices in input, two factors that alleviate the parameter exploration capabilities, no latency performance compared to RTL simulation.
+        \end{itemize}
+        \item \textbf{RTL implementation} (next chapter):
+        \begin{itemize}
+            \item accurate results in both memory traffic and latencies, hardware testing, but,
+            \item slow simulation, demands real matrices in input, time-consuming implementation.
+        \end{itemize}
+    \end{itemize}
+
+    \bigskip
+
+    \colorbf{Mulberry}{Validation and sizing of SpDCache three regions}
+    \begin{itemize}
+        \item \textbf{\acrshort{grc}}: can take advantage of prefetching methods, size flexible.
+        \item \textbf{\acrshort{drc}}: must respect relationship $s_C \geqslant w_B + l - 1$ (Equation~\ref{eq:theory:in_band_cond}), size flexible.
+        \item \textbf{\acrshort{srt}}: must be element-wise, especially on memory transactions, high size is better but limited by hardware constraint.
+    \end{itemize}
+    The most basic and simpler to implement region sizing for \acrlong{spdc}, \textbf{25\%/50\%/25\%} for \acrshort{grc}, \acrshort{drc} and \acrshort{srt}, respectively, is close to optimal for memory traffic performance.
+\end{highlight}
 
 \clearpage

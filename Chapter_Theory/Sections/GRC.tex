@@ -40,7 +40,7 @@ Thus, we define in Equation~\ref{eq:theory:grc_size} the minimum size of the \ac
 This relationship is not exact, as it does not consider address alignment effects, but it gives a good approximation of the minimum size needed for the \acrshort{grc} to avoid unnecessary \glspl{eviction}.
 It explains why, in the previous chapter, the total memory traffic slightly drops when the \acrshort{grc} size is decreased.
 
-Separating the inputs in a dedicated cache region also has the advantage of allowing prefetching techniques to be used efficiently.
+Separating the inputs in a dedicated cache region also has the advantage of allowing prefetching techniques~\cite{Smith1982_Prefetcher} to be used efficiently.
 It has no impact on memory traffic but can improve performance by hiding memory latencies.
 
 \begin{highlight}{Conclusion}{Red}
