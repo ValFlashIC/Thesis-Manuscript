@@ -68,7 +68,7 @@ When a new \gls{reduction} \emph{RED(key, value, region)} is received from the p
 If it \glspl{hit}, the value (case \addr{0b} -- \textit{turquoise}) can be accumulated in the corresponding cache-line of the \acrshort{drc}.
 We give this priority to the \acrshort{drc} as part of the mechanism to avoid duplication.
 
-If there is a \gls{miss} in the \acrshort{drc}, then the target region is determined based on the \emph{region} argument of the \emph{RED} transaction.
+If there is a \gls{miss} in the \acrshort{drc}, then the target region is determined based on the \emph{region} argument of the \gls{red} transaction.
 If it is \acrshort{ibr}, then it is necessarily a \gls{miss} case, and the value (\addr{02} -- \textit{orange}) must be inserted into a free cache-line of the \acrshort{drc}.
 When we allocate this line, we ensure that it does not create a duplication of existing entries in the \acrshort{srt}.
 If there is duplication, as in our example, these entries (\addr{00}, \addr{02}, \addr{06}) are deleted from the \acrshort{srt} and merged into the newly allocated cache-line ($set_1, line_1$).

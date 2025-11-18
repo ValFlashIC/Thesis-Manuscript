@@ -13,7 +13,7 @@ For each write transaction, it tracks how many words in the line were actually u
 We consider a word in the cache to be useful if it is updated or inserted by the processor.
 Our goal is to validate the principle of \acrlong{spdc} using real application matrices from the SuiteSparse Matrix Collection~\cite{Kolodziej2019_SuiteSparse}.
 
-As baselines, we implemented a fully generic cache (\acrshort{gc}) that handle reads and writes for both inputs ($A$, $b$) and output ($c$), following the data movements shown in Figure~\ref{fig:spdc:GC_cache_WB}, and a simple \gls{redC} (\acrshort{redc}) that processes \emph{RED} transactions in a dedicated region using the flow shown in Figure~\ref{fig:spdc:red_based_cache}.
+As baselines, we implemented a fully generic cache (\acrshort{gc}) that handle reads and writes for both inputs ($A$, $b$) and output ($c$), following the data movements shown in Figure~\ref{fig:spdc:GC_cache_WB}, and a simple \gls{redC} (\acrshort{redc}) that processes \gls{red} transactions in a dedicated region using the flow shown in Figure~\ref{fig:spdc:red_based_cache}.
 In the \acrshort{redc}, 25\% of the memory is allocated for the inputs and the other 75\% for \emph{REDs} on $c$.
 In \acrlong{spdc} (\acrshort{spdc}), 25\% is allocated for the \acrshort{grc}, 50\% for the \acrshort{drc} and 25\% for the \acrshort{srt}.
 In the next section, we present more results with varying region sizes, showing that this configuration is a good compromise.
@@ -110,7 +110,7 @@ The \acrshort{srt} size could be adjusted to gain performance.
 \label{sec:spdc:soa_comp}
 
 \lettrine{T}{o} compare \acrlong{spdc} with the state-of-the-art, we simulated PHI~\cite{Mukkara2019_PHI}, the existing solution that is closest to our proposal, using the same methodology as in the previous section.
-PHI is a \gls{reduction}-aware cache that uses a single region to process \emph{RED} transactions (see Section~\ref{sec:soa:phi} from previous chapter).
+PHI is a \gls{reduction}-aware cache that uses a single region to process \gls{red} transactions (see Section~\ref{sec:soa:phi} from previous chapter).
 PHI works as if our three regions, \acrshort{grc}, \acrshort{drc} and \acrshort{srt}, where merged together, using different technics to handle \glspl{reduction}, load and store operations in the same cache address space.
 It also handles isolated elements, but do not consider the matrix structure.
 Conversely to \acrshort{spdc}, PHI relies on the use of the \emph{deferred update} version of the \acrshort{op} \acrshort{spmv} algorithm (see Algorithm~\ref{alg:bg:OPSpMSpMCSR}).
@@ -180,7 +180,7 @@ The improved performance of \acrshort{spdc} can again be explained by the better
 The overall cache memory utilization is also significantly better with \acrshort{spdc}, with 75.2\% of the cache holding useful data, compared to only 30.6\% for PHI.
 
 As explained in Chapter~\ref{cha:soa}, PHI mixes the `immediate updates' and `deferred updates' strategies for \acrshort{op} \acrshort{spmv}.
-In the first phase of the algorithm, it processes \emph{RED} transactions as `immediate updates', and PHI handles them with a mechanism similar to a classical \gls{redC}.
+In the first phase of the algorithm, it processes \gls{red} transactions as `immediate updates', and PHI handles them with a mechanism similar to a classical \gls{redC}.
 The main differences are that the \acrshort{grc} and \acrshort{drc} are merged, which can cause unnecessary evictions of useful data, and more importantly, PHI uses a batching mechanism at \gls{eviction} to `defer' some updates to the second phase.
 When a cache-line is evicted and contains fewer non-zero entries than a fixed threshold, PHI batches the entries in \acrfullpl{po} defined by the software and stored in memory.
 These \acrshortpl{po} are processed in the second phase of the algorithm, as in the `deferred updates' variant.
@@ -200,7 +200,7 @@ We will explore the reasons behind this effect in the next chapter.
 Overall, fine tuning the region sizes can lead to small performance improvements, but the original sizing of 8~KiB for the \acrshort{grc}, 16~KiB for the \acrshort{drc} and 8~KiB for the \acrshort{srt} appears to be a good compromise for the set of matrices we evaluated.
 
 We also explored different sizing strategies for the \acrshort{redc} baseline, varying the size of its single \gls{reduction} region while keeping the total cache size constant at 32~KiB.
-Allocating more than 75\% of the cache (96 \glspl{set}) to store \emph{RED} transactions slightly improves performance, as it increases the likelihood of capturing multiple updates to the same output element before eviction, without overly compromising the storage of input elements.
+Allocating more than 75\% of the cache (96 \glspl{set}) to store \gls{red} transactions slightly improves performance, as it increases the likelihood of capturing multiple updates to the same output element before eviction, without overly compromising the storage of input elements.
 
 \begin{highlight}{Conclusion}{Red}
     \textbf{\acrlong{spdc} outperforms PHI}, a state-of-the-art \gls{reduction} cache, by achieving a 2.1$\times$ decrease in memory traffic, thanks to its dedicated regions for in- and out-of-band accesses that improve cache-line and overall cache utilization.

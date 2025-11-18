@@ -5,33 +5,33 @@
 
 
 
-%% add RAM, nop, RTL
+%% add RAM, nop, RTL, CAM
 
 
 
 \section{Microarchitecture}
 \label{sec:arch:microarch}
 
-% In light of the above analysis, this section describes the architecture of a \textit{reduction cache} capable of supporting multiple regions with distinct characteristics.
+% In light of the above analysis, this section describes the architecture of a \gls{redC} capable of supporting multiple regions with distinct characteristics.
 % We introduce OBaMMA, an \textit{\underline{O}uter-Product} \underline{Ba}nded \underline{M}atrix \underline{M}emory \underline{A}ccelerator.
-OBaMMA features two primary capabilities.
-First, as a \textit{reduction cache}, it supports \textit{reduction} instructions, enabling the accumulation of data near-memory.
+\acrlong{spdc} features two primary capabilities.
+First, as a \gls{redC}, it supports \textit{reduction} instructions, enabling the accumulation of data near-memory.
 Second, it implements a region-based cache where regions have different data-granularity, levels of associativity and overall behavior.
 
 % The OBaMMA cache has three regions:
 % \begin{itemize}
-%     \item The GRC (\textit{Generic Region Cache}) functions as a generic cache region.
+%     \item The \acrshort{grc} (\textit{Generic Region Cache}) functions as a generic cache region.
 %     It is useful for processing sequential memory accesses that occur during the computation of sparse kernels.
-%     For example, in the \algo{OP} SpMV kernel, the GRC manages the sequential reads of matrix $A$ and vector $b$.
+%     For example, in the \algo{OP} SpMV kernel, the \acrshort{grc} manages the sequential reads of matrix $A$ and vector $b$.
 %     %
-%     \item The DRC (\textit{Dense Region Cache}) operates as a line-wise set-associative \textit{reduction cache}.
+%     \item The \acrshort{drc} (\textit{Dense Region Cache}) operates as a line-wise set-associative \gls{redC}.
 %     It exclusively processes \textit{reduction} instructions, in a write-back manner.
 %     Data to be accumulated is held only in the cache.
-%     Memory transactions, to synchronize main memory, are issued only on data eviction.
+%     Memory transactions, to synchronize main memory, are issued only on data \gls{eviction}.
 %     This region is beneficial for matrix areas which exhibit high locality despite the apparent randomness of accesses, such as within the matrix band.
 %     %
-%     \item The SRT (\textit{Sparse Region Table}) functions as an element-wise fully-associative \textit{reduction cache}.
-%     Like the DRC, it processes \textit{reduction} instructions in a write-back manner but employs atomic element-wise memory transactions instead of the conventional line-wise read and write transactions.
+%     \item The \acrshort{srt} (\textit{Sparse Region Table}) functions as an element-wise fully-associative \gls{redC}.
+%     Like the \acrshort{drc}, it processes \textit{reduction} instructions in a write-back manner but employs atomic element-wise memory transactions instead of the conventional line-wise read and write transactions.
 %     This region is advantageous for matrix areas where elements are isolated, having minimal spatial locality, such as outside the band of a matrix.
 % \end{itemize}
 
@@ -54,7 +54,7 @@ At \textit{st0}, the instruction is not yet consumed.
 Depending on the response and the availability of cache resources at \textit{st1}, a \textit{nop} (\textit{no operation}) may be inserted in the pipeline, and the instruction may be placed in a \textit{replay table}.
 The instruction is then replayed with the highest priority once its dependencies are cleared.
 If the instruction does not need to be replayed at \textit{st1}, it is consumed and processed.
-% say: we use that pipeline as a base
+This pipeline serves as the foundation for implementing \acrlong{spdc}'s \gls{reduction} operations.
 % add infos on blocks such as UC, CMO..
 
 HPDcache provides extensive static and dynamic configurability, making it a flexible foundation for further extensions.
@@ -63,12 +63,46 @@ The RTL can be instantiated as a generic cache (the first baseline, \acrshort{gc
 
 \subsection{RTL Implementation of SpDCache}
 
+We configure the original HPDcache as a 4-way set-associative cache with 128 \glspl{set} and 64-byte cache-lines, resulting in a total cache size of 32~KiB.
+We extend the three-stage pipeline to handle the new \gls{red} instruction.
+Figure~\ref{fig:arch:microarch} provides an overview of \acrlong{spdc}'s microarchitecture, highlighting new blocks in \textit{red}, modified blocks in \textit{blue}, and untouched components in \textit{black}.
+The overall architecture aligns with the design presented in Chapter~\ref{cha:spdc}, adapted here for hardware implementation.
+Let us briefly describe the operation of the \acrshort{drc} under three scenarios: \glspl{hit}, \glspl{miss} with available cache-lines, and \glspl{miss} requiring \gls{eviction}.
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_MicroArchi.pdf}
-    \caption{OBaMMA Microarchitecture, based on HPDcache}
+    \caption{\acrlong{spdc} Microarchitecture, based on HPDcache \note{RMWQ}}
     \label{fig:arch:microarch}
 \end{figure}
+
+\textbf{In the case of a \gls{hit}}, the value of the \gls{red} instruction is accumulated with its corresponding value in the cache.
+At \textit{st1}, the cache value, read in \textit{st0} from \textit{Data}, is accumulated with the \gls{red} value using a dedicated accumulator (\textit{Acc}).
+The result is written back to \textit{Data} at \textit{st2}.
+
+\textbf{In the case of a \gls{miss}}, if there is an available cache-line, the value of the \gls{red} instruction is simply stored in this free entry of the cache.
+A free cache-line is selected at \textit{st1}, and at \textit{st2}, the \gls{red} value is written to \textit{Data} along with zeros to reset the selected cache-line.
+A write to \textit{Dir} is also performed to change the state of the cache-line from free to valid.
+
+\textbf{If a \gls{miss} occurs but no cache-line is free}, an \gls{eviction} must be processed before handling the \gls{red} instruction.
+The \gls{red} instruction is placed in the \textit{PrioRED table} to be replayed with higher priority than the \textit{replay table}.
+Meanwhile, at \textit{st2}, the \textit{miss handler}, \textit{flush controller}, and \textit{accumulation table} are allocated to process the \gls{eviction}.
+The \gls{eviction} is a ``fire-and-forget'' operation, meaning the \gls{red} instruction only needs to wait for the entry in \textit{Data} to be freed, not for the entire \gls{eviction} to finish.
+The \gls{eviction} process begins by fetching and resetting the chosen 64~B cache-line from \textit{Data}, which is done in one cycle by the \textit{flush controller}.
+Simultaneously, the \textit{miss handler} issues a read to the main memory, which in our performance simulations, we assume will take 64 cycles to respond. \note{FIX}
+The \textit{accumulation table} waits and temporarily stores both the old cache-line from the \textit{flush controller} and the 64~B response data from the \textit{miss handler}.
+It then accumulates the cache-line with the data, word by word, and sends the 64~B results back to the main memory using the existing write interface.
+
+With the changes described above, we have transformed \mbox{HPDcache} into a \gls{redC}.
+To achieve multiple cache regions, we virtually separate the cache RAMs.
+To maintain HPDcache's set-associative operation, we divide the cache memory along its \glspl{set}.
+Thus, each region of the cache has the same structure as the overall cache but is smaller in size: each \gls{set} contains a fixed number (the number of ways) of 64-byte cache-lines, as depicted in Figure~\ref{fig:arch:set_redirection}.
+Each region can map any possible address.
+To ensure that every address matches a unique \gls{set} within each region, we allocate a power-of-two number of consecutive \glspl{set} to a region.
+Considering the total number of \glspl{set} $S_T$ and our region $R$ mapping on $S_R < S_T$ of them, starting at the \gls{set} $s_\mathit{offset}$, if an address matches one of the \glspl{set} of this region, no action is required.
+However, if the address matches a \gls{set} $s_\mathit{addr}$ outside the region, we need to map it to a unique \gls{set} in the region such that $s_\mathit{region} = (s_\mathit{addr} \% S_R) + s_\mathit{offset}$, as illustrated in Figure~\ref{fig:arch:set_redirection}.
+The three regions \acrshort{grc}, \acrshort{drc}, and \acrshort{srt} are each defined by their number of \glspl{set} $S_R$ and their first \gls{set}, $s_\mathit{offset}$.
+\acrlong{spdc} can thus be reconfigured to operate as a generic cache, a traditional \gls{redC} or a region-based \gls{redC} based on the needs of the application (\textit{config} in Figure~\ref{fig:arch:microarch}).
 
 \begin{figure}[htbp]
     \centering
@@ -77,52 +111,104 @@ The RTL can be instantiated as a generic cache (the first baseline, \acrshort{gc
     \label{fig:arch:set_redirection}
 \end{figure}
 
-We configure the original HPDcache as a 4-way set-associative cache with 128 \textit{sets} and 64-byte cache-lines, resulting in a total cache size of 32~kiB.
-We extend the three-stage pipeline to handle the new RED instruction.
-Figure~\ref{fig:arch:microarch} provides an overview of OBaMMA's microarchitecture, highlighting new blocks in \textit{red}, modified blocks in \textit{blue}, and untouched components in \textit{black}.
-Let us briefly describe the operation of the DRC under three scenarios: hits, misses with available cache-lines, and misses requiring eviction.
-
-\textbf{In the case of a hit}, the value of the RED instruction is accumulated with its corresponding value in the cache.
-At \textit{st1}, the cache value, read in \textit{st0} from \textit{Data}, is accumulated with the RED value using a dedicated accumulator (\textit{Acc}).
-The result is written back to \textit{Data} at \textit{st2}.
-
-\textbf{In the case of a miss}, if there is an available cache-line, the value of the RED instruction is simply stored in this free entry of the cache.
-A free cache-line is selected at \textit{st1}, and at \textit{st2}, the RED value is written to \textit{Data} along with zeros to reset the selected cache-line.
-A write to \textit{Dir} is also performed to change the state of the cache-line from free to valid.
-
-\textbf{If a miss occurs but no cache-line is free}, an eviction must be processed before handling the RED instruction.
-The RED instruction is placed in the \textit{PrioRED table} to be replayed with higher priority than the \textit{replay table}.
-Meanwhile, at \textit{st2}, the \textit{miss handler}, \textit{flush controller}, and \textit{accumulation table} are allocated to process the eviction.
-The eviction is a ``fire-and-forget'' operation, meaning the RED instruction only needs to wait for the entry in \textit{Data} to be freed, not for the entire eviction to finish.
-The eviction process begins by fetching and resetting the chosen 64~B cache-line from \textit{Data}, which is done in one cycle by the \textit{flush controller}.
-Simultaneously, the \textit{miss handler} issues a read to the main memory, which in our performance simulations, we assume will take 64 cycles to respond.
-The \textit{accumulation table} waits and temporarily stores both the old cache-line from the \textit{flush controller} and the 64~B response data from the \textit{miss handler}.
-It then accumulates the cache-line with the data, word by word, and sends the 64~B results back to the main memory using the existing write interface.
-
-With the changes described above, we have transformed \mbox{HPDcache} into a \textit{reduction cache}.
-To achieve multiple cache regions, we virtually separate the cache RAMs.
-To maintain HPDcache's set-associative operation, we divide the cache memory along its \textit{sets}.
-Thus, each region of the cache has the same structure as the overall cache but is smaller in size: each \textit{set} contains a fixed number (the number of ways) of 64-byte cache-lines, as depicted in Figure~\ref{fig:arch:set_redirection}.
-Each region can map any possible address.
-To ensure that every address matches a unique \textit{set} within each region, we allocate a power-of-two number of consecutive \textit{sets} to a region.
-Considering the total number of \textit{sets} $S_T$ and our region $R$ mapping on $S_R < S_T$ of them, starting at the \textit{set} $s_\mathit{offset}$, if an address matches one of the \textit{sets} of this region, no action is required.
-However, if the address matches a \textit{set} $s_\mathit{addr}$ outside the region, we need to map it to a unique \textit{set} in the region such that $s_\mathit{region} = (s_\mathit{addr} \% S_R) + s_\mathit{offset}$, as illustrated in Figure~\ref{fig:arch:set_redirection}.
-The three regions GRC, DRC, and SRT are each defined by their number of \textit{sets} $S_R$ and their first \textit{set}, $s_\mathit{offset}$.
-OBaMMA can thus be dynamically reconfigured to operate as a generic cache, a traditional \textit{reduction cache} or a region-based \textit{reduction cache} based on the needs of the application (\textit{config} in Figure~\ref{fig:arch:microarch}).
-
-The SRT region requires additional adjustments to function as an element-wise fully-associative cache.
-This region operates as if all the \textit{sets} were combined into a single \textit{set}, containing numerous elements.
+The \acrshort{srt} region requires additional adjustments to function as an element-wise fully-associative cache.
+This region operates as if all the \glspl{set} were combined into a single \gls{set}, containing numerous elements.
 Each element requires its own directory entry.
-Therefore, we replace the \textit{Dir} RAMs of this region with a \textit{CAM} (\textit{Content-Addressable Memory}) containing the addresses of each valid element in the SRT region.
-With the \textit{CAM}, we can check for a hit across the entire region and retrieve the matching value stored in the \textit{Data} RAMs.
-We also added a queue (\textit{RED AMO Queue}) to manage the element-wise read-modify-write memory transactions.
+Therefore, we replace the \textit{Dir} RAMs of this region with a \textit{CAM} (\textit{Content-Addressable Memory}) containing the addresses of each valid element in the \acrshort{srt} region.
+With the \textit{CAM}, we can check for a \gls{hit} across the entire region and retrieve the matching value stored in the \textit{Data} RAMs.
+We also added a queue (\textit{RED AMO Queue}) \note{FIX} to manage the element-wise \gls{rmw} memory transactions.
 
-To avoid address duplication between regions, the \textit{MultiHit fetcher} in Figure~\ref{fig:arch:microarch} manages coherency between the DRC and SRT.
+To avoid address duplication between regions, the \textit{MultiHit fetcher} in Figure~\ref{fig:arch:microarch} manages coherency between the \acrshort{drc} and \acrshort{srt}, following the description in Chapter~\ref{cha:spdc}.
 Since software selects the region, this can be necessary.
+The \textit{MultiHit fetcher} performs two tasks.
+First, given an address, it probes the \textit{CAM} for entries whose cache-line address matches.
+If one or more matches are found, it records their positions locally and notifies the \textit{cache controller}.
+Second, when activated, the \textit{MultiHit fetcher} gathers the corresponding elements from the \textit{Data} RAMs of the \acrshort{srt} and assembles them into a single 64~B line that will be written into the \acrshort{drc}.
 
+%%%
 We have added several custom instructions to the CVA6 RISC-V core~\cite{Waterman2016_RISCV_ISA}.
-The primary addition is the \textit{reduction} instruction (\textit{RED}), which takes an address and a value as arguments and expects no response.
+The primary addition is the \textit{reduction} instruction (\gls{red}), which takes an address and a value as arguments and expects no response.
 This instruction is accompanied by a region instruction (\textit{REG}) that specifies in which region subsequent \textit{reductions} should be processed.
-We have also added an instruction to flush the \textit{reduction} regions (DRC and SRT) of the cache, which is necessary at the end of the algorithm.
+We have also added an instruction to flush the \textit{reduction} regions (\acrshort{drc} and \acrshort{srt}) of the cache, which is necessary at the end of the algorithm.
 It is performed in the cache by the \textit{CMO handler}.
-Finally, we have included an instruction to enable and disable the \textit{reduction} mode of OBaMMA.
+Finally, we have included an instruction to enable and disable the \textit{reduction} mode of \acrlong{spdc}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_01.pdf}
+        \caption{TODO}
+        \label{fig:arch:pipeline_01}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_02.pdf}
+        \caption{TODO}
+        \label{fig:arch:pipeline_02}
+    \end{subfigure}
+    %
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_03.pdf}
+        \caption{TODO}
+        \label{fig:arch:pipeline_03}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=0.8\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_06.pdf}
+        \caption{TODO}
+        \label{fig:arch:pipeline_06}
+    \end{subfigure}
+    %
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_04.pdf}
+        \caption{TODO}
+        \label{fig:arch:pipeline_04}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_05.pdf}
+        \caption{TODO}
+        \label{fig:arch:pipeline_05}
+    \end{subfigure}
+    \caption{Pipeline Operation IBR}
+    \label{fig:arch:pipeline_IBR}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{0.49\linewidth} % [position][height][inner pos]{width}
+        \centering
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_07.pdf}
+        \caption{TODO}
+        \label{fig:arch:pipeline_07}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_08.pdf}
+        \caption{TODO}
+        \label{fig:arch:pipeline_08}
+    \end{subfigure}
+    %
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_09.pdf}
+        \caption{TODO}
+        \label{fig:arch:pipeline_09}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_10.pdf}
+        \caption{TODO \note{RMWQ}}
+        \label{fig:arch:pipeline_10}
+    \end{subfigure}
+    \caption{Pipeline Operation OBR}
+    \label{fig:arch:pipeline_OBR}
+\end{figure}

@@ -14,7 +14,7 @@ When there is a \gls{miss}, the operation is blocked until the read from main me
 Potentially, the \gls{miss} will also trigger an \gls{eviction}, which exacerbates the blocking condition, because a cache-line must first be written back, before the read from main memory can be performed (on the right in the figure).
 In scientific applications, the matrices are extremely large and only a small portion of the vector $c$ can reside in the cache, thus the \emph{miss+evict} case arises frequently.
 
-A \gls{redC}, such as~\cite{Srikanth2021_SortCache} or~\cite{Mukkara2019_PHI}, is a data-cache which accepts \gls{reduction} instructions (\emph{RED}) from the processor and performs accumulations locally (near-memory).
+A \gls{redC}, such as~\cite{Srikanth2021_SortCache} or~\cite{Mukkara2019_PHI}, is a data-cache which accepts \gls{reduction} instructions (\gls{red}) from the processor and performs accumulations locally (near-memory).
 In the case of a \gls{hit}, see Figure~\ref{fig:spdc:red_based_cache}, the \gls{reduction} takes place in the cache (in \textit{blue}, on the left in the figure).
 For a \gls{miss}, the cache allocates a new line with zeros, and simply inserts the value (in the middle of the figure).
 In this case, the cache-line is inconsistent with main memory.
@@ -46,7 +46,7 @@ At the end of the algorithm, the \gls{redC} must be flushed.
 \end{figure}
 
 \begin{highlight}{Definition}{LimeGreen}
-    A \textbf{\gls{redC}} is a data-cache containing an arithmetic unit and a dedicated support for \gls{reduction} operations, via single ``fire-and-forget'' \emph{RED} instructions.
+    A \textbf{\gls{redC}} is a data-cache containing an arithmetic unit and a dedicated support for \gls{reduction} operations, via single ``fire-and-forget'' \gls{red} instructions.
 \end{highlight}
 
 \begin{highlight}{Conclusion}{Red}
