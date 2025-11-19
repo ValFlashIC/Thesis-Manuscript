@@ -8,7 +8,7 @@
 
 \lettrine{A}{} widely used \gls{spFormat} to compress the non-zero elements in a matrix $A$ is \acrshort{csc}~\cite{Saad2003_COO_CSR_DIA_ELL}, where $A$ is a sparse matrix of dimensions $(M, N)$ with a number of non-zero elements $\mathit{nnz}$.
 As seen in Chapter~\ref{cha:background}, it consists of three tables ($\mathit{val}$, $\mathit{idx}$, $\mathit{ptr}$) used to store non-zero values, row indices and column positions.
-When performing an \acrshort{op} \acrshort{spmv} ($A \times b = c$) with this format (Algorithm~\ref{alg:spdc:spmv_with_red}), we see that a \gls{red} is needed to accumulate the output vector $c$ (line~6).
+When performing an \acrshort{op} \acrshort{spmv} ($A \times b = c$) with this format (Algorithm~\ref{alg:spdc:spmv_with_red}), we see that a \acrshort{red} is needed to accumulate the output vector $c$ (line~6).
 Moreover, $A$ is read sequentially while $c$ is updated ``randomly''.
 In fact, the \emph{key} is determined via an indirection with an access to $\mathit{idx}$.
 
@@ -29,7 +29,7 @@ In memory, $A$ is stored as three dense tables, but conceptually, as we perform 
 A row in the matrix corresponds to a \emph{key}, or equivalently, a position in the output vector $c$.
 In Figure~\ref{fig:spdc:spmv_on_matrix}, we show an example of a sparse matrix with a few non-zero values (\ding{192} - \ding{197}).
 As we traverse the matrix, we first perform a \gls{reduction} for the value on row $\mathit{key}_{10}$, then on row $\mathit{key}_{20}$ and then $\mathit{key}_{30}$.
-Each of these results in a \gls{red} on $c$.
+Each of these results in a \acrshort{red} on $c$.
 As we continue, we then \gls{hit} another value \ding{196} on the row $\mathit{key}_{10}$ which must be \emph{reduced} with an existing entry \ding{192}
  (as shown on the left of Figure~\ref{fig:spdc:spmv_on_matrix}, \emph{Conceptual View}).
 

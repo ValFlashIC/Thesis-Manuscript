@@ -55,16 +55,22 @@ Depending on the response and the availability of cache resources at \textit{st1
 The instruction is then replayed with the highest priority once its dependencies are cleared.
 If the instruction does not need to be replayed at \textit{st1}, it is consumed and processed.
 This pipeline serves as the foundation for implementing \acrlong{spdc}'s \gls{reduction} operations.
+
 % add infos on blocks such as UC, CMO..
+% As the \textit{cache controller} is the heart of the cache process, the cache directory (\textit{Dir}) and data (\textit{Data}) RAMs its essence.
+The \textit{cache controller} drives several components depending on the needs.
+...
 
 HPDcache provides extensive static and dynamic configurability, making it a flexible foundation for further extensions.
 To implement \acrlong{spdc} as well as a \gls{redC} baseline, we modified HPDcache to be highly configurable so that a single RTL implementation can produce multiple designs.
 The RTL can be instantiated as a generic cache (the first baseline, \acrshort{gc}), as a \gls{redC} (the second baseline, \acrshort{redc}), or as \acrshort{spdc}, the solution presented in the previous chapters.
 
+%% there is no transfer at eviction from DRC to RMWQ, give Python number to show it has low impact
+
 \subsection{RTL Implementation of SpDCache}
 
 We configure the original HPDcache as a 4-way set-associative cache with 128 \glspl{set} and 64-byte cache-lines, resulting in a total cache size of 32~KiB.
-We extend the three-stage pipeline to handle the new \gls{red} instruction.
+We extend the three-stage pipeline to handle the new \acrshort{red} instruction.
 Figure~\ref{fig:arch:microarch} provides an overview of \acrlong{spdc}'s microarchitecture, highlighting new blocks in \textit{red}, modified blocks in \textit{blue}, and untouched components in \textit{black}.
 The overall architecture aligns with the design presented in Chapter~\ref{cha:spdc}, adapted here for hardware implementation.
 Let us briefly describe the operation of the \acrshort{drc} under three scenarios: \glspl{hit}, \glspl{miss} with available cache-lines, and \glspl{miss} requiring \gls{eviction}.
@@ -76,18 +82,18 @@ Let us briefly describe the operation of the \acrshort{drc} under three scenario
     \label{fig:arch:microarch}
 \end{figure}
 
-\textbf{In the case of a \gls{hit}}, the value of the \gls{red} instruction is accumulated with its corresponding value in the cache.
-At \textit{st1}, the cache value, read in \textit{st0} from \textit{Data}, is accumulated with the \gls{red} value using a dedicated accumulator (\textit{Acc}).
+\textbf{In the case of a \gls{hit}}, the value of the \acrshort{red} instruction is accumulated with its corresponding value in the cache.
+At \textit{st1}, the cache value, read in \textit{st0} from \textit{Data}, is accumulated with the \acrshort{red} value using a dedicated accumulator (\textit{Acc}).
 The result is written back to \textit{Data} at \textit{st2}.
 
-\textbf{In the case of a \gls{miss}}, if there is an available cache-line, the value of the \gls{red} instruction is simply stored in this free entry of the cache.
-A free cache-line is selected at \textit{st1}, and at \textit{st2}, the \gls{red} value is written to \textit{Data} along with zeros to reset the selected cache-line.
+\textbf{In the case of a \gls{miss}}, if there is an available cache-line, the value of the \acrshort{red} instruction is simply stored in this free entry of the cache.
+A free cache-line is selected at \textit{st1}, and at \textit{st2}, the \acrshort{red} value is written to \textit{Data} along with zeros to reset the selected cache-line.
 A write to \textit{Dir} is also performed to change the state of the cache-line from free to valid.
 
-\textbf{If a \gls{miss} occurs but no cache-line is free}, an \gls{eviction} must be processed before handling the \gls{red} instruction.
-The \gls{red} instruction is placed in the \textit{PrioRED table} to be replayed with higher priority than the \textit{replay table}.
+\textbf{If a \gls{miss} occurs but no cache-line is free}, an \gls{eviction} must be processed before handling the \acrshort{red} instruction.
+The \acrshort{red} instruction is placed in the \textit{PrioRED table} to be replayed with higher priority than the \textit{replay table}.
 Meanwhile, at \textit{st2}, the \textit{miss handler}, \textit{flush controller}, and \textit{accumulation table} are allocated to process the \gls{eviction}.
-The \gls{eviction} is a ``fire-and-forget'' operation, meaning the \gls{red} instruction only needs to wait for the entry in \textit{Data} to be freed, not for the entire \gls{eviction} to finish.
+The \gls{eviction} is a ``fire-and-forget'' operation, meaning the \acrshort{red} instruction only needs to wait for the entry in \textit{Data} to be freed, not for the entire \gls{eviction} to finish.
 The \gls{eviction} process begins by fetching and resetting the chosen 64~B cache-line from \textit{Data}, which is done in one cycle by the \textit{flush controller}.
 Simultaneously, the \textit{miss handler} issues a read to the main memory, which in our performance simulations, we assume will take 64 cycles to respond. \note{FIX}
 The \textit{accumulation table} waits and temporarily stores both the old cache-line from the \textit{flush controller} and the 64~B response data from the \textit{miss handler}.
@@ -107,7 +113,7 @@ The three regions \acrshort{grc}, \acrshort{drc}, and \acrshort{srt} are each de
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/Sets_redirection.pdf}
-    \caption{Set Redirection Depending on the Region}
+    \caption{Set Redirection Depending on the Region \note{REDO}}
     \label{fig:arch:set_redirection}
 \end{figure}
 
@@ -125,13 +131,43 @@ First, given an address, it probes the \textit{CAM} for entries whose cache-line
 If one or more matches are found, it records their positions locally and notifies the \textit{cache controller}.
 Second, when activated, the \textit{MultiHit fetcher} gathers the corresponding elements from the \textit{Data} RAMs of the \acrshort{srt} and assembles them into a single 64~B line that will be written into the \acrshort{drc}.
 
-%%%
+\subsection{Software Interface}
+\label{sec:arch:sw_interface}
+
 We have added several custom instructions to the CVA6 RISC-V core~\cite{Waterman2016_RISCV_ISA}.
-The primary addition is the \textit{reduction} instruction (\gls{red}), which takes an address and a value as arguments and expects no response.
-This instruction is accompanied by a region instruction (\textit{REG}) that specifies in which region subsequent \textit{reductions} should be processed.
-We have also added an instruction to flush the \textit{reduction} regions (\acrshort{drc} and \acrshort{srt}) of the cache, which is necessary at the end of the algorithm.
+The primary addition is the \gls{reduction} instruction (\acrshort{red}), which takes an address and a value as arguments and expects no response.
+This instruction is accompanied by a region instruction (\acrshort{reg}) that specifies in which region subsequent \glspl{reduction} should be processed.
+We have also added an instruction to flush the \gls{reduction} regions (\acrshort{drc} and \acrshort{srt}) of the cache, which is necessary at the end of the algorithm.
 It is performed in the cache by the \textit{CMO handler}.
-Finally, we have included an instruction to enable and disable the \textit{reduction} mode of \acrlong{spdc}.
+Finally, we have included an instruction to enable and disable the \gls{reduction} mode of \acrlong{spdc}.
+
+We demonstrate a simple example in Listing~\hyperlink{hl0}{1} that accumulates multiple values at a single address.
+Before executing \acrshort{red} transactions, the \gls{reduction} engine must be enabled (line~3).
+The cache transitions from a fully generic state to \acrshort{spdc} with multiple regions using a hardware-defined static configuration.
+This example assumes a configuration with three regions: \acrshort{grc}, \acrshort{drc}, and \acrshort{srt}.
+For a simpler \gls{redC} configuration with only two regions (\acrshort{grc} and \acrshort{drc}), the \acrshort{reg} instruction would be unnecessary.
+Additionally, the instruction can accept a dynamic configuration argument specifying word granularity and operation type.
+A future optimization would allow passing the entire configuration as a parameter, enabling dynamic configuration of \acrshort{spdc} regions at runtime.
+Next, at line~8, we select the \acrshort{ibr} region using the \acrshort{reg} instruction.
+The subsequent two \acrshort{red} instructions are then executed and stored in the \acrshort{drc}.
+At line~13, we switch to the \acrshort{obr} region, causing the following \acrshort{red} instruction to be processed by the \acrshort{srt}.
+Once all \acrshort{red} operations complete, \acrlong{spdc} is flushed at line~17 before disabling the reduction engine, reverting to standard cache operation.
+
+\begin{figure}[t]
+    \hypertarget{hl0}{}
+    \begin{minipage}{\linewidth}
+        \addtolength{\linewidth}{-16pt}
+        \colorbox{white}{\begin{minipage}[t][5mm][t]{6.5pt}\null\hfill\null\end{minipage}}
+        \begin{minipage}{\linewidth}
+            \lstinputlisting[
+                title=\textbf{Listing 1:} A Simple Example of \acrshort{red} Operations Usage
+            ]{Chapter_MicroArch/Code/red_example.c}
+        \end{minipage}
+        %\bigskip
+    \end{minipage}
+\end{figure}
+
+\subsection{Pipeline Operation}
 
 \begin{figure}[htbp]
     \centering
