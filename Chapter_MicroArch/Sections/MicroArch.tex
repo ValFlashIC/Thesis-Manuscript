@@ -3,45 +3,13 @@
 % Microarchitecture
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% add RAM, nop, RTL, CAM, pipeline
+%cmo
 
-
-%% add RAM, nop, RTL, CAM
-
-
-
-\section{Microarchitecture}
+\section{SpDCache Microarchitecture}
 \label{sec:arch:microarch}
 
-% In light of the above analysis, this section describes the architecture of a \gls{redC} capable of supporting multiple regions with distinct characteristics.
-% We introduce OBaMMA, an \textit{\underline{O}uter-Product} \underline{Ba}nded \underline{M}atrix \underline{M}emory \underline{A}ccelerator.
-\acrlong{spdc} features two primary capabilities.
-First, as a \gls{redC}, it supports \textit{reduction} instructions, enabling the accumulation of data near-memory.
-Second, it implements a region-based cache where regions have different data-granularity, levels of associativity and overall behavior.
-
-% The OBaMMA cache has three regions:
-% \begin{itemize}
-%     \item The \acrshort{grc} (\textit{Generic Region Cache}) functions as a generic cache region.
-%     It is useful for processing sequential memory accesses that occur during the computation of sparse kernels.
-%     For example, in the \algo{OP} SpMV kernel, the \acrshort{grc} manages the sequential reads of matrix $A$ and vector $b$.
-%     %
-%     \item The \acrshort{drc} (\textit{Dense Region Cache}) operates as a line-wise set-associative \gls{redC}.
-%     It exclusively processes \textit{reduction} instructions, in a write-back manner.
-%     Data to be accumulated is held only in the cache.
-%     Memory transactions, to synchronize main memory, are issued only on data \gls{eviction}.
-%     This region is beneficial for matrix areas which exhibit high locality despite the apparent randomness of accesses, such as within the matrix band.
-%     %
-%     \item The \acrshort{srt} (\textit{Sparse Region Table}) functions as an element-wise fully-associative \gls{redC}.
-%     Like the \acrshort{drc}, it processes \textit{reduction} instructions in a write-back manner but employs atomic element-wise memory transactions instead of the conventional line-wise read and write transactions.
-%     This region is advantageous for matrix areas where elements are isolated, having minimal spatial locality, such as outside the band of a matrix.
-% \end{itemize}
-
-% This approach is similar to~\cite{Isaac2024_SpDCache} which already suggested that splitting a cache can reduce memory traffic, however, the analysis was empirical, based on a high-level Python model and the sizing of the regions was not addressed.
-% Our work extends this by providing an analytical study that strengthens the concept and offers insights into region dimensioning.
-% Additionally, OBaMMA includes a fully functional RTL implementation, enabling accurate performance and area evaluation, as presented in Section~\ref{sec:evaluation}.
-
-\subsection{HPDcache: The RTL base generic cache}
-
-\acrlong{spdc} is implemented into an L1 data cache for a CVA6 RISC-V core, building upon an existing open-source high-performance set-associative data cache known as HPDcache~\cite{Fuguet2023_HPDcache}.
+\lettrine{S}{pDCache} is implemented into an L1 data cache for a CVA6 RISC-V core, building upon an existing open-source high-performance set-associative data cache known as HPDcache~\cite{Fuguet2023_HPDcache}.
 In contrast to traditional data caches, HPDcache introduces new features, including buffering techniques for memory writes, set-associative storage to manage read \gls{miss} requests, and dynamic configurability of each cache-line to operate in either write-back or write-through modes.
 It is designed for high performance, utilizing a three-stage pipeline to handle multiple instructions while minimizing stall potential through out-of-order cache execution.
 
@@ -56,18 +24,29 @@ The instruction is then replayed with the highest priority once its dependencies
 If the instruction does not need to be replayed at \textit{st1}, it is consumed and processed.
 This pipeline serves as the foundation for implementing \acrlong{spdc}'s \gls{reduction} operations.
 
-% add infos on blocks such as UC, CMO..
-% As the \textit{cache controller} is the heart of the cache process, the cache directory (\textit{Dir}) and data (\textit{Data}) RAMs its essence.
-The \textit{cache controller} drives several components depending on the needs.
-...
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.56\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_MicroArchi.pdf}
+    \caption{\acrlong{spdc} Microarchitecture, based on HPDcache}
+    \label{fig:arch:microarch}
+\end{figure}
+
+The \textit{cache controller} coordinates several auxiliary units.
+The \textit{miss handler}, allocated from \textit{st2}, tracks outstanding memory read requests and notifies the cache controller with a \textit{refill} request when responses arrive.
+An optional \textit{write buffer} gathers recent write to memory, allowing merges of transactions that target the same cache-line.
+The \textit{flush controller}, also allocated from \textit{st2}, reads cache-line data from the \textit{Data} RAMs and issues memory writes.
+It temporarily stall the pipeline to prevent RAM conflicts.
+HPDcache further provides an \textit{UC} unit to handle uncached transactions.
+Finally, the \textit{CMO handler} performs internal cache operations (e.g., invalidations and flushes).
+When active it takes control of the cache and can invoke the \textit{flush controller} if necessary.
+Most of these units are reused and extended to implement \acrlong{spdc}.
 
 HPDcache provides extensive static and dynamic configurability, making it a flexible foundation for further extensions.
 To implement \acrlong{spdc} as well as a \gls{redC} baseline, we modified HPDcache to be highly configurable so that a single RTL implementation can produce multiple designs.
 The RTL can be instantiated as a generic cache (the first baseline, \acrshort{gc}), as a \gls{redC} (the second baseline, \acrshort{redc}), or as \acrshort{spdc}, the solution presented in the previous chapters.
 
-%% there is no transfer at eviction from DRC to RMWQ, give Python number to show it has low impact
-
 \subsection{RTL Implementation of SpDCache}
+\label{sec:arch:spdcache}
 
 We configure the original HPDcache as a 4-way set-associative cache with 128 \glspl{set} and 64-byte cache-lines, resulting in a total cache size of 32~KiB.
 We extend the three-stage pipeline to handle the new \acrshort{red} instruction.
@@ -75,27 +54,20 @@ Figure~\ref{fig:arch:microarch} provides an overview of \acrlong{spdc}'s microar
 The overall architecture aligns with the design presented in Chapter~\ref{cha:spdc}, adapted here for hardware implementation.
 Let us briefly describe the operation of the \acrshort{drc} under three scenarios: \glspl{hit}, \glspl{miss} with available cache-lines, and \glspl{miss} requiring \gls{eviction}.
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.7\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_MicroArchi.pdf}
-    \caption{\acrlong{spdc} Microarchitecture, based on HPDcache \note{RMWQ}}
-    \label{fig:arch:microarch}
-\end{figure}
-
-\textbf{In the case of a \gls{hit}}, the value of the \acrshort{red} instruction is accumulated with its corresponding value in the cache.
+In the case of a \gls{hit}, the value of the \acrshort{red} instruction is accumulated with its corresponding value in the cache.
 At \textit{st1}, the cache value, read in \textit{st0} from \textit{Data}, is accumulated with the \acrshort{red} value using a dedicated accumulator (\textit{Acc}).
 The result is written back to \textit{Data} at \textit{st2}.
 
-\textbf{In the case of a \gls{miss}}, if there is an available cache-line, the value of the \acrshort{red} instruction is simply stored in this free entry of the cache.
+In the case of a \gls{miss}, if there is an available cache-line, the value of the \acrshort{red} instruction is simply stored in this free entry of the cache.
 A free cache-line is selected at \textit{st1}, and at \textit{st2}, the \acrshort{red} value is written to \textit{Data} along with zeros to reset the selected cache-line.
 A write to \textit{Dir} is also performed to change the state of the cache-line from free to valid.
 
-\textbf{If a \gls{miss} occurs but no cache-line is free}, an \gls{eviction} must be processed before handling the \acrshort{red} instruction.
+If a \gls{miss} occurs but no cache-line is free, an \gls{eviction} must be processed before handling the \acrshort{red} instruction.
 The \acrshort{red} instruction is placed in the \textit{PrioRED table} to be replayed with higher priority than the \textit{replay table}.
 Meanwhile, at \textit{st2}, the \textit{miss handler}, \textit{flush controller}, and \textit{accumulation table} are allocated to process the \gls{eviction}.
 The \gls{eviction} is a ``fire-and-forget'' operation, meaning the \acrshort{red} instruction only needs to wait for the entry in \textit{Data} to be freed, not for the entire \gls{eviction} to finish.
 The \gls{eviction} process begins by fetching and resetting the chosen 64~B cache-line from \textit{Data}, which is done in one cycle by the \textit{flush controller}.
-Simultaneously, the \textit{miss handler} issues a read to the main memory, which in our performance simulations, we assume will take 64 cycles to respond. \note{FIX}
+Simultaneously, the \textit{miss handler} issues a read to the main memory, which in our performance simulations, we assume will take 64 cycles to respond.
 The \textit{accumulation table} waits and temporarily stores both the old cache-line from the \textit{flush controller} and the 64~B response data from the \textit{miss handler}.
 It then accumulates the cache-line with the data, word by word, and sends the 64~B results back to the main memory using the existing write interface.
 
@@ -112,8 +84,8 @@ The three regions \acrshort{grc}, \acrshort{drc}, and \acrshort{srt} are each de
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/Sets_redirection.pdf}
-    \caption{Set Redirection Depending on the Region \note{REDO}}
+    \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_SetsRedirection.pdf}
+    \caption{Set Redirection Depending on the Region}
     \label{fig:arch:set_redirection}
 \end{figure}
 
@@ -122,7 +94,7 @@ This region operates as if all the \glspl{set} were combined into a single \gls{
 Each element requires its own directory entry.
 Therefore, we replace the \textit{Dir} RAMs of this region with a \textit{CAM} (\textit{Content-Addressable Memory}) containing the addresses of each valid element in the \acrshort{srt} region.
 With the \textit{CAM}, we can check for a \gls{hit} across the entire region and retrieve the matching value stored in the \textit{Data} RAMs.
-We also added a queue (\textit{RED AMO Queue}) \note{FIX} to manage the element-wise \gls{rmw} memory transactions.
+We also added a queue (\textit{RMWQ}) to manage the element-wise \gls{rmw} memory transactions.
 
 To avoid address duplication between regions, the \textit{MultiHit fetcher} in Figure~\ref{fig:arch:microarch} manages coherency between the \acrshort{drc} and \acrshort{srt}, following the description in Chapter~\ref{cha:spdc}.
 Since software selects the region, this can be necessary.
@@ -130,6 +102,10 @@ The \textit{MultiHit fetcher} performs two tasks.
 First, given an address, it probes the \textit{CAM} for entries whose cache-line address matches.
 If one or more matches are found, it records their positions locally and notifies the \textit{cache controller}.
 Second, when activated, the \textit{MultiHit fetcher} gathers the corresponding elements from the \textit{Data} RAMs of the \acrshort{srt} and assembles them into a single 64~B line that will be written into the \acrshort{drc}.
+
+Contrary to the description in Chapter~\ref{cha:spdc}, we do not transfer isolated elements from the \acrshort{drc} to the \acrshort{rmwq} on \gls{eviction}.
+In our Python simulations we observed that only a negligible fraction of elements were transferred (mean 0.3\%, range 0 to 5\% across the 48 matrices), which demonstrates the effectiveness of the \acrshort{drc} blocking behavior.
+To simplify the RTL implementation, this transfer is therefore omitted.
 
 \subsection{Software Interface}
 \label{sec:arch:sw_interface}
@@ -167,7 +143,8 @@ Once all \acrshort{red} operations complete, \acrlong{spdc} is flushed at line~1
     \end{minipage}
 \end{figure}
 
-\subsection{Pipeline Operation}
+\subsection{Details on SpDCache's Pipeline Operation}
+\label{sec:arch:pipeline}
 
 \begin{figure}[htbp]
     \centering
@@ -242,7 +219,7 @@ Once all \acrshort{red} operations complete, \acrlong{spdc} is flushed at line~1
     \begin{subfigure}{0.49\linewidth}
         \centering
         \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_10.pdf}
-        \caption{TODO \note{RMWQ}}
+        \caption{TODO}
         \label{fig:arch:pipeline_10}
     \end{subfigure}
     \caption{Pipeline Operation OBR}
