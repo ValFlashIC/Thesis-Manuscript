@@ -45,6 +45,10 @@ HPDcache provides extensive static and dynamic configurability, making it a flex
 To implement \acrlong{spdc} as well as a \gls{redC} baseline, we modified HPDcache to be highly configurable so that a single RTL implementation can produce multiple designs.
 The RTL can be instantiated as a generic cache (the first baseline, \acrshort{gc}), as a \gls{redC} (the second baseline, \acrshort{redc}), or as \acrshort{spdc}, the solution presented in the previous chapters.
 
+\begin{highlight}{Conclusion}{Red}
+    TODO
+\end{highlight}
+
 \subsection{RTL Implementation of SpDCache}
 \label{sec:arch:spdcache}
 
@@ -107,6 +111,10 @@ Contrary to the description in Chapter~\ref{cha:spdc}, we do not transfer isolat
 In our Python simulations we observed that only a negligible fraction of elements were transferred (mean 0.3\%, range 0 to 5\% across the 48 matrices), which demonstrates the effectiveness of the \acrshort{drc} blocking behavior.
 To simplify the RTL implementation, this transfer is therefore omitted.
 
+\begin{highlight}{Conclusion}{Red}
+    TODO
+\end{highlight}
+
 \subsection{Software Interface}
 \label{sec:arch:sw_interface}
 
@@ -143,85 +151,165 @@ Once all \acrshort{red} operations complete, \acrlong{spdc} is flushed at line~1
     \end{minipage}
 \end{figure}
 
+\begin{highlight}{Conclusion}{Red}
+    TODO
+\end{highlight}
+
 \subsection{Details on SpDCache's Pipeline Operation}
 \label{sec:arch:pipeline}
 
-\begin{figure}[htbp]
-    \centering
-    \begin{subfigure}{0.49\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_01.pdf}
-        \caption{TODO}
-        \label{fig:arch:pipeline_01}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.49\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_02.pdf}
-        \caption{TODO}
-        \label{fig:arch:pipeline_02}
-    \end{subfigure}
-    %
-    \begin{subfigure}{0.49\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_03.pdf}
-        \caption{TODO}
-        \label{fig:arch:pipeline_03}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.49\linewidth}
-        \centering
-        \includegraphics[width=0.8\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_06.pdf}
-        \caption{TODO}
-        \label{fig:arch:pipeline_06}
-    \end{subfigure}
-    %
-    \begin{subfigure}{0.49\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_04.pdf}
-        \caption{TODO}
-        \label{fig:arch:pipeline_04}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.49\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_05.pdf}
-        \caption{TODO}
-        \label{fig:arch:pipeline_05}
-    \end{subfigure}
-    \caption{Pipeline Operation IBR}
-    \label{fig:arch:pipeline_IBR}
-\end{figure}
+In this section, we dive into the details of the \acrlong{spdc}'s pipeline architecture.
+It is based on the HPDcache original pipeline, with the aim of only adding additional behavior for our needs without destroying original operating.
+On Figures~\ref{fig:arch:pipeline_IBR} and~\ref{fig:arch:pipeline_OBR}, we illustrate the various scenarios that can occur when processing \acrshort{red} instructions, depending on the selected region (\acrshort{ibr} or \acrshort{obr}, respectively).
+We represents the three pipeline stages (\textit{st0}, \textit{st1}, and \textit{st2}) and the interactions with the auxiliary units involved in processing \acrshort{red} instructions.
+The \textit{green}, \textit{red} and \textit{blue} arrows represents reads, writes and allocations of the units, respectively.
+The \textit{Dir} and \textit{Data} RAM units, notified with a hourglass, always need one full cycle to respond.
 
 \begin{figure}[htbp]
     \centering
-    \begin{subfigure}{0.49\linewidth} % [position][height][inner pos]{width}
+    \begin{subfigure}{0.32\linewidth}
         \centering
-        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_07.pdf}
-        \caption{TODO}
-        \label{fig:arch:pipeline_07}
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_01.pdf}
+        \caption{\Gls{hit} in the \acrshort{drc}}
+        \label{fig:arch:pipeline_01}
     \end{subfigure}
     \hfill
-    \begin{subfigure}{0.49\linewidth}
+    \begin{subfigure}{0.32\linewidth}
         \centering
-        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_08.pdf}
-        \caption{TODO}
-        \label{fig:arch:pipeline_08}
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_02.pdf}
+        \caption{\Gls{miss} in the \acrshort{drc}}
+        \label{fig:arch:pipeline_02}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_03.pdf}
+        \caption{\Gls{miss}+\Gls{eviction} in the \acrshort{drc}}
+        \label{fig:arch:pipeline_03}
     \end{subfigure}
     %
-    \begin{subfigure}{0.49\linewidth}
+    \begin{subfigure}{0.32\linewidth}
+        \centering
+        \includegraphics[width=0.8\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_06.pdf}
+        \caption{Cache-line \Gls{eviction} Process}
+        \label{fig:arch:pipeline_06}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_04.pdf}
+        \caption{\Gls{miss} in the \acrshort{drc} but ``Multi-\Gls{hit}'' in the \acrshort{srt}}
+        \label{fig:arch:pipeline_04}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_05.pdf}
+        \caption{\Gls{miss} in the \acrshort{drc} but \Gls{hit} in the \textit{MultiHit Fetcher}}
+        \label{fig:arch:pipeline_05}
+    \end{subfigure}
+    \caption{Pipeline Operation when the Region Argument is \acrshort{ibr}}
+    \label{fig:arch:pipeline_IBR}
+\end{figure}
+
+We start with the cases when the region argument is \acrshort{ibr}.
+In Figure~\ref{fig:arch:pipeline_01}, reads are issued to the \textit{Dir} and \textit{Data} RAMs at \textit{st0}.
+The answers are received one cycle later, at \textit{st1}, which identify if there is a \gls{hit} or a \gls{miss} in the \acrshort{drc}.
+This first part of the pipeline is the same for every cases.
+In the case \ding{192}, a \gls{hit} occurred, thus the data, also received at \textit{st1}, is accumulated with the \acrshort{red} value and sent to \textit{st2} to be write back in the \textit{Data} RAM.
+
+If a \gls{miss} occurs, several cases are possible, from Figures~\ref{fig:arch:pipeline_02} to~\ref{fig:arch:pipeline_05}, since an \gls{eviction} can occur and the \textit{MultiHit Fetcher} is bing used.
+In the case \ding{193}, when receiving a \gls{miss} at \textit{st1}, a check for a ``multi-\gls{hit}'' is performed in the \textit{Dir} CAM of the \acrshort{srt}.
+Indeed, as presented in Chapter~\ref{cha:spdc}, in case of \gls{miss} in the \acrshort{drc}, we want to gather elements of the same cache-line address that could be in the \acrshort{srt} to avoid duplications.
+The ``multi-\gls{hit}'' operation is done within the cycle, thus responding to the \textit{st1}, and also notifying the \textit{MultiHit Fetcher}.
+In case of ``multi-\gls{hit}'', the \textit{MultiHit Fetcher} will allocate an entry for the cache-line address into local memory and will take the control of the pipeline to read and invalidate the ``multi-\gls{hit}'' entries from the \textit{Data} RAM and write it locally to be used later.
+In the case \ding{193}, there is no ``multi-\gls{hit}'' and the \textit{MultiHit Fetcher} is empty.
+We are thus dealing with the simple \gls{miss} case, which necessitate writing the \acrshort{red} value into a reset cache-line in the \textit{Data} RAM at \textit{st2}.
+
+In the case \ding{195} however, the ``multi-\gls{hit}'' occurs, showing the allocation of the \textit{MultiHit Fetcher}.
+In this case, the \acrshort{red} instruction must be placed in the \textit{PrioRED Table} to be replayed immediately as soon as the pipeline is liberated, towards cases \ding{194} or \ding{196} depending on the need of \gls{eviction} or not, respectively.
+
+In the case \ding{196}, which only occurs upon replay, the \acrshort{red} instruction \glspl{miss} again but at \textit{st1}, it \glspl{hit} on the \textit{MultiHit Fetcher} which has gathered the data on the previous run.
+Thus, the \acrshort{red} value is accumulated with the \textit{MultiHit Fetcher} data to be write in the \textit{Data} RAM at \textit{st2}.
+
+The last case, \ding{194}, occurs when an \gls{eviction} is needed, being similar with or without replays from the ``multi-\gls{hit}''.
+If an \gls{eviction} is needed, a victim cache-line is selected at \textit{st1} and must be removed from the \textit{Data} RAM before inserting the new value.
+Thus, the \gls{eviction} process is launched at \textit{st2}, the \textit{Miss Handler}, the \textit{Flush Controller} and the \textit{Accumulation Table} being allocated with the victim address.
+Meanwhile, the \acrshort{red} instruction is put in the \textit{PrioRED Table} to be replayed immediately.
+As soon as the victim cache-line is freed, the \acrshort{red} instruction can be replayed following the case \ding{193} or \ding{196}, depending on the presence of data on the same cache-line address in the \textit{MultiHit Fetcher} or not, respectively.
+Note that as soon as there is a ``multi-\gls{hit}'' (case \ding{195}), the \textit{MultiHit Fetcher} processes the data gathering from the \acrshort{srt}, and keeps the data up until we get to the case \ding{196}.
+After that, since the data is no more in the\textit{Dir} CAM and \textit{Data} RAM, there will be no ``multi-\gls{hit}'' on the same address upon replay.
+
+In Figure~\ref{fig:arch:pipeline_06}, we present the \gls{eviction} process, that works in parallel of the pipeline.
+When receiving the victim address from the pipeline in case \ding{194}, the \textit{Flush Controller} immediately fires a read in the \textit{Data} RAM followed by an invalidation.
+It is done in one cycle, allowing the pipeline to replay the \acrshort{red} instruction without having to wait for the entire \gls{eviction} process to finish.
+The \textit{Flush Controller} then sends its victim data to the \textit{Accumulation Table} that is temporarily storing it.
+Meanwhile, the \textit{Miss Handler} issues a memory read, which can take up to a hundred cycles in the worst cases.
+Upon reception of the data from memory, the \textit{Miss Handler} also sends the dada to the \textit{Accumulation Table} to be stored.
+As soon as the \textit{Accumulation Table} has the two data lines, it accumulates them, word by word, and sends the results back to the \textit{Flush Controller} that serves as a memory write interface to write the result back in memory and complete the \gls{eviction}.
+
+Here is the list of the possible sequences of cases that can occur when the region argument is \acrshort{ibr}:
+\begin{itemize}
+    \item \gls{hit} in the \acrshort{drc}, \ding{192};
+    \item \gls{miss} in the \acrshort{drc}, \ding{193};
+    \item \gls{miss}+\gls{eviction} in the \acrshort{drc}, \ding{194} + \ding{197} $\rightarrow$ \ding{193};
+    \item \gls{miss} in the \acrshort{drc} with ``multi-\gls{hit}'' in the \acrshort{srt}, \ding{195} $\rightarrow$ \ding{196};
+    \item \gls{miss}+\gls{eviction} in the \acrshort{drc} with ``multi-\gls{hit}'' in the \acrshort{srt}, \ding{195} $\rightarrow$ \ding{194} + \ding{197} $\rightarrow$ \ding{196}.
+\end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_07.pdf}
+        \caption{\Gls{hit} in the \acrshort{drc}}
+        \label{fig:arch:pipeline_07}
+    \end{subfigure}
+
+    \begin{subfigure}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_08.pdf}
+        \caption{\Gls{hit} in the \acrshort{srt}}
+        \label{fig:arch:pipeline_08}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\linewidth}
         \centering
         \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_09.pdf}
-        \caption{TODO}
+        \caption{\Gls{miss} in the \acrshort{srt}}
         \label{fig:arch:pipeline_09}
     \end{subfigure}
     \hfill
-    \begin{subfigure}{0.49\linewidth}
+    \begin{subfigure}{0.32\linewidth}
         \centering
         \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_Pipeline_10.pdf}
-        \caption{TODO}
+        \caption{\Gls{miss}+\Gls{eviction} in the \acrshort{srt}}
         \label{fig:arch:pipeline_10}
     \end{subfigure}
-    \caption{Pipeline Operation OBR}
+    \caption{Pipeline Operation when the Region Argument is \acrshort{obr}}
     \label{fig:arch:pipeline_OBR}
 \end{figure}
+
+We now describe the cases when the region argument is \acrshort{obr}, from Figures~\ref{fig:arch:pipeline_07} to~\ref{fig:arch:pipeline_10}.
+In every cases, we check for \glspl{hit} both in the \acrshort{drc} and \acrshort{srt} at \textit{st0}.
+If there is a \gls{hit} in the \acrshort{drc}, case \ding{198}, we enter the special case where, regardless of the region argument, the \acrshort{red} instruction is processed in the \acrshort{drc}.
+It is thus sent to the \textit{PrioRED Table} to be replayed as a \acrshort{drc} \gls{hit}, on case \ding{192}.
+
+If there is no \textit{hit} in the \acrshort{drc}, we simply check the \textit{Dir} CAM for \glspl{hit} in the \acrshort{srt}.
+In case of \gls{hit}, \ding{199}, the data is accumulated with the \acrshort{red} value and write back in the \textit{Data} RAM.
+In case of \gls{miss}, \ding{200}, the data is inserted in the the \textit{Data} RAM.
+In the case of an \gls{eviction}, \ding{201}, the victim data can be read directly between \textit{st0} and \textit{st1}, since the \textit{Dir} CAM do not need a full cycle to respond and thus can initiate the victim read before \textit{st1}.
+Thus, the \acrshort{red} value can be inserted in the \textit{Data} RAM at \textit{st2}, while the victim data is sent to the \acrshort{rmwq}.
+The \acrshort{rmwq} independently fires atomic \acrshort{rmw} transaction to memory when not empty.
+
+Here is the list of the possible sequences of cases that can occur when the region argument is \acrshort{obr}:
+\begin{itemize}
+    \item \gls{hit} in the \acrshort{drc}, \ding{198} $\rightarrow$ \ding{192};
+    \item \gls{hit} in the \acrshort{srt}, \ding{199};
+    \item \gls{miss} in the \acrshort{srt}, \ding{200};
+    \item \gls{miss}+\gls{eviction} in the \acrshort{srt}, \ding{201}.
+\end{itemize}
+
+\begin{highlight}{Conclusion}{Red}
+    TODO
+\end{highlight}
