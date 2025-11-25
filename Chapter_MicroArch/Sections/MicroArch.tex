@@ -3,26 +3,23 @@
 % Microarchitecture
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% add RAM, nop, RTL, CAM, pipeline
-%cmo
-
 \section{SpDCache Microarchitecture}
 \label{sec:arch:microarch}
 
 \lettrine{S}{pDCache} is implemented into an L1 data cache for a CVA6 RISC-V core, building upon an existing open-source high-performance set-associative data cache known as HPDcache~\cite{Fuguet2023_HPDcache}.
 In contrast to traditional data caches, HPDcache introduces new features, including buffering techniques for memory writes, set-associative storage to manage read \gls{miss} requests, and dynamic configurability of each cache-line to operate in either write-back or write-through modes.
-It is designed for high performance, utilizing a three-stage pipeline to handle multiple instructions while minimizing stall potential through out-of-order cache execution.
+It is designed for high performance, utilizing a three-stage \gls{pipeline} to handle multiple instructions while minimizing stall potential through out-of-order cache execution.
 
 An overview of \acrlong{spdc}'s microarchitecture is shown in Figure~\ref{fig:arch:microarch}, where \textit{black} and \textit{blue} components are originally from HPDcache.
-The first stage (\textit{st0}) decodes instructions and issues reads to the cache directory and data RAMs (\textit{Dir} and \textit{Data}).
+The first stage (\textit{st0}) decodes instructions and issues reads to the cache directory and data \acrshortpl{ram} (\textit{Dir} and \textit{Data}).
 These reads require one cycle to respond.
 In the second stage (\textit{st1}), the response indicates whether a \gls{hit} or \gls{miss} occurred and if an \gls{eviction} is necessary.
 The instruction proceeds to the final stage (\textit{st2}) only if a \gls{miss} or \gls{eviction} must be processed.
 At \textit{st0}, the instruction is not yet consumed.
-Depending on the response and the availability of cache resources at \textit{st1}, a \textit{nop} (\textit{no operation}) may be inserted in the pipeline, and the instruction may be placed in a \textit{replay table}.
+Depending on the response and the availability of cache resources at \textit{st1}, a \acrfull{nop} may be inserted in the \gls{pipeline}, and the instruction may be placed in a \textit{replay table}.
 The instruction is then replayed with the highest priority once its dependencies are cleared.
 If the instruction does not need to be replayed at \textit{st1}, it is consumed and processed.
-This pipeline serves as the foundation for implementing \acrlong{spdc}'s \gls{reduction} operations.
+This \gls{pipeline} serves as the foundation for implementing \acrlong{spdc}'s \gls{reduction} operations.
 
 \begin{figure}[htbp]
     \centering
@@ -34,26 +31,27 @@ This pipeline serves as the foundation for implementing \acrlong{spdc}'s \gls{re
 The \textit{cache controller} coordinates several auxiliary units.
 The \textit{miss handler}, allocated from \textit{st2}, tracks outstanding memory read requests and notifies the cache controller with a \textit{refill} request when responses arrive.
 An optional \textit{write buffer} gathers recent write to memory, allowing merges of transactions that target the same cache-line.
-The \textit{flush controller}, also allocated from \textit{st2}, reads cache-line data from the \textit{Data} RAMs and issues memory writes.
-It temporarily stall the pipeline to prevent RAM conflicts.
+The \textit{flush controller}, also allocated from \textit{st2}, reads cache-line data from the \textit{Data} \acrshortpl{ram} and issues memory writes.
+It temporarily stall the \gls{pipeline} to prevent \acrshort{ram} conflicts.
 HPDcache further provides an \textit{UC} unit to handle uncached transactions.
-Finally, the \textit{CMO handler} performs internal cache operations (e.g., invalidations and flushes).
+Finally, the \textit{\acrshort{cmo} handler} performs internal cache operations (e.g., invalidations and flushes).
 When active it takes control of the cache and can invoke the \textit{flush controller} if necessary.
 Most of these units are reused and extended to implement \acrlong{spdc}.
 
 HPDcache provides extensive static and dynamic configurability, making it a flexible foundation for further extensions.
-To implement \acrlong{spdc} as well as a \gls{redC} baseline, we modified HPDcache to be highly configurable so that a single RTL implementation can produce multiple designs.
-The RTL can be instantiated as a generic cache (the first baseline, \acrshort{gc}), as a \gls{redC} (the second baseline, \acrshort{redc}), or as \acrshort{spdc}, the solution presented in the previous chapters.
+To implement \acrlong{spdc} as well as a \gls{redC} baseline, we modified HPDcache to be highly configurable so that a single \acrshort{rtl} implementation can produce multiple designs.
+The \acrshort{rtl} can be instantiated as a generic cache (the first baseline, \acrshort{gc}), as a \gls{redC} (the second baseline, \acrshort{redc}), or as \acrshort{spdc}, the solution presented in the previous chapters.
 
 \begin{highlight}{Conclusion}{Red}
-    TODO
+    \textbf{HPDcache} is an \textbf{open-source}, high-performance cache which we use as the \textbf{\acrshort{rtl} basis} for our work.
+    We extended it to support \gls{reduction} operations and the \acrlong{spdc} mode while preserving its \textbf{configurability}.
 \end{highlight}
 
 \subsection{RTL Implementation of SpDCache}
 \label{sec:arch:spdcache}
 
 We configure the original HPDcache as a 4-way set-associative cache with 128 \glspl{set} and 64-byte cache-lines, resulting in a total cache size of 32~KiB.
-We extend the three-stage pipeline to handle the new \acrshort{red} instruction.
+We extend the three-stage \gls{pipeline} to handle the new \acrshort{red} instruction.
 Figure~\ref{fig:arch:microarch} provides an overview of \acrlong{spdc}'s microarchitecture, highlighting new blocks in \textit{red}, modified blocks in \textit{blue}, and untouched components in \textit{black}.
 The overall architecture aligns with the design presented in Chapter~\ref{cha:spdc}, adapted here for hardware implementation.
 Let us briefly describe the operation of the \acrshort{drc} under three scenarios: \glspl{hit}, \glspl{miss} with available cache-lines, and \glspl{miss} requiring \gls{eviction}.
@@ -76,7 +74,7 @@ The \textit{accumulation table} waits and temporarily stores both the old cache-
 It then accumulates the cache-line with the data, word by word, and sends the 64~B results back to the main memory using the existing write interface.
 
 With the changes described above, we have transformed \mbox{HPDcache} into a \gls{redC}.
-To achieve multiple cache regions, we virtually separate the cache RAMs.
+To achieve multiple cache regions, we virtually separate the cache \acrshortpl{ram}.
 To maintain HPDcache's set-associative operation, we divide the cache memory along its \glspl{set}.
 Thus, each region of the cache has the same structure as the overall cache but is smaller in size: each \gls{set} contains a fixed number (the number of ways) of 64-byte cache-lines, as depicted in Figure~\ref{fig:arch:set_redirection}.
 Each region can map any possible address.
@@ -96,23 +94,26 @@ The three regions \acrshort{grc}, \acrshort{drc}, and \acrshort{srt} are each de
 The \acrshort{srt} region requires additional adjustments to function as an element-wise fully-associative cache.
 This region operates as if all the \glspl{set} were combined into a single \gls{set}, containing numerous elements.
 Each element requires its own directory entry.
-Therefore, we replace the \textit{Dir} RAMs of this region with a \textit{CAM} (\textit{Content-Addressable Memory}) containing the addresses of each valid element in the \acrshort{srt} region.
-With the \textit{CAM}, we can check for a \gls{hit} across the entire region and retrieve the matching value stored in the \textit{Data} RAMs.
+Therefore, we replace the \textit{Dir} \acrshortpl{ram} of this region with a \acrshort{cam} (\textit{Content-Addressable Memory}) containing the addresses of each valid element in the \acrshort{srt} region.
+With the \acrshort{cam}, we can check for a \gls{hit} across the entire region and retrieve the matching value stored in the \textit{Data} \acrshortpl{ram}.
 We also added a queue (\textit{RMWQ}) to manage the element-wise \gls{rmw} memory transactions.
 
 To avoid address duplication between regions, the \textit{MultiHit fetcher} in Figure~\ref{fig:arch:microarch} manages coherency between the \acrshort{drc} and \acrshort{srt}, following the description in Chapter~\ref{cha:spdc}.
 Since software selects the region, this can be necessary.
 The \textit{MultiHit fetcher} performs two tasks.
-First, given an address, it probes the \textit{CAM} for entries whose cache-line address matches.
+First, given an address, it probes the \acrshort{cam} for entries whose cache-line address matches.
 If one or more matches are found, it records their positions locally and notifies the \textit{cache controller}.
-Second, when activated, the \textit{MultiHit fetcher} gathers the corresponding elements from the \textit{Data} RAMs of the \acrshort{srt} and assembles them into a single 64~B line that will be written into the \acrshort{drc}.
+Second, when activated, the \textit{MultiHit fetcher} gathers the corresponding elements from the \textit{Data} \acrshortpl{ram} of the \acrshort{srt} and assembles them into a single 64~B line that will be written into the \acrshort{drc}.
 
 Contrary to the description in Chapter~\ref{cha:spdc}, we do not transfer isolated elements from the \acrshort{drc} to the \acrshort{rmwq} on \gls{eviction}.
 In our Python simulations we observed that only a negligible fraction of elements were transferred (mean 0.3\%, range 0 to 5\% across the 48 matrices), which demonstrates the effectiveness of the \acrshort{drc} blocking behavior.
-To simplify the RTL implementation, this transfer is therefore omitted.
+To simplify the \acrshort{rtl} implementation, this transfer is therefore omitted.
 
 \begin{highlight}{Conclusion}{Red}
-    TODO
+    The \acrlong{spdc} implementation introduces two primary extensions.
+    First, it integrates \textbf{support for \gls{reduction} instructions (\acrshortpl{red})} into the cache \gls{pipeline} while preserving the generic cache behavior.
+    This entails mechanisms for accumulating entire cache-lines and for handling element-wise atomic \acrshort{rmw} transactions.
+    Second, it implements a \textbf{virtual partitioning of the cache \acrshortpl{ram}}: the memory is logically split and a \gls{set}-redirection scheme is applied to dynamically create multiple regions.
 \end{highlight}
 
 \subsection{Software Interface}
@@ -122,7 +123,7 @@ We have added several custom instructions to the CVA6 RISC-V core~\cite{Waterman
 The primary addition is the \gls{reduction} instruction (\acrshort{red}), which takes an address and a value as arguments and expects no response.
 This instruction is accompanied by a region instruction (\acrshort{reg}) that specifies in which region subsequent \glspl{reduction} should be processed.
 We have also added an instruction to flush the \gls{reduction} regions (\acrshort{drc} and \acrshort{srt}) of the cache, which is necessary at the end of the algorithm.
-It is performed in the cache by the \textit{CMO handler}.
+It is performed in the cache by the \textit{\acrshort{cmo} handler}.
 Finally, we have included an instruction to enable and disable the \gls{reduction} mode of \acrlong{spdc}.
 
 We demonstrate a simple example in Listing~\hyperlink{hl0}{1} that accumulates multiple values at a single address.
@@ -152,18 +153,18 @@ Once all \acrshort{red} operations complete, \acrlong{spdc} is flushed at line~1
 \end{figure}
 
 \begin{highlight}{Conclusion}{Red}
-    TODO
+    \textbf{\acrlong{spdc} provides a simple and flexible software interface} through a minimal set of custom RISC-V instructions.
+    The ability to dynamically enable and disable \gls{reduction} mode allows the cache to seamlessly transition between generic and specialized operation, adapting to application requirements.
 \end{highlight}
 
-\subsection{Details on SpDCache's Pipeline Operation}
+\subsection{Details on SpDCache Pipeline Operation}
 \label{sec:arch:pipeline}
 
-In this section, we dive into the details of the \acrlong{spdc}'s pipeline architecture.
-It is based on the HPDcache original pipeline, with the aim of only adding additional behavior for our needs without destroying original operating.
-On Figures~\ref{fig:arch:pipeline_IBR} and~\ref{fig:arch:pipeline_OBR}, we illustrate the various scenarios that can occur when processing \acrshort{red} instructions, depending on the selected region (\acrshort{ibr} or \acrshort{obr}, respectively).
-We represents the three pipeline stages (\textit{st0}, \textit{st1}, and \textit{st2}) and the interactions with the auxiliary units involved in processing \acrshort{red} instructions.
-The \textit{green}, \textit{red} and \textit{blue} arrows represents reads, writes and allocations of the units, respectively.
-The \textit{Dir} and \textit{Data} RAM units, notified with a hourglass, always need one full cycle to respond.
+In this section, we detail the \acrlong{spdc} \gls{pipeline} architecture, which extends the HPDcache original \gls{pipeline} by adding new behavior for \gls{reduction} operations while preserving existing functionality.
+Figures~\ref{fig:arch:pipeline_IBR} and~\ref{fig:arch:pipeline_OBR} illustrate the various scenarios that occur when processing \acrshort{red} instructions, depending on the selected region (\acrshort{ibr} or \acrshort{obr}, respectively).
+We represent the three \gls{pipeline} stages (\textit{st0}, \textit{st1}, and \textit{st2}) and their interactions with the auxiliary units involved in processing \acrshort{red} instructions.
+The \textit{green}, \textit{red}, and \textit{blue} arrows represent read and write operations, and unit allocations, respectively.
+The \textit{Dir} and \textit{Data} \acrshort{ram} units, marked with an hourglass, require one full cycle to respond.
 
 \begin{figure}[htbp]
     \centering
@@ -208,54 +209,54 @@ The \textit{Dir} and \textit{Data} RAM units, notified with a hourglass, always 
         \caption{\Gls{miss} in the \acrshort{drc} but \Gls{hit} in the \textit{MultiHit Fetcher}}
         \label{fig:arch:pipeline_05}
     \end{subfigure}
-    \caption{Pipeline Operation when the Region Argument is \acrshort{ibr}}
+    \caption{\Gls{pipeline} Operation when the Region Argument is \acrshort{ibr}}
     \label{fig:arch:pipeline_IBR}
 \end{figure}
 
-We start with the cases when the region argument is \acrshort{ibr}.
-In Figure~\ref{fig:arch:pipeline_01}, reads are issued to the \textit{Dir} and \textit{Data} RAMs at \textit{st0}.
-The answers are received one cycle later, at \textit{st1}, which identify if there is a \gls{hit} or a \gls{miss} in the \acrshort{drc}.
-This first part of the pipeline is the same for every cases.
-In the case \ding{192}, a \gls{hit} occurred, thus the data, also received at \textit{st1}, is accumulated with the \acrshort{red} value and sent to \textit{st2} to be write back in the \textit{Data} RAM.
+We now describe the scenarios when the region argument is \acrshort{ibr}.
+In Figure~\ref{fig:arch:pipeline_01}, the \gls{pipeline} issues reads to the \textit{Dir} and \textit{Data} \acrshortpl{ram} at \textit{st0}.
+Responses arrive one cycle later at \textit{st1}, indicating whether a \gls{hit} or \gls{miss} occurs in the \acrshort{drc}.
+This initial \gls{pipeline} stage is identical across all scenarios.
+In case \ding{192}, a \gls{hit} is detected, so the data received at \textit{st1} is accumulated with the \acrshort{red} value and forwarded to \textit{st2} for write-back to the \textit{Data} \acrshort{ram}.
 
-If a \gls{miss} occurs, several cases are possible, from Figures~\ref{fig:arch:pipeline_02} to~\ref{fig:arch:pipeline_05}, since an \gls{eviction} can occur and the \textit{MultiHit Fetcher} is bing used.
-In the case \ding{193}, when receiving a \gls{miss} at \textit{st1}, a check for a ``multi-\gls{hit}'' is performed in the \textit{Dir} CAM of the \acrshort{srt}.
-Indeed, as presented in Chapter~\ref{cha:spdc}, in case of \gls{miss} in the \acrshort{drc}, we want to gather elements of the same cache-line address that could be in the \acrshort{srt} to avoid duplications.
-The ``multi-\gls{hit}'' operation is done within the cycle, thus responding to the \textit{st1}, and also notifying the \textit{MultiHit Fetcher}.
-In case of ``multi-\gls{hit}'', the \textit{MultiHit Fetcher} will allocate an entry for the cache-line address into local memory and will take the control of the pipeline to read and invalidate the ``multi-\gls{hit}'' entries from the \textit{Data} RAM and write it locally to be used later.
-In the case \ding{193}, there is no ``multi-\gls{hit}'' and the \textit{MultiHit Fetcher} is empty.
-We are thus dealing with the simple \gls{miss} case, which necessitate writing the \acrshort{red} value into a reset cache-line in the \textit{Data} RAM at \textit{st2}.
+When a \gls{miss} occurs, multiple scenarios are possible (Figures~\ref{fig:arch:pipeline_02} to~\ref{fig:arch:pipeline_05}), as an \gls{eviction} may be required and the \textit{MultiHit Fetcher} may be active.
+In case \ding{193}, upon detecting a \gls{miss} at \textit{st1}, the \gls{pipeline} checks the \textit{Dir} \acrshort{cam} of the \acrshort{srt} for a ``multi-\gls{hit}''.
+As described in Chapter~\ref{cha:spdc}, when a \gls{miss} occurs in the \acrshort{drc}, we gather elements with the same cache-line address from the \acrshort{srt} to prevent duplication.
+This check completes within the cycle and notifies the \textit{MultiHit Fetcher}.
+If a ``multi-\gls{hit}'' is found, the \textit{MultiHit Fetcher} allocates an entry and takes control of the \gls{pipeline} to read and invalidate matching entries from the \textit{Data} \acrshort{ram}, storing them locally for later use.
+If no ``multi-\gls{hit}'' occurs (case \ding{193}), we handle a simple \gls{miss} by writing the \acrshort{red} value to a free cache-line in the \textit{Data} \acrshort{ram} at \textit{st2}.
 
-In the case \ding{195} however, the ``multi-\gls{hit}'' occurs, showing the allocation of the \textit{MultiHit Fetcher}.
-In this case, the \acrshort{red} instruction must be placed in the \textit{PrioRED Table} to be replayed immediately as soon as the pipeline is liberated, towards cases \ding{194} or \ding{196} depending on the need of \gls{eviction} or not, respectively.
+In case \ding{195}, a ``multi-\gls{hit}'' is detected and the \textit{MultiHit Fetcher} is allocated.
+The \acrshort{red} instruction is placed in the \textit{PrioRED Table} for immediate replay once the \gls{pipeline} becomes available, proceeding to case \ding{194} or \ding{196} depending on whether an \gls{eviction} is needed.
 
-In the case \ding{196}, which only occurs upon replay, the \acrshort{red} instruction \glspl{miss} again but at \textit{st1}, it \glspl{hit} on the \textit{MultiHit Fetcher} which has gathered the data on the previous run.
-Thus, the \acrshort{red} value is accumulated with the \textit{MultiHit Fetcher} data to be write in the \textit{Data} RAM at \textit{st2}.
+In case \ding{196}, which occurs only upon replay, the \acrshort{red} instruction \glspl{miss} in the \acrshort{drc} but \glspl{hit} in the \textit{MultiHit Fetcher}, which has cached the gathered data from the previous case \ding{195}.
+The \acrshort{red} value is then accumulated with the \textit{MultiHit Fetcher} data and written to the \textit{Data} \acrshort{ram} at \textit{st2}.
 
-The last case, \ding{194}, occurs when an \gls{eviction} is needed, being similar with or without replays from the ``multi-\gls{hit}''.
-If an \gls{eviction} is needed, a victim cache-line is selected at \textit{st1} and must be removed from the \textit{Data} RAM before inserting the new value.
-Thus, the \gls{eviction} process is launched at \textit{st2}, the \textit{Miss Handler}, the \textit{Flush Controller} and the \textit{Accumulation Table} being allocated with the victim address.
-Meanwhile, the \acrshort{red} instruction is put in the \textit{PrioRED Table} to be replayed immediately.
-As soon as the victim cache-line is freed, the \acrshort{red} instruction can be replayed following the case \ding{193} or \ding{196}, depending on the presence of data on the same cache-line address in the \textit{MultiHit Fetcher} or not, respectively.
-Note that as soon as there is a ``multi-\gls{hit}'' (case \ding{195}), the \textit{MultiHit Fetcher} processes the data gathering from the \acrshort{srt}, and keeps the data up until we get to the case \ding{196}.
-After that, since the data is no more in the\textit{Dir} CAM and \textit{Data} RAM, there will be no ``multi-\gls{hit}'' on the same address upon replay.
+Case \ding{194} handles the \gls{eviction} scenario, which applies whether or not a ``multi-\gls{hit}'' replay is involved.
+When an \gls{eviction} is required, a victim cache-line is selected at \textit{st1} and must be evicted before inserting the new value.
+The \gls{eviction} process begins at \textit{st2}, with the \textit{Miss Handler}, \textit{Flush Controller}, and \textit{Accumulation Table} allocated for the victim address.
+Concurrently, the \acrshort{red} instruction is placed in the \textit{PrioRED Table} for immediate replay.
+Once the victim cache-line is freed, the instruction is replayed as case \ding{193} or \ding{196}, depending on whether data exists for the same cache-line address in the \textit{MultiHit Fetcher}.
+Note that when a ``multi-\gls{hit}'' occurs (case \ding{195}), the \textit{MultiHit Fetcher} retains the gathered data until reaching case \ding{196}.
+Subsequently, since the data is no longer present in the \textit{Dir} \acrshort{cam} and \textit{Data} \acrshort{ram}, no ``multi-\gls{hit}'' will occur for that address on replay.
 
-In Figure~\ref{fig:arch:pipeline_06}, we present the \gls{eviction} process, that works in parallel of the pipeline.
-When receiving the victim address from the pipeline in case \ding{194}, the \textit{Flush Controller} immediately fires a read in the \textit{Data} RAM followed by an invalidation.
-It is done in one cycle, allowing the pipeline to replay the \acrshort{red} instruction without having to wait for the entire \gls{eviction} process to finish.
-The \textit{Flush Controller} then sends its victim data to the \textit{Accumulation Table} that is temporarily storing it.
-Meanwhile, the \textit{Miss Handler} issues a memory read, which can take up to a hundred cycles in the worst cases.
-Upon reception of the data from memory, the \textit{Miss Handler} also sends the dada to the \textit{Accumulation Table} to be stored.
-As soon as the \textit{Accumulation Table} has the two data lines, it accumulates them, word by word, and sends the results back to the \textit{Flush Controller} that serves as a memory write interface to write the result back in memory and complete the \gls{eviction}.
+Figure~\ref{fig:arch:pipeline_06} depicts the \gls{eviction} process, which executes in parallel with the \gls{pipeline}.
+Upon receiving the victim address in case \ding{194}, the \textit{Flush Controller} immediately reads the \textit{Data} \acrshort{ram} and invalidates the entry in a single cycle.
+This allows the \gls{pipeline} to replay the \acrshort{red} instruction without waiting for the entire \gls{eviction} to complete.
+The \textit{Flush Controller} then forwards the victim data to the \textit{Accumulation Table} for temporary storage.
+Meanwhile, the \textit{Miss Handler} issues a memory read, which may take up to one hundred cycles in worst-case scenarios.
+Upon receiving the data from memory, the \textit{Miss Handler} sends it to the \textit{Accumulation Table}.
+Once the \textit{Accumulation Table} has both data lines, it performs word-by-word accumulation and returns the result to the \textit{Flush Controller}, which writes it back to memory to complete the \gls{eviction}.
 
-Here is the list of the possible sequences of cases that can occur when the region argument is \acrshort{ibr}:
+\noindent The following sequences enumerate all possible cases when the region argument is \acrshort{ibr}:
 \begin{itemize}
-    \item \gls{hit} in the \acrshort{drc}, \ding{192};
-    \item \gls{miss} in the \acrshort{drc}, \ding{193};
-    \item \gls{miss}+\gls{eviction} in the \acrshort{drc}, \ding{194} + \ding{197} $\rightarrow$ \ding{193};
-    \item \gls{miss} in the \acrshort{drc} with ``multi-\gls{hit}'' in the \acrshort{srt}, \ding{195} $\rightarrow$ \ding{196};
-    \item \gls{miss}+\gls{eviction} in the \acrshort{drc} with ``multi-\gls{hit}'' in the \acrshort{srt}, \ding{195} $\rightarrow$ \ding{194} + \ding{197} $\rightarrow$ \ding{196}.
+    \item \gls{hit} in the \acrshort{drc}: \ding{192};
+    \item \gls{miss} in the \acrshort{drc}: \ding{193};
+    \item \gls{miss}+\gls{eviction} in the \acrshort{drc}: \ding{194} + \ding{197} $\rightarrow$ \ding{193};
+    \item \gls{miss} in the \acrshort{drc} with ``multi-\gls{hit}'' in the \acrshort{srt}: \ding{195} $\rightarrow$ \ding{196};
+    \item \gls{miss}+\gls{eviction} in the \acrshort{drc} with ``multi-\gls{hit}'' in the \acrshort{srt}: \ding{195} $\rightarrow$ \ding{194} + \ding{197} $\rightarrow$ \ding{196}.
 \end{itemize}
+\bigskip
 
 \begin{figure}[htbp]
     \centering
@@ -286,23 +287,23 @@ Here is the list of the possible sequences of cases that can occur when the regi
         \caption{\Gls{miss}+\Gls{eviction} in the \acrshort{srt}}
         \label{fig:arch:pipeline_10}
     \end{subfigure}
-    \caption{Pipeline Operation when the Region Argument is \acrshort{obr}}
+    \caption{\Gls{pipeline} Operation when the Region Argument is \acrshort{obr}}
     \label{fig:arch:pipeline_OBR}
 \end{figure}
 
-We now describe the cases when the region argument is \acrshort{obr}, from Figures~\ref{fig:arch:pipeline_07} to~\ref{fig:arch:pipeline_10}.
-In every cases, we check for \glspl{hit} both in the \acrshort{drc} and \acrshort{srt} at \textit{st0}.
-If there is a \gls{hit} in the \acrshort{drc}, case \ding{198}, we enter the special case where, regardless of the region argument, the \acrshort{red} instruction is processed in the \acrshort{drc}.
-It is thus sent to the \textit{PrioRED Table} to be replayed as a \acrshort{drc} \gls{hit}, on case \ding{192}.
+We now describe the cases when the region argument is \acrshort{obr}, as illustrated in Figures~\ref{fig:arch:pipeline_07} to~\ref{fig:arch:pipeline_10}.
+In all cases, we check for \glspl{hit} in both the \acrshort{drc} and \acrshort{srt} at \textit{st0}.
+If a \gls{hit} occurs in the \acrshort{drc}, case \ding{198}, the \acrshort{red} instruction is processed in the \acrshort{drc} regardless of the region argument.
+It is then sent to the \textit{PrioRED Table} for replay as a \acrshort{drc} \gls{hit}, corresponding to case \ding{192}.
 
-If there is no \textit{hit} in the \acrshort{drc}, we simply check the \textit{Dir} CAM for \glspl{hit} in the \acrshort{srt}.
-In case of \gls{hit}, \ding{199}, the data is accumulated with the \acrshort{red} value and write back in the \textit{Data} RAM.
-In case of \gls{miss}, \ding{200}, the data is inserted in the the \textit{Data} RAM.
-In the case of an \gls{eviction}, \ding{201}, the victim data can be read directly between \textit{st0} and \textit{st1}, since the \textit{Dir} CAM do not need a full cycle to respond and thus can initiate the victim read before \textit{st1}.
-Thus, the \acrshort{red} value can be inserted in the \textit{Data} RAM at \textit{st2}, while the victim data is sent to the \acrshort{rmwq}.
-The \acrshort{rmwq} independently fires atomic \acrshort{rmw} transaction to memory when not empty.
+If no \gls{hit} is found in the \acrshort{drc}, we check the \textit{Dir} \acrshort{cam} for \glspl{hit} in the \acrshort{srt}.
+In case of a \gls{hit}, \ding{199}, the data is accumulated with the \acrshort{red} value and written back to the \textit{Data} \acrshort{ram}.
+In case of a \gls{miss}, \ding{200}, the data is inserted into the \textit{Data} \acrshort{ram}.
+For an \gls{eviction}, \ding{201}, the victim data is read directly between \textit{st0} and \textit{st1}, since the \textit{Dir} \acrshort{cam} responds within one cycle and can initiate the victim read before \textit{st1}.
+Thus, the \acrshort{red} value is inserted into the \textit{Data} \acrshort{ram} at \textit{st2}, while the victim data is sent to the \acrshort{rmwq}.
+The \acrshort{rmwq} independently issues atomic \acrshort{rmw} transactions to memory as entries become available.
 
-Here is the list of the possible sequences of cases that can occur when the region argument is \acrshort{obr}:
+\noindent The following sequences enumerate all possible cases when the region argument is \acrshort{obr}:
 \begin{itemize}
     \item \gls{hit} in the \acrshort{drc}, \ding{198} $\rightarrow$ \ding{192};
     \item \gls{hit} in the \acrshort{srt}, \ding{199};
@@ -310,6 +311,13 @@ Here is the list of the possible sequences of cases that can occur when the regi
     \item \gls{miss}+\gls{eviction} in the \acrshort{srt}, \ding{201}.
 \end{itemize}
 
+\begin{highlight}{Note}{SkyBlue}
+    This implementation leverages most of the original \gls{pipeline} capabilities while keeping modifications to a minimum.
+    We do not claim this is the optimal design for \acrlong{spdc}.
+    A ground-up redesign or significant modifications to HPDcache could yield better performance.
+\end{highlight}
+
 \begin{highlight}{Conclusion}{Red}
-    TODO
+    We implemented \textbf{\acrlong{spdc}} in \acrshort{rtl} by extending HPDcache with \textbf{minimal modifications}, introducing support for \gls{reduction} operations and multiple cache regions without requiring additional memory.
+    This \textbf{configurable design} allows a single \acrshort{rtl} implementation to function as a generic cache, a traditional \gls{redC}, or the region-based \acrlong{spdc} variant, facilitating comprehensive performance evaluation.
 \end{highlight}

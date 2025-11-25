@@ -208,6 +208,12 @@
     plural=\emph{ways}
 }
 
+\newglossaryentry{pipeline}{
+    name=pipeline,
+    description={Is a sequence of processing stages where instructions flow through each stage in order},
+    plural=pipelines
+}
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Use \acrshort{}, \acrlong{}, \acrfull{}, \acrshortpl{}, \acrlongpl{} and \acrfullpl{}
 
@@ -258,6 +264,16 @@
 \newacronym{drc}{\emph{DRC}}{\emph{Dense Region Cache}}
 \newacronym{srt}{\emph{SRT}}{\emph{Sparse Region Table}}
 
+% Generic Components
+\newacronym[
+    \glsshortpluralkey=RAMs,
+    \glslongpluralkey=Random-Access Memories
+]{ram}{RAM}{Random-Access Memory}
+\newacronym[
+    \glsshortpluralkey=CAMs,
+    \glslongpluralkey=Content Addressable Memories
+]{cam}{CAM}{Content Addressable Memory}
+
 % SpDC Components
 \newacronym{rmwq}{\emph{RMWQ}}{\emph{Read-Modify-Write Queue}}
 
@@ -280,3 +296,14 @@
     \glsshortpluralkey=\emph{REGs},
     \glslongpluralkey=\emph{Regions}
 ]{reg}{\emph{REG}}{\emph{Region}}
+\newacronym[
+    \glsshortpluralkey=\emph{nops},
+    \glslongpluralkey=\emph{no-operations}
+]{nop}{\emph{nop}}{\emph{no-operation}}
+\newacronym[
+    \glsshortpluralkey=CMOs,
+    \glslongpluralkey=Cache Management Operations
+]{cmo}{CMO}{Cache Management Operation}
+
+% Others
+\newacronym{rtl}{RTL}{Register Transfer Language}
