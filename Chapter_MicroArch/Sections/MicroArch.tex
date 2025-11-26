@@ -69,7 +69,7 @@ The \acrshort{red} instruction is placed in the \textit{PrioRED table} to be rep
 Meanwhile, at \textit{st2}, the \textit{miss handler}, \textit{flush controller}, and \textit{accumulation table} are allocated to process the \gls{eviction}.
 The \gls{eviction} is a ``fire-and-forget'' operation, meaning the \acrshort{red} instruction only needs to wait for the entry in \textit{Data} to be freed, not for the entire \gls{eviction} to finish.
 The \gls{eviction} process begins by fetching and resetting the chosen 64~B cache-line from \textit{Data}, which is done in one cycle by the \textit{flush controller}.
-Simultaneously, the \textit{miss handler} issues a read to the main memory, which in our performance simulations, we assume will take 64 cycles to respond.
+Simultaneously, the \textit{miss handler} issues a read to the main memory.
 The \textit{accumulation table} waits and temporarily stores both the old cache-line from the \textit{flush controller} and the 64~B response data from the \textit{miss handler}.
 It then accumulates the cache-line with the data, word by word, and sends the 64~B results back to the main memory using the existing write interface.
 

@@ -6,7 +6,81 @@
 \section{Evaluation}
 \label{sec:arch:eval}
 
-TODO
+TODO intro
+
+\subsection{Methodology for RTL Simulations}
+
+The starting point is a CVA6~\cite{Zaruba2019_CVA6} RISC-V core with HPDcache~\cite{Fuguet2023_HPDcache} as an L1 data-cache with size 32~KiB ($S=128$, $W=4$, $l=8$ elements).
+This serves as our baseline for performance comparison which we refer to as the \acrfull{gc}.
+Next we evaluate a \gls{redC} which we derived from the HPDcache and configured to have two regions: a generic region with 16~KiB, and a \gls{reduction} region with 16~KiB whose behavior is the same as the \acrshort{drc} region of \acrlong{spdc}.
+We refer to this design as \acrshort{redc}.
+Finally, we evaluate \acrfull{spdc} with a reference configuration of: \acrshort{grc} = 8~KiB, \acrshort{drc} = 16~KiB, \acrshort{srt} = 8~KiB, which corresponds to the 25\%/50\%/25\% configuration selected in Chapter~\ref{cha:spdc}.
+The configurations are summarized in Table~\ref{tab:arch:region_configs}.
+All our simulations are performed using Siemens Questasim\texttrademark~2023.3 and the memory accesses beyond the L1 incur a fixed latency of 64 clock cycles.
+We do not aim to evaluate a full system in this work, as our goal is to identify performance behavior using real matrices.
+Thus, we use a single-core, single-cache-level environment.
+The CVA6 core is not designed for high performance and can process at most one instruction per cycle.
+We will discuss later how this limitation affects cache performance. \note{CHECK THIS AT THE END}
+The fixed memory latency of 64 cycles is not realistic but provides a reasonable approximation of other memory levels' latencies and helps stabilize results for clearer interpretation.
+
+% int64_t
+
+% the hw constraint of the region sizes (could be fixed)
+
+\begin{table}[htbp]
+    \caption{Region Sizing of the Cache Configurations}
+    \label{tab:arch:region_configs}
+    \centering
+    \begin{tblr}{
+            width = {0.75\linewidth},
+            colspec = {X[3cm,c] *{6}{X[c]}}, % rowspec
+            rows = {m, font=\small},
+            colsep = {1pt},
+            row{1-Z} = {rowsep=2pt, black!2},
+            column{2,4,6} = {r, rightsep=2pt},
+            column{3,5,7} = {l, leftsep=2pt},
+            row{1} = {c, font=\bfseries\small, black!5},
+            cell{1}{2,4,6} = {c=2}{},
+            hspan = {minimal},
+            % hlines, vlines,
+            % rulesep = {-1pt},
+            hline{1,Z} = {2pt}, % Z for last
+            hline{2} = {1pt},
+            vline{2} = {1-Z}{0.5pt},
+        }
+        %
+        Configurations & \acrshort{grc} & & \acrshort{drc} & & \acrshort{srt} & \\
+        %
+        \acrshort{gc}   & 100\% & ($S = 128$) & 0\%  & ($S = 0$)  & 0\%  & ($S = 0$)  \\
+        \acrshort{redc} & 50\%  & ($S = 64$)  & 50\% & ($S = 64$) & 0\%  & ($S = 0$)  \\
+        \acrshort{spdc} & 25\%  & ($S = 32$)  & 50\% & ($S = 64$) & 25\% & ($S = 32$)
+    \end{tblr}
+\end{table}
+
+By default, matrices are stored in \acrshort{csc} sparse format.
+The code running on the CVA6 is written in generic C, compiled with \textit{gcc} 11.2.0 and -O3 optimization.
+The inner-loops of the \acrshort{op} \acrshort{spmv} kernel are unrolled 4 or 8 times and the \acrshort{red} instructions are manually inserted using \textit{asm} directives. \note{unroll -> later??}
+For \acrshort{spdc}, it is necessary to know the target region for each \acrshort{red} instruction based on the size of the \gls{band}.
+The value of $w_\mathit{hB}$ is calculated using the relationship presented in Chapter~\ref{cha:theory} (Equation~\ref{eq:theory:in_band_cond}) so the in-\gls{band} region fits in the \acrshort{drc} and is independent of the matrix.
+In our reference configuration ($s_C(\mathit{DRC}) = 2048$ , $l = 8$), $w_\mathit{hB} = 1021$.
+
+%%%%% IN EVAL SEC? (only for RTL eval)
+The region for the RED instructions could be calculated on-the-fly, however, this introduces additional instructions in the critical inner-loop.
+To avoid this overhead, the region is pre-computed and stored in memory using our BaCSC format (see Section~\ref{sec:background}).
+At the start of each column, in the outer-loop, three pointers are looked-up to identify the top out-of-\gls{band} region, the in-\gls{band} region and the bottom out-of-\gls{band} region.
+Thus, we can process these three regions of the column in three separate, consecutive inner-loops, which do not require additional instructions to determine the region.
+The main loop of our modified \algo{OP} SpMV is shown in Listing~1.
+
+%% region select
+
+\subsection{Comparison with the Analytical Model}
+
+% need graph
+% generate banded matrices with various d
+% minor diff, follows the results -> ok!
+% (add python??)
+
+\subsection{Comparison with the Python Model}
 
 
 
@@ -62,61 +136,7 @@ TODO
     \end{tblr}
 \end{table}
 
-
-
-
-
-\subsection{Methodology}
-
-To evaluate our solution, we performed a full RTL implementation of OBaMMA.
-The starting point is a CVA6~\cite{CVA6_zaruba2019cost} RISC-V core with HPDcache~\cite{Fuguet2023_HPDcache} as an L1 data-cache with size 32~KiB ($S=128$, $W=4$, $l=8$ elements).
-This serves as our baseline for performance comparison which we refer to as the \textit{Generic Cache} (\textit{GC}).
-Next we evaluate a \textit{reduction cache} which we derived from the HPDcache and configured to have two regions: a generic region with 16~KiB, and a \textit{reduction} region with 16~KiB whose behavior is the same as the DRC region of OBaMMA.
-We refer to this design as the \textit{Reduction Cache} (\textit{RedC}).
-Finally, we evaluate OBaMMA with a reference configuration of: GRC = 8~KiB, DRC = 16~KiB, SRT = 8~KiB.
-The configurations are summarized in Table~\ref{tab:arch:regions}.
-All our simulations are performed using Siemens Questasim\texttrademark~2023.3 and the memory accesses beyond the L1 incur a fixed latency of 64 clock cycles.
-
-\begin{table}[htbp]
-    \centering
-    \caption{Region Sizing of the Cache Configurations}
-    \label{tab:arch:regions}
-    \begin{tabular}{cccc}
-        Configuration & GRC & DRC & SRT \\
-        \hline
-        \textit{GC} & $100\%$ ($S = 128$) & $0\%$ ($S = 0$) & $0\%$ ($S = 0$) \\
-        \textit{RedC} & $50\%$ ($S = 64$) & $50\%$ ($S = 64$) & $0\%$ ($S = 0$) \\
-        OBaMMA & $25\%$ ($S = 32$) & $50\%$ ($S = 64$) & $25\%$ ($S = 32$)
-    \end{tabular}
-\end{table}
-
-By default, matrices are stored in CSC sparse format.
-The code running on the CVA6 is written in generic C, compiled with \textit{gcc} 11.2.0 and -O3 optimization.
-The inner-loops of the \algo{OP} SpMV kernel are unrolled 4 or 8 times and the RED instructions are manually inserted using \textit{asm} directives.
-For OBaMMA, it is necessary to know the target region for each RED instruction based on the size of the band.
-The value of $w_\mathit{hB}$ is calculated using Equation~\ref{eq:in_band_cond} so the in-band region fits in the DRC and is independent of the matrix.
-In our reference configuration ($s_C(\mathit{DRC}) = 2048$ , $l = 8$), $w_\mathit{hB} = 1021$.
-
-The region for the RED instructions could be calculated on-the-fly, however, this introduces additional instructions in the critical inner-loop.
-To avoid this overhead, the region is pre-computed and stored in memory using our BaCSC format (see Section~\ref{sec:background}).
-At the start of each column, in the outer-loop, three pointers are looked-up to identify the the top out-of-band region, the in-band region and the bottom out-of-band region.
-Thus, we can process these three regions of the column in three separate, consecutive inner-loops, which do not require additional instructions to determine the region.
-The main loop of our modified \algo{OP} SpMV is shown in Listing~1.
-
-\begin{figure}[t]
-    \begin{minipage}{\linewidth}
-        \addtolength{\linewidth}{-16pt}
-        \colorbox{white}{\begin{minipage}[t][5mm][t]{6.5pt}\null\hfill\null\end{minipage}}
-        \begin{minipage}{\linewidth}
-            \lstinputlisting[
-                title=\textbf{Listing 1:} C Code for the \algo{OP} SpMV with RED Operations
-            ]{Chapter_MicroArch/Code/op_spmv_unroll.c}
-        \end{minipage}
-        %\bigskip
-    \end{minipage}
-\end{figure}
-
-\subsection{Matrix Selection}
+\subsection{Matrix Selection for the RTL Evaluation}
 
 For our evaluation, we have selected an extended set of 62 square matrices from the SparseSuite Matrix Collection~\cite{SparseSuite} which includes virtually all the matrices used by recent hardware accelerators~\cite{Zhang2021_Gamma, Xie2021_SpaceA, Zhang2022_ASA,Srikanth2021_SortCache, Pal2018_OuterSPACE}.
 We verified that this set is diverse containing banded and non-banded sparse matrices with various sizes ($M\in [124,1~971~281]$), numbers of non-zero elements ($nnz\in [2~157,14~148~858]$) and a wide range of densities ($d\in [1.4\times10^{-6},7.0\times10^{-1}]$).
@@ -165,9 +185,43 @@ We report: (1) the performance results for the selected matrices in group~1, (2)
     \label{fig:arch:scatter}
 \end{figure}
 
-\subsection{Evaluation}
+\subsection{Software?}
 
- \begin{figure*}[t]
+\begin{figure}[t]
+    \begin{minipage}{\linewidth}
+        \addtolength{\linewidth}{-16pt}
+        \colorbox{white}{\begin{minipage}[t][5mm][t]{6.5pt}\null\hfill\null\end{minipage}}
+        \begin{minipage}{\linewidth}
+            \lstinputlisting[
+                title=\textbf{Listing 2:} C Code for the \acrshort{op} \acrshort{spmv} with \acrshort{red} Operations
+            ]{Chapter_MicroArch/Code/op_spmv.c}
+        \end{minipage}
+        %\bigskip
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[t]
+    \begin{minipage}{\linewidth}
+        \addtolength{\linewidth}{-16pt}
+        \colorbox{white}{\begin{minipage}[t][5mm][t]{6.5pt}\null\hfill\null\end{minipage}}
+        \begin{minipage}{\linewidth}
+            \lstinputlisting[
+                title=\textbf{Listing 3:} Optimized C Code for the \acrshort{op} \acrshort{spmv} when Using \acrshort{bacsc}
+            ]{Chapter_MicroArch/Code/op_spmv_bacsc.c}
+        \end{minipage}
+        %\bigskip
+    \end{minipage}
+\end{figure}
+
+\subsection{Results Analysis}
+
+\subsubsection{Memory Traffic}
+
+\subsubsection{Latencies}
+
+\subsubsection{Area Overhead}
+
+\begin{figure*}[t]
     \centering
     \begin{minipage}{\linewidth}
         \begin{minipage}{0.49\linewidth}
@@ -252,7 +306,7 @@ We investigate the impact of increasing the \textit{AccTab} entries from 1 to 8,
 For the matrices in group~2, which are compute bound, increasing the \textit{AccTab} entries has no impact on runtime ($\leqslant 1\%$).
 In the case of group~1 matrices, setting the \textit{AccTab} to 1, 2, 4, and 8 entries allows \textit{RedC} to achieve performance improvements of $1.16\times$, $1.36\times$, $1.60\times$, and $1.61\times$ respectively, compared to \textit{GC}, although this comes at the cost of increased area.
 For OBaMMA, increasing the \textit{AccTab} has virtually no impact regardless of the matrices ($\leqslant 0.5\%$).
-This is expected as there are rarely evictions from the DRC as it is sized to contain the band.
+This is expected as there are rarely evictions from the DRC as it is sized to contain the \gls{band}.
 OBaMMA's region based architecture thus reduces both total memory traffic and memory bursts.
 
 Both HPDcache and OBaMMA systems were synthesized in GF22FDX technology using Synopsis DC\texttrademark.
