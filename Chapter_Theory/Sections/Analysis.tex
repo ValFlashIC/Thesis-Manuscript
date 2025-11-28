@@ -107,7 +107,7 @@ In Figure~\ref{fig:theory:theory_traffic_vs_d_ob}, we plot the normalized memory
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\linewidth]{Chapter_Theory/Figures/PDF/graph1_25.07.31.pdf}
+    \includegraphics[width=\linewidth]{Chapter_Theory/Figures/PDF/graph1_25.11.28.pdf}
     \caption{Normalized Output Memory Traffic Depending on the Out-of-\Gls{band} Density for Several Cache-Sizes}
     \label{fig:theory:theory_traffic_vs_d_ob}
 \end{figure}
@@ -207,14 +207,14 @@ In Figure~\ref{fig:theory:theory_IBtraffic_vs_d_IB}, we plot $\mathit{normMT}$ f
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\linewidth]{Chapter_Theory/Figures/PDF/graph12_25.11.06.pdf}
+    \includegraphics[width=\linewidth]{Chapter_Theory/Figures/PDF/graph12_25.11.28.pdf}
     \caption{Normalized Output Memory Traffic of the In-\Gls{band}, Depending on the Density for Several Cache-Sizes}
     \label{fig:theory:theory_IBtraffic_vs_d_IB}
 \end{figure}
 
 We observe that $normMT$ increases as $d_\mathit{IB}$ decreases, generally following a constant negative slope (\textit{dashed}) on the right side of the graph for each cache size.
 Thus, across a broad range of in-\gls{band} densities, the raw memory traffic remains relatively constant.
-As noted in Section~\ref{sec:theory:graph1}, the $S = 32$ curve (\textit{yellow}) indicates the lower bound of memory traffic since the entire matrix can fit within the cache.
+As noted in Section~\ref{sec:theory:graph1}, the $S = 32$ curve indicates the lower bound of memory traffic since the entire matrix can fit within the cache.
 In this scenario, there are no \gls{eviction} in the \gls{band} until the density drops sufficiently low ($< 10^{-3}$), resulting in isolated non-zero elements.
 For other cache sizes, variations around the constant raw memory traffic are observed.
 If a ideal \gls{eviction} policy were in place, allowing the rotating pattern to function as intended (refer to Section~\ref{sec:theory:perfectband_vs_cache}), we would expect all curves to align with their respective \textit{dashed} lines, indicating constant raw memory traffic.

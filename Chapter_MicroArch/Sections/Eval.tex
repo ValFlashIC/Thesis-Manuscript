@@ -75,66 +75,145 @@ The main loop of our modified \algo{OP} SpMV is shown in Listing~1.
 
 \subsection{Comparison with the Analytical Model}
 
-% need graph
-% generate banded matrices with various d
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/graph11_25.11.28.pdf}
+    \caption{Normalized Output Memory Traffic Depending on the Out-of-Band Density for the \acrshort{redc} and \acrshort{spdc} Configurations}
+    \label{fig:arch:graph11}
+\end{figure}
+
+% generate banded matrices with various d (IB 1e-2  OB -2 to -7) M=10000
+% cache 32k (same configs as table 25/50/25  50/50)
 % minor diff, follows the results -> ok!
 % (add python??)
 
 \subsection{Comparison with the Python Model}
 
+To further validate our implementation, we compare the \acrshort{rtl} results against the Python simulations from Chapter~\ref{cha:spdc}.
+Table~\ref{tab:arch:results_python} presents the Python results for the \acrshort{rtl} cache configurations shown in Table~\ref{tab:arch:region_configs}.
+We include the \acrshort{redc} 50\%/50\%/0\% configuration for comparison, though it is suboptimal according to the Python analysis.
+Table~\ref{tab:arch:rtl_vs_python} reports \acrshort{rtl} results with geometric mean over the same 48 matrices used in Python simulations, comparing output and total memory traffic.
 
+The total memory traffic for \acrshort{redc} and \acrshort{spdc} relative to \acrshort{gc} is nearly equivalent across both simulations.
+However, output memory traffic shows notable differences: \acrshort{rtl} achieves better traffic reduction than Python, 1.3$\times$ for \acrshort{redc} (vs. 1.0$\times$ in Python) and 5.0$\times$ for \acrshort{spdc} (vs. 4.1$\times$ in Python).
+Comparing raw traffic values between \acrshort{rtl} and Python simulations across all configurations, we observe approximately 25\% lower total memory traffic in \acrshort{rtl}.
+Output memory traffic varies by $\pm$15\%, with \acrshort{rtl} showing favorable results for both \acrshort{redc} and \acrshort{spdc}.
 
-\begin{table}[htbp]
-    \caption{Results of Main Cache Configurations from Python Simulation}
-    \label{tab:arch:results_python}
+\begin{figure}[htbp]
     \centering
-    \begin{tblr}{
-            width = {0.43\linewidth},
-            colspec = {X[1.7,c] X[0.5,c] X[0.8,c] *{3}{X[c]}}, % rowspec
-            rows = {m, font=\small},
-            colsep = {1pt},
-            column{1-3} = {colsep=0pt},
-            column{1} = {leftsep=1pt},
-            column{3} = {rightsep=1pt},
-            row{1-Z} = {rowsep=2pt, black!2},
-            row{1} = {c, font=\bfseries\small, black!5},
-            column{1} = {l},
-            row{2-4} = {c, black!5},
-            row{2-4} = {font=\itshape\small},
-            row{2-4} = {rowsep=0pt},
-            row{6,9,11,13} = {abovesep=0pt},
-            row{5,8,10,12} = {belowsep=0pt},
-            cell{2}{2} = {r=3}{c},
-            cell{2-4}{1} = {r},
-            cell{5,8,10,12}{1} = {r=2}{},
-            cell{5-13}{1} = {c=3}{},
-            cell{1}{1} = {r=2}{},
-            hspan = {minimal},
-            % hlines, vlines,
-            % rulesep = {-1pt},
-            hline{1,Z} = {2pt}, % Z for last
-            hline{5} = {1pt},
-            vline{4} = {1-Z}{0.5pt},
-        }
-        %
-        GMeans (48 mat.) & & & \acrshort{gc} & \acrshort{redc} & \acrshort{spdc} \\
-        %
-        & \rotatebox[y=2pt]{90}{\glspl{set}} & \acrshort{grc}\; & 128 & 64 & 32 \\
-        &                                    & \acrshort{drc}\; & \O  & 64 & 64 \\
-        &                                    & \acrshort{srt}\; & \O  & \O & 32 \\
-        %
-        \textbf{Output Memory Traffic} (\% over GC)      & & & 100  & 103 & 24.5 \\
-                                                         & & & \cst1.0 & \cst1.0 & \dwG4.1 \\
-        \textbf{Ratio of RMWs in Memory Traffic} (\%)    & & & \O   & \O   & 40.5 \\
-        \textbf{Total Memory Traffic} (\% over GC)       & & & 100  & 98.5 & 56.1 \\
-                                                         & & & \cst1.0 & \cst1.0 & \dwG1.8 \\
-        \textbf{Evicted Cache Line Utilization} (max: 8) & & & 3.60 & 3.41 & 7.21 \\
-                                                         & & & \cst1.0 & \cst1.0 & \upG2.0 \\
-        \textbf{Cache Memory Utilization} (\%)           & & & 36.4 & 43.8 & 75.2 \\
-                                                         & & & \cst1.0 & \upG1.2 & \upG2.1 \\
-        %
-    \end{tblr}
-\end{table}
+    \begin{minipage}[t]{0.49\linewidth}
+        \centering
+        \begin{table}[H]
+            \caption{Results of Main Cache Configurations from Python Simulation}
+            \label{tab:arch:results_python}
+            \centering
+            \begin{tblr}{
+                    width = {0.88\linewidth},
+                    colspec = {X[1.7,c] X[0.5,c] X[0.8,c] *{3}{X[c]}}, % rowspec
+                    rows = {m, font=\small},
+                    colsep = {1pt},
+                    column{1-3} = {colsep=0pt},
+                    column{1} = {leftsep=1pt},
+                    column{3} = {rightsep=1pt},
+                    row{1-Z} = {rowsep=2pt, black!2},
+                    row{1} = {c, font=\bfseries\small, black!5},
+                    column{1} = {l},
+                    row{2-4} = {c, black!5},
+                    row{2-4} = {font=\itshape\small},
+                    row{2-4} = {rowsep=0pt},
+                    row{6,9,11,13} = {abovesep=0pt},
+                    row{5,8,10,12} = {belowsep=0pt},
+                    cell{2}{2} = {r=3}{c},
+                    cell{2-4}{1} = {r},
+                    cell{5,8,10,12}{1} = {r=2}{},
+                    cell{5-13}{1} = {c=3}{},
+                    cell{1}{1} = {r=2}{},
+                    hspan = {minimal},
+                    % hlines, vlines,
+                    % rulesep = {-1pt},
+                    hline{1,Z} = {2pt}, % Z for last
+                    hline{5} = {1pt},
+                    vline{4} = {1-Z}{0.5pt},
+                }
+                %
+                GMeans (48 mat.) & & & \acrshort{gc} & \acrshort{redc} & \acrshort{spdc} \\
+                %
+                & \rotatebox[y=2pt]{90}{\glspl{set}} & \acrshort{grc}\; & 128 & 64 & 32 \\
+                &                                    & \acrshort{drc}\; & \O  & 64 & 64 \\
+                &                                    & \acrshort{srt}\; & \O  & \O & 32 \\
+                %
+                \textbf{Output Memory Traffic} (\% over GC)      & & & 100  & 103 & 24.5 \\
+                                                                & & & \cst1.0 & \cst1.0 & \dwG4.1 \\
+                \textbf{Ratio of RMWs in Memory Traffic} (\%)    & & & \O   & \O   & 40.5 \\
+                \textbf{Total Memory Traffic} (\% over GC)       & & & 100  & 98.5 & 56.1 \\
+                                                                & & & \cst1.0 & \cst1.0 & \dwG1.8 \\
+                \textbf{Evicted Cache Line Utilization} (max: 8) & & & 3.60 & 3.41 & 7.21 \\
+                                                                & & & \cst1.0 & \cst1.0 & \upG2.0 \\
+                \textbf{Cache Memory Utilization} (\%)           & & & 36.4 & 43.8 & 75.2 \\
+                                                                & & & \cst1.0 & \upG1.2 & \upG2.1 \\
+                %
+            \end{tblr}
+        \end{table}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.49\linewidth}
+        \centering
+        \begin{table}[H]
+            \caption{\acrshort{rtl} Results Comparison with Python Simulations}
+            \label{tab:arch:rtl_vs_python}
+            \centering
+            \begin{tblr}{
+                    width = {0.88\linewidth},
+                    colspec = {X[1.7,c] X[0.5,c] X[0.8,c] *{3}{X[c]}}, % rowspec
+                    rows = {m, font=\small},
+                    colsep = {1pt},
+                    column{1-3} = {colsep=0pt},
+                    column{1} = {leftsep=1pt},
+                    column{3} = {rightsep=1pt},
+                    row{1-Z} = {rowsep=2pt, black!2},
+                    row{1} = {c, font=\bfseries\small, black!5},
+                    column{1} = {l},
+                    row{2-4} = {c, black!5},
+                    row{2-4} = {font=\itshape\small},
+                    row{2-4} = {rowsep=0pt},
+                    row{6,8,10,12} = {abovesep=0pt},
+                    row{5,7,9,11} = {belowsep=0pt},
+                    cell{2}{2} = {r=3}{c},
+                    cell{2-4}{1} = {r},
+                    cell{5,7,9,11}{1} = {r=2}{},
+                    cell{5-Z}{1} = {c=3}{},
+                    cell{1}{1} = {r=2}{},
+                    hspan = {minimal},
+                    % hlines, vlines,
+                    % rulesep = {-1pt},
+                    hline{1,Z} = {2pt}, % Z for last
+                    hline{5} = {1pt},
+                    vline{4} = {1-Z}{0.5pt},
+                }
+                %
+                GMeans (48 mat.) & & & \acrshort{gc} & \acrshort{redc} & \acrshort{spdc} \\
+                %
+                & \rotatebox[y=2pt]{90}{\glspl{set}} & \acrshort{grc}\; & 128 & 64 & 32 \\
+                &                                    & \acrshort{drc}\; & \O  & 64 & 64 \\
+                &                                    & \acrshort{srt}\; & \O  & \O & 32 \\
+                %
+                \textbf{Output Memory Traffic} (\% over GC) & & & 100  & 75.5 & 20.0 \\
+                                                            & & & \cst1.0 & \dwG1.3 & \dwG5.0 \\
+                $\rightarrow$ \textbf{RTL/Python} (\%)      & & & 116 & 85.0 & 94.6 \\
+                                                            & & & \upR0.9 & \dwG1.2 & \dwG1.1 \\
+                \textbf{Total Memory Traffic} (\% over GC)  & & & 100  & 99.3 & 54.7 \\
+                                                            & & & \cst1.0 & \cst1.0 & \dwG1.8 \\
+                $\rightarrow$ \textbf{RTL/Python} (\%)      & & & 75.5 & 76.1 & 73.6 \\
+                                                            & & & \dwG1.3 & \dwG1.3 & \dwG1.4 \\
+                %
+            \end{tblr}
+        \end{table}
+    \end{minipage}
+\end{figure}
+
+\begin{highlight}{Conclusion}{Red}
+    The \acrshort{rtl} implementation corroborates the Python simulations, exhibiting slightly improved memory traffic performance.
+\end{highlight}
 
 \subsection{Matrix Selection for the RTL Evaluation}
 
