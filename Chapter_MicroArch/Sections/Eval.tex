@@ -75,29 +75,36 @@ The main loop of our modified \algo{OP} SpMV is shown in Listing~1.
 
 \subsection{Comparison with the Analytical Model}
 
-\begin{figure}
+To validate consistency between our models and implementations, we compare the normalized output memory traffic produced by three sources: the analytical model of Chapter~\ref{cha:theory}, the Python model of Chapter~\ref{cha:spdc}, and the \acrshort{rtl} implementation presented in this chapter.
+For a fair comparison, the caches for \acrshort{redc} and \acrshort{spdc} are configured to 32~KiB total (see Table~\ref{tab:arch:region_configs}): 50\%/50\%/0\% for \acrshort{redc} and 25\%/50\%/25\% for \acrshort{spdc}.
+The analytical model accepts global parameters and density distributions rather than concrete matrices, so we synthesize \gls{banded} matrices for the Python and \acrshort{rtl} simulations that match those parameters.
+All synthetic matrices use $M = 10^{4}$, half-\gls{band} width $w_\mathit{hB} = 1021$, in-\gls{band} density $d_\mathit{IB} = 10^{-2}$, and out-of-\gls{band} density $d_\mathit{OB}$ varying from $10^{-7}$ to $10^{-2}$.
+
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/graph11_25.12.02.pdf}
-    \caption{Normalized Output Memory Traffic Depending on the Out-of-Band Density for the \acrshort{redc} and \acrshort{spdc} Configurations}
+    \caption{Normalized Output Memory Traffic Depending on the Out-of-Band Density for the \acrshort{redc} and \acrshort{spdc} Configurations, Through Different Simulation Models}
     \label{fig:arch:graph11}
 \end{figure}
 
-% generate banded matrices with various d (IB 1e-2  OB -2 to -7) M=10000
-% cache 32k (same configs as table 25/50/25  50/50)
-% minor diff, follows the results -> ok!
-% (add python??)
+Figure~\ref{fig:arch:graph11} shows the results: \acrshort{spdc} (\textit{green}) outperforms \acrshort{redc} (\textit{red}) in normalized output memory traffic ($\mathit{normMT}$).
+Two observations are noteworthy.
+First, the three approaches agree most closely when $d_\mathit{OB}$ is low.
+Indeed, at $d_\mathit{OB} = 10^{-2}$ there is no measurable difference for \acrshort{redc}, while \acrshort{spdc} exhibits a 0.23 difference in $\mathit{normMT}$.
+At the smallest $d_\mathit{OB}$ the discrepancies reach 0.58 element transferred in memory per \gls{reduction}.
+Overall trends are preserved across models and deviations remain small.
+Second, the analytical model consistently overestimates traffic, the Python model consistently underestimates it, and the \acrshort{rtl} results fall between the two.
+
+\begin{highlight}{Conclusion}{Red}
+    On synthetic \gls{banded} matrices, all simulation models show similar memory traffic results, with minor variations.
+\end{highlight}
 
 \subsection{Comparison with the Python Model}
 
-To further validate our implementation, we compare the \acrshort{rtl} results against the Python simulations from Chapter~\ref{cha:spdc}.
+To further validate our implementation over real, not necessarily \gls{banded}, matrices, we compare the \acrshort{rtl} results against the Python simulations from Chapter~\ref{cha:spdc}.
 Table~\ref{tab:arch:results_python} presents the Python results for the \acrshort{rtl} cache configurations shown in Table~\ref{tab:arch:region_configs}.
 We include the \acrshort{redc} 50\%/50\%/0\% configuration for comparison, though it is suboptimal according to the Python analysis.
 Table~\ref{tab:arch:rtl_vs_python} reports \acrshort{rtl} results with geometric mean over the same 48 matrices used in Python simulations, comparing output and total memory traffic.
-
-The total memory traffic for \acrshort{redc} and \acrshort{spdc} relative to \acrshort{gc} is nearly equivalent across both simulations.
-However, output memory traffic shows notable differences: \acrshort{rtl} achieves better traffic reduction than Python, 1.3$\times$ for \acrshort{redc} (vs. 1.0$\times$ in Python) and 5.0$\times$ for \acrshort{spdc} (vs. 4.1$\times$ in Python).
-Comparing raw traffic values between \acrshort{rtl} and Python simulations across all configurations, we observe approximately 25\% lower total memory traffic in \acrshort{rtl}.
-Output memory traffic varies by $\pm$15\%, with \acrshort{rtl} showing favorable results for both \acrshort{redc} and \acrshort{spdc}.
 
 \begin{figure}[htbp]
     \centering
@@ -211,8 +218,13 @@ Output memory traffic varies by $\pm$15\%, with \acrshort{rtl} showing favorable
     \end{minipage}
 \end{figure}
 
+The total memory traffic for \acrshort{redc} and \acrshort{spdc} relative to \acrshort{gc} is nearly equivalent across both simulations.
+However, output memory traffic shows notable differences: \acrshort{rtl} achieves better traffic reduction than Python, 1.3$\times$ for \acrshort{redc} (vs. 1.0$\times$ in Python) and 5.0$\times$ for \acrshort{spdc} (vs. 4.1$\times$ in Python).
+Comparing raw traffic values between \acrshort{rtl} and Python simulations across all configurations, we observe approximately 25\% lower total memory traffic in \acrshort{rtl}.
+Output memory traffic varies by $\pm$15\%, with \acrshort{rtl} showing favorable results for both \acrshort{redc} and \acrshort{spdc}.
+
 \begin{highlight}{Conclusion}{Red}
-    The \acrshort{rtl} implementation corroborates the Python simulations, exhibiting slightly improved memory traffic performance.
+    Over a set of real application matrices, the \acrshort{rtl} implementation corroborates the Python simulations, exhibiting slightly improved memory traffic performance.
 \end{highlight}
 
 \subsection{Matrix Selection for the RTL Evaluation}
@@ -278,7 +290,7 @@ We report: (1) the performance results for the selected matrices in group~1, (2)
 
 \subsection{Software?}
 
-\begin{figure}[t]
+\begin{figure}[htbp]
     \begin{minipage}{\linewidth}
         \addtolength{\linewidth}{-16pt}
         \colorbox{white}{\begin{minipage}[t][5mm][t]{6.5pt}\null\hfill\null\end{minipage}}
@@ -291,7 +303,7 @@ We report: (1) the performance results for the selected matrices in group~1, (2)
     \end{minipage}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[htbp]
     \begin{minipage}{\linewidth}
         \addtolength{\linewidth}{-16pt}
         \colorbox{white}{\begin{minipage}[t][5mm][t]{6.5pt}\null\hfill\null\end{minipage}}
@@ -315,7 +327,7 @@ We report: (1) the performance results for the selected matrices in group~1, (2)
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/OutMemTrafficFromRTL.pdf}
-    \caption{Normalized Output Memory Traffic}
+    \caption{Output Memory Traffic Normalized over \acrshort{gc}, from \acrshort{rtl} Simulations}
     \label{fig:arch:outmemtraffbar}
     % \label{fig:arch:outMT}
 \end{figure}
@@ -323,7 +335,7 @@ We report: (1) the performance results for the selected matrices in group~1, (2)
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/TotMemTrafficFromRTL.pdf}
-    \caption{Normalized Memory Traffic on Input Matrix, Input Vector and Output Vector}
+    \caption{Total Memory Traffic on Input Matrix $A$, Input Vector $b$ and Output Vector $c$, Normalized over \acrshort{gc}, from \acrshort{rtl} Simulations}
     \label{fig:arch:inoutmetraff}
     % \label{fig:arch:totMT}
 \end{figure}
@@ -331,7 +343,7 @@ We report: (1) the performance results for the selected matrices in group~1, (2)
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/Speedups.pdf}
-    \caption{Normalized Speedup}
+    \caption{Speedup over \acrshort{gc}, from \acrshort{rtl} Simulations}
     \label{fig:arch:speedup}
 \end{figure}
 
@@ -362,39 +374,37 @@ Two parameters characterize sparse matrices: (1) the $nnz/Column$ which is a coa
 In Figure~\ref{fig:arch:allscatter}, the normalized memory traffic ($bytes/nnz$) for each of the matrices is shown for \textit{RedC} and OBaMMA.
 With \textit{RedC}, the memory traffic is high for low values of $d_\mathit{cd}$ whereas for OBaMMA, the memory traffic is virtually independent of both density parameters.
 
-% \begin{figure}[htbp]
-%     \centering
-%     \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/plotCloudRedSpDCtraffprunf.pdf}
-%     \caption{Scatter Plot of Normalized Memory Traffic for Benchmark Matrices ($d_\mathit{cd}$ vs $nnz/Column$) in $bytes/nnz$}
-%     \label{fig:arch:allscatter}
-% \end{figure}
-
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/MatricesDcdRep_WithMT_onRedC.pdf}
-    \caption{TODO}
-    \label{fig:arch:todo}
-\end{figure}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/MatricesDcdRep_WithMT_onSpDC.pdf}
-    \caption{TODO}
-    \label{fig:arch:todo}
-\end{figure}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/MatricesDcdRep_WithSpeedUp_onRedC.pdf}
-    \caption{TODO}
-    \label{fig:arch:todo}
-\end{figure}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/MatricesDcdRep_WithSpeedUp_onSpDC.pdf}
-    \caption{TODO}
-    \label{fig:arch:todo}
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/MatricesDcdRep_WithMT_onRedC.pdf}
+        \caption{\acrshort{redc} Output Memory Traffic over \acrshort{gc}}
+        \label{fig:arch:perfOnMat:00}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/MatricesDcdRep_WithMT_onSpDC.pdf}
+        \caption{\acrshort{spdc} Output Memory Traffic over \acrshort{gc}}
+        \label{fig:arch:perfOnMat:01}
+    \end{subfigure}
+    %
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/MatricesDcdRep_WithSpeedUp_onRedC.pdf}
+        \caption{\acrshort{redc} Speedup over \acrshort{gc}}
+        \label{fig:arch:perfOnMat:10}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/MatricesDcdRep_WithSpeedUp_onSpDC.pdf}
+        \caption{\acrshort{spdc} Speedup over \acrshort{gc}}
+        \label{fig:arch:perfOnMat:11}
+    \end{subfigure}
+    \caption{Memory Traffic and Speedup Performance Visualized Across Benchmark Matrix Densities and $d_\mathit{cd}$}
+    \label{fig:arch:perfOnMat}
 \end{figure}
 
 Our focus now shifts to the total compute time, and we recall that all main memory reads incur a fixed 64 cycle latency.
