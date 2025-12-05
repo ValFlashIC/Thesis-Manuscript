@@ -47,6 +47,7 @@ The \acrshort{rtl} can be instantiated as a generic cache (the first baseline, \
     We extended it to support \gls{reduction} operations and the \acrlong{spdc} mode while preserving its \textbf{configurability}.
 \end{highlight}
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{RTL Implementation of SpDCache}
 \label{sec:arch:spdcache}
 
@@ -116,6 +117,7 @@ To simplify the \acrshort{rtl} implementation, this transfer is therefore omitte
     Second, it implements a \textbf{virtual partitioning of the cache \acrshortpl{ram}}: the memory is logically split and a \gls{set}-redirection scheme is applied to dynamically create multiple regions.
 \end{highlight}
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Software Interface}
 \label{sec:arch:sw_interface}
 
@@ -126,7 +128,7 @@ We have also added an instruction to flush the \gls{reduction} regions (\acrshor
 It is performed in the cache by the \textit{\acrshort{cmo} handler}.
 Finally, we have included an instruction to enable and disable the \gls{reduction} mode of \acrlong{spdc}.
 
-We demonstrate a simple example in Listing~\hyperlink{hl0}{1} that accumulates multiple values at a single address.
+We demonstrate a simple example in Source Code~\ref{src:arch:red_ex} that accumulates multiple values at a single address.
 Before executing \acrshort{red} transactions, the \gls{reduction} engine must be enabled (line~3).
 The cache transitions from a fully generic state to \acrshort{spdc} with multiple regions using a hardware-defined static configuration.
 This example assumes a configuration with three regions: \acrshort{grc}, \acrshort{drc}, and \acrshort{srt}.
@@ -138,25 +140,14 @@ The subsequent two \acrshort{red} instructions are then executed and stored in t
 At line~13, we switch to the \acrshort{obr} region, causing the following \acrshort{red} instruction to be processed by the \acrshort{srt}.
 Once all \acrshort{red} operations complete, \acrlong{spdc} is flushed at line~17 before disabling the reduction engine, reverting to standard cache operation.
 
-\begin{figure}[t]
-    \hypertarget{hl0}{}
-    \begin{minipage}{\linewidth}
-        \addtolength{\linewidth}{-16pt}
-        \colorbox{white}{\begin{minipage}[t][5mm][t]{6.5pt}\null\hfill\null\end{minipage}}
-        \begin{minipage}{\linewidth}
-            \lstinputlisting[
-                title=\textbf{Listing 1:} A Simple Example of \acrshort{red} Operations Usage
-            ]{Chapter_MicroArch/Code/red_example.c}
-        \end{minipage}
-        %\bigskip
-    \end{minipage}
-\end{figure}
+\sourcecode{Chapter_MicroArch/Code/red_example.c}{A Simple Example of \acrshort{red} Operations Usage}{src:arch:red_ex}{htbp}
 
 \begin{highlight}{Conclusion}{Red}
     \textbf{\acrlong{spdc} provides a simple and flexible software interface} through a minimal set of custom RISC-V instructions.
     The ability to dynamically enable and disable \gls{reduction} mode allows the cache to seamlessly transition between generic and specialized operation, adapting to application requirements.
 \end{highlight}
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Details on SpDCache Pipeline Operation}
 \label{sec:arch:pipeline}
 
@@ -321,3 +312,5 @@ The \acrshort{rmwq} independently issues atomic \acrshort{rmw} transactions to m
     We implemented \textbf{\acrlong{spdc}} in \acrshort{rtl} by extending HPDcache with \textbf{minimal modifications}, introducing support for \gls{reduction} operations and multiple cache regions without requiring additional memory.
     This \textbf{configurable design} allows a single \acrshort{rtl} implementation to function as a generic cache, a traditional \gls{redC}, or the region-based \acrlong{spdc} variant, facilitating comprehensive performance evaluation.
 \end{highlight}
+
+\note{min max latencies of RED / between REDs}

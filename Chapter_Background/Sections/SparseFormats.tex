@@ -56,22 +56,9 @@ The $ptr$ table allows \acrshort{csr} and \acrshort{csc} to have a lower memory 
 
 Many others classes of \glspl{spFormat} exists such as \acrfull{bcsr}, \acrfull{dia}, \acrfull{ell} and \acrfull{hyb}, which all have their own advantages depending on the matrix structure or the hardware setup.
 Additional information about these other formats is provided in Appendix~\ref{app:sparse_formats}.
-
 In general, there are many derivates from the above main categories of \glspl{spFormat}.
 Ultimately, we can create any format we want depending on the software and hardware constraints.
 Later in this manuscript, we propose our own custom \gls{spFormat} called \acrfull{bacsc} that is an extension of \acrshort{csc} for \gls{banded} matrices.
-As shown in Figure~\ref{fig:bg:FormatEx:BaCSC}, we added extra information in the $ptr$ table to identify the beginning and end of the \gls{band}.
-Indeed, three pointers instead of one are now needed per column, as shown with the example of column $2$ in \textit{yellow}.
-The column is split in one in-\gls{band} (IB) region in the middle and two out-of-\gls{band} (OB) regions around.
-The $ptr$ table size thus becomes $3 \times M + 1$.
-With this format, we can avoid the computational cost of identifying in which region non-zero elements are, while traversing the matrix, a feature we take advantage of in Chapter~\ref{cha:eval}. \note{(MOVE BaCSC in future chapter evaluation)}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\linewidth]{Chapter_Background/Figures/PDF/SparseFormats/SpFormats_BaCSC.pdf}
-    \caption{Example of a Sparse Matrix in \acrshort{bacsc} Format}
-    \label{fig:bg:FormatEx:BaCSC}
-\end{figure}
 
 \begin{highlight}{Definition}{LimeGreen}
     A \textbf{\gls{spFormat}} is a memory representation of a sparse matrix which avoids storing zeros by using \gls{metadata}.
