@@ -6,10 +6,18 @@
 \section{Introduction}
 \label{sec:arch:intro}
 
-TODO
+\lettrine{I}{n} the previous chapters, we established the theoretical foundations and high-level design principles for \acrlong{spdc}, a specialized cache architecture tailored to optimize memory transactions for sparse matrix computations.
+This chapter bridges theory and practice by presenting the microarchitectural implementation of \acrlong{spdc} and evaluating its performance through \acrfull{rtl} simulations.
 
-% we do a rtl implem of spdc for eval
-% first, some details about the implem
-% then, eval and new things around it (dcd)
+We begin by detailing the microarchitecture of \acrlong{spdc}, focusing on its three distinct regions: the \acrfull{grc}, the \acrfull{drc}, and the \acrfull{srt}.
+Each region is designed to handle specific types of memory accesses, sequential reads, dense \glspl{reduction}, and sparse \glspl{reduction}, respectively, thereby addressing the irregular memory access patterns inherent in sparse matrix operations.
+The \acrshort{rtl} implementation of \acrlong{spdc} is described, highlighting the hardware components and \gls{pipeline} stages that enable efficient data processing and \gls{reduction} operations.
+
+Following the microarchitectural overview, we present the evaluation methodology and results obtained from \acrshort{rtl} simulations.
+These simulations provide a detailed assessment of \acrlong{spdc}'s performance, including memory traffic reduction and latency improvements.
+We analyze the behavior of \acrlong{spdc} across a diverse set of sparse matrices, comparing its performance against baseline cache architectures and validating the theoretical insights gained from earlier chapters.
+
+By translating the theoretical model into a practical hardware design, this chapter demonstrates the effectiveness of \acrlong{spdc} in minimizing memory traffic and improving computational efficiency for sparse matrix kernels.
+The results underscore the importance of region-based caching and \gls{reduction} support, paving the way for further optimizations and scalability enhancements discussed in subsequent chapter.
 
 \clearpage
