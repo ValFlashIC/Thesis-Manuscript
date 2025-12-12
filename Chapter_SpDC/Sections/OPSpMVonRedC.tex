@@ -56,20 +56,19 @@ Furthermore, for $\mathit{key}_{20}$ and $\mathit{key}_{30}$, a full line was lo
 A ``smarter'' cache would have maintained the line with $\mathit{key}_{10}$ to avoid an unnecessary main memory access.
 Furthermore, this ``smarter'' cache would not have allocated full lines for $\mathit{key}_{20}$ and $\mathit{key}_{30}$ to only modify a single word.
 
-The globally low local and temporal localities avoid caches, and even \glspl{redC}, to take advantage of any reuse opportunity.
-However, sparse matrices have various types of structure which can have reuse potential on some parts of the matrix.
-In the example in Figure~\ref{fig:spdc:spmv_on_matrix}, the first rows (on $\mathit{key}_{10}$ to $\mathit{key}_{13}$) are denser than the rest of the matrix.
+The globally low local and temporal localities prevent caches, and even \glspl{redC}, to take advantage of any reuse opportunity.
+However, sparse matrices have various types of structure which may have reuse potential in some parts of the matrix.
+In the example in Figure~\ref{fig:spdc:spmv_on_matrix}, the first rows (with $\mathit{key}_{10}$ to $\mathit{key}_{13}$) are denser than the rest of the matrix.
 A ``smarter'' cache would prefer to focus on these rows, keeping the corresponding cache-line and accumulating every elements before a final \gls{eviction}.
-On the contrary, the sparser rows of the matrix would not stayed long in the ``smarter'' cache, having low priority to avoid thrashing data from denser regions.
+On the contrary, the sparser rows of the matrix would not be kept by the ``smarter'' cache, thus avoiding thrashing data from denser regions.
 
-We focus on the case of \gls{banded} matrices which have a denser region around the diagonal.
-For a \gls{redC} to work efficiently with such matrices, the dense \gls{band} should be prioritized, and the isolated elements out of the band should be processed separately to avoid disturbance.
-This is the main idea of \acrlong{spdc} (Paper~\ref{publ:SpDC}), which is a \gls{redC} with dedicated memory regions for the in-band and out-of-band of a matrix.
-We describe its behavior int the following sections.
+Going forward, we focus on the case of \gls{banded} matrices which have a denser region around the diagonal.
+For a \gls{redC} to work efficiently with such matrices, the dense \gls{band} should be prioritized, and the isolated elements out of the \gls{band} should be processed separately to avoid these sparse elements disturbing the storage of the dense data.
+This is the main idea of \acrlong{spdc} (Paper~\ref{publ:SpDC}), which is a \gls{redC} with dedicated memory regions for the in-\gls{band} and out-of-\gls{band} of a matrix.
+We describe its behavior in the following sections.
 
 \begin{highlight}{Conclusion}{Red}
-    When computing an \textbf{\acrshort{op} \acrshort{spmv}}, a \textbf{conventional \gls{redC} is not enough} for the available cache memory to be efficiently utilized.
-    Compared to the size of a cache, matrices have too large dimensions for \emph{keys} to be reused from one column iteration to an other, leading to mostly empty cache-lines being prematurely evicted.
+    When computing an \textbf{\acrshort{op} \acrshort{spmv} kernel} on a very \textbf{large matrix}, a \textbf{conventional \gls{redC} does not provide enormous benefit} because the cache is not large enough to reuse data from one column iteration to the next.
     \bigskip \\
-    We propose \textbf{\acrlong{spdc}}, a \gls{redC} with dedicated memory regions, \textbf{leveraging matrix structure} with denser and sparser regions, such as \textbf{\gls{banded} matrices}.
+    We propose \textbf{\acrlong{spdc}}, a \gls{redC} with dedicated memory regions, \textbf{leveraging matrix structure} with dense and sparse regions which correspond to the structure of \textbf{\gls{banded} matrices}.
 \end{highlight}

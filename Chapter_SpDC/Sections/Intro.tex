@@ -6,21 +6,21 @@
 \section{Introduction}
 \label{sec:spdc:intro}
 
-\lettrine{I}{n} the previous chapters, we analyzed the causes and effects of \glspl{irrAccess} in sparse computations and identified the \acrfull{op} algorithm of \acrfull{spmv} ($A \times b = c$) as a key case.
-The \acrshort{op} algorithm generates irregular updates on the output vector $c$, as each non-zero element of the input matrix $A$ contributes to distinct, and often distant, memory locations.
-These ``random'' \glspl{reduction} are a major challenge for cache-based architectures.
+\lettrine{I}{n} the previous chapters, we analyzed the causes and effects of irregular memory accesses in sparse computations and identified the \acrfull{op} algorithm of \acrfull{spmv} ($A \times b = c$) as an important example.
+The \acrshort{op} algorithm generates irregular updates on the output vector $c$, as each non-zero element of the input matrix $A$ produces updates to distinct, and often distant, location in the output vector $c$.
+These ``random'' \glspl{reduction} render stress the memory system.
 
 Conventional cache hierarchies are designed for regular, predictable access streams that exploit spatial and temporal locality.
-In contrast, \acrshort{op} \acrshort{spmv} exhibits poor locality, leading to low cache utilization, frequent evictions, and inefficient bandwidth use.
+In contrast, \acrshort{op} \acrshort{spmv} exhibits poor locality, leading to low cache utilization, frequent evictions, and thus requiring more memory bandwidth.
 
 Previous works, such as PHI~\cite{Mukkara2019_PHI}, SortCache~\cite{Srikanth2021_SortCache}, and ASA~\cite{Zhang2022_ASA}, have proposed \gls{reduction}-aware cache mechanisms to alleviate irregularity by improving accumulation and storage efficiency.
-However, these solutions do not exploit the structural properties of the processed matrices, and therefore miss optimization opportunities when partial regularity is present.
-This observation motivates our focus on \gls{banded} sparse matrices, which combine overall sparsity with localized dense regions near the diagonal.
-Such matrices provide a controlled environment to study how structure and locality can be leveraged to enhance cache performance.
+However, these solutions do not exploit the structural properties of the processed matrices, and therefore miss optimization opportunities when the matrix has some regularity.
+This observation motivates our focus on \gls{banded} sparse matrices, which combine overall sparsity with a dense region near the diagonal.
+\Gls{banded} matrices are very common and serve as an initial example to study how dense and sparse regions can be leveraged to enhance performance.
 
-This chapter begins by recalling the main concepts of generic data-caches, introducing the terminology and mechanisms required to discuss caching behavior under \gls{irrAccess} conditions.
-It then presents a \gls{reduction}-aware cache architecture, designed to efficiently support ``random'' \glspl{reduction} in \acrshort{op} \acrshort{spmv}.
-The proposed design, \acrlong{spdc} (presented in Paper~\ref{publ:SpDC}), extends traditional caching models with region-based organization and native \gls{reduction} support.
+This chapter begins by reviewing the main concepts of generic data-caches, introducing certain terminology and mechanisms which are required to discuss cache behavior under \gls{irrAccess} conditions.
+It then presents a \gls{reduction}-aware cache architecture, designed to efficiently support ``random'' \glspl{reduction} for the \acrshort{op} \acrshort{spmv} kernel.
+The proposed design, \acrlong{spdc} (presented in Paper~\ref{publ:SpDC}), extends traditional caching models with a region-based organization and native \gls{reduction} support.
 Finally, we evaluate its performance through high-level modeling on \gls{banded} and non-\gls{banded} matrices, highlighting the influence of data regularity on cache efficiency.
 
 \clearpage

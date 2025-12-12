@@ -6,36 +6,36 @@
 \section{Conclusion}
 \label{sec:spdc:conclu}
 
-\lettrine{W}{e} have presented the concept of SpDCache, a \gls{redC} that has optimized storage and compute techniques for the sparser and denser regions of \gls{banded} matrices.
+\lettrine{W}{e} have presented the concept of \acrlong{spdc}, a \gls{redC} that has optimized storage and compute techniques for the sparse and dense regions of \gls{banded} matrices.
 This approach does not reduce the number of compute operations, however, it significantly decreases memory traffic (4.1$\times$).
 These benefits can be attributed to three techniques: (1) blocking the dense part of the \gls{band} in the \acrshort{drc}, (2) using fine-grained storage in the \acrshort{srt} and (3) off-loading the \glspl{reduction} for isolated elements to the downstream caches, to prevent local \glspl{eviction} and reduce traffic.
 
-Exploiting the coarse-grain structure of matrices is key to design hardware optimized for sparse matrix kernels.
-In the next chapter, we demonstrate this with a more theoretical approach, allowing us to go further into \acrlong{spdc} analysis, and justify appropriate region sizing, before going into a cycle-accurate evaluation.
+Exploiting the coarse-grain structure of matrices is key to designing hardware optimized for sparse matrix kernels.
+In the next chapter, we present a more theoretical analysis of the behavior of \acrlong{spdc} before moving onto an actual \acrshort{rtl} implementation in Chapter~\ref{cha:arch}.
 
 \bigskip\bigskip
 
 \begin{highlight}{Takeaways}{Mulberry}
     \raggedright
-    \colorbf{Mulberry}{Reduction cache}:
+    \colorbf{Mulberry}{Reduction cache:}
     \begin{itemize}
-        \item Support a \gls{reduction} instruction: $\mathit{RED}(key, value)$
-        \item Accumulate near memory
-        \item Reduce the number of memory transactions
+        \item Provides hardware support for performing \textbf{\glspl{reduction}}: $\mathit{RED}(key, value)$.
+        \item The accumulations are done \textbf{near memory}, in the cache.
+        \item \textbf{Reduces memory traffic} for kernels with a large number of \gls{reduction} updates.
     \end{itemize}
 
     \bigskip
-    \colorbf{Mulberry}{SpDCache}:
+    \colorbf{Mulberry}{SpDCache:}
     \begin{itemize}
-        \item Take advantage of coarse grain structure of matrices: matrix regions such as \acrshort{ibr} and \acrshort{obr} for \gls{banded} matrices
-        \item Three cache memory regions:
+        \item Considers that the matrix has a \textbf{dense region} and a less dense, \textbf{sparse region}. For \gls{banded} matrices, these correspond to the in-\gls{band} (\acrshort{ibr}) and the out-of-\gls{band} (\acrshort{obr}).
+        \item Divides the L1 data-cache into \textbf{three regions}:
         \begin{itemize}
-            \item \acrshort{grc}, generic region cache for generic instructions
-            \item \acrshort{drc}, dense region cache for \glspl{reduction} in the \acrshort{ibr}
-            \item \acrshort{srt}, sparse region table for \glspl{reduction} in the \acrshort{obr}
+            \item \textbf{\acrshort{grc}}, generic region cache for regular memory accesses (such as reading $A$ and $b$);
+            \item \textbf{\acrshort{drc}}, dense region cache for \glspl{reduction} in the dense region of the matrix;
+            \item \textbf{\acrshort{srt}}, sparse region table for \glspl{reduction} in the sparse region of the matrix.
         \end{itemize}
-        \item Adapted memory transactions: cache-line wise versus element wise for the \acrshort{drc} and the \acrshort{srt}, respectively
-        \item Overall: greatly reduce memory traffic
+        \item Uses memory transactions adapted to the region density: \textbf{cache-line-wise versus element-wise} for the \acrshort{drc} and the \acrshort{srt}, respectively.
+        \item For a set of 48 matrices, results in \textbf{4.1$\times$ less memory traffic} for \acrshort{op} \acrshort{spmv} kernel.
     \end{itemize}
 \end{highlight}
 

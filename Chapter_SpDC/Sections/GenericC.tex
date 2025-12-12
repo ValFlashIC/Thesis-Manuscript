@@ -6,11 +6,11 @@
 \section{Generic Data-Caches}
 \label{sec:spdc:gc}
 
-\lettrine{M}{odern} processors and accelerators integrate data-caches to bridge the latency and bandwidth gap between computation units and main memory.
-A cache is a small, fast memory that stores recently accessed data to anticipate future reuse.
+\lettrine{M}{odern} processors and accelerators integrate data-caches to bridge the latency and bandwidth gap between computation units and main memory~\cite{Hennessy2011_GC}.
+A cache is a small, fast memory that stores recently accessed data anticipating that the data will be reused in the near future.
 Its efficiency relies on two main forms of locality:
 \begin{itemize}
-\item temporal locality, where recently accessed data is likely to be reused soon, and
+\item temporal locality, where recently accessed data is likely to be reused within a short interval of time, and
 \item spatial locality, where data stored near recently accessed addresses is likely to be used next.
 \end{itemize}
 
@@ -23,35 +23,36 @@ When an access occurs, the cache controller searches for the requested address a
 If the address is found, a \gls{hit} occurs and the data is served directly to the core.
 Otherwise, a \gls{miss} occurs, triggering a memory fetch from a lower cache level or from main memory.
 If necessary, an existing cache-line is evicted to make room for the new data.
-Each cache-line is associated with \glspl{tag} and validity bits that record its address and coherence state.
+Each cache-line is associated with a \gls{tag} that record its address and additional bits to keep track of its state.
 
 Several mapping policies exist.
-In a direct-mapped cache, each memory block maps to a single cache-line, which is simple but prone to conflicts.
-A $n$-\gls{way} \gls{set}-associative cache allows each block to be placed in one of $n$ possible cache-lines within a \gls{set}, improving \gls{hit} rate at moderate cost.
+In a direct-mapped cache, each memory block maps to a single cache-line.
+This approach is simple to implement but results in conflicts and poor utilization.
+A $n$-\gls{way} \gls{set}-associative cache allows each block to be placed in one of $n$ possible cache-lines within a \gls{set}, improving \gls{hit} rate with only a moderate additional hardware cost.
 A \emph{fully associative} cache removes these constraints, as any block may occupy any cache-line, but requires more complex \gls{tag} searches.
-When multiple candidates exist, a replacement policy such as \acrfull{lru} or \emph{Random} decides which entry is evicted.
+In all cases, when a line must be evicted and multiple candidates exist, a replacement policy such as \acrfull{lru} or \emph{Random} decides which entry is evicted.
 
-Write policies also impact performance.
+Caches have different policies when writes occur.
 With a \emph{write-through} policy, every store operation updates both the cache and main memory, maintaining consistency but increasing traffic.
-A \emph{write-back} policy delays the update until \gls{eviction}, reducing bandwidth usage at the cost of additional state bits (dirty flags) to maintain consistency.
-For workloads dominated by \gls{seqAccesses}, these mechanisms are highly effective.
+A \emph{write-back} policy delays the update until \gls{eviction}, reducing memory bandwidth at the cost of additional state bits (dirty flags) to maintain consistency.
+
+For workloads dominated by \gls{seqAccesses}, these mechanisms and policies are highly effective.
 However, \glspl{irrAccess} tend to degrade cache efficiency by increasing \gls{miss} rates and provoking frequent \glspl{eviction}.
 
 Modern processors implement hierarchical cache organizations to balance latency, capacity, and throughput.
-A typical CPU integrates small L1 caches close to each core, larger L2 caches, and a high-capacity L3 cache shared at the chip level.
-Accelerators and domain-specific architectures often employ local data storages or scratchpad memories serving the same purpose, providing low-latency access to frequently reused data (see Chapter~\ref{cha:soa}).
+A typical CPU integrates small L1 caches close to each core, larger L2 caches shared by a group of cores, and a high-capacity L3 cache shared at the chip level.
+Accelerators and domain-specific architectures often employ local data storage or scratchpad memories serving the same purpose, providing low-latency access to frequently reused data (see Chapter~\ref{cha:soa}).
 
-The generic cache assumes regular read and write operations with predictable locality.
-Yet workloads operating on sparse or \gls{reduction}-intensive data violate this assumption.
-In particular, ``random'' \glspl{reduction} are poorly supported, as conventional caches lack native mechanisms to merge updates efficiently or to retain relevant data in limited storage.
-
-In the next sections, we introduce cache architectures supporting \gls{reduction} operations, specifically designed to handle \gls{irrData}.
-These architectures generalize the concept of a data-cache to include \gls{reduction}-aware mechanisms, ensuring correctness while improving bandwidth efficiency.
+The generic cache assumes regular read and write operations with predictable memory access patterns.
+Yet workloads operating on sparse data violate this assumption.
+In particular, ``random'' \glspl{reduction} often have poor performance because each \gls{reduction} triggers a read and a write of a full cache-line, to simply update one word.
+Furthermore, the lack of spatial locality means each \gls{reduction} can trigger an \gls{eviction}, in the worst case.
 
 In the following sections, we introduce cache architectures with native \gls{reduction} support, specifically designed to handle \gls{irrData}.
 These architectures extend the classical cache model with \gls{reduction}-aware mechanisms, improving bandwidth efficiency under irregular access patterns.
 
 \begin{highlight}{Conclusion}{Red}
-    \textbf{Generic data-caches} efficiently exploit regular access patterns but \textbf{fail to address the irregularity} and accumulation requirements of sparse data computing.
-    These limitations motivate the introduction of \textbf{\gls{reduction}-aware cache architectures}, capable of handling \gls{irrData}.
+    Generic data-caches are effective when access patterns exhibit spatial and temporal locality.
+    This is not the case for sparse data and their performance is particularly poor for ``random'' \gls{reduction} operations.
+    This limitation motivates the introduction of \textbf{\gls{reduction}-aware cache architectures} which are optimized for such ``random'' \glspl{reduction}.
 \end{highlight}

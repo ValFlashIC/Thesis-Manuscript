@@ -6,19 +6,19 @@
 \section{Architecture of SpDCache}
 \label{sec:spdc:archispdc}
 
-\lettrine{S}{pDCache} is developed to replace a L1 generic data-cache.
-Thus, it has to function as a generic cache when receiving classical memory instructions from the processor, such as reads and writes.
-Indeed, when processing an \acrshort{op} \acrshort{spmv}, the sequential reads to the matrix $A$ and the vector $b$ should not bypass the cache hierarchy which takes advantage of spatial locality.
-Only, the output vector $c$ suffers from ``random'' \glspl{reduction} that should be processed with a region-wise \gls{redC}.
-\acrlong{spdc} can be extended on a multilevel memory hierarchy, as well as a multicore architecture (see Chapter~\ref{cha:optim}).
-However, our study (up to Chapter~\ref{cha:eval}) focus on a single level cache hierarchy with a single core, to focus on the \acrlong{spdc} behavior.
+\lettrine{S}{pDCache} was developed to replace a generic L1 data-cache.
+Thus, it must function as a generic cache when receiving load and store memory instructions from the processor.
+Indeed, when processing an \acrshort{op} \acrshort{spmv} kernel, the sequential reads to the matrix $A$ and the vector $b$ should take advantage of the generic cache behavior, due to their spatial locality.
+Only, the output vector $c$ suffers from ``random'' \glspl{reduction} that must be processed with a region-wise \gls{redC}.
+\acrlong{spdc} can be extended to a multilevel memory hierarchy, as well as multicore architectures (see Chapter~\ref{cha:optim}).
+However, our study focuses on a single level cache hierarchy with a single core, to better understand \acrlong{spdc} behavior.
 
 As shown in Figure~\ref{fig:spdc:cache_partition}, \acrlong{spdc} is divided into three regions.
 The first, \acrfull{grc}, is for all memory transactions unrelated to the output vector $c$, including reads of $A$ and $b$.
-It is a classic, \gls{set}-associative cache and not our focus, but is required for the processor to operate normally.
+It is a classic, \gls{set}-associative cache and is required for the processor to operate normally, but is not the focus in this chapter.
 The other two regions, called \acrfull{drc} and \acrfull{srt}, are able to perform \glspl{reduction} on $c$.
 The \acrshort{drc} works as a line-wise, \gls{set}-associative \gls{redC} to hold high density data in the \acrlong{ibr} of the matrix (\acrshort{ibr}, \textit{orange}).
-The difference with the \acrshort{grc} is that it is able to perform \glspl{reduction} and it is dedicated to the \emph{banded} region, so that spurious accesses do not provoke undesired \glspl{eviction}.
+The difference with the \acrshort{grc} is that it is able to perform \glspl{reduction} and it is dedicated to the \emph{banded} region, so that spurious accesses outside of the \gls{band} do not provoke undesired \glspl{eviction}.
 Finally, the \acrshort{srt} works as an element-wise, fully-associative table whose role is to handle sparse regions, such as the \acrlong{obr} in the matrix (\acrshort{obr}, \textit{blue}).
 
 \begin{figure}[htbp]
@@ -43,18 +43,20 @@ Finally, the \acrshort{srt} works as an element-wise, fully-associative table wh
 \end{figure}
 
 Figure~\ref{fig:spdc:global_view_archi} shows a simplified view of a memory hierarchy with \acrlong{spdc}.
-The \emph{Processor Interface} (\emph{PI}) takes \gls{reduction} instructions, \emph{RED(key, value, region)}, from the processor and dispatches them to the \acrshort{drc} and \acrshort{srt}, depending on the \emph{region} argument.
+The \emph{Processor Interface} (\emph{PI}) takes \gls{reduction} instructions, \emph{RED(key, value, region)}, from the processor.
+The \acrshort{red} instruction contains a `region' field which indicates whether the value is expected to be in a dense region (\acrshort{drc}) or a sparse region (\acrshort{srt}).
+As we will see, the hardware may override the software selection to avoid duplication.
 The \acrshort{drc} communicates with the memory hierarchy using read and write transactions over entire cache-lines, to propagate the local \emph{updates} to the downstream memory.
 As \acrshort{srt} \emph{updates} are for isolated elements, it does not make sense to bring a full line into the L1 to modify a single word. 
 The \acrshort{srt} thus propagates \emph{updates} by issuing atomic \acrlong{rmw} transactions (\acrshortpl{rmw}), which must be processed remotely and 
 close to the main memory.
-Existing protocols such as \mbox{AXI-4}~\cite{ARM2023_AXI} already support atomic transactions for certain operations (logical, integer add, min, max) and these would need to be extended to include floating point addition.
+Existing protocols such as \mbox{AXI-4}~\cite{ARM2023_AXI} already support atomic transactions for certain operations (logical, integer add, min, max) and these could be extended to include floating point addition.
 The \acrshortpl{rmw} from the \acrshort{srt} are temporarily buffered in a small queue (\acrshort{rmwq}), to avoid congestion.
 
 \acrlong{spdc} is driven by three key design principles.
-First, we ensure a given \emph{key} is in only one region, to avoid coherency problems.
+First, we ensure a given \emph{key} is in only one region at a time, to avoid coherency problems.
 Second, the \acrshort{drc} is given priority over the \acrshort{srt}, to enable coalescing.
-Third, we avoid bringing a full line from memory to the L1 to simply update a few entries.
+Third, we avoid bringing a full line from memory to the L1 to simply update one or a few entries.
 
 \begin{figure}[htbp]
     \centering
@@ -77,10 +79,10 @@ If the target region is the \acrshort{obr}, then the \gls{reduction} (\addr{3d} 
 
 Now, we describe the \gls{eviction} scenarios.
 In the \acrshort{drc}, the line to evict is selected ($set_2, line_2$ -- \textit{pink}), a read to main memory is performed, the values from the evicted cache-line are accumulated and a write to main memory is issued.
-If the evicted cache-line only has a few non-zero elements and the \acrshort{rmwq} has enough free entries, it is a special case.
+If the evicted cache-line only has a few non-zero elements and the \acrshort{rmwq} has enough free entries, we enter into a special case.
 To avoid bringing a full line from main memory, the non-zero values (\addr{a1} and \addr{a5} -- \textit{blue}) are converted to atomic \acrshortpl{rmw} and pushed onto the \acrshort{rmwq}.
 The decision to convert evicted cache-lines to atomic \acrshortpl{rmw} is based on a configurable density threshold.
-Previous work~\cite{Mukkara2019_PHI} used a threshold of one non-zero word per eight words in a cache-line.
+PHI~\cite{Mukkara2019_PHI}, an accelerator similar to \acrlong{spdc}, used a threshold of one non-zero word per eight words in a cache-line.
 Given our queuing mechanism to handle congestion, we use a more aggressive threshold of three non-zero words per cache-line.
 
 The width of the \emph{band} ($w_B$), must be selected so that one column of the \emph{band} remains blocked in the \acrshort{drc}, otherwise, this region of the cache is always thrashing.
@@ -88,20 +90,26 @@ This is our approach to selecting $w_B$, which we detail in the next chapter.
 Note that this approach selects $w_B$ based on the \acrshort{drc} size, independently of the matrix and its structure.
 
 In the \acrshort{srt}, an \gls{eviction} simply consists of moving the element from the table to the \acrshort{rmwq} (\addr{8c} -- \textit{brown}).
-If the \acrshort{rmwq} is not full, \acrshort{srt} \glspl{eviction} are issued in advance when the \acrshort{srt} table is nearly full, using an other configurable threshold sets to half the size of the queue in our experiments.
+If the \acrshort{rmwq} is not full, \acrshort{srt} \glspl{eviction} are issued in advance when the \acrshort{srt} table is nearly full, using another configurable threshold set to the \acrshort{srt} size minus half the size of the \acrshort{rmwq} in our experiments.
 The \acrshort{rmwq} issues atomic \acrshortpl{rmw} when it is not empty (\addr{56} -- \textit{dark green}).
+
+\begin{highlight}{Note}{SkyBlue}
+    We make the assumption that memory regions in the \acrshort{grc} and the \acrshort{drc}/\acrshort{srt} are disjoint.
+    Currently, we do not manage coherency between the two, although this could be a future extension.
+\end{highlight}
 
 \begin{highlight}{Note}{SkyBlue}
     \acrlong{spdc} is not limited to \gls{banded} matrices.
     Any sparse matrix with a denser region can benefit from this architecture, by adapting the definition of the \emph{band} accordingly, and making sure that the blocking effect in the \acrshort{drc} is preserved.
+    The selection of where the dense region is located is done in software via the region argument of the \acrshort{red} instruction.
 \end{highlight}
 
 \begin{highlight}{Conclusion}{Red}
     \textbf{\acrlong{spdc}} is a data-cache splits in \textbf{three regions}:
     \begin{itemize}
-        \item \acrshort{grc}, a \textbf{generic} cache region processing reads and writes of $A$ and $b$,
-        \item \acrshort{drc}, a \gls{redC} region dedicated to \glspl{reduction} on $c$ when computing the \textbf{\gls{band}} (\acrshort{ibr}),
-        \item \acrshort{srt}, a \gls{redC} region dedicated to \glspl{reduction} on $c$ when computing the isolated \textbf{out-of-band} elements (\acrshort{obr}).
+        \item \acrshort{grc}, a \textbf{generic} cache region which handles the reads of $A$ and $b$ and any other memory accesses performed by the processor,
+        \item \acrshort{drc}, a \gls{redC} region dedicated to \glspl{reduction} on $c$ when computing the dense region of the matrix, which is the \textbf{\gls{band}} (\acrshort{ibr}) in the cases of \gls{banded} matrices,
+        \item \acrshort{srt}, a \gls{redC} region dedicated to \glspl{reduction} on $c$ when computing the sparse regions of the matrix, which correspond to the \textbf{out-of-band} elements (\acrshort{obr}) for a \gls{banded} matrix.
     \end{itemize}
-    The two last regions use \textbf{adapted memory transactions} to avoid transferring unnecessary data.
+    The two last regions use \textbf{memory transactions adapted to the region density} (line-wise or element-wise) to avoid transferring unnecessary data.
 \end{highlight}
