@@ -3,7 +3,7 @@
 % C Model
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Model for Reduction Cache}
+\section{Modeling a Reduction Cache}
 \label{sec:theory:cmodel}
 
 \lettrine{T}{o} go beyond simply observing the behavior of a specific accelerator processing a given matrix, a model of the matrix and the cache is required.
@@ -17,7 +17,7 @@ We can thus predict the total number of memory accesses for different types of m
 
 We do not consider the sequential accesses to the input matrix $A$ and vector $b$ in our model.
 Indeed, the matrix tables $\mathit{val}$, $\mathit{idx}$ and $\mathit{ptr}$, and the vector $b$ are each read once, giving a total memory traffic of $2\mathit{nnz} + (M+1) + M$ elements.
-We showed in previous section that a simple generic cache of reasonable size is enough to handle the inputs.
+We showed in the previous section that a simple generic cache of reasonable size is sufficient to minimize the associated memory traffic.
 
 Our model uses the cache configuration parameters $S$, $W$ and $l$.
 Although our model is not limited to \gls{banded} matrices, they are the focus of this work.
@@ -60,7 +60,7 @@ Specifically, we ensure the number of valid cache-lines in a \gls{set} of the ca
 In the example in Figure~\ref{fig:theory:model:matrix_cache_rep}, the actual cache is holding four valid cache-lines, which are the only valid cache-lines present in the cache representation.
 
 To count the number of valid cache-lines, we further distinguish them from empty ones.
-For this reason, we set the cache-line densities to be either zero (the cache-line is empty), or the density is in the range $\left[\frac{1}{l}, 1\right]$ (the cache-line is valid).
+For this reason, we set the cache-line densities to be either zero (the cache-line is empty), or a density is in the range $\left[\frac{1}{l}, 1\right]$ (the cache-line is valid).
 A valid cache-line has a density between $\frac{1}{l}$ and $1$, corresponding to the probabilistic number of non-zero elements.
 
 The state of the cache is thus represented with the dynamic table $\mathit{DCDT}$ (\textit{Disjoint Cache Density Table}), of dimension $M_l$ that contains the disjoint-density in $\{0\} \cup \left[\frac{1}{l}, 1\right]$ of each cache-line, at a given iteration.
@@ -100,7 +100,7 @@ In the case of an \gls{eviction}, for the probabilistic model, we use a \textit{
 The index of the evicted cache-line is $e \in \ldb0, M_l-1\rdb$.
 
 \paragraph{Cache Update}
-The last step is to update $\mathit{DCDT}$ before proceeding to the next iteration.
+The last step is to update the $\mathit{DCDT}$ before proceeding to the next iteration.
 (1) If a cache-line is evicted, we must account for the memory traffic and reset the victim line $e$;
 (2) The density of the current cache-line $\kappa$ may increase if there is a \gls{hit} or if it is newly allocated:
 \begin{enumerate}
@@ -108,9 +108,9 @@ The last step is to update $\mathit{DCDT}$ before proceeding to the next iterati
     \item We update the density of the cache-line $\kappa$.
     In the case of a \gls{miss} ($\mathit{DCDT}_\kappa = 0$), the cache-line density is set to the disjoint-density of the matrix vertical-strip $\kappa$.
     In the case of a \gls{hit}, the cache-line and the vertical-strip densities are merged: \\
-    $\mathit{DCDT}_\kappa \gets \mathit{DCDT}_\kappa + (1 - \mathit{DCDT}_\kappa) \times d_\mathit{lM}(\kappa)$
+    $\mathit{DCDT}_\kappa \gets \mathit{DCDT}_\kappa + (1 - \mathit{DCDT}_\kappa) \times d_\mathit{lM}(\kappa)$ \\
+    The updated cache-line density is either $0$ or greater than $\frac{1}{l}$, thus respecting the constraint that the cache-line is either empty or valid.
 \end{enumerate}
-The updated cache-line density is either $0$ or greater than $\frac{1}{l}$, thus respecting the constraint that the cache-line is either empty or valid.
 
 \paragraph{Final Iteration}
 Starting with an initially empty cache, we run all $M \times M_l$ iterations and count the total number of \glspl{eviction} ($\mathit{nbEvict}$).
@@ -118,7 +118,7 @@ After the last iteration, we account for the memory transactions required to flu
 $\mathit{nbFlush}$ will never exceed \mbox{$S \times W$}.
 
 In a \gls{redC}, \glspl{eviction} and flushes result in a line-wise memory read, a modification, and a line-wise memory write.
-The update memory traffic is $2 l (\mathit{nbEvict} + \mathit{nbFlush})$ elements, and $\mathit{normMT}$ is this amount divided by $nnz$.
+The update memory traffic is $2 l (\mathit{nbEvict} + \mathit{nbFlush})$ elements, and $\mathit{normMT}$ is this value divided by $nnz$.
 
 \begin{highlight}{Conclusion}{Red}
     We have presented a \textbf{hybrid probabilistic/fast simulation analytical model} for a \gls{redC}, processing \acrshort{op} \acrshort{spmv}, which predicts the volume of memory traffic issued by the L1 cache, starting from a \textbf{matrix density distribution} and a \textbf{cache configuration}.

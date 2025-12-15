@@ -6,24 +6,24 @@
 \section{Introduction}
 \label{sec:theory:intro}
 
-\lettrine{S}{parse} matrix processing exposes hardware to irregular memory access patterns, which degrade cache efficiency and increase memory traffic.
+\lettrine{S}{parse} matrix processing exposes processor systems to irregular memory access patterns, which degrade cache efficiency and increase memory traffic.
 The magnitude of these effects on memory system performance remains challenging to predict due to the diversity of data patterns.
 In this chapter, we develop a theoretical model to analyze and optimize the behavior of a \gls{redC} when executing an \acrfull{op} \acrshort{spmv} kernel.
 
-We propose a hybrid probabilistic/fast simulation model that predicts the memory transactions of a \gls{redC} during \acrshort{op} \acrshort{spmv} \mbox{($A \times b = c$)}.
+We propose a hybrid probabilistic/fast simulation model that predicts the memory transactions of a \gls{redC} when executing an \acrshort{op} \acrshort{spmv} kernel \mbox{($A \times b = c$)}.
 This model allows us to quickly explore the impact of different cache configurations on memory traffic, using \gls{banded} matrices as a representative case study.
 By isolating the sequential reads of the input data and analyzing the density distribution of non-zero elements, we identify key design principles for optimizing cache performance.
 
 The chapter demonstrates the importance of separating the in-\gls{band} and out-of-\gls{band} regions of the matrix into dedicated cache regions.
 This separation allows the cache to exploit the structural regularity of \gls{banded} matrices while efficiently handling \glspl{irrAccess} in sparser regions.
-The theoretical analysis validates the architectural choices of \acrlong{spdc} and provides insights for sizing and configuring cache regions to minimize memory traffic.
+The theoretical analysis validates the architectural choices of \acrlong{spdc} that was presented in previous chapter and provides insights for sizing and configuring cache regions to minimize memory traffic.
 
 In our analysis of \glspl{redC}, we use a set-associative configuration, with $8$ byte elements which we consider as the basic memory unit.
 $s_C$ is the size of the cache, in elements.
 The cache is divided into \glspl{set}, \glspl{way} and cache-lines, of size $S$, $W$ and $l$, respectively.
 Thus, $s_C = S \times W \times l$ elements.
-We recall that a \gls{banded} square matrix of dimension $M$ is define by its \gls{band} width $w_B$, or its half-\gls{band} width $w_\mathit{hB}$, such that $w_B = 2w_\mathit{hB} - 1$.
+We recall that a \gls{banded} square matrix of dimension $M$ is defined by its \gls{band} width $w_B$, or its half-\gls{band} width $w_\mathit{hB}$, such that $w_B = 2w_\mathit{hB} - 1$.
 The in- and out-of-\gls{band} densities are named $d_\mathit{IB}$ and $d_\mathit{OB}$, respectively.
-When $d_\mathit{OB}$ is down to 0, the matrix is identified as \gls{PBanded}.
+When $d_\mathit{OB}$ is zero, the matrix is said to be \gls{PBanded}.
 
 \clearpage
