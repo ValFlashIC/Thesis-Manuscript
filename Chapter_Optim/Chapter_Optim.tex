@@ -1,12 +1,30 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% CHAPTER Optimisations
+% CHAPTER Optimizations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter[Optimisations]{Optimisations}
+\chapter[Optimizations]{SpDCache Optimizations}
 \label{cha:optim}
 
 \minitoc
 
-% \input{}
+\input{Chapter_Optim/Sections/Intro}
+
+\input{Chapter_Optim/Sections/RTLOptims}
+% floating point pipeline changes? -> RTL enhancements
+% config of region size dynamic / sizes more flexible
+% learn from first iteration
+% band calculus in HW
+% inter region coherence?
+
+% add region DRT and CB to get fine grain density -> complex for not much
+% add a leaky bucket to watch on traffic dynamically and anticipate reads and evictions
+
+\input{Chapter_Optim/Sections/SpMM}
+% spdcache on a spmspm kernel (and spmm)
+
+\input{Chapter_Optim/Sections/Multicore}
+% Scaling spdcache to multi levels and multi cores
+
+\input{Chapter_Optim/Sections/Conclu}
 
 \clearpage
