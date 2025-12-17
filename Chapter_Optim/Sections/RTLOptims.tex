@@ -3,7 +3,131 @@
 % RTL Optimizations
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+%fpu
+
 \section{RTL Optimizations for SpDCache}
 \label{sec:optim:rtloptims}
 
+% floating point pipeline changes? -> RTL enhancements
+% config of region size dynamic / sizes more flexible
+% learn from first iteration
+% band calculus in HW
+% inter region coherence?
+
 %TODO
+
+The \acrshort{rtl} implementation of \acrlong{spdc} provided in Chapter~\ref{cha:arch} has been enough to get performance results in accordance with all the models, and allowed us to do a precise analysis of the cache performance depending on the matrix structure.
+However, as already noted several times in the previous chapter, the \acrshort{rtl} implementation is missing some features and could be optimized for better practicality and performance.
+In this section, we detail the major features and optimizations that are still to be implemented.
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Floating-Point Support Implementation}
+
+The evaluated matrices (Appendix~\ref{app:mat_list}) include binary, 4-byte integer, and 8-byte floating-point data types.
+While 8-byte floating-point matrices dominate our dataset and present the worst-case memory traffic due to their word size, we used 8-byte integers as a practical substitute for evaluation.
+However, floating-point accumulation presents greater hardware complexity than integer accumulation: integer operations guarantee single-cycle latency, whereas floating-point operations can require multiple cycles~\cite{Hossain1998_FPU}.
+
+To support accumulations between \textit{st1} and \textit{st2} in the \gls{pipeline} (Section~\ref{sec:arch:pipeline}), we can either deploy a single-cycle high-performance FPU with area trade-offs, or extend the \gls{pipeline} to accommodate two-cycle, for example, floating-point accumulation.
+The latter approach better suits our \textit{accumulation table}, which does not stall the \gls{pipeline} and can parallelize element-wise accumulations across stored 64-byte lines.
+Additionally, full floating-point support requires extending the AXI port to handle element-wise \acrfull{rmw} operations beyond its native integer capabilities~\cite{ARM2023_AXI}.
+
+Floating-point support is critical for \acrlong{spdc} deployment.
+We anticipate that \acrshort{rtl} extensions, while time-intensive, should not present fundamental technical obstacles.
+
+\begin{highlight}{Conclusion}{Red}
+    %TODO
+\end{highlight}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Region-Sizes Configuration}
+
+One strength of \acrlong{spdc}'s \acrshort{rtl} implementation is its highly configurable design, inherited from the HPDcache implementation used as a foundation.
+This allowed us to develop a single \acrshort{rtl} codebase that could be compiled and simulated for multiple designs, \acrshort{gc}, \acrshort{redc}, and \acrshort{spdc}, each with different region size configurations.
+However, these configurations are static, requiring \acrshort{rtl} recompilation for each design variant.
+
+Currently, \acrshort{spdc}'s \gls{reduction} mode can be dynamically enabled or disabled via an instruction issued before and after the \acrshort{spmv} kernel.
+This switches between a generic cache and a hard-coded \acrshort{rtl} configuration.
+To enhance software flexibility, \acrshort{spdc} should support dynamic configuration settings through the initial instruction.
+
+A fundamental limitation is that region sizes are restricted to powers of two, which severely constrains configuration options and led to the 25/50/25\% configuration used in the previous chapter.
+This restriction stems from address decoding that uses bit shifts to extract the \gls{set} index, an approach inherited from HPDcache.
+Supporting arbitrary region sizes would require integer division and modulo operations, which would incur significant performance and frequency costs.
+However, our Python simulations in Chapter~\ref{cha:spdc} demonstrate that precise region sizing is unnecessary for achieving good performance, making this optimization impractical relative to its implementation complexity.
+
+A practical compromise would be to provide one or two predefined configurations for \acrshort{redc} and \acrshort{spdc}, allowing dynamic design selection from software while maintaining a simple user interface.
+
+\begin{highlight}{Conclusion}{Red}
+    %TODO
+\end{highlight}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Learning Methods}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Band-Width Calculus in Hardware}
+
+\acrlong{spdc} evaluation shows that depending on matrix characteristics, the \acrshort{op} \acrshort{spmv} kernel can be compute-bound, making region calculation a critical software bottleneck.
+We addressed this by using a custom sparse format that converts latency costs into memory traffic costs.
+To eliminate any latency or memory traffic overhead, we can compute the region argument directly in hardware.
+This approach sacrifices software flexibility but enables \acrshort{csc} format compatibility and simplifies the \acrshort{op} \acrshort{spmv} kernel to the version shown in Algorithm~\ref{src:arch:op_spmv}. The required \acrlong{spdc} modifications are:
+\begin{itemize}
+    \item Configuration: The initial instruction enabling \acrlong{spdc}'s \gls{reduction} mode must accept a configuration argument specifying the word size in bytes ($s_w$), the output vector address ($c$), and the \acrshort{drc} size in bytes ($s_\mathit{DRC}$).
+    The hardware could fetch the last parameter independently.
+    Upon issuance with each \acrshort{spmv}, the half-\gls{band}-width is computed and retained until reconfigured, where $s_l$ denotes cache-line size in bytes:
+    $$w_\mathit{hB} = \dfrac{s_\mathit{DRC}-s_l}{2s_w}+1$$
+    %
+    \item Column indexing: Each outer-loop iteration requires issuing a new instruction containing the current column index $j \in \ldb 0; M-1 \rdb$, denoted $CCOL(j)$.
+    This value persists until the next $CCOL$ instruction arrives, consuming one cycle per outer-loop iteration.
+    Note that the \acrshort{reg} instruction becomes unnecessary.
+    %
+    \item Region determination: For each $RED(addr, val)$ instruction, \acrshort{spdc} computes the current row $i \in \ldb 0; M-1 \rdb$ from the address: $i = \dfrac{addr-c}{s_w}$, then determines the region as \acrshort{ibr} if $|i-j| \leq w_\mathit{hB}$, otherwise \acrshort{obr}.
+\end{itemize}
+These modifications impose minimal hardware overhead, with per-\gls{reduction} computations executed at \textit{st0} in the \acrlong{spdc} \gls{pipeline}.
+This feature becomes essential when extending \acrshort{spdc} to multi-level, multi-core architectures (Section~\ref{sec:optim:multicore}).
+
+\begin{highlight}{Conclusion}{Red}
+    %TODO
+\end{highlight}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Complete Inter-Region Cache Coherency}
+
+When executing an \acrshort{op} \acrshort{spmv} kernel with \acrlong{spdc}, we assume that the processor issues \acrshort{red} instructions strictly on addresses of the output vector $c$, and that loads and stores are issued only on non-$c$ addresses.
+\acrlong{spdc}'s current implementation provides no hardware safeguards if this assumption is violated.
+While we provide local coherency between the two \gls{reduction} regions (\acrshort{drc} and \acrshort{srt}) to prevent $c$ address duplication, we lack coherency with the \acrshort{grc}.
+Implementing global inter-region coherency would require the following modifications:
+\begin{itemize}
+    \item Configuration: When enabling \gls{reduction} mode, the configuration parameter must specify the address range for \acrshort{red} instructions (e.g., output vector $c$ and its extent).
+    %
+    \item Region Assignment: To prevent address duplication between \gls{reduction} regions and the \acrshort{grc}, loads and stores on $c$ addresses target \gls{reduction} regions, while \acrshortpl{red} on non-$c$ addresses target the \acrshort{grc}.
+    The following cases apply only when \gls{reduction} mode is enabled.
+    %
+    \item Load on $c$ address:
+    \begin{itemize}
+        \item \Glspl{miss} in \acrshort{drc} and \acrshort{srt}: Issue memory read and return data to processor, bypassing cache.
+        \item \Gls{hit} in \acrshort{drc} or \acrshort{srt}: Issue memory read, accumulate with cached data, and return result to processor.
+    \end{itemize}
+    We do not update \gls{reduction} regions on load to avoid complexity.
+    Updating would require writing zeros to memory to prevent double accumulation upon \gls{eviction} or flush.
+    %
+    \item Store on $c$ address:
+    \begin{itemize}
+        \item \Glspl{miss} in \acrshort{drc} and \acrshort{srt}: Issue memory write with store value, bypassing cache.
+        \item \Gls{hit} in \acrshort{drc} or \acrshort{srt}: Overwrite cached data with store value and issue memory write of zeros to maintain consistency.
+    \end{itemize}
+    Cache policy (write-through and write-back) can influence this design choice.
+    Crucially, data must not exist in both memory and cache simultaneously.
+    %
+    \item \acrshort{red} on non-$c$ address:
+    \begin{itemize}
+        \item \Gls{miss} in \acrshort{grc}: Issue memory read, accumulate with \acrshort{red} value, insert into \acrshort{grc} (with \gls{eviction} if needed), and mark dirty (write-back) or write to memory (write-through).
+        \item \Gls{hit} in \acrshort{grc}: Accumulate cached data with \acrshort{red} value, update \acrshort{grc} accordingly, and mark dirty (write-back) or write to memory (write-through).
+    \end{itemize}
+\end{itemize}
+It is to expect that incorrect region usage increases memory traffic and latency, degrading performance.
+Implementing this coherency system would ensure deterministic behavior, a critical feature for \acrlong{spdc} deployment.
+
+\begin{highlight}{Conclusion}{Red}
+    %TODO
+\end{highlight}
