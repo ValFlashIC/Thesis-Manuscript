@@ -6,4 +6,36 @@
 \section{SpDCache on Matrix-Matrix Multiplication Kernels}
 \label{sec:optim:spmm}
 
-%TODO
+\lettrine{T}{o} demonstrate \acrlong{spdc}'s applicability beyond the \acrshort{spmv} kernel, we present its use for \acrlong{spmspm} (\acrshort{spmspm}, $A \times B = C$), a widely used kernel essential for \acrshort{ai} applications.
+
+As discussed in Chapter~\ref{cha:background}, the \acrlong{gust} algorithm (\acrshort{gust}) offers the best performance potential for \acrshort{spmspm}.
+However, it requires handling \glspl{irrAccess} to both input matrix $B$ and output matrix $C$.
+Since \acrlong{spdc} targets \glspl{reduction} on the output, additional hardware for fetching $B$ is necessary to achieve peak performance, as demonstrated by the Gamma accelerator~\cite{Zhang2021_Gamma}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\linewidth]{Chapter_Optim/Figures/PDF/SpMSpM_SpDC.pdf}
+    \caption{\acrlong{gust} \acrshort{spmspm} Kernel with an \acrlong{op} \acrshort{spmspv} Iteration}
+    \label{fig:optim:spdc_spmspm}
+\end{figure}
+
+A \acrshort{spmspm} kernel can be decomposed into a series of \acrshort{spmspv} (\acrlong{spmspv}) operations.
+As shown in Figure~\ref{fig:optim:spdc_spmspm}, each column $C_j$ is computed from column $B_j$ and matrix $A$, yielding $M$ independent matrix-vector multiplications: $A \times B_j = C_j$.
+\acrlong{spdc} readily extends to this scenario.
+
+Since matrix $B$ is sparse, so are its columns.
+When computing the \acrlong{op} \acrshort{spmspv}, only columns of $A$ corresponding to non-zero entries in $B_j$ contribute to the result.
+While \acrshort{spmv} (dense vector) processes the entire matrix structure of $A$, \acrshort{spmspv} accesses only a subset of columns, which are not necessarily consecutive.
+As the \gls{band} in $A$ is disrupted, \acrlong{spdc}'s \gls{hit} rate in the \acrshort{drc} decreases with sparse vectors, but retains its benefits.
+When $B$ is \gls{banded}, this limitation is alleviated as columns of $A$ are consecutive in a subset.
+This issue vanishes entirely for \acrlong{spmm} (\acrshort{spmm}).
+
+Explicit flushes are unnecessary between successive \acrshort{spmspv} operations except the last one, since each iteration updates a distinct address range in $C$.
+The next iteration implicitly flushes previous values through replacements and \glspl{eviction}.
+
+This approach suits multicore architectures, where multiple \acrshort{spmspv} iterations can execute in parallel.
+The primary hardware challenge is managing shared access to matrix $A$ across cores.
+
+\begin{highlight}{Conclusion}{Red}
+    %TODO
+\end{highlight}
