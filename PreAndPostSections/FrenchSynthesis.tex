@@ -1,0 +1,50 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% French Synthesis
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{otherlanguage}{french}
+
+\FancyHeadRight{\sectitle}
+
+\renewcommand{\sectitle}{Synth\`ese en Fran\c cais}
+
+\phantomsection
+\chapter*{\sectitle}
+\addstarredchapter{\sectitle}
+
+\mtcselectlanguage{french}
+\minitoc
+
+\newcounter{synthFCnt}
+\setcounter{synthFCnt}{0}
+\renewcommand{\thesection}{\arabic{synthFCnt}}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Section 1
+
+\addtocounter{synthFCnt}{1}
+\section{TODO}
+
+{\color{red} \textbf{TODO}}
+
+% \subsection{A Section}
+
+% \subsubsection{A Subsection}
+
+% \lipsum[3]
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Section 2
+
+% \addtocounter{synthFCnt}{1}
+% \section{Second element}
+
+% \lipsum[1-5]
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{otherlanguage}
+\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
+
+\cleardoublepage %% Comment this line if this section occupies the last pages
+% \adjustmtc %% Commented for the appendices minitoc to not disappear

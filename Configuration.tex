@@ -40,8 +40,7 @@
 \usepackage[includeheadfoot, left=\LeftMargin, right=\RightMargin, top=\TopMargin, bottom=\BottomMargin]{geometry}
 \headheight=\HeadHeight
 \usepackage[square,numbers,sort&compress]{natbib}
-\if\Language\EN \usepackage[english]{babel}
-\else \usepackage[french]{babel} \fi
+\usepackage[english,french]{babel}
 % \usepackage{courierten}
 \usepackage[T1]{fontenc}
 % \usepackage{palatino}
@@ -237,7 +236,7 @@
                 \colorbox{white}{\begin{minipage}[t][5mm][t]{6.5pt}\null\hfill\null\end{minipage}}
                 \begin{minipage}{\linewidth}
                     \lstinputlisting[
-                        title=\textbf{Source Code \thechapter.\thesourcecode:} #2]{#1}
+                        title=\textbf{Source Code \thechapter.\thesourcecode~--} #2]{#1}
                 \end{minipage}
             \end{minipage}
         \end{enumerate}

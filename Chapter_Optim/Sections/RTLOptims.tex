@@ -3,21 +3,10 @@
 % RTL Optimizations
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-%fpu
-
 \section{RTL Optimizations for SpDCache}
 \label{sec:optim:rtloptims}
 
-% floating point pipeline changes? -> RTL enhancements
-% config of region size dynamic / sizes more flexible
-% learn from first iteration
-% band calculus in HW
-% inter region coherence?
-
-%TODO
-
-The \acrshort{rtl} implementation of \acrlong{spdc} provided in Chapter~\ref{cha:arch} has been enough to get performance results in accordance with all the models, and allowed us to do a precise analysis of the cache performance depending on the matrix structure.
+\lettrine{T}{he} \acrshort{rtl} implementation of \acrlong{spdc} provided in Chapter~\ref{cha:arch} has been enough to get performance results in accordance with all the models, and allowed us to do a precise analysis of the cache performance depending on the matrix structure.
 However, as already noted several times in the previous chapter, the \acrshort{rtl} implementation is missing some features and could be optimized for better practicality and performance.
 In this section, we detail the major features and optimizations that are still to be implemented.
 
@@ -28,7 +17,7 @@ The evaluated matrices (Appendix~\ref{app:mat_list}) include binary, 4-byte inte
 While 8-byte floating-point matrices dominate our dataset and present the worst-case memory traffic due to their word size, we used 8-byte integers as a practical substitute for evaluation.
 However, floating-point accumulation presents greater hardware complexity than integer accumulation: integer operations guarantee single-cycle latency, whereas floating-point operations can require multiple cycles~\cite{Hossain1998_FPU}.
 
-To support accumulations between \textit{st1} and \textit{st2} in the \gls{pipeline} (Section~\ref{sec:arch:pipeline}), we can either deploy a single-cycle high-performance FPU with area trade-offs, or extend the \gls{pipeline} to accommodate two-cycle, for example, floating-point accumulation.
+To support accumulations between \textit{st1} and \textit{st2} in the \gls{pipeline} (Section~\ref{sec:arch:pipeline}), we can either deploy a single-cycle high-performance \acrshort{fpu} with area trade-offs, or extend the \gls{pipeline} to accommodate two-cycle, for example, floating-point accumulation.
 The latter approach better suits our \textit{accumulation table}, which does not stall the \gls{pipeline} and can parallelize element-wise accumulations across stored 64-byte lines.
 Additionally, full floating-point support requires extending the AXI port to handle element-wise \acrfull{rmw} operations beyond its native integer capabilities~\cite{ARM2023_AXI}.
 
@@ -36,7 +25,7 @@ Floating-point support is critical for \acrlong{spdc} deployment.
 We anticipate that \acrshort{rtl} extensions, while time-intensive, should not present fundamental technical obstacles.
 
 \begin{highlight}{Conclusion}{Red}
-    %TODO
+    \textbf{Floating-point support} is achievable through \gls{pipeline} extension and requires extending the AXI port for element-wise operations, presenting no fundamental obstacles to implementation.
 \end{highlight}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,11 +47,9 @@ However, our Python simulations in Chapter~\ref{cha:spdc} demonstrate that preci
 A practical compromise would be to provide one or two predefined configurations for \acrshort{redc} and \acrshort{spdc}, allowing dynamic design selection from software while maintaining a simple user interface.
 
 \begin{highlight}{Conclusion}{Red}
-    %TODO
+    Dynamic region-size configuration through software, while desirable, is constrained by hardware limitations and adds complexity without significant performance gains.
+    A practical approach is to provide \textbf{predefined configurations for dynamic selection}, balancing flexibility with implementation simplicity.
 \end{highlight}
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Learning Methods}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Band-Width Calculus in Hardware}
@@ -87,7 +74,7 @@ These modifications impose minimal hardware overhead, with per-\gls{reduction} c
 This feature becomes essential when extending \acrshort{spdc} to multi-level, multi-core architectures (Section~\ref{sec:optim:multicore}).
 
 \begin{highlight}{Conclusion}{Red}
-    %TODO
+    \textbf{Hardware-based \gls{band}-width computation} eliminates software bottlenecks, enabling \acrshort{csc} format compatibility and simplifying the \acrshort{spmv} kernel with minimal hardware overhead.
 \end{highlight}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,5 +116,5 @@ It is to expect that incorrect region usage increases memory traffic and latency
 Implementing this coherency system would ensure deterministic behavior, a critical feature for \acrlong{spdc} deployment.
 
 \begin{highlight}{Conclusion}{Red}
-    %TODO
+    \textbf{Complete inter-region cache coherency} prevents address duplication across \gls{reduction} and generic regions, ensuring deterministic behavior at minimal hardware cost through address-range configuration and region-specific load/store/reduction handling.
 \end{highlight}

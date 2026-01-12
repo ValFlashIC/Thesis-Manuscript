@@ -6,6 +6,42 @@
 \section{Conclusion}
 \label{sec:optim:conclu}
 
-%TODO
+\lettrine{T}{his} chapter explored optimizations and extensions to \acrlong{spdc}, focusing on enhancing its performance and scalability for sparse matrix computations.
+We refined the \acrshort{rtl}-level implementation to maximize efficiency and resource utilization, ensuring \acrlong{spdc} remains robust and adaptable to modern computational demands.
+
+We extended \acrlong{spdc} to matrix-matrix multiplication kernels, demonstrating its versatility beyond \acrshort{spmv}.
+This extension highlights its adaptability to complex operations, reinforcing its potential as a foundational component for diverse sparse matrix computations.
+
+A key focus was integrating \acrlong{spdc} into multi-level, multi-core architectures, addressing the need for scalable, distributed processing.
+By optimizing memory traffic and parallel processing capabilities, \acrlong{spdc} becomes a viable solution for large-scale, high-performance applications.
+
+While this chapter presents theoretical insights and proposed optimizations, no evaluation has been conducted yet.
+The work aims to guide future research and implementation, with proper evaluation and analysis to conduct in subsequent studies.
+These advancements position \acrlong{spdc} as a versatile and scalable solution for modern sparse matrix processing systems, paving the way for future research in high-performance architectures.
+
+\bigskip\bigskip
+
+\begin{highlight}{Takeaways}{Mulberry}
+    \colorbf{Mulberry}{SpDCache Optimizations:}
+    \begin{itemize}
+        \item \textbf{Floating-Point Support:} Handle floating-point arithmetic within \acrlong{spdc};
+        \item \textbf{Region-Size Configuration:} Methods to dynamically adjust region sizes in \acrlong{spdc};
+        \item \textbf{\Gls{band}-Width Calculs in Hardware:} Hardware-based calculations for \acrshort{drc} \gls{band}-width;
+        \item \textbf{Complete Inter-Region Cache Coherency:} Comprehensive cache coherency protocol for \acrlong{spdc}, ensuring data integrity and consistency across regions.
+    \end{itemize}
+    \bigskip
+    \colorbf{Mulberry}{SpDCache on Matrix-Matrix Kernels:}
+    \begin{itemize}
+        \item \acrlong{spdc} effectively \textbf{extends to matrix-matrix kernels} through decomposition into matrix-vector operations;
+        \item This demonstrates \acrlong{spdc}'s versatility across different sparse linear algebra kernels.
+    \end{itemize}
+    \bigskip
+    \colorbf{Mulberry}{Multi-Level, Multi-Core SpDCache Architecture:}
+    \begin{itemize}
+        \item \acrlong{spdc} can be \textbf{scaled to multi-level, multi-core systems} by adapting slightly its architecture to each cache level and core;
+        \item Vertical matrix partitioning enables efficient parallel processing across cores;
+        \item The proposed architecture effectively addresses the challenges of scaling across cache levels and cores while optimizing memory usage.
+    \end{itemize}
+\end{highlight}
 
 \clearpage

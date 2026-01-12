@@ -343,7 +343,119 @@ TODO
 \section{Sparse Matrices Used for the Evaluations}
 \label{app:mat_list}
 
-\note{TODO: table of all 62+ matrices, with characteristics, which eval they were used for}
+\DefTblrTemplate{caption-sep}{default}{~--\enskip}
+\NewTblrTheme{fancy}{
+    \SetTblrStyle{caption-tag}{font=\bfseries}
+    \SetTblrStyle{caption-sep}{font=\bfseries}
+}
+{
+    \def\ck{\ding{51}}
+    \begin{longtblr}[
+            theme = fancy,
+            caption = {Matrices Used in Every Evaluations and Their Characteristics},
+            label = {tab:app:mat_list:matrix_list},
+        ]{
+            width = {\linewidth},
+            colspec = {X[5.0cm,l] X[0.8cm,c] *{6}{X[c]} *{2}{X[0.7cm,c]}}, % rowspec
+            rows = {m, font=\small},
+            colsep = {1pt},
+            rowhead = 2,
+            row{1-Y} = {rowsep=2pt, black!2},
+            row{1} = {c, font=\bfseries\small, black!5},
+            row{2} = {c, black!5},
+            cell{1}{1} = {l},
+            cell{1}{1-5,8} = {r=2}{},
+            cell{1}{9} = {c=2}{},
+            cell{2}{6} = {c=2}{},
+            cell{2}{9-10} = {font=\bfseries\small},
+            row{Z} = {abovesep=1pt, belowsep=1pt},
+            cell{Z}{1} = {c=10}{l, font=\small},
+            hspan = {minimal},
+            % hlines, vlines,
+            % rulesep = {-1pt},
+            hline{1,Y} = {2pt}, % Z for last
+            hline{3} = {1pt},
+            hline{Z} = {1pt, dashed},
+            vline{2,3,X} = {1-Y}{0.5pt},
+        }
+        %
+        Name & Src & \textit{M} & \textit{nnz} & \textit{d} & \textit{d\textsubscript{IB}}  & \textit{d\textsubscript{OB}} & \textit{d\textsubscript{cd}} & Eval. &              \\
+             &     &            &              &            & (with $w_\mathit{hB} = 1021$) &                              &                              & Py. & \acrshort{rtl} \\
+        %
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        %
+        SS: SuiteSparse Matrix Collection~\cite{Kolodziej2019_SuiteSparse}; Gen: Generated
+    \end{longtblr}
+}
 
 \newpage
 

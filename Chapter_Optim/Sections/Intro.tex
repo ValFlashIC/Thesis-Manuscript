@@ -6,6 +6,20 @@
 \section{Introduction}
 \label{sec:optim:intro}
 
-%TODO
+\lettrine{T}{he} increasing complexity and scale of sparse matrix computations demand not only efficient single-core architectures but also scalable solutions that can leverage multi-core and multi-level memory hierarchies.
+While the previous chapters have focused on the design, theoretical analysis, and microarchitectural implementation of \acrlong{spdc}, this chapter explores opportunities to further enhance its performance and scalability.
+
+In Chapter~\ref{cha:arch}, we demonstrated the effectiveness of \acrlong{spdc} in reducing memory traffic and improving cache utilization for \acrlong{spmv} (\acrshort{spmv}).
+However, as applications grow in size and complexity, the need for scalable architectures that can efficiently distribute workloads across multiple cores and memory levels becomes critical.
+This chapter addresses these challenges by proposing optimizations and extensions to \acrlong{spdc} that target both single-core and multi-core systems.
+
+We begin by discussing \acrshort{rtl}-level optimizations for \acrlong{spdc}, focusing on fine-tuning the hardware implementation to maximize performance and resource utilization.
+Next, we explore the application of \acrlong{spdc} to \acrlong{spmspm} (\acrshort{spmspm}), extending its benefits beyond \acrshort{spmv} and demonstrating its adaptability to more complex operations.
+
+Finally, we investigate the integration of \acrlong{spdc} into multi-level, multi-core architectures.
+This includes designing a scalable version of \acrlong{spdc} that can operate efficiently across multiple cores, as well as optimizing memory bandwidth usage to ensure high throughput in distributed environments.
+By addressing these aspects, we aim to provide a comprehensive roadmap for scaling \acrlong{spdc} to meet the demands of modern, data-intensive applications.
+
+Through these optimizations and extensions, this chapter underscores the versatility and scalability of \acrlong{spdc}, reinforcing its potential as a foundational component for future high-performance sparse matrix processing systems.
 
 \clearpage

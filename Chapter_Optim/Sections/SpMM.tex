@@ -37,5 +37,6 @@ This approach suits multicore architectures, where multiple \acrshort{spmspv} it
 The primary hardware challenge is managing shared access to matrix $A$ across cores.
 
 \begin{highlight}{Conclusion}{Red}
-    %TODO
+    \textbf{\acrlong{spdc} effectively extends to \acrshort{spmspm} kernels} through decomposition into \textbf{\acrshort{spmspv} operations}, maintaining performance benefits while introducing manageable trade-offs in cache \gls{hit} rates for sparse vectors.
+    This demonstrates \acrlong{spdc}'s \textbf{versatility} across different sparse linear algebra kernels.
 \end{highlight}
