@@ -6,6 +6,9 @@
 
 \renewcommand{\sectitle}{Appendices}
 
+\addtocontents{lof}{\addvspace{10pt}}
+
+% \addtocounter{chapter}{1}
 \phantomsection
 \chapter*{\sectitle}
 \addstarredchapter{\sectitle}
@@ -15,6 +18,14 @@
 \newcounter{appendCnt}
 \setcounter{appendCnt}{0}
 \renewcommand{\thesection}{\Alph{appendCnt}}
+
+\setcounter{figure}{0}
+\let\originalthefigure\thefigure
+\renewcommand{\thefigure}{\thesection.\arabic{figure}}
+
+\setcounter{table}{0}
+\let\originalthetable\thetable
+\renewcommand{\thetable}{\thesection.\arabic{table}}
 
 \newpage
 
@@ -343,12 +354,12 @@ TODO
 \section{Sparse Matrices Used for the Evaluations}
 \label{app:mat_list}
 
-\DefTblrTemplate{caption-sep}{default}{~--\enskip}
-\NewTblrTheme{fancy}{
-    \SetTblrStyle{caption-tag}{font=\bfseries}
-    \SetTblrStyle{caption-sep}{font=\bfseries}
-}
 {
+    \DefTblrTemplate{caption-sep}{default}{~--\enskip}
+    \NewTblrTheme{fancy}{
+        \SetTblrStyle{caption-tag}{font=\bfseries}
+        \SetTblrStyle{caption-sep}{font=\bfseries}
+    }
     \def\ck{\ding{51}}
     \begin{longtblr}[
             theme = fancy,
@@ -356,7 +367,7 @@ TODO
             label = {tab:app:mat_list:matrix_list},
         ]{
             width = {\linewidth},
-            colspec = {X[5.0cm,l] X[0.8cm,c] *{6}{X[c]} *{2}{X[0.7cm,c]}}, % rowspec
+            colspec = {X[3.5cm,l] X[0.8cm,c] *{6}{X[c]} *{2}{X[0.8cm,c]}}, % rowspec
             rows = {m, font=\small},
             colsep = {1pt},
             rowhead = 2,
@@ -382,78 +393,97 @@ TODO
         Name & Src & \textit{M} & \textit{nnz} & \textit{d} & \textit{d\textsubscript{IB}}  & \textit{d\textsubscript{OB}} & \textit{d\textsubscript{cd}} & Eval. &              \\
              &     &            &              &            & (with $w_\mathit{hB} = 1021$) &                              &                              & Py. & \acrshort{rtl} \\
         %
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & SS  & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
-        x & Gen & 0.00~M & 0.00~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\% & \ck & \ck \\
+        wiki-Vote               & SS  & 8.30~k & 104~k  & 1.51 e-3 & 3.55 e-3 & 8.92 e-4 & 17\%  & \ck & \ck \\
+        poisson3Da              & SS  & 13.5~k & 353~k  & 1.93 e-3 & 2.71 e-3 & 1.80 e-3 & 15\%  & \ck & \ck \\
+        soc-Epinions1           & SS  & 75.9~k & 509~k  & 8.84 e-5 & 7.00 e-4 & 7.16 e-5 & 17\%  & \ck & \ck \\
+        cit-HepTh               & SS  & 27.8~k & 353~k  & 4.57 e-4 & 1.05 e-3 & 4.11 e-4 & 14\%  & \ck & \ck \\
+        patents\_main           & SS  & 241~k  & 561~k  & 9.69 e-6 & 2.00 e-8 & 9.78 e-6 & 13\%  & \ck & \ck \\
+        sme3Db                  & SS  & 29.1~k & 2.08~M & 2.46 e-3 & 3.08 e-3 & 2.42 e-3 & 15\%  & \ck & \ck \\
+        Stanford                & SS  & 282~k  & 2.31~M & 2.91 e-5 & 2.61 e-5 & 2.91 e-5 & 13\%  &     & \ck \\
+        scircuit                & SS  & 171~k  & 959~k  & 3.28 e-5 & 1.83 e-3 & 1.11 e-5 & 25\%  & \ck & \ck \\
+        msc10848                & SS  & 10.8~k & 1.23~M & 1.05 e-2 & 2.10 e-2 & 8.15 e-3 & 73\%  & \ck & \ck \\
+        opt1                    & SS  & 15.4~k & 1.93~M & 8.09 e-3 & 5.44 e-2 & 1.31 e-3 & 86\%  & \ck & \ck \\
+        x104                    & SS  & 108~k  & 10.2~M & 8.66 e-4 & 2.60 e-2 & 3.86 e-4 & 79\%  & \ck & \ck \\
+        consph                  & SS  & 83.3~k & 6.01~M & 8.65 e-4 & 2.27 e-2 & 3.21 e-4 & 58\%  & \ck & \ck \\
+        xenon2                  & SS  & 157~k  & 3.87~M & 1.56 e-4 & 1.06 e-2 & 1.88 e-5 & 41\%  &     & \ck \\
+        email-Enron             & SS  & 36.7~k & 368~k  & 2.73 e-4 & 1.69 e-3 & 1.91 e-4 & 18\%  & \ck & \ck \\
+        pwtk                    & SS  & 218~k  & 11.6~M & 2.45 e-4 & 2.52 e-2 & 1.01 e-5 & 75\%  & \ck & \ck \\
+        webbase-1M              & SS  & 1.00~M & 3.11~M & 3.11 e-6 & 6.55 e-4 & 1.77 e-6 & 25\%  & \ck & \ck \\
+        ramage02                & SS  & 16.8~k & 2.87~M & 1.01 e-2 & 3.77 e-2 & 6.44 e-3 & 85\%  & \ck & \ck \\
+        2cubes\_sphere          & SS  & 101~k  & 1.65~M & 1.60 e-4 & 6.16 e-3 & 3.73 e-5 & 23\%  & \ck & \ck \\
+        amazon0312              & SS  & 401~k  & 3.20~M & 1.99 e-5 & 6.88 e-4 & 1.65 e-5 & 18\%  & \ck & \ck \\
+        bcsstk10                & SS  & 1.09~k & 22.1~k & 1.87 e-2 & 1.87 e-2 & 0.00 e-0 & 62\%  &     & \ck \\
+        bcsstk13                & SS  & 2.00~k & 83.9~k & 2.09 e-2 & 2.73 e-2 & 7.21 e-4 & 67\%  &     & \ck \\
+        bcsstk17                & SS  & 11.0~k & 429~k  & 3.56 e-3 & 2.01 e-2 & 0.00 e-0 & 72\%  & \ck & \ck \\
+        bcsstk32                & SS  & 44.6~k & 2.01~M & 1.01 e-3 & 1.95 e-2 & 1.35 e-4 & 75\%  & \ck & \ck \\
+        ca-CondMat              & SS  & 23.1~k & 187~k  & 3.49 e-4 & 3.96 e-4 & 3.45 e-4 & 13\%  & \ck & \ck \\
+        cage12                  & SS  & 130~k  & 2.03~M & 1.20 e-4 & 4.23 e-3 & 5.46 e-5 & 16\%  & \ck & \ck \\
+        CAG\_mat364             & SS  & 364    & 13.6~k & 1.03 e-1 & 1.03 e-1 & 0.00 e-0 & 46\%  &     & \ck \\
+        cant                    & SS  & 62.5~k & 4.01~M & 1.03 e-3 & 3.17 e-2 & 0.00 e-0 & 71\%  & \ck & \ck \\
+        cop20k\_A               & SS  & 121~k  & 2.62~M & 1.79 e-4 & 2.80 e-3 & 1.34 e-4 & 31\%  & \ck & \ck \\
+        crankseg\_2             & SS  & 63.8~k & 14.1~M & 3.47 e-3 & 3.70 e-2 & 2.37 e-3 & 73\%  &     & \ck \\
+        ct20stif                & SS  & 52.3~k & 2.70~M & 9.85 e-4 & 1.96 e-2 & 2.38 e-4 & 74\%  &     & \ck \\
+        ex2                     & SS  & 441    & 26.8~k & 1.38 e-1 & 1.38 e-1 & 0.00 e-0 & 84\%  &     & \ck \\
+        filter2D                & SS  & 1.67~k & 10.8~k & 3.86 e-3 & 3.86 e-3 & 0.00 e-0 & 18\%  &     & \ck \\
+        filter3D                & SS  & 106~k  & 2.71~M & 2.39 e-4 & 8.15 e-3 & 8.50 e-5 & 22\%  & \ck & \ck \\
+        Ge87H76                 & SS  & 113~k  & 7.89~M & 6.18 e-4 & 1.38 e-2 & 3.77 e-4 & 31\%  & \ck & \ck \\
+        Ge99H100                & SS  & 113~k  & 8.45~M & 6.62 e-4 & 1.42 e-2 & 4.14 e-4 & 32\%  & \ck & \ck \\
+        gupta2                  & SS  & 62.1~k & 4.25~M & 1.10 e-3 & 3.88 e-3 & 1.01 e-3 & 38\%  & \ck & \ck \\
+        Journals                & SS  & 124    & 12.1~k & 7.85 e-1 & 7.85 e-1 & 0.00 e-0 & 99\%  &     & \ck \\
+        LeGresley\_4908         & SS  & 4.91~k & 30.5~k & 1.27 e-3 & 1.39 e-3 & 1.19 e-3 & 15\%  & \ck & \ck \\
+        lhr71                   & SS  & 70.3~k & 1.53~M & 3.09 e-4 & 2.02 e-3 & 2.58 e-4 & 61\%  &     & \ck \\
+        m133-b3                 & SS  & 200~k  & 801~k  & 2.00 e-5 & 9.97 e-6 & 2.01 e-5 & 17\%  & \ck & \ck \\
+        mac\_econ\_fwd500       & SS  & 207~k  & 1.27~M & 2.99 e-5 & 2.99 e-3 & 4.10 e-7 & 21\%  & \ck & \ck \\
+        mario002                & SS  & 390~k  & 2.10~M & 1.38 e-5 & 8.98 e-4 & 9.17 e-6 & 18\%  & \ck & \ck \\
+        mbeacxc                 & SS  & 496    & 49.9~k & 2.03 e-1 & 2.03 e-1 & 0.00 e-0 & 59\%  &     & \ck \\
+        mhda416                 & SS  & 416    & 8.56~k & 4.95 e-2 & 4.95 e-2 & 0.00 e-0 & 83\%  &     & \ck \\
+        m\_t1                   & SS  & 97.6~k & 9.75~M & 1.02 e-3 & 2.62 e-2 & 4.89 e-4 & 81\%  & \ck & \ck \\
+        offshore                & SS  & 260~k  & 4.24~M & 6.29 e-5 & 5.15 e-3 & 2.26 e-5 & 19\%  & \ck & \ck \\
+        ohne2                   & SS  & 181~k  & 11.1~M & 3.36 e-4 & 8.91 e-3 & 2.39 e-4 & 41\%  &     & \ck \\
+        p2p-Gnutella31          & SS  & 62.6~k & 148~k  & 3.78 e-5 & 2.60 e-4 & 3.03 e-5 & 13\%  & \ck & \ck \\
+        pdb1HYS                 & SS  & 36.4~k & 4.34~M & 3.28 e-3 & 4.97 e-2 & 5.61 e-4 & 83\%  & \ck & \ck \\
+        qc324                   & SS  & 324    & 26.7~k & 2.55 e-1 & 2.55 e-1 & 0.00 e-0 & 83\%  &     & \ck \\
+        raefsky3                & SS  & 21.2~k & 1.49~M & 3.31 e-3 & 3.51 e-2 & 1.41 e-5 & 100\% & \ck & \ck \\
+        rma10                   & SS  & 46.8~k & 2.37~M & 1.08 e-3 & 1.74 e-2 & 3.47 e-4 & 79\%  & \ck & \ck \\
+        roadNet-CA              & SS  & 1.97~M & 5.53~M & 1.42 e-6 & 1.16 e-3 & 2.20 e-7 & 18\%  & \ck & \ck \\
+        rotor2                  & SS  & 791    & 10.7~k & 1.71 e-2 & 1.71 e-2 & 0.00 e-0 & 68\%  &     & \ck \\
+        ship\_001               & SS  & 34.9~k & 4.64~M & 3.81 e-3 & 3.35 e-2 & 1.99 e-3 & 83\%  & \ck & \ck \\
+        shipsec1                & SS  & 141~k  & 7.81~M & 3.94 e-4 & 1.12 e-2 & 2.35 e-4 & 76\%  & \ck & \ck \\
+        Si2                     & SS  & 769    & 17.8~k & 3.01 e-2 & 3.01 e-2 & 0.00 e-0 & 26\%  &     & \ck \\
+        Trefethen\_700          & SS  & 700    & 12.7~k & 2.58 e-2 & 2.58 e-2 & 0.00 e-0 & 25\%  &     & \ck \\
+        TSOPF\_RS\_b39\_c7      & SS  & 14.1~k & 252~k  & 1.27 e-3 & 1.03 e-3 & 1.31 e-3 & 44\%  & \ck & \ck \\
+        vsp\_bcsstk30\_[...]    & SS  & 58.3~k & 4.03~M & 1.18 e-3 & 1.18 e-3 & 1.18 e-3 & 13\%  & \ck & \ck \\
+        web-Google              & SS  & 916~k  & 5.11~M & 6.08 e-6 & 6.06 e-6 & 6.08 e-6 & 13\%  & \ck & \ck \\
+        west0381                & SS  & 381    & 2.16~k & 1.49 e-2 & 1.49 e-2 & 0.00 e-0 & 18\%  &     & \ck \\
+        EternityII\_Etilde $^*$ & SS  & 10.1~k & 1.17~M & 5.70 e-4 & 2.22 e-5 & 2.81 e-5 & 13\%  & \ck &     \\
+        Maragal\_7 $^*$         & SS  & 46.8~k & 1.20~M & 9.65 e-4 & 8.63 e-4 & 1.77 e-3 & 24\%  & \ck &     \\
+        NotreDame\_actors $^*$  & SS  & 392~k  & 1.47~M & 2.93 e-5 & 1.68 e-4 & 8.87 e-5 & 16\%  & \ck &     \\
+        degme $^*$              & SS  & 186~k  & 8.13~M & 6.64 e-5 & 1.37 e-5 & 1.87 e-5 & 23\%  & \ck &     \\
         %
-        SS: SuiteSparse Matrix Collection~\cite{Kolodziej2019_SuiteSparse}; Gen: Generated
+        cit\_Patents            & SS  & 3.77~M & 16.5~M & 0.00 e-0 & 0.00 e-0 & 0.00 e-0 & 00\%  & \ck &     \\ %%%%% missing infos here
+        %
+        Alice\_1021             & Gen & 10.0~k & 193~k  & 1.93 e-3 & 9.98 e-3 & 9.00 e-8 & 14\%  & \ck & \ck \\
+        Bob\_1021               & Gen & 10.0~k & 193~k  & 1.93 e-3 & 9.98 e-3 & 1.70 e-7 & 14\%  & \ck & \ck \\
+        Charlie\_1021           & Gen & 10.0~k & 193~k  & 1.93 e-3 & 9.98 e-3 & 3.20 e-7 & 14\%  & \ck & \ck \\
+        Diana\_1021             & Gen & 10.0~k & 193~k  & 1.93 e-3 & 9.98 e-3 & 6.10 e-7 & 14\%  & \ck & \ck \\
+        Ethan\_1021             & Gen & 10.0~k & 193~k  & 1.93 e-3 & 9.98 e-3 & 1.12 e-6 & 14\%  & \ck & \ck \\
+        Fiona\_1021             & Gen & 10.0~k & 193~k  & 1.93 e-3 & 9.98 e-3 & 2.06 e-6 & 13\%  & \ck & \ck \\
+        George\_1021            & Gen & 10.0~k & 194~k  & 1.94 e-3 & 9.98 e-3 & 3.76 e-6 & 14\%  & \ck & \ck \\
+        Hannah\_1021            & Gen & 10.0~k & 194~k  & 1.94 e-3 & 9.98 e-3 & 6.88 e-6 & 14\%  & \ck & \ck \\
+        Isaac\_1021             & Gen & 10.0~k & 194~k  & 1.94 e-3 & 9.98 e-3 & 1.24 e-5 & 14\%  & \ck & \ck \\
+        Julia\_1021             & Gen & 10.0~k & 195~k  & 1.95 e-3 & 9.98 e-3 & 2.07 e-5 & 13\%  & \ck & \ck \\
+        Kevin\_1021             & Gen & 10.0~k & 197~k  & 1.97 e-3 & 9.98 e-3 & 4.13 e-5 & 13\%  & \ck & \ck \\
+        Laura\_1021             & Gen & 10.0~k & 198~k  & 1.98 e-3 & 9.98 e-3 & 6.20 e-5 & 13\%  & \ck & \ck \\
+        Michael\_1021           & Gen & 10.0~k & 205~k  & 2.05 e-3 & 9.98 e-3 & 1.42 e-4 & 13\%  & \ck & \ck \\
+        Nina\_1021              & Gen & 10.0~k & 215~k  & 2.15 e-3 & 9.98 e-3 & 2.64 e-4 & 13\%  & \ck & \ck \\
+        Oliver\_1021            & Gen & 10.0~k & 228~k  & 2.28 e-3 & 9.98 e-3 & 4.34 e-4 & 13\%  & \ck & \ck \\
+        Paula\_1021             & Gen & 10.0~k & 265~k  & 2.65 e-3 & 9.98 e-3 & 8.86 e-4 & 13\%  & \ck & \ck \\
+        Quentin\_1021           & Gen & 10.0~k & 324~k  & 3.24 e-3 & 9.98 e-3 & 1.62 e-3 & 13\%  & \ck & \ck \\
+        Rachel\_1021            & Gen & 10.0~k & 428~k  & 4.28 e-3 & 9.98 e-3 & 2.91 e-3 & 13\%  & \ck & \ck \\
+        Samuel\_1021            & Gen & 10.0~k & 628~k  & 6.28 e-3 & 9.98 e-3 & 5.39 e-3 & 13\%  & \ck & \ck \\
+        Tina\_1021              & Gen & 10.0~k & 998~k  & 9.98 e-3 & 9.98 e-3 & 9.98 e-3 & 14\%  & \ck & \ck \\
+        %
+        SS: SuiteSparse Matrix Collection~\cite{Kolodziej2019_SuiteSparse}; Gen: Generated; $^*$ not square
     \end{longtblr}
 }
 
@@ -495,6 +525,12 @@ TODO (get infos before end of contract)
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
+
+\let\thefigure\originalthefigure
+\renewcommand{\thefigure}{\thechapter.\arabic{figure}}
+
+\let\thetable\originalthetable
+\renewcommand{\thetable}{\thechapter.\arabic{table}}
 
 \cleardoublepage %% Comment this line if this section occupies the last pages
 \adjustmtc
