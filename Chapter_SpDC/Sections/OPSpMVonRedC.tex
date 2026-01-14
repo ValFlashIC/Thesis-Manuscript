@@ -25,7 +25,7 @@ In fact, the \emph{key} is determined via an indirection with an access to $\mat
     }
 \end{algorithm}
 
-In memory, $A$ is stored as three dense tables, but conceptually, as we perform the \acrshort{op} multiplication, the matrix is traversed from top to bottom, then left to right.
+In memory, $A$ is stored as three dense tables (\acrshort{csc}), but conceptually, as we perform the \acrshort{op} multiplication, the matrix is traversed from top to bottom, then left to right.
 A row in the matrix corresponds to a \emph{key}, or equivalently, a position in the output vector $c$.
 In Figure~\ref{fig:spdc:spmv_on_matrix}, we show an example of a sparse matrix with a few non-zero values (\ding{192} - \ding{197}).
 As we traverse the matrix, we first perform a \gls{reduction} for the value on row $\mathit{key}_{10}$, then on row $\mathit{key}_{20}$ and then $\mathit{key}_{30}$.
@@ -62,7 +62,8 @@ In the example in Figure~\ref{fig:spdc:spmv_on_matrix}, the first rows (with $\m
 A ``smarter'' cache would prefer to focus on these rows, keeping the corresponding cache-line and accumulating every elements before a final \gls{eviction}.
 On the contrary, the sparser rows of the matrix would not be kept by the ``smarter'' cache, thus avoiding thrashing data from denser regions.
 
-Going forward, we focus on the case of \gls{banded} matrices which have a denser region around the diagonal.
+The matrix structure is key to designing an efficient \gls{redC} for \acrshort{op} \acrshort{spmv}.
+Going forward, we focus on the case of \gls{banded} matrices, a widely used type of sparse matrix, which have a denser region around the diagonal.
 For a \gls{redC} to work efficiently with such matrices, the dense \gls{band} should be prioritized, and the isolated elements out of the \gls{band} should be processed separately to avoid these sparse elements disturbing the storage of the dense data.
 This is the main idea of \acrlong{spdc} (Paper~\ref{publ:SpDC}), which is a \gls{redC} with dedicated memory regions for the in-\gls{band} and out-of-\gls{band} of a matrix.
 We describe its behavior in the following sections.

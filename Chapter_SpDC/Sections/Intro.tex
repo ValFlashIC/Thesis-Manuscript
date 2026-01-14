@@ -6,12 +6,12 @@
 \section{Introduction}
 \label{sec:spdc:intro}
 
-\lettrine{I}{n} the previous chapters, we analyzed the causes and effects of irregular memory accesses in sparse computations and identified the \acrfull{op} algorithm of \acrfull{spmv} ($A \times b = c$) as an important example.
-The \acrshort{op} algorithm generates irregular updates on the output vector $c$, as each non-zero element of the input matrix $A$ produces updates to distinct, and often distant, location in the output vector $c$.
+\lettrine{I}{n} the previous chapters, we analyzed the causes and effects of irregular memory accesses in sparse computations and identified that the \acrfull{op} algorithm of \acrfull{spmv} ($A \times b = c$) has potential for high performance and optimization.
+The \acrshort{op} algorithm generates irregular updates on the output vector $c$, called ``random'' \glspl{reduction}, as each non-zero element of the input matrix $A$ produces updates to distinct, and often distant, location in the output vector $c$.
 These ``random'' \glspl{reduction} render stress the memory system.
 
 Conventional cache hierarchies are designed for regular, predictable access streams that exploit spatial and temporal locality.
-In contrast, \acrshort{op} \acrshort{spmv} exhibits poor locality, leading to low cache utilization, frequent evictions, and thus requiring more memory bandwidth.
+In contrast, \acrshort{op} \acrshort{spmv} exhibits poor locality, leading to low cache utilization, frequent \glspl{eviction}, and thus requiring more memory bandwidth for the output vector $c$.
 
 Previous works, such as PHI~\cite{Mukkara2019_PHI}, SortCache~\cite{Srikanth2021_SortCache}, and ASA~\cite{Zhang2022_ASA}, have proposed \gls{reduction}-aware cache mechanisms to alleviate irregularity by improving accumulation and storage efficiency.
 However, these solutions do not exploit the structural properties of the processed matrices, and therefore miss optimization opportunities when the matrix has some regularity.

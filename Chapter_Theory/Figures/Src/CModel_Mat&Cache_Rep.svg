@@ -9,7 +9,7 @@
    id="svg1"
    inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
    sodipodi:docname="CModel_Mat&amp;Cache_Rep.svg"
-   inkscape:export-filename="CModel_matrix&amp;cache_rep.pdf"
+   inkscape:export-filename="CModel_Mat&amp;Cache_Rep.pdf"
    inkscape:export-xdpi="333"
    inkscape:export-ydpi="333"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -28,9 +28,9 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      showgrid="true"
-     inkscape:zoom="3.0044184"
-     inkscape:cx="464.14973"
-     inkscape:cy="239.48063"
+     inkscape:zoom="1.5022092"
+     inkscape:cx="395.75047"
+     inkscape:cy="148.78088"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
@@ -831,25 +831,25 @@
     <text
        xml:space="preserve"
        style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;line-height:2.86631px;font-family:Cambria;-inkscape-font-specification:'Cambria Italic';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:none;fill-opacity:1;stroke:none;stroke-width:0.705556;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       x="384.96872"
+       x="386.29163"
        y="60.85416"
        id="text21-0-3-1-14-9-6-9-8"><tspan
          sodipodi:role="line"
          id="tspan21-1-5-6-3-2-8-7-8"
          style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:2.86631px;font-family:Cambria;-inkscape-font-specification:'Cambria Bold Italic';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.705556;stroke-opacity:1"
-         x="384.96872"
-         y="60.85416">empty</tspan></text>
+         x="386.29163"
+         y="60.85416">free</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;line-height:2.86631px;font-family:Cambria;-inkscape-font-specification:'Cambria Italic';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:none;fill-opacity:1;stroke:none;stroke-width:0.705556;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       x="384.96872"
+       x="386.29163"
        y="71.437492"
        id="text21-0-3-1-14-9-6-9-8-3"><tspan
          sodipodi:role="line"
          id="tspan21-1-5-6-3-2-8-7-8-2"
          style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:2.86631px;font-family:Cambria;-inkscape-font-specification:'Cambria Bold Italic';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.705556;stroke-opacity:1"
-         x="384.96872"
-         y="71.437492">empty</tspan></text>
+         x="386.29163"
+         y="71.437492">free</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;line-height:2.86631px;font-family:Cambria;-inkscape-font-specification:'Cambria Italic';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:none;fill-opacity:1;stroke:none;stroke-width:0.705556;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"

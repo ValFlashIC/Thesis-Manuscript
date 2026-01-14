@@ -8,8 +8,9 @@
 
 \lettrine{P}{erforming} a \gls{reduction} in hardware requires a read from memory, followed by an accumulation and a write back.
 This operation is denoted $\mathit{RED}(key, value)$~\cite{Srikanth2021_SortCache} with the \emph{key} being the position in the output vector $c$.
+
 In Figure~\ref{fig:spdc:GC_cache_WB}, we show three cases that occur in a generic data-cache when a \gls{reduction} is performed.
-If the vector entry ($c_{key}$) \glspl{hit} in the cache, the \emph{update} is performed by the processor (in \textit{red}) with no external memory access (on the left in the figure).
+If the vector entry ($c_{key}$) \glspl{hit} in the cache, the update is performed by the processor (in \textit{red}) with no external memory access (on the left in the figure).
 When there is a \gls{miss}, the operation is blocked until the read from main memory completes (in the middle of the figure).
 Potentially, the \gls{miss} will also trigger an \gls{eviction}, which exacerbates the blocking condition, because a cache-line must first be written back, before the read from main memory can be performed (on the right in the figure).
 In scientific applications, the matrices are extremely large and only a small portion of the vector $c$ can reside in the cache, thus the \emph{miss+evict} case arises frequently.
@@ -21,7 +22,8 @@ In this case, the cache-line is inconsistent with main memory.
 Only when the line needs to be evicted, is a read performed (on the right in the figure).
 In the cache, the values in the line are accumulated with the main memory data, and the result is written back.
 
-As seen in the figure, a \gls{redC} reduces the number of main memory accesses in the case of a \gls{miss}.
+As seen in the figure, for \gls{hit} and \emph{miss+evict} cases, the number of memory transactions is the same as a generic cache.
+However, a \gls{redC} reduces the number of main memory accesses in the case of a \gls{miss}, by postponing the main memory update until \gls{eviction}.
 Instead of having the classic ascendant policy where data is stored in the cache to be pulled-up again by the processor latter-on, the \gls{redC} has a descendant policy: data is written/updated in the cache to be pushed-down to memory latter-on.
 Instead of two memory transactions that can stall the processor, the \gls{redC} only needs a single ``fire-and-forget'' instruction, meaning it can be issued without waiting for an answer, thus avoiding processor stalls.
 At the end of the algorithm, the \gls{redC} must be flushed.

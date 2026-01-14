@@ -6,20 +6,24 @@
 \section{Architecture of SpDCache}
 \label{sec:spdc:archispdc}
 
-\lettrine{S}{pDCache} was developed to replace a generic L1 data-cache.
-Thus, it must function as a generic cache when receiving load and store memory instructions from the processor.
-Indeed, when processing an \acrshort{op} \acrshort{spmv} kernel, the sequential reads to the matrix $A$ and the vector $b$ should take advantage of the generic cache behavior, due to their spatial locality.
-Only, the output vector $c$ suffers from ``random'' \glspl{reduction} that must be processed with a region-wise \gls{redC}.
-\acrlong{spdc} can be extended to a multilevel memory hierarchy, as well as multicore architectures (see Chapter~\ref{cha:optim}).
-However, our study focuses on a single level cache hierarchy with a single core, to better understand \acrlong{spdc} behavior.
+\lettrine{W}{e} design a specialized data-cache architecture, called \acrlong{spdc}, that exploits the two-region structure of \gls{banded} matrices to reduce memory traffic during \glspl{reduction} operations on the output vector $c$.
+To better understand \acrlong{spdc} behavior, our study focuses on a single-level cache hierarchy with a single core executing \acrshort{spmv} kernels on \gls{banded} matrix case.
+However, \acrlong{spdc} is designed to extend to multilevel memory hierarchies and multicore architectures (see Chapter~\ref{cha:optim}), and to adapt to other region configurations.
+As an isolated data-cache, \acrlong{spdc} must satisfy three key requirements:
+\begin{itemize}
+    \item \textbf{Generic cache functionality:} \acrlong{spdc} operates as a standard cache for load and store instructions from the processor, enabling sequential reads of matrix $A$ and vector $b$ to leverage spatial locality.
+    \item \textbf{Reduction capability:} \acrlong{spdc} functions as a \gls{redC} to minimize inherent memory traffic costs of \gls{reduction} operations on output vector $c$.
+    \item \textbf{Region-wise reduction:} Dedicated cache regions for sparse and dense matrix regions mitigate the \gls{irrAccess} patterns of \glspl{reduction}.
+\end{itemize}
 
-As shown in Figure~\ref{fig:spdc:cache_partition}, \acrlong{spdc} is divided into three regions.
+As shown in Figure~\ref{fig:spdc:cache_partition}, \acrlong{spdc} is divided into three memory regions.
 The first, \acrfull{grc}, is for all memory transactions unrelated to the output vector $c$, including reads of $A$ and $b$.
 It is a classic, \gls{set}-associative cache and is required for the processor to operate normally, but is not the focus in this chapter.
 The other two regions, called \acrfull{drc} and \acrfull{srt}, are able to perform \glspl{reduction} on $c$.
 The \acrshort{drc} works as a line-wise, \gls{set}-associative \gls{redC} to hold high density data in the \acrlong{ibr} of the matrix (\acrshort{ibr}, \textit{orange}).
 The difference with the \acrshort{grc} is that it is able to perform \glspl{reduction} and it is dedicated to the \emph{banded} region, so that spurious accesses outside of the \gls{band} do not provoke undesired \glspl{eviction}.
 Finally, the \acrshort{srt} works as an element-wise, fully-associative table whose role is to handle sparse regions, such as the \acrlong{obr} in the matrix (\acrshort{obr}, \textit{blue}).
+This region is well-suited for handling isolated data and reducing memory traffic, with further analysis of this design choice presented in the next chapter.
 
 \begin{figure}[htbp]
     \centering
@@ -48,9 +52,11 @@ The \acrshort{red} instruction contains a `region' field which indicates whether
 As we will see, the hardware may override the software selection to avoid duplication.
 The \acrshort{drc} communicates with the memory hierarchy using read and write transactions over entire cache-lines, to propagate the local \emph{updates} to the downstream memory.
 As \acrshort{srt} \emph{updates} are for isolated elements, it does not make sense to bring a full line into the L1 to modify a single word. 
-The \acrshort{srt} thus propagates \emph{updates} by issuing atomic \acrlong{rmw} transactions (\acrshortpl{rmw}), which must be processed remotely and 
+The \acrshort{srt} thus propagates \emph{updates} by issuing atomic, element-wise \acrlong{rmw} transactions (\acrshortpl{rmw}), which must be processed remotely and 
 close to the main memory.
-Existing protocols such as \mbox{AXI-4}~\cite{ARM2023_AXI} already support atomic transactions for certain operations (logical, integer add, min, max) and these could be extended to include floating point addition.
+This is a stringent requirement for the memory hierarchy, but it is realistic.
+Indeed, existing protocols such as \mbox{AXI-4}~\cite{ARM2023_AXI} already support atomic transactions for certain operations (logical, integer add, min, max) and these could be extended to include floating point addition.
+Moreover, this requirement becomes more manageable when extending \acrlong{spdc} to multilevel cache hierarchies (see Chapter~\ref{cha:optim}).
 The \acrshortpl{rmw} from the \acrshort{srt} are temporarily buffered in a small queue (\acrshort{rmwq}), to avoid congestion.
 
 \acrlong{spdc} is driven by three key design principles.
@@ -75,7 +81,7 @@ If it is \acrshort{ibr}, then it is necessarily a \gls{miss} case, and the value
 When we allocate this line, we ensure that it does not create a duplication of existing entries in the \acrshort{srt}.
 If there is duplication, as in our example, these entries (\addr{00}, \addr{02}, \addr{06}) are deleted from the \acrshort{srt} and merged into the newly allocated cache-line ($set_1, line_1$).
 
-If the target region is the \acrshort{obr}, then the \gls{reduction} (\addr{3d} -- \textit{purple}) is processed in the \acrshort{srt}, either allocating a new entry (\gls{miss} case) or accumulating with an existing entry (\gls{hit} case).
+If the target region is the \acrshort{obr}, then the \gls{reduction} (\addr{3d} -- \textit{purple}) is processed in the \acrshort{srt}, either allocating a new entry (\gls{miss} case) or accumulating in cache with an existing entry (\gls{hit} case).
 
 Now, we describe the \gls{eviction} scenarios.
 In the \acrshort{drc}, the line to evict is selected ($set_2, line_2$ -- \textit{pink}), a read to main memory is performed, the values from the evicted cache-line are accumulated and a write to main memory is issued.
@@ -84,6 +90,7 @@ To avoid bringing a full line from main memory, the non-zero values (\addr{a1} a
 The decision to convert evicted cache-lines to atomic \acrshortpl{rmw} is based on a configurable density threshold.
 PHI~\cite{Mukkara2019_PHI}, an accelerator similar to \acrlong{spdc}, used a threshold of one non-zero word per eight words in a cache-line.
 Given our queuing mechanism to handle congestion, we use a more aggressive threshold of three non-zero words per cache-line.
+This threshold is chosen empirically, but its specific value has minimal impact, as our evaluation shows that very few elements are transferred through this mechanism.
 
 The width of the \emph{band} ($w_B$), must be selected so that one column of the \emph{band} remains blocked in the \acrshort{drc}, otherwise, this region of the cache is always thrashing.
 This is our approach to selecting $w_B$, which we detail in the next chapter.

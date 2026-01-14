@@ -23,7 +23,7 @@ When an access occurs, the cache controller searches for the requested address a
 If the address is found, a \gls{hit} occurs and the data is served directly to the core.
 Otherwise, a \gls{miss} occurs, triggering a memory fetch from a lower cache level or from main memory.
 If necessary, an existing cache-line is evicted to make room for the new data.
-Each cache-line is associated with a \gls{tag} that record its address and additional bits to keep track of its state.
+Each cache-line is associated with a \gls{tag} that records its address and additional bits to keep track of its state.
 
 Several mapping policies exist.
 In a direct-mapped cache, each memory block maps to a single cache-line.

@@ -50,7 +50,7 @@ Thus, on iteration $j+2$, cache-line $L_1$ must be fetched again and this patter
         \caption{Column iteration $j+1$}
         \label{fig:theory:in_band_rotation_01}
     \end{subfigure}
-    \caption{Example of the \Gls{eviction} Rotation in a Perfect \Gls{band} when the Cache is Undersized ($s_C < w_B + l - 1$)}
+    \caption{Example of the \Gls{eviction} Rotation in a Perfect \Gls{band} when the Cache is Undersized ($s_C < w_B + l - 1$): $s_C = 24$, $w_B = 23$ and $l = 6$}
     \label{fig:theory:in_band_rotation_case1}
 \end{figure}
 
@@ -75,7 +75,7 @@ In this way, when processing columns, the cache-lines do a rotation where the to
         \caption{Column iteration $j+1$}
         \label{fig:theory:in_band_rotation_11}
     \end{subfigure}
-    \caption{Example of the \Gls{eviction} Rotation in a Perfect \Gls{band} when the Cache is `Properly' Sized ($s_C = w_B + l - 1$)}
+    \caption{Example of the \Gls{eviction} Rotation in a Perfect \Gls{band} when the Cache is `Properly' Sized ($s_C = w_B + l - 1$): $s_C = 24$, $w_B = 19$ and $l = 6$}
     \label{fig:theory:in_band_rotation_case2}
 \end{figure}
 
@@ -158,8 +158,8 @@ Because the out-of-\gls{band} data is highly sparse, we want to explore having a
 As this cache region can be relatively small, a fully-associative configuration ($S = 1$, $l = 1$) is reasonable in terms of hardware implementation, and this full associativity enables more efficient storage of the data elements.
 Indeed, when dealing with sparse elements, it is wasteful to bring a full line into the cache to only modify one element and then evict it, which we denote as \textit{R/W}.
 Thus, we consider offloading the \gls{reduction} to a higher level cache, thus reducing unnecessary data transfers.
-We assume the higher level cache can support this operation which we denote as \acrshort{rmw}, following the design choice of \acrlong{spdc} in Chapter~\ref{cha:spdc}.
-We recall that protocols such as AXI~\cite{ARM2023_AXI} support atomic transactions (AMOs), which could easily be extended for \gls{reduction} operations.
+We assume the higher level cache can support this element-wise operation which we denote as \acrshort{rmw}, following the design choice of \acrlong{spdc} in Chapter~\ref{cha:spdc}.
+We recall that protocols such as AXI~\cite{ARM2023_AXI} support atomic, element-wise transactions (AMOs), which could easily be extended for \gls{reduction} operations.
 
 To analyse the impact of the cache-size, we consider two different sizes (\textit{solid} and \textit{dashed}).
 For a given cache-size, we adjust the number of ways ($W$), based on the associativity, to keep the cache-size constant.
@@ -172,8 +172,8 @@ In Figure~\ref{fig:theory:theory_OBtraffic_vs_d_OB}, we plot $\mathit{normMT}$ f
     \label{fig:theory:theory_OBtraffic_vs_d_OB}
 \end{figure}
 
-Let us start by considering a classic set-associative cache with a line-wise memory interface (\textit{solid blue}, \textit{dot}), where we see a dependence of $\mathit{normMT}$ on $d_\mathit{OB}$.
-On the right of the graph ($d_\mathit{OB} \geqslant \frac{1}{l}$), we observe the same behavior as in Section~\ref{sec:theory:graph1}, where the cache behavior approaches that seen for a dense matrix.
+Let us start by considering a classic set-associative cache with a line-wise memory interface (\textit{solid blue}, \textit{dot}), where we see a dependence of $\mathit{normMT}$ on $d_\mathit{OB}$ on the right of the graph ($d_\mathit{OB} \geqslant \frac{1}{l}$).
+Indeed, we observe the same behavior as in Section~\ref{sec:theory:graph1}, where the cache behavior approaches that seen for a dense matrix.
 
 Looking at the plot for the fully-associative cache with a line-wise memory interface (\textit{solid green}, \textit{square}), we see that the normalized traffic is not impacted by the density of the out-of-\gls{band}, as expected.
 With the fully-associative cache, $\mathit{normMT}$ is constant near $16$, as, on average, there are two line-wise transactions per non-zero element processed, one read to fill the line, one write to evict it.
@@ -227,7 +227,7 @@ With very low density the non-zeros are isolated and provide no reuse: each non-
 With $l = 8$ this corresponds to 16 elements transferred per non-zero.
 
 It is therefore important to select the densest region of the matrix to be processed in a dedicated cache region such as the \acrshort{drc} of \acrlong{spdc}.
-However, the selected region need not be highly dense: for a \gls{PBanded} matrix with $M = 1000$, columns become nearly empty for $d_\mathit{IB} \lesssim 10^{-3}$, yet the raw memory traffic remains nearly constant in the range $10^{-2}$ to $10^{-3}$ depending on cache size.
+However, the selected region needs not be highly dense: for a \gls{PBanded} matrix with $M = 1000$, columns become nearly empty for $d_\mathit{IB} \lesssim 10^{-3}$, yet the raw memory traffic remains nearly constant in the range $10^{-2}$ to $10^{-3}$ depending on cache size.
 Because real, larger matrices often have a mean $d_\mathit{IB}$ around $10^{-3}$, a \acrshort{drc} sized to capture this denser region still provides good memory-traffic performance.
 
 \begin{highlight}{Note}{SkyBlue}
@@ -257,10 +257,10 @@ For the out-of-\gls{band} region, a fully-associative element-wise cache with an
 When sizing the two regions, once Equation~\ref{eq:theory:in_band_cond} is satisfied, enlarging the in-\gls{band} region yields only a marginal reduction in memory traffic (on the order of $10^{-2}$).
 By contrast, a moderate increase of the out-of-\gls{band} region produces a larger reduction (on the order of $10^{-1}$).
 Therefore, the out-of-\gls{band} region should be made as large as practical, subject to the hardware limits imposed by full associativity.
-This correlates with the results presented in Chapter~\ref{cha:spdc}, where we showed better performance with \acrlong{spdc} configurations having a larger \acrshort{srt}.
+This correlates with the results presented in Chapter~\ref{cha:spdc}, where we showed better performance with \acrlong{spdc} configurations having a larger \acrshort{srt} (Table~\ref{tab:spdc:results_overall}).
 
 Although this analysis is sufficient to guide the design of \acrlong{spdc} for \acrshort{op} \acrshort{spmv} with \gls{banded} matrices, it is important to note that the analytical model that we have presented is based on the assumption of a uniform distribution of the non-zero elements.
-In practice, this is not always the case, and this non-uniformity can impact the cache behavior, as will be seen later in Chapter~\ref{cha:eval}.
+In practice, this is not always the case, and this non-uniformity can impact the cache behavior, as will be seen later in Chapter~\ref{cha:arch}.
 Indeed, if the non-zero elements are clumped, the cache-lines tend to be better filled, resulting in lower memory traffic.
 In other words, our uniform assumption leads to a pessimistic prediction of memory traffic.
 

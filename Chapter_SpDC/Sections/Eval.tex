@@ -6,18 +6,20 @@
 \section{High Level Evaluation of SpDCache}
 \label{sec:spdc:eval}
 
-\lettrine{W}{e} modelled the behavior of \acrlong{spdc}, based on the flowchart in Figure~\ref{fig:spdc:spdc_archi}, using a transaction level model in Python, for a single-core, single-thread system executing a \acrshort{op} \acrshort{spmv} kernel (Algorithm~\ref{alg:spdc:spmv_with_red}).
+\lettrine{T}{o} validate the \acrlong{spdc} architecture, we simulate its behavior to assess memory traffic gains and explore various parameters.
+Combined with the theoretical analysis presented in the next chapter, this approach enables us to validate both the principle and performance of \acrlong{spdc}.
+We modelled the behavior of \acrlong{spdc} based on the flowchart in Figure~\ref{fig:spdc:spdc_archi}, using a transaction level model in Python, for a single-core, single-thread system executing an \acrshort{op} \acrshort{spmv} kernel (Algorithm~\ref{alg:spdc:spmv_with_red}).
 We do not model timing, as the order of the memory accesses determines the behavior of the cache (\glspl{hit}, \glspl{miss}, \glspl{eviction}), which depends only on the \acrshort{spmv} algorithm.
-The model checks the final numerical result and reports the main memory traffic associated with the \emph{updates} to the output vector (\emph{Output Memory Traffic}), where we count the bytes transferred (64B for each read and write, and 8B per atomic \acrshort{rmw}, with our configuration).
+The model checks the final numerical result and reports the main memory traffic associated with the \emph{updates} to the output vector (\emph{Output Memory Traffic}), where we count the bytes transferred (64B, 8 words of 8B, for each read and write, and 8B per atomic \acrshort{rmw}, with our configuration).
 For each write transaction, it tracks how many words in the line were actually used (\emph{Evicted Cache Line Utilization}) and it tracks how many words in the cache held useful data (\emph{Cache Memory Utilization}).
 We consider a word in the cache to be useful if it is updated or inserted by the processor.
 Our goal is to validate the principle of \acrlong{spdc} using real application matrices from the SuiteSparse Matrix Collection~\cite{Kolodziej2019_SuiteSparse}.
 
 As baselines, we implemented a fully generic cache (\acrshort{gc}) that handles reads and writes for both inputs ($A$, $b$) and output ($c$), following the data movements shown in Figure~\ref{fig:spdc:GC_cache_WB}, and a simple \gls{redC} (\acrshort{redc}) that processes \acrshort{red} transactions in a dedicated region using the flow shown in Figure~\ref{fig:spdc:red_based_cache}.
-In the \acrshort{redc}, 25\% of the memory is allocated for the inputs and the other 75\% for \emph{REDs} on $c$.
+In the \acrshort{redc}, 25\% of the memory is allocated for the inputs ($A$ and $b$) and the other 75\% for \emph{REDs} on $c$.
 In \acrlong{spdc} (\acrshort{spdc}), 25\% is allocated for the \acrshort{grc}, 50\% for the \acrshort{drc} and 25\% for the \acrshort{srt}.
 In the next section, we present more results with varying region sizes, confirming that this allocation is indeed a good compromise.
-All three caches use a \acrfull{lru} \gls{eviction} policy, except the \acrshort{srt} region of \acrshort{spdc} which uses a \emph{random} policy.
+All three caches use a \acrfull{lru} \gls{eviction} policy, except the \acrshort{srt} region of \acrlong{spdc} which uses a \emph{random} policy.
 All three caches have a total data storage of 32~KiB, not including the \acrshort{tag} storage.
 The \gls{set}-associative regions have 4~\glspl{way} and 64B cache-lines (8 \emph{double} words per line).
 
@@ -46,6 +48,7 @@ Most, but not all, of the matrices have a dense \gls{band} and even some matrice
             row{Z} = {belowsep=2pt},
             cell{1}{2,5,8} = {c=3}{font=\bfseries\small},
             cell{2}{3} = {c=2}{},
+            cell{4}{2,3} = {font=\bfseries\small},
             cell{X-Z}{1} = {c=10}{l, font=\itshape\small},
             hspan = {minimal},
             % hlines, vlines,
@@ -78,23 +81,23 @@ Most, but not all, of the matrices have a dense \gls{band} and even some matrice
     \end{tblr}
 \end{table}
 
-As expected, the simple \gls{redC} (\acrshort{redc}) decreases the main memory traffic to 89.2\% of the \acrshort{gc} baseline.
-\acrlong{spdc} has significantly better performance than \acrshort{redc}, reducing the traffic to 24.5\%.
+As expected, the simple \gls{redC} (\acrshort{redc}) decreases the main memory traffic to 89.2\% of the \acrshort{gc} baseline (10.8\% decrease).
+\acrlong{spdc} has significantly better performance than \acrshort{redc}, reducing the traffic to 24.5\% (75.5\% decrease).
 \acrlong{spdc} thus achieves a 4.1$\times$ decrease in memory traffic compared to \acrshort{gc}, and a 3.6$\times$ decrease compared to \acrshort{redc}, on average over the set of matrices.
-\acrshort{spdc} outperforms \acrshort{gc} on all matrices, and \acrshort{redc} on 93.8\% of them.
+\acrlong{spdc} outperforms \acrshort{gc} on all matrices, and \acrshort{redc} on 93.8\% of them.
 
 The benefits of \acrlong{spdc} can be partly explained by the improved utilization of the cache-lines.
-On average, a cache-line evicted from \acrshort{spdc} has 7.21 modified words, compared to 3.56 and 3.60 with the baselines.
+On average, a cache-line evicted from \acrlong{spdc} has 7.21 modified words, compared to 3.56 and 3.60 with the baselines.
 This improved utilization is the result of blocking the dense region in the \acrshort{drc}, where multiple \glspl{reduction} have the time to accumulate in the cache before being evicted.
 The \acrshort{srt} also contributes to this effect, as it captures irregular accesses outside the \gls{band}, which would otherwise evict useful data from the \acrshort{drc}.
-The overall cache memory utilization is also significantly improved, with 75.2\% of the cache holding useful data in \acrshort{spdc}, compared to 45.8\% and 36.4\% for \acrshort{redc} and \acrshort{gc}, respectively.
+The overall cache memory utilization is also significantly improved, with 75.2\% of the cache holding useful data in \acrlong{spdc}, compared to 45.8\% and 36.4\% for \acrshort{redc} and \acrshort{gc}, respectively.
 
 We need to consider an additional metric, the percentage of traffic sent as atomic \acrshort{rmw} transactions (\textit{\%~\acrshort{rmw}}).
-If this value is too high, it means we have simply shifted the workload to the lower level caches, which inherently have limited compute capability.
-On average, 40.5\% of the memory traffic of \acrlong{spdc} is composed of atomic \acrshortpl{rmw}, which is acceptable given the significant overall reduction in memory traffic.
+Indeed, if this value is too high, it means we have simply shifted the workload to the lower level caches, which inherently have limited compute capability.
+On average, 40.5\% of the memory traffic of \acrlong{spdc} is composed of atomic \acrshortpl{rmw}, which is we consider acceptable given the significant overall reduction in memory traffic.
 However, this ratio varies widely between matrices.
 There are some matrices where most of the traffic is composed of atomic \acrshortpl{rmw}, meaning that most of their non-zero values are outside the \gls{band}.
-For such matrices, which are basically not banded, \acrshort{spdc} still greatly decrease the memory traffic, but better performance could be achieved by choosing a matrix-fitting region partitioning strategy.
+For such matrices, which are basically not banded, \acrlong{spdc} still greatly decreases the memory traffic, but better performance could be achieved by choosing a matrix-fitting region partitioning strategy.
 For example, the matrix \emph{cit-Patents} has no elements in the \gls{band}, and all non-zero values are scattered under the bottom part of the matrix (an unusual extreme case).
 While having a memory traffic decreased to 7.2\% compared to \acrshort{gc}, it could benefit from a better use of the \acrshort{drc} by choosing a horizontal band covering the non-zero elements, with correct sizing to leverage the blocking effect.
 On the other hand, some matrices have very low \acrshort{rmw} usage, indicating that most non-zero values are within the \gls{band} and efficiently handled by the \acrshort{drc}.
@@ -113,10 +116,10 @@ The \acrshort{srt} size could be adjusted to gain performance.
 PHI is a \gls{reduction}-aware cache that uses a single region to process \acrshort{red} transactions (see Section~\ref{sec:soa:phi} from previous chapter).
 In PHI, the cache is not separated into regions, however, it treats load/store and \acrshort{red} operations differently.
 It also handles isolated elements, but do not consider the matrix structure.
-Unlike \acrshort{spdc}, PHI relies on the \emph{deferred update} version of the \acrshort{op} \acrshort{spmv} algorithm (see Algorithm~\ref{alg:bg:OPSpMSpMCSR}).
+Unlike \acrlong{spdc}, PHI relies on the \emph{deferred update} version of the \acrshort{op} \acrshort{spmv} algorithm (see Algorithm~\ref{alg:bg:OPSpMSpMCSR}).
 We thus adapted our simulation to use this algorithm for PHI.
-To ensure a fair comparison, we allocated the same amount of memory to PHI as for \acrshort{spdc} and the baselines (32~KiB).
-In Table~\ref{tab:spdc:results_overall}, we report the results for PHI alongside our previous results (columns 2, 3, 6 and 7).
+To ensure a fair comparison, we allocated the same amount of memory to PHI as for \acrlong{spdc} and the baselines (32~KiB).
+In Table~\ref{tab:spdc:results_overall}, we report the results for PHI alongside our previous results (columns \no 1, 2, 5 and 6).
 
 \begin{table}[htbp]
     \caption{All Results from Python Simulation}
@@ -130,14 +133,17 @@ In Table~\ref{tab:spdc:results_overall}, we report the results for PHI alongside
             column{1-3} = {colsep=0pt},
             column{1} = {leftsep=1pt},
             column{3} = {rightsep=1pt},
-            row{1-Z} = {rowsep=2pt, black!2},
+            row{1-Y} = {rowsep=2pt, black!2},
             row{1} = {c, font=\bfseries\small, black!5},
             column{1} = {l},
+            % column{4,5,8,9} = {font=\bfseries\small},
             row{2-4} = {c, black!5},
             row{2-4} = {font=\itshape\small},
             row{2-4} = {rowsep=0pt},
             row{6,9,11,13} = {abovesep=0pt},
             row{5,8,10,12} = {belowsep=0pt},
+            row{Z} = {font=\itshape\scriptsize, rowsep=0pt},
+            cell{2-4}{4,5,8,9} = {font=\bfseries\itshape\small},
             cell{1}{5} = {c=3}{},
             cell{1}{9} = {c=6}{},
             cell{2}{2} = {r=3}{c},
@@ -149,9 +155,10 @@ In Table~\ref{tab:spdc:results_overall}, we report the results for PHI alongside
             hspan = {minimal},
             % hlines, vlines,
             % rulesep = {-1pt},
-            hline{1,Z} = {2pt}, % Z for last
+            hline{1,Y} = {2pt}, % Z for last
             hline{5} = {1pt},
-            vline{4,5,8,9} = {1-Z}{0.5pt},
+            hline{Z} = {1pt, dashed},
+            vline{4,5,8,9} = {1-Y}{0.5pt},
         }
         %
         GMeans (48 mat.) & & & \acrshort{gc} & \acrshort{redc} & & & PHI & \acrshort{spdc} & & & & & \\
@@ -170,14 +177,15 @@ In Table~\ref{tab:spdc:results_overall}, we report the results for PHI alongside
         \textbf{Cache Memory Utilization} (\%)           & & & 36.4 & 45.8 & 47.0 & 47.1 & 30.6 & 75.2 & 68.3 & 65.0 & 72.5 & 65.1 & 60.9 \\
         & & & \cst1.0 & \upG1.3 & \upG1.3 & \upG1.3 & \dwR0.8 & \upG2.1 & \upG1.9 & \upG1.8 & \upG2.0 & \upG1.8 & \upG1.7 \\
         %
+        Column \no & & & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11
     \end{tblr}
 \end{table}
 
-As expected, PHI achieves a significant reduction in memory traffic compared to the \acrshort{gc}, a 50.4\% reduction on average.
-This represents a 2.0$\times$ decrease compared to the \acrshort{gc}, which is consistent with the results reported in the original PHI paper~\cite{Mukkara2019_PHI}, and a 1.8$\times$ decrease compared to the \acrshort{redc}.
-However, \acrlong{spdc} still outperforms PHI, cutting memory traffic by 2.1$\times$.
-The improved performance of \acrshort{spdc} can again be explained by the better utilization of the cache-lines, with 7.21 useful words per evicted line, compared to 5.00 for PHI.
-The overall cache memory utilization is also significantly better with \acrshort{spdc}, with 75.2\% of the cache holding useful data, compared to only 30.6\% for PHI.
+As expected, PHI (\no5) achieves a significant reduction in memory traffic compared to the \acrshort{gc} (\no1), a 50.4\% reduction on average.
+This represents a 2.0$\times$ decrease compared to the \acrshort{gc}, which is consistent with the results reported in the original PHI paper~\cite{Mukkara2019_PHI}, and a 1.8$\times$ decrease compared to the \acrshort{redc} (\no2).
+However, \acrlong{spdc} (\no6) still outperforms PHI, cutting memory traffic by 2.1$\times$.
+The improved performance of \acrlong{spdc} can again be explained by the better utilization of the cache-lines, with 7.21 useful words per evicted line, compared to 5.00 for PHI.
+The overall cache memory utilization is also significantly better with \acrlong{spdc}, with 75.2\% of the cache holding useful data, compared to only 30.6\% for PHI.
 
 As explained in Chapter~\ref{cha:soa}, PHI mixes the `immediate updates' and `deferred updates' strategies for \acrshort{op} \acrshort{spmv}.
 In the first phase of the algorithm, it processes \acrshort{red} transactions as `immediate updates', and PHI handles them with a mechanism similar to a classical \gls{redC}.
@@ -186,20 +194,20 @@ When a cache-line is evicted and contains fewer non-zero entries than a fixed th
 These \acrshortpl{po} are processed in the second phase of the algorithm, as in the `deferred updates' variant.
 If the threshold is set too high, PHI batches many entries and increases second-phase memory traffic.
 If it is set too low, PHI batches few entries, reducing batching effectiveness and increasing the number of `immediate updates', making PHI behavior closer to a \gls{redC}.
-PHI sets this threshold to one non-zero word per eight words in a cache-line, meaning that for each batched evicted line, PHI reduces bytes transferred by 4$\times$ (4 (word, address) tuples fitting in a single 64~B cache-line, instead of 4 full 64~B lines with 7 unused words each).
+PHI sets this threshold to one non-zero word per eight words in a cache-line, meaning that for each batched evicted line, PHI reduces bytes transferred by 4$\times$ (4 $(word, \, address)$ tuples fitting in a single 64B cache-line, instead of 4 full 64B lines with 7 unused words each).
 However, we observed that, on the geometric mean over the 48 matrices, only 4.2\% of PHI's output memory traffic comes from these batched updates (maximum 28.6\%), indicating that PHI's overall behavior remains close to a \gls{redC}.
 In contrast, \acrlong{spdc} addresses the drawbacks of a \gls{redC} by using dedicated regions for denser and sparser accesses, avoiding unnecessary \glspl{eviction}, without incurring the additional second-phase traffic introduced by PHI's batching mechanism.
 
 We also explored different region sizing for \acrlong{spdc}, varying the sizes of the \acrshort{grc}, \acrshort{drc} and \acrshort{srt} while keeping the total cache size constant at 32~KiB.
-The results are also reported in Table~\ref{tab:spdc:results_overall}.
+The results are also reported in Table~\ref{tab:spdc:results_overall} (columns \no 7 to 11).
 Reducing the size of the \acrshort{grc} from 8~KiB (32 \glspl{set}) to 2~KiB (8 \glspl{set}) and 1~KiB (4 \glspl{set}) has little impact on performance, as the \acrshort{grc} is mainly used for temporary storage of input vector elements.
-However, reducing the \acrshort{grc} under 1~KiB increases the total memory traffic, as more frequent \glspl{eviction} occur before the data is used, an effect already noticeable when going from 2~KiB to 1~KiB.
+However, reducing the \acrshort{grc} under 1~KiB (4 \glspl{set}) increases the total memory traffic, as more frequent \glspl{eviction} occur before the data is used, an effect already noticeable when going from 2~KiB to 1~KiB.
 With constant \acrshort{grc} size, when reducing the size of the \acrshort{srt}, which means allocating more space to the \acrshort{drc}, we observe a slight increase in memory traffic, as the \acrshort{srt} becomes less effective at capturing irregular accesses.
 Thus, the \acrshort{srt} sizing appears to be more critical than the \acrshort{drc} sizing.
 We will explore the reasons behind this effect in the next chapter.
 Overall, fine tuning the region sizes can lead to small performance improvements, but the original sizing of 8~KiB for the \acrshort{grc}, 16~KiB for the \acrshort{drc} and 8~KiB for the \acrshort{srt} appears to be a good compromise for the set of matrices we evaluated.
 
-We also explored different sizing strategies for the \acrshort{redc} baseline, varying the size of its single \gls{reduction} region while keeping the total cache size constant at 32~KiB.
+We also explored different sizing strategies for the \acrshort{redc} baseline (columns \no 3 and 4), varying the size of its single \gls{reduction} region while keeping the total cache size constant at 32~KiB.
 Allocating more than 75\% of the cache (96 \glspl{set}) to store \acrshort{red} transactions slightly improves performance, as it increases the likelihood of capturing multiple updates to the same output element before \gls{eviction}, without overly compromising the storage of input elements.
 
 \begin{highlight}{Conclusion}{Red}
