@@ -7,7 +7,7 @@
 \label{sec:arch:conclu}
 
 \lettrine{I}{n} this chapter, we presented the microarchitectural implementation of \acrlong{spdc} and evaluated its performance through \acrshort{rtl} simulations.
-By translating the theoretical insights from previous chapters into a practical hardware design, we demonstrated the effectiveness of \acrlong{spdc} in addressing the challenges of irregular memory access patterns in sparse matrix computations.
+By translating the theoretical insights from previous chapters into an actual hardware design, we demonstrated the effectiveness of \acrlong{spdc} in addressing the challenges of irregular memory access patterns in sparse matrix computations.
 
 Our \acrshort{rtl} implementation of \acrlong{spdc}, with its three dedicated regions, \acrshort{grc}, \acrshort{drc}, and \acrshort{srt}, successfully optimizes memory transactions for both dense and sparse regions of matrices.
 The results from \acrshort{rtl} simulations highlight significant reductions in memory traffic and improved cache utilization, validating the architectural choices and theoretical models developed earlier.
@@ -16,21 +16,22 @@ Specifically, \acrlong{spdc} achieves a substantial decrease in memory traffic c
 The importance of fine-grain matrix structure is further underscored by our findings.
 The \acrshort{rtl} simulations revealed two distinct groups of matrices, split depending on the $d_\mathit{cd}$ metric, which measures the density of non-zero elements within cache-line-sized portions of the matrices.
 This distinction highlights how the fine-grain distribution of non-zero elements within matrices impacts performance.
-By effectively handling both coarse-grain and fine-grain structures, \acrlong{spdc} demonstrates its adaptability and efficiency across a diverse set of sparse matrices.
+By effectively handling both coarse-grain and fine-grain structure, \acrlong{spdc} demonstrates its adaptability and efficiency across a diverse set of sparse matrices.
 
 As a contribution, this chapter detailed the \acrshort{rtl} implementation of \acrlong{spdc}, including the hardware components and \gls{pipeline} stages that enable efficient data processing and \gls{reduction} operations.
 Through \acrshort{rtl} simulations, we assessed \acrlong{spdc}'s performance, demonstrating its superiority in reducing memory traffic and improving cache utilization.
 The \acrshort{rtl} results validated the theoretical models and insights, confirming the benefits of region-based caching and \gls{reduction} support.
-Additionally, we identified and analyzed the impact of fine-grain matrix structures on performance, revealing two distinct groups of matrices based on the $d_\mathit{cd}$ metric.
+Additionally, we identified and analyzed the impact of fine-grain matrix structure on performance, revealing two distinct groups of matrices based on the $d_\mathit{cd}$ metric.
 
 However, several limitations must be acknowledged.
 The current \acrshort{rtl} implementation is a first iteration and could be further optimized, as some features are still missing or not fully refined.
 The use of element-wise, atomic transactions for offloading sparse data carries the risk of overwhelming the rest of the memory hierarchy if it is not designed to handle such transactions efficiently.
-Finally, the evaluation was conducted on a single-core, single-cache level system, which is ideal for detailed analysis but limits raw performance compared to more complex, multi-level, or multi-core architectures.
+Finally, the evaluation was conducted on a single-core, single-cache level system, which helps us easily understand the cache behavior but limits raw performance compared to more complex, multi-level, or multi-core architectures.
+However, we believe that with a more powerful processor (such as multiple-issue), the pressure on the memory system would be higher and the threshold between the two groups of matrices would be shifted, with more matrices benefiting from \acrlong{spdc}.
 
-Overall, this chapter highlights the critical role of both coarse-grain and fine-grain matrix structures in optimizing sparse matrix computations.
+Overall, this chapter highlights the critical role of both coarse-grain and fine-grain matrix structure in optimizing sparse matrix computations.
 The contributions of \acrlong{spdc} not only advance the state-of-the-art in cache architectures but also provide a robust foundation for future enhancements in scalability and bandwidth efficiency, as discussed in the following chapter.
-The ability to adapt to varying matrix structures ensures that \acrlong{spdc} remains effective across a wide range of applications and workloads.
+The ability to adapt to varying matrix structure ensures that \acrlong{spdc} remains effective across a wide range of applications and workloads.
 
 \bigskip\bigskip
 
@@ -38,16 +39,16 @@ The ability to adapt to varying matrix structures ensures that \acrlong{spdc} re
     \colorbf{Mulberry}{Contributions:}
     \begin{itemize}
         \item \textbf{Microarchitectural Design:} We detailed the \acrshort{rtl} implementation of \acrlong{spdc}, including the hardware components and \gls{pipeline} stages that enable efficient data processing and \gls{reduction} operations.
-        \item \textbf{Performance Evaluation:} Through \acrshort{rtl} simulations, we assessed \acrlong{spdc}'s performance, demonstrating its superiority in reducing memory traffic and improving cache utilization.
+        \item \textbf{Performance Evaluation:} Through \acrshort{rtl} simulations, we assessed \acrlong{spdc}'s performance, demonstrating its ability to reduce memory traffic and improve cache utilization.
         \item \textbf{Validation of Theoretical Models:} The \acrshort{rtl} results validated the theoretical models and insights, confirming the benefits of region-based caching and \gls{reduction} support.
-        \item \textbf{Fine-Grain Structure Analysis:} We identified and analyzed the impact of fine-grain matrix structures on performance, revealing two distinct groups of matrices based on the $d_\mathit{cd}$ metric.
+        \item \textbf{Fine-Grain Structure Analysis:} We identified and analyzed the impact of fine-grain matrix structure on performance, revealing two distinct groups of matrices based on the $d_\mathit{cd}$ metric.
     \end{itemize}
 
     \colorbf{Mulberry}{Limitations:}
     \begin{itemize}
-        \item \textbf{\acrshort{rtl} Implementation Optimization:} The current \acrshort{rtl} implementation is a first iteration and could be further optimized, as some features are still missing or not fully refined.
+        \item \textbf{\acrshort{rtl} Implementation Optimization:} The current \acrshort{rtl} implementation is a first iteration and could be further optimized, as some performance feature is still missing or not fully refined.
         \item \textbf{Offloading Risk:} The use of element-wise, atomic transactions for offloading sparse data carries the risk of overwhelming the rest of the memory hierarchy if it is not designed to handle such transactions efficiently.
-        \item \textbf{Single-Core, Single-Cache Level System:} The evaluation was conducted on a single-core, single-cache level system, which is ideal for detailed analysis but limits raw performance compared to more complex, multi-level, or multi-core architectures.
+        \item \textbf{Single-Core, Single-Cache Level System:} The evaluation was conducted on a single-core, single-cache level system, which is ideal for detailed analysis but limits raw performance compared to more recent architectures with multi-level caches and multi-core processors with multi-issue cores.
     \end{itemize}
 \end{highlight}
 

@@ -52,31 +52,31 @@ The configurations are summarized in Table~\ref{tab:arch:region_configs}.
 All our simulations are performed using Siemens Questasim\texttrademark~2023.3 and the memory accesses beyond the L1 incur a fixed latency of 64 clock cycles.
 We do not aim to evaluate a full system in this work, as our goal is to identify performance behavior using real matrices.
 Thus, we use a single-core, single-cache-level environment.
-The CVA6 core is not designed for high performance and can process at most one instruction per cycle.
-The fixed memory latency of 64 cycles is not realistic but provides a reasonable approximation of other memory levels' latencies and helps stabilize results for clearer interpretation.
+The CVA6 core is single-issue and can process at most one instruction per cycle.
+The fixed memory latency of 64 cycles provides a reasonable approximation of the latency incurred by requests passing through the other memory levels, and a deterministic memory model makes the results easily reproducible.
 
 Our SystemVerilog implementation supports only integer addition up to 64 bits, precluding floating-point accumulations.
 Extending \acrlong{spdc} to support floating-point operations remains future work.
 We employ 64-bit integers throughout and assume this choice does not significantly impact performance results.
 
-A second implementation constraint is that region sizes for \acrshort{grc}, \acrshort{drc}, and \acrshort{srt} must be powers of two in terms of \glspl{set}, unlike the other models.
-This limitation motivates our choice of a 50\%/50\%/0\% configuration for \acrshort{redc}, which we expect to underperform relative to more flexible configurations.
+A second implementation constraint is that region sizes for \acrshort{grc}, \acrshort{drc}, and \acrshort{srt} must be powers of two in terms of \glspl{set}, unlike the analytical and Python models described in Chapters~\ref{cha:spdc} and~\ref{cha:theory}.
+This limitation motivates our choice of a 50/50/0\% configuration for \acrshort{redc}, which we expect to slightly underperform compared to more flexible configurations.
 Future optimizations of the implementation could relax this constraint.
 
 \begin{highlight}{Conclusion}{Red}
-    We evaluate three cache configurations, \acrshort{gc}, \acrshort{redc}, and \acrshort{spdc}, using a single-core CVA6 processor with a single cache level.
+    We simulated three cache configurations, \acrshort{gc}, \acrshort{redc}, and \acrshort{spdc}, using a single-core CVA6 processor with a single cache level.
 \end{highlight}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Sparse Formats Used for thr RTL Simulations}
 
 By default, matrices are stored in \acrshort{csc} sparse format, and we use this format for most of our simulations.
-However, in our evaluation, we try simulating \acrshort{spdc} with a specific format tailored for \acrshort{banded} matrices.
+However, in our evaluation with \gls{banded} matrices, we also simulated \acrshort{spdc} with a modified \acrshort{csc} format tailored for \gls{banded} matrices.
 As shown in Figure~\ref{fig:arch:BaCSC}, compared to a \acrshort{csc}, we added extra information in the $ptr$ table to identify the beginning and end of the \gls{band}.
 Indeed, three pointers instead of one are now needed per column, as shown with the example of column 2 in \textit{yellow}.
-The column is split in one in-\gls{band} (IB) region in the middle and two out-of-\gls{band} (OB) regions around.
+The column is split in one in-\gls{band} region in the middle (IB, from $ptr$ 7 to 9) and two out-of-\gls{band} regions around (OB, from $ptr$ 6 to 7, and 9 to 10).
 The $ptr$ table size thus becomes $3 \times M + 1$.
-With this format, we can avoid the computational cost of identifying in which region non-zero elements are, while traversing the matrix, with the drawback of having to preprocess it.
+With this format, we can avoid the computational cost of identifying in which region non-zero elements are, while traversing the matrix, with the drawback of having to preprocess the matrix to store this additional information.
 
 \begin{figure}[htbp]
     \centering
@@ -86,7 +86,7 @@ With this format, we can avoid the computational cost of identifying in which re
 \end{figure}
 
 \begin{highlight}{Conclusion}{Red}
-    We employ \acrshort{csc} format for most simulations and additionally evaluate \acrshort{spdc} using \acrshort{bacsc}, a specialized format optimized for \gls{banded} matrices.
+    We employ the \acrshort{csc} format for most simulations and additionally evaluate \acrshort{spdc} using \acrshort{bacsc}, a specialized format optimized for \gls{banded} matrices.
 \end{highlight}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,8 +123,8 @@ The column is then processed through three separate inner-loops (lines~13, 21, 2
 \sourcecode{Chapter_MicroArch/Code/op_spmv_bacsc.c}{Optimized C Code for the \acrshort{op} \acrshort{spmv} when Using \acrshort{bacsc}}{src:arch:op_spmv_bacsc}{htbp}
 
 Each approach trades off one limitation for another.
-\acrshort{spdc}(\acrshort{csc}) uses simple \acrshort{csc} format with minimal preprocessing and low memory overhead, but incurs additional inner-loop instructions and thus latency per iteration.
-\acrshort{spdc}(\acrshort{bacsc}) reduces instructions and latency at the cost of matrix preprocessing into \acrshort{bacsc} format and increased memory footprint.
+\acrshort{spdc}(\acrshort{csc}) uses simple \acrshort{csc} format with minimal preprocessing and reduced memory overhead, but incurs additional inner-loop instructions and thus latency per iteration.
+\acrshort{spdc}(\acrshort{bacsc}) reduces instructions and latency at the cost of matrix preprocessing into \acrshort{bacsc} format and an increased memory footprint for the matrix.
 Both variants are evaluated in the results section.
 
 These software approaches avoid hardware modifications, providing flexibility.
@@ -144,7 +144,7 @@ With cache-line size $l = 8$, this unrolling hides read-\gls{miss} latency throu
 Consequently, \acrshort{gc} experiences potential latency from both \glspl{reduction} reads and writes, while \acrshort{redc} and \acrshort{spdc} benefit from ``fire-and-forget'' semantics and consecutive \gls{reduction} scheduling.
 
 \acrshort{spdc}(\acrshort{csc}) is constrained to 4$\times$ unrolling due to register pressure on our platform.
-This limitation, addressable with a higher-register CPU, demonstrates another advantage of hardware based region computation.
+This limitation, addressable with a higher-register CPU, highlights another advantage of hardware based region computation.
 
 \begin{highlight}{Conclusion}{Red}
     We utilize four distinct software implementations of the \acrshort{op} \acrshort{spmv}, each customized for our four simulations and fully unrolled to prevent performance constraints.
@@ -168,15 +168,14 @@ Consequently, the cache-lines are often nearly empty, which may render the line-
 Conversely, as $d_\mathit{cd}$ increases, the non-zero elements of the matrix cluster more closely, enhancing the efficiency of the \acrshort{drc}.
 
 In our experiments with $l = 8$, we establish two groups of matrices based on a $d_\mathit{cd}$ threshold of 20\%.
-This threshold corresponds to a range of one to two non-zero elements per eight.
-Although there is no definitive threshold, performance can vary significantly depending on the hardware environment.
-In our scenario, using a simple scalar core, we can clearly distinguish matrices with highly isolated non-zero elements, thus setting the threshold at fewer than two elements per cache line.
-A complete discussion on this follows in the next section.
+This threshold corresponds to either one to two non-zero elements per eight.
+At this point, this threshold may appear somewhat arbitrary and it, of course, depends on the processor and caches.
+As we presents the results, this choice, for our CVA6 core, will become clearer.
 
-According to this threshold, we categorize 21 matrices in group~1 ($d_\mathit{cd} \leqslant 20\%$) and 41 in group~2 ($d_\mathit{cd} > 20\%$).
+Using the threshold based on $d_\mathit{cd}$, we categorize 21 matrices in group~1 ($d_\mathit{cd} \leqslant 20\%$) and 41 in group~2 ($d_\mathit{cd} > 20\%$).
 We have selected 13 well-known matrices from both groups that are frequently used for performance evaluation, as illustrated in Table~\ref{tab:arch:matrices}.
 The selected matrices represent a range of overall matrix densities ($d$) and $d_\mathit{cd}$ values, as depicted by the \textit{red} and \textit{purple} points in the scatter plot in Figure~\ref{fig:arch:matrices}.
-In the following evaluation, we report the performance results of the 13 matrices from group~1 and~2, the geometric means for both groups on all matrices, and the overall geometric mean for the full set of 62 matrices.
+In the following evaluation, we report the performance results of the 13 matrices from group~1 and~2, the geometric means for both groups (covering 21 matrices in group~1 and 41 in group~2), and the geometric mean for the full set of 62 matrices.
 
 \begin{table}[htbp]
     \centering
@@ -220,7 +219,7 @@ In the following evaluation, we report the performance results of the 13 matrice
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/BenchmarkMatricesDcdRep.pdf}
-    \caption{Benchmark Matrices: $d_\mathit{cd}$ vs $nnz/Column$}
+    \caption{Density Characteristics of Benchmark Matrices: $d_\mathit{cd}$ vs Density ($d$)}
     \label{fig:arch:matrices}
 \end{figure}
 
@@ -234,46 +233,42 @@ In the following evaluation, we report the performance results of the 13 matrice
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Memory Traffic Performance}
 
-For all benchmark matrices, we simulated the \acrshort{rtl} model executing the full \acrshort{op} \acrshort{spmv} and measured output memory traffic, shown in Figure~\ref{fig:arch:outMT} for \acrshort{redc}, \acrshort{spdc} with \acrshort{csc}, and \acrshort{spdc} with \acrshort{bacsc}, normalized relative to \acrshort{gc}.
+For all benchmark matrices, we simulated the \acrshort{rtl} model executing the full \acrshort{op} \acrshort{spmv} and measured output memory traffic, shown in Figure~\ref{fig:arch:outMT} for \acrshort{redc}, \acrshort{spdc} with \acrshort{csc}, and \acrshort{spdc} with \acrshort{bacsc}, normalized compared to the output traffic when simulating with \acrshort{gc}.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/OutMemTrafficFromRTL.pdf}
-    \caption{Output Memory Traffic Normalized over \acrshort{gc}, from \acrshort{rtl} Simulations}
+    \caption{Output Memory Traffic Normalized Compared to \acrshort{gc}, Measured from \acrshort{rtl} Simulations}
     \label{fig:arch:outMT}
 \end{figure}
 
-\acrshort{spdc} achieves 3.9$\times$ output memory traffic reduction compared to \acrshort{gc}, which is 2.8$\times$ better than \acrshort{redc}.
-\acrshort{spdc} performs rather consistently across both matrix groups, while \acrshort{gc} shows group-dependent variation (not shown in the figure).
-Notably, when normalized per the number of non-zero elements ($nnz$), the \acrshort{gc} output memory traffic exhibits 17.6$\times$ higher traffic on group~1 than group~2, yet \acrshort{spdc} maintains significant relative benefits (see Section~\ref{sec:arch:perfGroups} for further discussion).
-
-\acrshort{redc} lacks hardware adaptation for \gls{irrAccess} patterns, making its performance group-dependent.
-For low $d_{\mathit{cd}}$ (sparse cache-lines), the line-wise cache proves ineffective for both \acrshort{redc} and \acrshort{gc}.
+\acrshort{spdc} achieves a 3.9$\times$ output memory traffic reduction compared to \acrshort{gc}, which is 2.8$\times$ better than \acrshort{redc} (1.4$\times$).
+While \acrshort{spdc} performs rather consistently for both groups of matrices, \acrshort{redc} lacks hardware adaptation for \gls{irrAccess} patterns, making its performance heavily group-dependent.
+For low $d_{\mathit{cd}}$ (sparse cache-lines), the line-wise cache proves ineffective.
 Conversely, \acrshort{spdc} maintains dense data in the \acrshort{drc} across columns, enabling the rotating pattern from Chapter~\ref{cha:theory}.
-Outside the \acrshort{drc}, element-wise \acrshort{srt} efficiently avoids transferring mostly empty cache-lines.
+Outside the \acrshort{drc}, the element-wise \acrshort{srt} organization efficiently avoids transferring mostly empty cache-lines.
 
-For group~1 matrices, \acrshort{redc} traffic exceeds \acrshort{gc} because \acrshort{gc}'s cache is 2$\times$ larger than \acrshort{redc}'s \acrshort{drc}, reducing performance.
-For group~2, higher cache-line density compensates, allowing \acrshort{redc} to leverage in-memory accumulation through increased \gls{hit}-rates.
-
-The two \acrshort{spdc} variants show no output traffic difference, as the primary distinction, reading matrix $A$ in \acrshort{bacsc} versus \acrshort{csc}, primarily affects speedup.
-The total memory traffic, shown in Figure~\ref{fig:arch:totMT}, reveals input overhead for \acrshort{spdc} with \acrshort{bacsc} below 10\%.
+For group~1 matrices, \acrshort{redc} traffic exceeds \acrshort{gc} because \acrshort{gc}'s cache is 2$\times$ larger than \acrshort{redc}'s \acrshort{drc}, reducing performance\footnote{Recall that for the benchmarking, the total cache size was kept constant at 32~KiB. The \acrshort{redc} has a 16~KiB generic region and a 16~KiB \acrshort{drc}, whereas the \acrshort{gc} can flexibly use the full 32~KiB.}.
+For group~2 matrices, higher cache-line density compensates, allowing \acrshort{redc} to leverage in-memory accumulation through increased \gls{hit}-rates.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/TotMemTrafficFromRTL.pdf}
-    \caption{Total Memory Traffic on Input Matrix $A$, Input Vector $b$ and Output Vector $c$, Normalized over \acrshort{gc}, from \acrshort{rtl} Simulations}
+    \caption{Total Memory Traffic for Input Matrix $A$, Input Vector $b$ and Output Vector $c$, Normalized Compared to \acrshort{gc}, Measured from \acrshort{rtl} Simulations}
     \label{fig:arch:totMT}
 \end{figure}
 
-Both groups exhibit consistent behavior.
-For \acrshort{gc}, input memory traffic ($A$ and $b$, \textit{hatched}) normalized per $nnz$ is only 1.1$\times$ higher for group~1.
+In Figure~\ref{fig:arch:totMT} we show the memory traffic broken down by input data reads and output vector updates.
+As the two \acrshort{spdc} variants show no difference in output traffic, the total memory traffic shows that the increased matrix storage overhead for \acrshort{spdc} with \acrshort{bacsc} is below 10\%.
+Otherwise, input memory traffic ($A$ and $b$, \textit{hatched}) is constant on every configurations and both groups of matrices.
+For \acrshort{gc}, input memory traffic normalized per $nnz$ is only 1.1$\times$ higher for group~1.
 Consequently, output traffic dominates \acrshort{gc} performance in group~1 (75\%) but represents a minority in group~2 (<25\%).
-Thus, output traffic reduction disproportionately benefits total traffic in group~1 matrices.
+Thus the output traffic reduction from \acrshort{spdc} has a more significant benefit for the group~1 matrices.
 
 \begin{highlight}{Conclusion}{Red}
     \textbf{\acrshort{spdc} achieves 3.9$\times$ output memory traffic reduction versus \acrshort{gc}}, substantially outperforming \acrshort{redc}'s 1.4$\times$ reduction.
-    Group~1 matrices (low $d_\mathit{cd}$) benefit most from traffic reduction due to sparse cache-lines, while group~2 (high $d_\mathit{cd}$) shows more modest gains as cache-line density mitigates the problem.
-    Total memory traffic remains favorable for \acrshort{spdc}, with \acrshort{bacsc} overhead under 10\%, confirming the design's effectiveness across diverse matrix structures.
+    Group~1 matrices (low $d_\mathit{cd}$) benefit most from traffic reduction due to sparse cache-lines, while group~2 (high $d_\mathit{cd}$) shows more modest gains as denser cache-lines are inherently more efficient.
+    The total memory traffic overhead for the \acrshort{bacsc} format is under 10\%.
 \end{highlight}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -285,42 +280,43 @@ Figure~\ref{fig:arch:speedup} presents the speedup relative to \acrshort{gc}.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/Speedups.pdf}
-    \caption{Speedup over \acrshort{gc}, from \acrshort{rtl} Simulations}
+    \caption{Speedup Compared to \acrshort{gc}, Measured from \acrshort{rtl} Simulations}
     \label{fig:arch:speedup}
 \end{figure}
 
 Group~1 matrices show speedup across all cache configurations, whereas group~2 shows slowdown.
 Overall, \acrshort{redc} achieves no speedup over \acrshort{gc}, \acrshort{spdc} with \acrshort{csc} incurs 1.2$\times$ slowdown, and \acrshort{spdc} with \acrshort{bacsc} achieves 1.1$\times$ speedup.
 
-For group~1 matrices, \acrshort{redc} obtains modest speedup (1.1$\times$) because \acrshort{red} instructions are ``fire-and-forget'', replacing multiple read-accumulate-write operations.
-However, blocking occurs when the \textit{accumulation table} processes prior \glspl{eviction}.
-Group~1's sparse cache-lines trigger frequent \gls{eviction} bursts, dominating performance and making the system memory-bound.
+For group~1 matrices, \acrshort{redc} obtains a small speedup (1.1$\times$) because \acrshort{red} instructions are ``fire-and-forget'', replacing multiple read-accumulate-write operations.
+However, blocking occurs when the \textit{accumulation table} processes prior \glspl{eviction} limiting the benefit.
+Group~1's sparse cache-lines trigger frequent \gls{eviction} bursts, dominating the performance and making the system highly memory-bound.
 Thus, \acrshort{spdc}'s substantial memory traffic reduction translates directly to speedup by eliminating costly line-wise \glspl{eviction}.
 \acrshort{spdc} with \acrshort{bacsc} performs best, with a 1.2$\times$ speedup, by eliminating region calculation overhead in the critical loop.
 
 For group~2 matrices, our single-core RISC-V processor becomes compute-bound.
 Higher cache-line density means \glspl{eviction} are typically followed by non-blocking \glspl{hit}.
-In the extreme case, 7 \glspl{hit} following an \gls{eviction} require 56-98 instructions (8-14 per iteration, see Section~\ref{sec:arch:sw}) before the next potential \gls{eviction}, sufficient to hide the 64-cycle memory latency.
+In the extreme case, 7 \glspl{hit} following an \gls{eviction} require 56-98 instructions (8-14 instructions per iteration, see Section~\ref{sec:arch:sw}) before the next potential \gls{eviction}, sufficient to hide the 64 cycle memory latency.
 
-Consequently, \acrshort{spdc} with \acrshort{bacsc} matches \acrshort{gc} performance.
-\acrshort{redc} underperforms by 1.1$\times$ due to its 2$\times$ smaller \acrshort{drc} versus \acrshort{gc}, larger \acrshort{drc} would yield comparable performance.
+Consequently, \acrshort{spdc} with \acrshort{bacsc} surpasses \acrshort{gc} performance.
+\acrshort{redc} underperforms by 1.1$\times$ due to its 2$\times$ smaller \acrshort{drc} versus \acrshort{gc}.
+With a larger \acrshort{drc}, \acrshort{redc} would yield comparable performance.
 \acrshort{spdc} with \acrshort{csc} underperforms by 1.4$\times$ because, in compute-bound regimes, reducing inner-loop instruction count is critical for performance.
 
 \begin{highlight}{Conclusion}{Red}
     For group~1 matrices (low $d_\mathit{cd}$), \textbf{\acrshort{spdc}(\acrshort{bacsc}) performs best}, with a 1.2$\times$ speedup, by eliminating costly \glspl{eviction} and region computation overhead.
-    For group~2 matrices (high $d_\mathit{cd}$), the workload becomes compute-bound and \acrshort{spdc}(\acrshort{bacsc}) still performs best by matching \acrshort{gc} performance.
-    Overall, \acrshort{spdc}(\acrshort{bacsc}) achieves 1.1$\times$ average speedup, while the other configurations underperform on average, with \textbf{gains concentrated in memory-bound scenarios}.
+    For group~2 matrices (high $d_\mathit{cd}$), the workload becomes compute-bound but \acrshort{spdc}(\acrshort{bacsc}) still matches the \acrshort{gc} performance.
+    Overall, \acrshort{spdc}(\acrshort{bacsc}) achieves a 1.1$\times$ average speedup, while the other configurations underperform on average, with \textbf{gains concentrated in memory-bound scenarios}.
 \end{highlight}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Further Discussion Over the Two Performance Groups}
+\subsubsection{Further Discussion Regarding the Two Performance Groups}
 \label{sec:arch:perfGroups}
 
-In the two previous sections, we showed performance normalized to \acrshort{gc}, highlighting how \acrshort{spdc} affects baseline performance upon replacement.
+In the two previous sections, we showed performance normalized to \acrshort{gc}, highlighting how \acrshort{spdc} affects baseline performance, assuming it was used as an alternative cache.
 Here, we further analyze performance by normalizing against the number of non-zero elements ($nnz$), yielding average raw output memory traffic and latency per \acrshort{op} \acrshort{spmv} iteration, or equivalently per \gls{reduction} processed.
 This reveals raw performance variations across matrix groups and configurations (\acrshort{gc}, \acrshort{redc}, \acrshort{spdc}(\acrshort{csc}), and \acrshort{spdc}(\acrshort{bacsc})).
 Figure~\ref{fig:arch:perfOnMat} organizes results as follows: each row represents a configuration; columns show output memory traffic and latency normalized by $nnz$; dots represent the 62 matrices scattered by density ($d$) and $d_\mathit{cd}$; red coloring indicates performance data.
-For both metrics, white indicates better performance, though scales are not shared across graphs.
+For both metrics, white indicates better performance, although the scale is not the same across graphs.
 
 \begin{figure}[htbp]
     \centering
@@ -383,36 +379,41 @@ For both metrics, white indicates better performance, though scales are not shar
     \label{fig:arch:perfOnMat}
 \end{figure}
 
-We observe that group~2 consistently outperforms group~1 across all configurations and metrics.
+We first notice that \acrshort{gc} shows group-dependent variation.
+Indeed, the \acrshort{gc} output memory traffic exhibits 17.6$\times$ higher traffic on group~1 than group~2.
+\acrshort{spdc} thus maintains significant relative benefits on both groups of matrices when comparing against \acrshort{gc} in previous sections.
+
+We then observe that group~2 consistently outperforms group~1 across all configurations and metrics, e.g. the \textit{red} points are nearly all group~2 matrices, on the left side.
 Group~1 exhibits from 8.27$\times$ to 31.4$\times$ higher memory traffic per $nnz$ and from 1.20$\times$ to 1.86$\times$ higher latency per $nnz$ than group~2.
 When $d_\mathit{cd}$ is low, cache-lines remain nearly empty, increasing \gls{eviction} frequency.
 Additionally, low $d_\mathit{cd}$ causes consecutive \acrshort{op} \acrshort{spmv} iterations to generate \gls{eviction} bursts.
 Consequently, when $d_\mathit{cd}$ is low: (1) \gls{eviction} count increases and (2) \glspl{eviction} cluster temporally.
 The first effect raises output vector $c$ traffic, potentially triggering critical memory reads that affect latency.
-The second exacerbates latency: when consecutive iterations process \glspl{eviction}, the intervening $\sim$10 instructions cannot hide the 64-cycle read latency (insufficient loop unrolling).
+The second exacerbates latency: when consecutive iterations process \glspl{eviction}, the intervening $\sim$10 instructions cannot hide the 64 cycle read latency (insufficient loop unrolling).
 As visible in Figure~\ref{fig:arch:perfOnMat:01}, worst-case group~1 matrices average 64 cycles latency on \acrshort{gc}.
-Repeated \gls{eviction} waiting causes processor stalls when $d_\mathit{cd}$ is low, inducing memory-bound behavior.
+Repeatedly waiting for \glspl{eviction} causes processor stalls when $d_\mathit{cd}$ is low, making the performance highly memory bound.
 
 As $d_\mathit{cd}$ increases, consecutive iterations exhibit cache-line \glspl{hit}.
 \Gls{eviction} frequency and burst clustering both decrease.
 Between successive \glspl{eviction}, \gls{hit} iterations execute sufficient instructions to overlap with prior read latency.
-Once \gls{eviction} latency hides within processor execution, the workload becomes compute-bound.
+Once the \gls{eviction} latency falls below the loop iteration time, the workload becomes compute-bound.
 
-Group~1 benefits significantly from memory traffic reduction, while group~2 is constrained by software implementation.
-Previous sections demonstrated this against \acrshort{gc}.
-While \acrshort{gc} and \acrshort{redc} remain bottlenecked, \acrshort{spdc} substantially reduces costly \glspl{eviction} and avoids bursting by accumulating with high \gls{hit}-rates in \acrshort{drc} or evicting via low-cost, element-wise transactions from \acrshort{srt}.
-Consequently, \acrshort{spdc} delivers significant latency reduction in memory-bound group~1 alongside substantial traffic reduction.
-For compute-bound group~2, traffic reduction yields modest latency improvements.
-Here, \acrshort{spdc}(\acrshort{bacsc}) excels by reducing inner-loop instructions with negligible total traffic overhead.
+Group~1 benefits significantly from memory traffic reduction, while group~2 is constrained by the latency of the inner-loop in software implementation.
+Previous sections demonstrated this while taking \acrshort{gc} as the performance reference.
+While \acrshort{gc} and \acrshort{redc} remain bottlenecked, \acrshort{spdc} substantially reduces costly \glspl{eviction} and avoids bursting by accumulating with high \gls{hit}-rates in the \acrshort{drc} or evicting via low-cost, element-wise transactions within the \acrshort{srt}.
+Consequently, \acrshort{spdc} delivers significant latency reduction for the matrices in group~1 which are memory bound.
+For the compute bound matrices in group~2, traffic reduction yields modest latency improvements.
+Here, the \acrshort{bacsc} format reduces the number of instructions in the inner-loop by avoiding the region calculation.
 
-For \acrshort{gc}, loop unrolling allows the \textit{miss handler}'s multiple entries to queue up to eight concurrent \gls{eviction} reads.
-However, this proves insufficient for group~1 stalls.
-Increasing the \textit{accumulation table} entries to eight similarly yields negligible speedup ($<1\%$) for \acrshort{redc} and \acrshort{spdc}.
+For \acrshort{gc}, loop unrolling allows the \textit{miss handler} to queue up to eight concurrent \gls{eviction} reads through its multiple entries.
+However, this proves insufficient for group~1 matrices, as the unrolled inner-loop contains too many instructions to hide the memory latency.
+Additionally, the \textit{miss handler}'s parallelism cannot be fully exploited if the \textit{accumulation table} lacks sufficient entries to process the corresponding \acrshort{red} \glspl{eviction}.
+Increasing the \textit{accumulation table} to eight entries similarly yields negligible speedup ($<1\%$) for \acrshort{redc} and \acrshort{spdc}, since the bottleneck remains the critical path length of the inner-loop instructions.
 
 \begin{highlight}{Conclusion}{Red}
     Overall, \textbf{group~2 always outperforms group~1} when compared with raw memory traffic and latency per $nnz$.
     Group~1 matrices (low $d_{\mathit{cd}}$) are \textbf{memory-bound} due to sparse cache-lines causing frequent \gls{eviction} bursts, while group~2 matrices (high $d_{\mathit{cd}}$) are \textbf{compute-bound} with dense cache-lines hiding \gls{eviction} latency.
-    Consequently, \acrshort{spdc} achieves speedup in group~1 through memory traffic reduction, but only matches baseline performance in group~2 where software implementation becomes the bottleneck.
+    Consequently, \acrshort{spdc} achieves speedup in group~1 through memory traffic reduction, but only matches baseline performance in group~2 where the inner-loop latency becomes the bottleneck.
 \end{highlight}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -427,7 +428,7 @@ This shows that \acrlong{spdc} could reasonably be integrated into a processor, 
 \subsection{Comparison with the Analytical Model}
 
 To validate consistency between our models and implementations, we compare the normalized output memory traffic produced by three sources: the analytical model of Chapter~\ref{cha:theory}, the Python model of Chapter~\ref{cha:spdc}, and the \acrshort{rtl} implementation presented in this chapter.
-For a fair comparison, the caches for \acrshort{redc} and \acrshort{spdc} are configured to 32~KiB total (see Table~\ref{tab:arch:region_configs}): 50\%/50\%/0\% for \acrshort{redc} and 25\%/50\%/25\% for \acrshort{spdc}.
+For a fair comparison, the caches for \acrshort{redc} and \acrshort{spdc} are configured to 32~KiB total (see Table~\ref{tab:arch:region_configs}): 50/50/0\% for \acrshort{redc} and 25/50/25\% for \acrshort{spdc}.
 The analytical model accepts global parameters and density distributions rather than concrete matrices, so we synthesize \gls{banded} matrices for the Python and \acrshort{rtl} simulations that match those parameters.
 All synthetic matrices use $M = 10^{4}$, half-\gls{band} width $w_\mathit{hB} = 1021$, in-\gls{band} density $d_\mathit{IB} = 10^{-2}$, and out-of-\gls{band} density $d_\mathit{OB}$ varying from $10^{-7}$ to $10^{-2}$.
 Note that at $d_\mathit{OB} \simeq 8\times10^{-3}$, approximately one non-zero element exists per column in the out-of-\gls{band} region, whereas at $d_\mathit{OB} \simeq 8\times10^{-7}$, approximately one non-zero element exists in the entire out-of-\gls{band} region, resulting in a nearly \gls{PBanded} matrix.
@@ -444,7 +445,7 @@ Two observations are noteworthy.
 First, the three approaches agree most closely when $d_\mathit{OB}$ is low.
 Indeed, at $d_\mathit{OB} = 10^{-2}$ there is no measurable difference for \acrshort{redc}, while \acrshort{spdc} exhibits a 0.23 difference in $\mathit{normMT}$.
 At the smallest $d_\mathit{OB}$ the discrepancies reach 0.58 element transferred in memory per \gls{reduction}.
-Overall trends are preserved across models and deviations remain small.
+Overall trends are hold across models and deviations remain small.
 Second, the analytical model consistently overestimates traffic, the Python model consistently underestimates it, and the \acrshort{rtl} results fall between the two.
 
 \begin{highlight}{Conclusion}{Red}
@@ -481,12 +482,12 @@ Table~\ref{tab:arch:rtl_vs_python} reports \acrshort{rtl} results with geometric
                     row{2-4} = {c, black!5},
                     row{2-4} = {font=\itshape\small},
                     row{2-4} = {rowsep=0pt},
-                    row{6,9,11,13} = {abovesep=0pt},
-                    row{5,8,10,12} = {belowsep=0pt},
+                    row{6,8} = {abovesep=0pt},
+                    row{5,7} = {belowsep=0pt},
                     cell{2}{2} = {r=3}{c},
                     cell{2-4}{1} = {r},
-                    cell{5,8,10,12}{1} = {r=2}{},
-                    cell{5-13}{1} = {c=3}{},
+                    cell{5,7}{1} = {r=2}{},
+                    cell{5-8}{1} = {c=3}{},
                     cell{1}{1} = {r=2}{},
                     hspan = {minimal},
                     % hlines, vlines,
@@ -504,13 +505,8 @@ Table~\ref{tab:arch:rtl_vs_python} reports \acrshort{rtl} results with geometric
                 %
                 \textbf{Output Memory Traffic} (\% over GC)      & & & 100  & 103 & 24.5 \\
                                                                 & & & \cst1.0 & \cst1.0 & \dwG4.1 \\
-                \textbf{Ratio of RMWs in Memory Traffic} (\%)    & & & \O   & \O   & 40.5 \\
                 \textbf{Total Memory Traffic} (\% over GC)       & & & 100  & 98.5 & 56.1 \\
                                                                 & & & \cst1.0 & \cst1.0 & \dwG1.8 \\
-                \textbf{Evicted Cache Line Utilization} (max: 8) & & & 3.60 & 3.41 & 7.21 \\
-                                                                & & & \cst1.0 & \cst1.0 & \upG2.0 \\
-                \textbf{Cache Memory Utilization} (\%)           & & & 36.4 & 43.8 & 75.2 \\
-                                                                & & & \cst1.0 & \upG1.2 & \upG2.1 \\
                 %
             \end{tblr}
         \end{table}
@@ -574,10 +570,15 @@ Table~\ref{tab:arch:rtl_vs_python} reports \acrshort{rtl} results with geometric
 The total memory traffic for \acrshort{redc} and \acrshort{spdc} relative to \acrshort{gc} is nearly equivalent across both simulations.
 However, output memory traffic shows notable differences: \acrshort{rtl} achieves better traffic reduction than Python, 1.3$\times$ for \acrshort{redc} (vs. 1.0$\times$ in Python) and 5.0$\times$ for \acrshort{spdc} (vs. 4.1$\times$ in Python).
 Comparing raw traffic values between \acrshort{rtl} and Python simulations across all configurations, we observe approximately 25\% lower total memory traffic in \acrshort{rtl}.
-Output memory traffic varies by $\pm$15\%, with \acrshort{rtl} showing favorable results for both \acrshort{redc} and \acrshort{spdc}.
+Output memory traffic varies by $\pm$15\%, with \acrshort{rtl} showing lower results for both \acrshort{redc} and \acrshort{spdc}.
+Indeed, the \acrshort{rtl} model manages \glspl{reduction} out-of-order using the \textit{replay table}, whereas the Python model simulates them sequentially without overlap.
+For instance, in the Python model, a \acrshort{red} triggering an \gls{eviction} completes entirely before processing the next \acrshort{red}.
+Conversely, in the \acrshort{rtl} model, a \acrshort{red} triggering an \gls{eviction} can be queued in the \textit{replay table} if the \textit{miss handler} or \textit{accumulation table} reach capacity, allowing the cache to accept subsequent \acrshort{red} operations.
+If a later \acrshort{red} \glspl{hit} the cache-line that would have been evicted by an earlier operation, an unnecessary \gls{eviction} is avoided, an event that would have been counted in the Python model.
+This out-of-order execution capability, inherited from HPDcache, thus contributes to reduced memory traffic in the \acrshort{rtl} implementation.
 
 \begin{highlight}{Conclusion}{Red}
-    Over a set of real application matrices, the \acrshort{rtl} implementation corroborates the Python simulations, exhibiting slightly improved memory traffic performance.
+    Over a set of real application matrices, the \acrshort{rtl} implementation corroborates the Python simulations, exhibiting slightly better memory traffic performance.
 \end{highlight}
 
 \clearpage
