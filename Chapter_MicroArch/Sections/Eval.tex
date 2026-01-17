@@ -383,7 +383,7 @@ We first notice that \acrshort{gc} shows group-dependent variation.
 Indeed, the \acrshort{gc} output memory traffic exhibits 17.6$\times$ higher traffic on group~1 than group~2.
 \acrshort{spdc} thus maintains significant relative benefits on both groups of matrices when comparing against \acrshort{gc} in previous sections.
 
-We then observe that group~2 consistently outperforms group~1 across all configurations and metrics, e.g. the \textit{red} points are nearly all group~2 matrices, on the left side.
+We then observe that group~2 consistently outperforms group~1 across all configurations and metrics, \eg the \textit{red} points are nearly all group~2 matrices, on the left side.
 Group~1 exhibits from 8.27$\times$ to 31.4$\times$ higher memory traffic per $nnz$ and from 1.20$\times$ to 1.86$\times$ higher latency per $nnz$ than group~2.
 When $d_\mathit{cd}$ is low, cache-lines remain nearly empty, increasing \gls{eviction} frequency.
 Additionally, low $d_\mathit{cd}$ causes consecutive \acrshort{op} \acrshort{spmv} iterations to generate \gls{eviction} bursts.

@@ -37,7 +37,7 @@ An optional \textit{write buffer} gathers recent writes to memory, allowing coal
 The \textit{flush controller}, also invoked by \textit{st2}, reads cache-line data from the \textit{Data} \acrshortpl{ram} and issues memory writes.
 It temporarily stalls the \gls{pipeline} to prevent \acrshort{ram} conflicts.
 HPDcache further provides an \textit{UC} unit to handle uncached transactions.
-Finally, the \textit{\acrshort{cmo} handler} performs internal cache operations (e.g., invalidations and flushes).
+Finally, the \textit{\acrshort{cmo} handler} performs internal cache operations (\eg, invalidations and flushes).
 When active it takes control of the cache and can invoke the \textit{flush controller} if necessary.
 Most of these units are reused and extended to implement \acrlong{spdc}.
 

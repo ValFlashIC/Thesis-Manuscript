@@ -85,7 +85,7 @@ When executing an \acrshort{op} \acrshort{spmv} kernel with \acrlong{spdc}, we a
 While we provide local coherency between the two \gls{reduction} regions (\acrshort{drc} and \acrshort{srt}) to prevent $c$ address duplication, we lack coherency with the \acrshort{grc}.
 Implementing global inter-region coherency would require the following modifications:
 \begin{itemize}
-    \item Configuration: When enabling \gls{reduction} mode, the configuration parameter must specify the address range for \acrshort{red} instructions (e.g., output vector $c$ and its extent).
+    \item Configuration: When enabling \gls{reduction} mode, the configuration parameter must specify the address range for \acrshort{red} instructions (\eg, output vector $c$ and its extent).
     %
     \item Region Assignment: To prevent address duplication between \gls{reduction} regions and the \acrshort{grc}, loads and stores on $c$ addresses target \gls{reduction} regions, while \acrshortpl{red} on non-$c$ addresses target the \acrshort{grc}.
     The following cases apply only when \gls{reduction} mode is enabled.

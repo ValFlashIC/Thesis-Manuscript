@@ -531,6 +531,36 @@
     month={July},
 }
 
+@INPROCEEDINGS{Hojabr2021_SPAGHETTI,
+    author={Hojabr, Reza and Sedaghati, Ali and Sharifian, Amirali and Khonsari, Ahmad and Shriraman, Arrvindh},
+    booktitle={2021 IEEE International Symposium on High-Performance Computer Architecture (HPCA)}, 
+    title={SPAGHETTI: Streaming Accelerators for Highly Sparse GEMM on FPGAs}, 
+    year={2021},
+    volume={},
+    number={},
+    pages={84-96},
+    abstract={Generalized Sparse Matrix-Matrix Multiplication (Sparse GEMM) is widely used across multiple domains, but the computation’s regularity is dependent on the input sparsity pattern. The majority of sparse GEMM accelerators are based on the inner product method and propose new storage formats [5], [28], [31] to regularize computation. We find that these storage formats are more suited for denser matrices. Accelerators [26], [34] adopting the outer product algorithm are more suitable for highly sparse inputs $(\lt 1$% density), since they support CSC/CSR storage formats. The current state-of-the-art, SpArch [34], condenses inputs to improve output reuse, but then spoils input reuse. The condensing effectiveness varies across inputs leading to high variance in DRAM utilization and speedup across inputs. SpArch also requires a complex memory hierarchy (e.g., prefetch caches) to re-capture input reuse.We propose Spaghetti, an open-source Chisel generator for creating FPGA-optimized outer product accelerators. The key novelty in Spaghetti is a new pattern-aware software scheduler that analyzes the sparsity pattern and schedules row-col pairs of the inputs onto the fixed microarchitecture. Spaghetti takes advantage of our observation that the rows in the input matrix lead to mutually independent rows in the final output. Thus the scheduler can partition the input into tiles that maximize reuse and eliminate re-fetching the partial matrices from the DRAM. The microarchitecture template we create has the following key benefits: i) we can statically schedule the inputs in a streaming fashion and maximize DRAM utilization, ii) we can parallelize the merge phase and generate multiple rows of the output in parallel maximally using the output DRAM bandwidth, iii) we can adapt to the varying logic resources and bandwidth across various FPGA devices and attain maximal roofline performance (only limited by memory bandwidth). We auto-generate sparse GEMM accelerators on Amazon AWS FPGAs and demonstrate that we can achieve performance improvement over CPUs and GPUs between 1.1 – 34.5 x. Compared to SpArch [34], our design improves performance by an average of $2.6 \times$, and reduces DRAM accesses by an average of $4 \times$.},
+    keywords={Performance evaluation;Schedules;Microarchitecture;Prefetching;Random access memory;Prototypes;Bandwidth},
+    doi={10.1109/HPCA51647.2021.00017},
+    ISSN={2378-203X},
+    month={Feb},
+}
+
+@INPROCEEDINGS{Qin2020_SIGMA,
+    author={Qin, Eric and Samajdar, Ananda and Kwon, Hyoukjun and Nadella, Vineet and Srinivasan, Sudarshan and Das, Dipankar and Kaul, Bharat and Krishna, Tushar},
+    booktitle={2020 IEEE International Symposium on High Performance Computer Architecture (HPCA)}, 
+    title={SIGMA: A Sparse and Irregular GEMM Accelerator with Flexible Interconnects for DNN Training}, 
+    year={2020},
+    volume={},
+    number={},
+    pages={58-70},
+    abstract={The advent of Deep Learning (DL) has radically transformed the computing industry across the entire spectrum from algorithms to circuits. As myriad application domains embrace DL, it has become synonymous with a genre of workloads across vision, speech, language, recommendations, robotics, and games. The key compute kernel within most DL workloads is general matrix-matrix multiplications (GEMMs), which appears frequently during both the forward pass (inference and training) and backward pass (training). GEMMs are a natural choice for hardware acceleration to speed up training, and have led to 2D systolic architectures like NVIDIA tensor cores and Google Tensor Processing Unit (TPU). Unfortunately, emerging GEMMs in DL are highly irregular and sparse, which lead to poor data mappings on systolic architectures. This paper proposes SIGMA, a flexible and scalable architecture that offers high utilization of all its processing elements (PEs) regardless of kernel shape and sparsity. Within SIGMA includes a novel reduction tree microarchitecture named Forwarding Adder Network (FAN). SIGMA performs 5.7x better than systolic array architectures for irregular sparse matrices, and roughly 3x better than state-of-the-art sparse accelerators. We demonstrate an instance of SIGMA operating at 10.8 TFLOPS efficiency across arbitrary levels of sparsity, with a 65.10 mm^2 and 22.33 W footprint on a 28 nm process.},
+    keywords={Training;Sparse matrices;Arrays;Graphics processing units;Engines;Kernel;Tensile stress},
+    doi={10.1109/HPCA47549.2020.00015},
+    ISSN={2378-203X},
+    month={Feb},
+}
+
 @ARTICLE{Hosseinabady2019_SDE,
     author={Hosseinabady, Mohammad and Nunez-Yanez, Jose Luis},
     journal={IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems}, 

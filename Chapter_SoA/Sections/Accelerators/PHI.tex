@@ -18,21 +18,21 @@ PHI is essentially a modified cache which is optimized to efficiently process co
     \item \emph{Reduced Cache Synchronization Traffic}. In multi-core systems, private caches act as local buffers, coalescing the updates and reducing coherency protocol traffic.
 \end{itemize}
 
-\begin{figure}
-    \centering
-    \begin{subfigure}{0.38\textwidth}
-       \includegraphics[width=0.9\linewidth]{Figures/PDF/phi_example_coalesce.pdf}
-       \caption{PHI : Coalescing of Updates in the Cache}
-       \label{fig:soa:phi_coalesce}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.58\textwidth}
-       \includegraphics[width=0.9\linewidth]{Figures/PDF/phi_example_ub.pdf}
-       \caption{PHI : Selective Update Buffering}
-       \label{fig:soa:phi_ub}
-   \end{subfigure}
-   \caption{Memory Access Patterns with PHI}
-   \label{fig:soa:phi}
-\end{figure}
+% \begin{figure}
+%     \centering
+%     \begin{subfigure}{0.38\textwidth}
+%        \includegraphics[width=0.9\linewidth]{Figures/PDF/phi_example_coalesce.pdf}
+%        \caption{PHI : Coalescing of Updates in the Cache}
+%        \label{fig:soa:phi_coalesce}
+%     \end{subfigure}
+%     \begin{subfigure}[b]{0.58\textwidth}
+%        \includegraphics[width=0.9\linewidth]{Figures/PDF/phi_example_ub.pdf}
+%        \caption{PHI : Selective Update Buffering}
+%        \label{fig:soa:phi_ub}
+%    \end{subfigure}
+%    \caption{Memory Access Patterns with PHI}
+%    \label{fig:soa:phi}
+% \end{figure}
 
 This combination of in-cache coalescing and update buffering enables PHI to take advantage of locality when possible (like Coup~\cite{ZHANG_2015__Exploiting_Commutativity}), but with the addition of UB, PHI improves memory utilization, even when the data being updated is too large to fit in the cache.
 

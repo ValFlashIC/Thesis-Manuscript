@@ -6,16 +6,29 @@
 \section{Hardware Accelerators for Sparse Matrices and Vectors}
 \label{sec:soa:hw_accelerators}
 
-In this section, we describe the recent (2018-2023) hardware accelerators for sparse MM and MV, targeting ASIC-type implementation. We try to be consistent on notations and architecture schemes to simplify the comparison. Before going into the detailed overviews of the accelerators, in Table~\ref{tab:soa:classificationOverview} we present a criteria-based classification of the designs.
+In this section, we describe the recent (2016-2025) hardware accelerators for sparse \acrshort{mm} and \acrshort{mv}, targeting ASIC-type implementation.
+We try to be consistent on notations and architecture schemes to simplify the comparison.
+%%%% shorter?? --> FIXME
+Before going into the detailed overviews of the accelerators, in Table~\ref{tab:soa:classificationOverview} we present a criteria-based classification of the designs.
 
-A first criterion to classify the accelerators is between \emph{standalone} accelerators that address the full kernel without the assist of a processor (\emph{e.g.} OuterSPACE~\cite{Pal2018_OuterSPACE} -- Section~\ref{sec:soa:outerspace}) and ones that  address only a part of the kernel and need a processor to manage the computation (\emph{e.g.} PHI~\cite{Mukkara2019_PHI} -- Section~\ref{sec:soa:other_accel}).
-\emph{Standalone} accelerators are directly connected to the main memory and internally manage their own custom memories. The other accelerators actually intervene at different levels of the memory hierarchy, giving a second classification criterion. Certain accelerators intervene near the processors (\emph{e.g.} ASA~\cite{Zhang2022_ASA} -- Section~\ref{sec:soa:asa}), near the cache (\emph{e.g.} PHI and SortCache~\cite{Srikanth2021_SortCache} -- Sections~\ref{sec:soa:other_accel} and~\ref{sec:soa:sortcache}), or near the main memory (\emph{e.g.} SPiDRE~\cite{Barredo2019_SPiDRE} and SpaceA~\cite{Xie2021_SpaceA} -- Section~\ref{sec:soa:other_accel}).
+A first criterion to classify the accelerators is between \emph{standalone} accelerators that address the full kernel without the assist of a processor (\eg OuterSPACE~\cite{Pal2018_OuterSPACE} -- Section~\ref{sec:soa:outerspace}) and ones that address only a part of the kernel and need a processor to manage the computation (\eg PHI~\cite{Mukkara2019_PHI} -- Section~\ref{sec:soa:other_accel}).%FIXME
+Most of the \emph{standalone} accelerators are directly connected to the main memory and internally manage their own custom memories.
+The other accelerators actually intervene at different levels of the memory hierarchy, giving a second classification criterion.
+Certain accelerators intervene near the processors (\eg ASA~\cite{Zhang2022_ASA} -- Section~\ref{sec:soa:asa}), near the cache (\eg PHI and SortCache~\cite{Srikanth2021_SortCache} -- Sections~\ref{sec:soa:other_accel} and~\ref{sec:soa:sortcache}), or near the main memory (\eg SPiDRE~\cite{Barredo2019_SPiDRE} and SpaceA~\cite{Xie2021_SpaceA} -- Section~\ref{sec:soa:other_accel}).%FIXME
 
-Each accelerator is optimized for a specific algorithm (\algo{IP}, \algo{OP} or \algo{Gust}), our third criterion. For example, some accelerators (\emph{e.g.} PHI and SortCache) address the \emph{reduction} problem and are adapted to \algo{OP} algorithms but \emph{reductions} are also required with \algo{Gust} and highly-\emph{tiled} algorithms. ExTensor~\cite{Hegde2019_ExTensor} (Section~\ref{sec:soa:extensor}) is a general purpose accelerator that is demonstrated for a highly-\emph{tiled} \algo{OP} but also makes major contributions for \algo{IP}. 
+Each accelerator is optimized for one or several specific algorithms (\acrshort{ip}, \acrshort{op} or \acrshort{gust}), our third criterion.
+For example, some accelerators (\eg PHI and SortCache) address the \gls{reduction} problem and are adapted to \acrshort{op} algorithms but \glspl{reduction} are also required with \acrshort{gust} and highly-tiled algorithms.
+ExTensor~\cite{Hegde2019_ExTensor} (Section~\ref{sec:soa:extensor}) is a general purpose accelerator that is demonstrated for a highly-tiled \acrshort{op} but also makes major contributions for \acrshort{ip}.%FIXME ADD
 
-From a memory perspective, the two main problems are \emph{gather} and \emph{scatter}, our fourth criterion. Certain accelerators offer solutions for one, the other or both. For example, some accelerators (\emph{e.g.} SpArch~\cite{Zhekai2020_SpArch} -- Section~\ref{sec:soa:sparch}) are specialized for an \algo{OP} algorithm but optimize both \emph{gather} and \emph{scatter}. Finally, accelerators preferably focus on sparse MM, MV or both -- our final criterion.
+From a memory perspective, the two main problems are \gls{gather} and \gls{scatter}, our fourth criterion.
+Certain accelerators offer solutions for one, the other or both.
+For example, some accelerators (\eg SpArch~\cite{Zhekai2020_SpArch} -- Section~\ref{sec:soa:sparch}) are specialized for an \acrshort{op} algorithm but optimize both \gls{gather} and \gls{gather}.
+Finally, accelerators preferably focus on sparse \acrshort{mm}, \acrshort{mv} or both, our final criterion.
 
-After this first comparison, in Sections~\ref{sec:soa:outerspace} to~\ref{sec:soa:gamma} we present the \emph{standalone} accelerators, followed by the \emph{processor assist} accelerators in Sections~\ref{sec:soa:sortcache} to~\ref{sec:soa:asa}. In Section~\ref{sec:soa:other_accel}, we briefly touch on other accelerators.
+After this first comparison, in Sections~\ref{sec:soa:outerspace} to~\ref{sec:soa:gamma} we present the \emph{standalone} accelerators, followed by the \emph{processor assist} accelerators in Sections~\ref{sec:soa:sortcache} to~\ref{sec:soa:asa}.%FIXME
+In Section~\ref{sec:soa:other_accel}, we briefly touch on other accelerators.
+
+%note about SpDCache in the table
 
 {
     \DefTblrTemplate{caption-sep}{default}{~--\enskip}
@@ -63,43 +76,45 @@ After this first comparison, in Sections~\ref{sec:soa:outerspace} to~\ref{sec:so
         & & Standalone & Processor Assist & Near Processors & Near Caches & Near Main Memory & \acrlong{ip} & \acrlong{op} & \acrlong{gust} & \Gls{gather} & \Gls{scatter} & \acrshort{mv} & \acrshort{mm} \\
         %
         EIE~\cite{Han2016_EIE}                      & 2016 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck & \ck &     \\
-        OuterSPACE~\cite{Pal2018_OuterSPACE}        & 2018 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck & \ck & \ck \\
+        OuterSPACE~\cite{Pal2018_OuterSPACE}        & 2018 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck & \ck & \ck \\%%%%
         GraphR~\cite{Song2018_GraphR}               & 2018 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck & \ck &     \\
         SDE~\cite{Hosseinabady2019_SDE}             & 2019 & \ck &     &     &     & \sa & \ck &     & \sc & \ck & \sb & \ck & \sc \\
-        ExTensor~\cite{Hegde2019_ExTensor}          & 2019 & \ck &     &     &     & \sa & \ck & \sb &     & \ck & \sb & \sc & \ck \\
-        PHI~\cite{Mukkara2019_PHI}                  & 2019 &     & \ck &     & \ck &     &     & \ck & \sc &     & \ck & \ck & \sc \\
-        SPiDRE~\cite{Barredo2019_SPiDRE}            & 2019 &     & \ck &     &     & \ck & \ck &     &     & \ck &     & \ck & \sc \\
+        ExTensor~\cite{Hegde2019_ExTensor}          & 2019 & \ck &     &     &     & \sa & \ck & \sb &     & \ck & \sb & \sc & \ck \\%%%%
+        PHI~\cite{Mukkara2019_PHI}                  & 2019 &     & \ck &     & \ck &     &     & \ck & \sc &     & \ck & \ck & \sc \\%%%%
+        SPiDRE~\cite{Barredo2019_SPiDRE}            & 2019 &     & \ck &     &     & \ck & \ck &     &     & \ck &     & \ck & \sc \\   %
         ITS~\cite{Sadi2019_ITS}                     & 2019 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck & \ck &     \\
         SPU~\cite{Dadu2019_SPU}                     & 2019 & \ck &     &     &     & \sa & \ck & \ck &     & \ck & \ck & \ck &     \\
-        MatRaptor~\cite{Srivastava2020_MatRaptor}   & 2020 & \ck &     &     &     & \sa &     &     & \ck & \ck & \ck &     & \ck \\
-        SpArch~\cite{Zhekai2020_SpArch}             & 2020 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck &     & \ck \\
-        Alrescha~\cite{Asgari2020_Alrescha}         & 2020 & \ck &     &     &     & \sa & \ck &     &     & \ck & \ck & \ck &     \\
-        SpaceA~\cite{Xie2021_SpaceA}                & 2021 & \ck &     &     &     & \ck & \ck &     &     & \ck & \ck & \ck &     \\
-        Gamma~\cite{Zhang2021_Gamma}                & 2021 & \ck &     &     &     & \sa &     &     & \ck & \ck & \sb &     & \ck \\
-        InnerSP~\cite{Baek2021_InnerSP}             & 2021 & \ck &     &     &     & \sa &     &     & \ck & \ck & \ck &     & \ck \\
+        MatRaptor~\cite{Srivastava2020_MatRaptor}   & 2020 & \ck &     &     &     & \sa &     &     & \ck & \ck & \ck &     & \ck \\   %
+        SpArch~\cite{Zhekai2020_SpArch}             & 2020 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck &     & \ck \\   %
+        Alrescha~\cite{Asgari2020_Alrescha}         & 2020 & \ck &     &     &     & \sa & \ck &     &     & \ck & \ck & \ck &     \\%
+        SIGMA~\cite{Qin2020_SIGMA}                  & 2020 & \ck &     &     &     & \sa & \ck &     &     & \ck & \ck &     & \ck \\%
+        SpaceA~\cite{Xie2021_SpaceA}                & 2021 & \ck &     &     &     & \ck & \ck &     &     & \ck & \ck & \ck &     \\   %
+        Gamma~\cite{Zhang2021_Gamma}                & 2021 & \ck &     &     &     & \sa &     &     & \ck & \ck & \ck &     & \ck \\%%%%
+        SPAGHETTI~\cite{Hojabr2021_SPAGHETTI}       & 2021 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck &     & \ck \\%
+        InnerSP~\cite{Baek2021_InnerSP}             & 2021 & \ck &     &     &     & \sa &     &     & \ck & \ck & \ck &     & \ck \\   %
         CoSPARSE~\cite{Feng2021_CoSPARSE}           & 2021 & \ck &     &     &     & \sa & \ck & \ck &     & \ck & \ck & \ck &     \\
-        SortCache~\cite{Srikanth2021_SortCache}     & 2021 &     & \ck &     & \ck &     &     & \ck & \sc &     & \ck & \sc & \ck \\
+        SortCache~\cite{Srikanth2021_SortCache}     & 2021 &     & \ck &     & \ck &     &     & \ck & \sc &     & \ck & \sc & \ck \\   %
         Sextans~\cite{Song2022_Sextans}             & 2022 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck &     & \ck \\
-        ASA~\cite{Zhang2022_ASA}                    & 2022 &     & \ck & \ck &     &     &     & \sc & \ck &     & \ck & \sc & \ck \\
-        Spada~\cite{Li2023_Spada}                   & 2023 & \ck &     &     &     & \sa &     &     & \sd & \ck & \ck &     & \ck \\
-        Flexagon~\cite{Munoz-Martinez2023_Flexagon} & 2023 & \ck &     &     &     & \sa & \ck & \ck & \ck & \ck & \ck &     & \ck \\
-        MOSCON~\cite{Noble2023_MOSCON}              & 2023 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck &     & \ck \\
-        GSCSp~\cite{Li2023_GSCSp}                   & 2023 & \ck &     &     &     & \sa &     &     & \ck & \ck & \ck &     & \ck \\
+        ASA~\cite{Zhang2022_ASA}                    & 2022 &     & \ck & \ck &     &     &     & \sc & \ck &     & \ck & \sc & \ck \\   %
+        Spada~\cite{Li2023_Spada}                   & 2023 & \ck &     &     &     & \sa &     &     & \sd & \ck & \ck &     & \ck \\%
+        Flexagon~\cite{Munoz-Martinez2023_Flexagon} & 2023 & \ck &     &     &     & \sa & \ck & \ck & \ck & \ck & \ck &     & \ck \\   %
+        MOSCON~\cite{Noble2023_MOSCON}              & 2023 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck &     & \ck \\%
+        GSCSp~\cite{Li2023_GSCSp}                   & 2023 & \ck &     &     &     & \sa &     &     & \ck & \ck & \ck &     & \ck \\   %
         SDMA~\cite{Gao2023_SDMA}                    & 2023 & \ck &     &     &     & \sa &     &     & \sd & \ck & \ck &     & \ck \\
-        SSSR~\cite{Scheffler2023_SSSR}              & 2023 &     & \ck & \ck &     &     & \ck &     &     & \ck &     & \ck & \sc \\
+        SSSR~\cite{Scheffler2023_SSSR}              & 2023 &     & \ck & \ck &     &     & \ck &     &     & \ck &     & \ck & \sc \\ %
         Funnel~\cite{Ma2024_Funnel}                 & 2024 & \ck &     &     &     & \sa & \ck &     & \ck & \ck & \ck &     & \ck \\
-        GAS~\cite{Zhang2024_GAS}                    & 2024 & \ck &     &     &     & \ck &     & \ck &     &     & \ck & \ck & \ck \\
-        ACES~\cite{Lu2024_ACES}                     & 2024 & \ck &     &     &     & \sa &     &     & \ck & \ck & \ck &     & \ck \\
+        GAS~\cite{Zhang2024_GAS}                    & 2024 & \ck &     &     &     & \ck &     & \ck &     &     & \ck & \ck & \ck \\%
+        ACES~\cite{Lu2024_ACES}                     & 2024 & \ck &     &     &     & \sa &     &     & \ck & \ck & \ck &     & \ck \\%
         FullSparse~\cite{Yu2024_FullSparse}         & 2024 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck &     & \ck \\
-        Sparm~\cite{Luo2024_Sparm}                  & 2024 & \ck &     &     &     & \sa & \ck & \ck & \ck & \ck & \ck &     & \ck \\
-        SpDCache~[\ref{publ:SpDC}]                  & 2024 &     & \ck &     & \ck &     &     & \ck & \sc &     & \ck & \ck & \sc \\
+        Sparm~\cite{Luo2024_Sparm}                  & 2024 & \ck &     &     &     & \sa & \ck & \ck & \ck & \ck & \ck &     & \ck \\%
+        \textbf{SpDCache}~[\ref{publ:SpDC}]         & 2024 &     & \ck &     & \ck &     &     & \ck & \sc &     & \ck & \ck & \sc \\
         SPADES~\cite{Huang2024_SPADES}              & 2024 & \ck &     &     &     & \sa & \sc & \sc & \sc & \ck &     & \ck & \sc \\
         DySpMM~\cite{Wang2024_DySpMM}               & 2024 & \ck &     &     &     & \sa & \ck &     &     & \ck & \ck &     & \ck \\
         Vesper~\cite{Jin2024_Vesper}                & 2024 & \ck &     &     &     & \sa & \ck & \ck & \ck & \ck & \ck & \ck & \ck \\
-        Mentor~\cite{Lu2024_Mentor}                 & 2024 & \ck &     &     &     & \sa &     &     & \ck & \ck & \ck &     & \ck \\
-        IOPS~\cite{Sun2025_IOPS}                    & 2025 & \ck &     &     &     & \sa & \ck & \ck &     & \ck & \ck &     & \ck \\
+        Mentor~\cite{Lu2024_Mentor}                 & 2024 & \ck &     &     &     & \sa &     &     & \ck & \ck & \ck &     & \ck \\%
+        IOPS~\cite{Sun2025_IOPS}                    & 2025 & \ck &     &     &     & \sa & \ck & \ck &     & \ck & \ck &     & \ck \\%
         Leda~\cite{Yi2025_Leda}                     & 2025 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck &     & \ck \\
-        DMSA~\cite{Nagahara2025_DMSA}               & 2025 & \ck &     &     &     & \sa &     &     & \sd & \ck & \ck &     & \ck \\
+        DMSA~\cite{Nagahara2025_DMSA}               & 2025 & \ck &     &     &     & \sa &     &     & \sd & \ck & \ck &     & \ck \\%
         %
         \sa \; Most standalone accelerators connect directly to main memory. \\
         \sb \; Not main contribution but addressed in the article. \\
@@ -115,23 +130,23 @@ After this first comparison, in Sections~\ref{sec:soa:outerspace} to~\ref{sec:so
 
 \input{Chapter_SoA/Sections/Accelerators/ExTensor}
 
-\input{Chapter_SoA/Sections/Accelerators/SpArch}
+% \input{Chapter_SoA/Sections/Accelerators/SpArch}
 
-\input{Chapter_SoA/Sections/Accelerators/MatRaptor}
+% \input{Chapter_SoA/Sections/Accelerators/MatRaptor}
 
-\input{Chapter_SoA/Sections/Accelerators/InnerSP}
+% \input{Chapter_SoA/Sections/Accelerators/InnerSP}
 
 \begin{figure}
     \centering
-    \begin{minipage}[b]{0.54\linewidth}
-        \begin{figure}[H]
-            \centering
-            \includegraphics[width=0.9\textwidth]{Chapter_SoA/Figures/PDF/InnerSP.pdf}
-            \caption{Architecture of InnerSP}
-            \label{fig:soa:innersp}
-        \end{figure}
-    \end{minipage}
-    \hfill
+    % \begin{minipage}[b]{0.54\linewidth}
+    %     \begin{figure}[H]
+    %         \centering
+    %         \includegraphics[width=0.9\textwidth]{Chapter_SoA/Figures/PDF/InnerSP.pdf}
+    %         \caption{Architecture of InnerSP}
+    %         \label{fig:soa:innersp}
+    %     \end{figure}
+    % \end{minipage}
+    % \hfill
     \begin{minipage}[b]{0.44\linewidth}
         \begin{figure}[H]
             \centering
@@ -148,30 +163,32 @@ After this first comparison, in Sections~\ref{sec:soa:outerspace} to~\ref{sec:so
 
 % VL: SPiDRE and PHI here
 
-\input{Chapter_SoA/Sections/Accelerators/SortCache}
+\input{Chapter_SoA/Sections/Accelerators/PHI}
 
-\begin{figure}
-    \centering
-    \begin{minipage}[b]{0.64\linewidth}
-        \begin{figure}[H]
-            \centering
-            \includegraphics[width=\textwidth]{Chapter_SoA/Figures/PDF/VBST_example.pdf}
-            \caption{VBST Data Structure Used by SortCache}
-            \label{fig:soa:sortcache_vbst}
-        \end{figure}
-    \end{minipage}
-    \hfill
-    \begin{minipage}[b]{0.34\linewidth}
-        \begin{figure}[H]
-            \centering
-            \includegraphics[width=\textwidth]{Chapter_SoA/Figures/PDF/ASA.pdf}
-            \caption{Architecture of ASA}
-            \label{fig:soa:asa}
-        \end{figure}
-    \end{minipage}
-\end{figure}
+% \input{Chapter_SoA/Sections/Accelerators/SortCache}
 
-\input{Chapter_SoA/Sections/Accelerators/ASA}
+% \begin{figure}
+%     \centering
+%     \begin{minipage}[b]{0.64\linewidth}
+%         \begin{figure}[H]
+%             \centering
+%             \includegraphics[width=\textwidth]{Chapter_SoA/Figures/PDF/VBST_example.pdf}
+%             \caption{VBST Data Structure Used by SortCache}
+%             \label{fig:soa:sortcache_vbst}
+%         \end{figure}
+%     \end{minipage}
+%     \hfill
+%     \begin{minipage}[b]{0.34\linewidth}
+%         \begin{figure}[H]
+%             \centering
+%             \includegraphics[width=\textwidth]{Chapter_SoA/Figures/PDF/ASA.pdf}
+%             \caption{Architecture of ASA}
+%             \label{fig:soa:asa}
+%         \end{figure}
+%     \end{minipage}
+% \end{figure}
+
+% \input{Chapter_SoA/Sections/Accelerators/ASA}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Other Accelerators
@@ -187,27 +204,27 @@ The authors of SPiDRE (Sparse Data Rearrange Engine)~\cite{Barredo2019_SPiDRE} p
 
 \subsubsection{PHI}
 
-The authors of PHI~\cite{Mukkara2019_PHI} note that many large graph algorithms favour pull (each node reads inputs from its neighbours) compared to push implementations (each node propagates results to its neighbours), as push implementations require read-modify-writes which require accessing complete cache lines, even though a small unit of data is modified. The authors include \algo{OP} SpMV (a push algorithm) in their evaluation.
+The authors of PHI~\cite{Mukkara2019_PHI} note that many large graph algorithms favour pull (each node reads inputs from its neighbours) compared to push implementations (each node propagates results to its neighbours), as push implementations require read-modify-writes which require accessing complete cache lines, even though a small unit of data is modified. The authors include \acrshort{op} SpMV (a push algorithm) in their evaluation.
 
-PHI is a modified cache optimized to efficiently process commutative \emph{scatter} updates. When an update is received but the line is not in the cache, the line is not fetched, but rather marked as being in \emph{update mode}, where it simply stores the update. If subsequent updates hit the line, they are stored, or combined via the commutative operator. When a cache line is evicted, if it contains multiple updates, PHI assumes that the coalescing has been effective, and it processes the operations via a read-modify-write from main memory. If a cache contains few updates when evicted, PHI batches these updates as $(address, value)$ tuples, allocating a new cache line to assemble the batch. Groups of updates are organized by \emph{bins} corresponding to a small memory region. The batches are streamed to main memory. Later, the reading of the batches is also efficient, as they are contiguous.
+PHI is a modified cache optimized to efficiently process commutative \gls{gather} updates. When an update is received but the line is not in the cache, the line is not fetched, but rather marked as being in \emph{update mode}, where it simply stores the update. If subsequent updates hit the line, they are stored, or combined via the commutative operator. When a cache line is evicted, if it contains multiple updates, PHI assumes that the coalescing has been effective, and it processes the operations via a read-modify-write from main memory. If a cache contains few updates when evicted, PHI batches these updates as $(address, value)$ tuples, allocating a new cache line to assemble the batch. Groups of updates are organized by \emph{bins} corresponding to a small memory region. The batches are streamed to main memory. Later, the reading of the batches is also efficient, as they are contiguous.
 
 In multi-core systems, private caches act as local buffers, thus coalescing the updates reduces coherency protocol traffic. This combination of in-cache coalescing and update buffering enables PHI to take advantage of locality when possible (like Coup~\cite{ZHANG_2015__Exploiting_Commutativity}), but with the addition of \emph{update batching}, PHI improves memory utilization, even when the data being updated is too large to fit in the cache.
 
 \subsubsection{GSCSp}
 
-GSCSp~\cite{LI_2023_GSCSp} is a FPGA-based accelerator based on \algo{Gust} algorithm. In other \algo{Gust} accelerators, a \emph{PE} processes a full $A$-row but the authors note that when there is variability in the number of elements in the $A$-rows, \emph{PEs} may be blocked, waiting for another \emph{PE} to complete. Thus the authors propose to distribute the elements in an $A$-row to different \emph{PEs} (\emph{element-wise} parallelism). Initially, each \emph{PE} buffers its output $C$-row, and when a \emph{PE} advances to the next row, it pushes its partial $C$-row to a final merger. The authors also propose to use separate caches for the \emph{metadata} for the $B$-rows and the values, and report that combined with the \emph{element-wise} parallelism, the approach is effective for reducing the memory traffic for accessing $B$-rows.
+GSCSp~\cite{LI_2023_GSCSp} is a FPGA-based accelerator based on \acrshort{gust} algorithm. In other \acrshort{gust} accelerators, a \emph{PE} processes a full $A$-row but the authors note that when there is variability in the number of elements in the $A$-rows, \emph{PEs} may be blocked, waiting for another \emph{PE} to complete. Thus the authors propose to distribute the elements in an $A$-row to different \emph{PEs} (\emph{element-wise} parallelism). Initially, each \emph{PE} buffers its output $C$-row, and when a \emph{PE} advances to the next row, it pushes its partial $C$-row to a final merger. The authors also propose to use separate caches for the \emph{metadata} for the $B$-rows and the values, and report that combined with the \emph{element-wise} parallelism, the approach is effective for reducing the memory traffic for accessing $B$-rows.
 
 \subsubsection{Flexagon}
 
-Flexagon~\cite{Munoz-Martinez2023_Flexagon} is a SpMSpM accelerator for DNN applications. The authors claim that the optimal algorithm (\algo{IP}, \algo{OP} and \algo{Gust}) depends on the matrix structure, potentially varying between DNN models and layers within a DNN, although in the majority of the cases, their data shows that \algo{Gust} is the most efficient. Flexagon is configurable: it can implement all three  algorithms. To achieve that, the authors designed a \emph{Merger-Reduction Network} (\emph{MRN}) that is able to perform multiplications (for \emph{partial sum} generation), accumulations (for \emph{reductions} operations) and comparisons (for \emph{intersection} searches and \emph{merge} phases) via a binary tree structure. Flexagon addresses the memory access issues of each algorithms via three custom memories: a FIFO for the $A$-matrix that is always read sequentially, a cache for the $B$-matrix that is subject to high temporal and spatial reuse in each of the three algorithms, and a PSRAM to store \emph{POs} for \algo{OP} and \algo{Gust} algorithms.
+Flexagon~\cite{Munoz-Martinez2023_Flexagon} is a SpMSpM accelerator for DNN applications. The authors claim that the optimal algorithm (\acrshort{ip}, \acrshort{op} and \acrshort{gust}) depends on the matrix structure, potentially varying between DNN models and layers within a DNN, although in the majority of the cases, their data shows that \acrshort{gust} is the most efficient. Flexagon is configurable: it can implement all three  algorithms. To achieve that, the authors designed a \emph{Merger-Reduction Network} (\emph{MRN}) that is able to perform multiplications (for \emph{partial sum} generation), accumulations (for \emph{reductions} operations) and comparisons (for \emph{intersection} searches and \emph{merge} phases) via a binary tree structure. Flexagon addresses the memory access issues of each algorithms via three custom memories: a FIFO for the $A$-matrix that is always read sequentially, a cache for the $B$-matrix that is subject to high temporal and spatial reuse in each of the three algorithms, and a PSRAM to store \emph{POs} for \acrshort{op} and \acrshort{gust} algorithms.
 
 \subsubsection{Other Accelerators}
 
-In GraphR~\cite{Song2018_GraphR}, the authors propose to use ReRAM technology and a cross-bar to perform graph operations directly in hardware, but this approach is not currently scalable to large problems. The ITS accelerator~\cite{Sadi2019_ITS} focuses on an \algo{OP} implementation of SpMV and they apply data-compression to the \emph{metadata}. The authors of SPU~\cite{Dadu2019_SPU} propose a more general hardware solution to input data dependencies and focus on graph applications. The focus of Alrescha~\cite{Asgari2020_Alrescha} is an innovative and adaptive preprocessing of the matrix in hardware to simplify the accesses to the $b$-vector. The authors of CoSparse~\cite{Feng2021_CoSPARSE} focus on a software layer that selects the hardware acceleration that is best adapted to the given problem.
+In GraphR~\cite{Song2018_GraphR}, the authors propose to use ReRAM technology and a cross-bar to perform graph operations directly in hardware, but this approach is not currently scalable to large problems. The ITS accelerator~\cite{Sadi2019_ITS} focuses on an \acrshort{op} implementation of SpMV and they apply data-compression to the \emph{metadata}. The authors of SPU~\cite{Dadu2019_SPU} propose a more general hardware solution to input data dependencies and focus on graph applications. The focus of Alrescha~\cite{Asgari2020_Alrescha} is an innovative and adaptive preprocessing of the matrix in hardware to simplify the accesses to the $b$-vector. The authors of CoSparse~\cite{Feng2021_CoSPARSE} focus on a software layer that selects the hardware acceleration that is best adapted to the given problem.
 
 The SSSR accelerator~\cite{Scheffler2023_SSSR} for RISC-V processors goes further by addressing \emph{intersection} and \emph{union} while streaming data to and from memory and it can be used for multiple kernels, however the RISC-V performance can not easily be compared with the other accelerators presented in this paper. In passing we note three other accelerators EIE~\cite{Han2016_EIE}, SCNN~\cite{Angshuman2017_SCNN} and CANDLES~\cite{Gudaparthi2022_CANDLES} which have hardware support for sparsity but which are highly focused on CNNs, besides SDMA~\cite{Gao2023_SDMA} that focuses on GNNs.
 
-The SpaceA~\cite{Xie2021_SpaceA} accelerator exploits near-memory computing inside a 3D DRAM memory to implement SpMV using an \algo{IP} algorithm. With preprocessing, the rows of the matrix are assigned to banks within specific DRAM dies, while optimizing spatial locality. A separate die is used for storing the input and output vectors. Associated with each DRAM bank which stores the matrix, there is a \emph{PE} which reads the non-zero values of the matrix, fetches the required vector entries and performs the computations. Bringing the compute near the DRAM and exploiting emerging 3D technology, is an orthogonal approach to reduce memory access overheads.
+The SpaceA~\cite{Xie2021_SpaceA} accelerator exploits near-memory computing inside a 3D DRAM memory to implement SpMV using an \acrshort{ip} algorithm. With preprocessing, the rows of the matrix are assigned to banks within specific DRAM dies, while optimizing spatial locality. A separate die is used for storing the input and output vectors. Associated with each DRAM bank which stores the matrix, there is a \emph{PE} which reads the non-zero values of the matrix, fetches the required vector entries and performs the computations. Bringing the compute near the DRAM and exploiting emerging 3D technology, is an orthogonal approach to reduce memory access overheads.
 
 \subsubsection{Other FPGA based Accelerators}
 
@@ -222,54 +239,54 @@ Many sparse accelerators have been prototyped on FPGAs~\cite{MOHAMMED_2022_SPARS
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Further Classification}
-\label{sec:soa:further_classification}
+% \subsection{Further Classification}
+% \label{sec:soa:further_classification}
 
-%%%%  --> in comparison? (next section)
+% %%%%  --> in comparison? (next section)
 
-%%%% VL %%%%
-The classification can go further with more details in the different sparse formats used and the data location at each step of a multiplication as presented in Table~\ref{tab:classificationAppView}.
+% %%%% VL %%%%
+% The classification can go further with more details in the different sparse formats used and the data location at each step of a multiplication as presented in Table~\ref{tab:classificationAppView}.
 
-For each inputs/outputs (including partial outputs), the sparse format used and the place it is stored in memory are described. Moreover, some information is added like the presence of data-rearrangements/hardware conversions for SPiDRE that convert sparse data into a reordered, dense version in main memory and SortCache that use a VBST storage scheme. As some accelerators only address a part of the kernel, the \emph{SW} gray cells indicates whenever the input/output is managed by the software. Thus we naturally find these cells for PHI, SPiDRE, SortCache and ASA. Finally, the \emph{NC} cells are used when the accelerator is not concerned by the partial outputs. This is obviously the case for SPiDRE since it only rearrange data in main memory ahead of time, PHI and SortCache directly generate the final output in caches (there eventually is overflow but we don't consider the resulting intermediate results as partial outputs of the kernel). MatRaptor~\cite{Srivastava2020_MatRaptor}, Gamma and InnerSP~\cite{Baek2021_InnerSP} manage partial output rows to sequentially build the output $C$ with the \emph{Gustavson's} algorithm.
+% For each inputs/outputs (including partial outputs), the sparse format used and the place it is stored in memory are described. Moreover, some information is added like the presence of data-rearrangements/hardware conversions for SPiDRE that convert sparse data into a reordered, dense version in main memory and SortCache that use a VBST storage scheme. As some accelerators only address a part of the kernel, the \emph{SW} gray cells indicates whenever the input/output is managed by the software. Thus we naturally find these cells for PHI, SPiDRE, SortCache and ASA. Finally, the \emph{NC} cells are used when the accelerator is not concerned by the partial outputs. This is obviously the case for SPiDRE since it only rearrange data in main memory ahead of time, PHI and SortCache directly generate the final output in caches (there eventually is overflow but we don't consider the resulting intermediate results as partial outputs of the kernel). MatRaptor~\cite{Srivastava2020_MatRaptor}, Gamma and InnerSP~\cite{Baek2021_InnerSP} manage partial output rows to sequentially build the output $C$ with the \emph{Gustavson's} algorithm.
 
-\begin{table}
-    \caption{Target Applications and Matrix Formats of Existing Accelerators}
-    \begin{center}
-        \footnotesize
-        \begin{tabular}{|c|c| *{4}{| *{2}{>{\centering\arraybackslash}m{1.15cm}|}}}
-            \hhline{--||--------}
-            & \multirow{5}{*}[-0.8ex]{\rotatebox{90}{\begin{minipage}{1.2cm}\raggedright\textbf{Sparse Kernel}\end{minipage}}} & \multicolumn{8}{c|}{\textbf{SpMSpV ($A \times b = c$)} or \textbf{SpMSpM ($A \times B = C$)}} \\
-            & & \multicolumn{8}{c|}{\textit{(NC: not concerned ; SW: managed by the software ; $\xrightarrow{}$: hardware conversion / data-rearrangement ;}} \\
-            & & \multicolumn{8}{c|}{\textit{RA: rearranged format)}} \\
-            \hhline{~~||--------}
-            & & \multicolumn{2}{c||}{\textbf{A}} & \multicolumn{2}{c||}{\textbf{b} or \textbf{B}} & \multicolumn{2}{c||}{\textbf{Partial c} or \textbf{Partial C}} & \multicolumn{2}{c|}{\textbf{c} or \textbf{C}} \\
-            \hhline{~~||--||--||--||--}
-            \textbf{Name} & & \textbf{Format} & \textbf{Stored in} & \textbf{Format} & \textbf{Stored in} & \textbf{Format} & \textbf{Stored in} & \textbf{Format} & \textbf{Stored in} \\
-            \hhline{==::==::==::==::==}
-            OuterSPACE & MM & \emph{(UOP, CP) col.-maj.} & Main memory & \emph{(UOP, CP) row-maj.} & Main memory & \emph{(UOP, CP) col.-maj.} & Main memory & \emph{(UOP, CP) col.-maj.} & Main memory \\
-            \hhline{--||--||--||--||--}
-            ExTensor & MM & \emph{(UOP, CP)}, tiling & Main memory & \emph{(UOP, CP)}, tiling & Main memory & \emph{CP$^{2}$} & Buffer & \emph{CP$^{2}$} & Main memory \\
-            \hhline{--||--||--||--||--}
-            PHI & MV & \multicolumn{2}{c||}{\cellcolor{veryLightGray} SW} & \multicolumn{2}{c||}{\cellcolor{veryLightGray} SW} & \multicolumn{2}{c||}{\cellcolor{lightGray} NC} & \emph{CP} & Caches, Main memory \\
-            \hhline{--||--||--||--||--}
-            SPiDRE & MV & \multicolumn{2}{c||}{\cellcolor{veryLightGray} SW} & \emph{CP $\xrightarrow{}$ RA} & Main memory & \multicolumn{2}{c||}{\cellcolor{lightGray} NC} & \emph{CP $\xrightarrow{}$ RA} & Main memory \\
-            \hhline{--||--||--||--||--}
-            MatRaptor & MM & \emph{(FL, UOP, CP) channel-maj.} & Main memory & \emph{(FL, UOP, CP) channel-maj.} & Main memory & \multicolumn{2}{c||}{\cellcolor{lightGray} NC} & \emph{(UOP, CP) row-maj.} & Main memory \\
-            \hhline{--||--||--||--||--}
-            SpArch & MM & \emph{(UOP, CP) row-maj.}, condensed column & Main memory & \emph{(UOP, CP) row-maj.} & Main memory & \emph{CP$^{2}$ row-maj.} & Main memory & \emph{(UOP, CP) row-maj.} & Main memory \\
-            \hhline{--||--||--||--||--}
-            Gamma & MM & \emph{(UOP, CP) row-maj.} & Main memory & \emph{(UOP, CP) row-maj.} & Internal cache & \multicolumn{2}{c||}{\cellcolor{lightGray} NC} & \emph{(UOP, CP) row-maj.} & Main memory \\
-            \hhline{--||--||--||--||--}
-            InnerSP & MM & \emph{(UOP, CP) row-maj.} & Main memory & \emph{(UOP, CP) row-maj.} & Main memory & \multicolumn{2}{c||}{\cellcolor{lightGray} NC} & \emph{(UOP, CP) row-maj.} & Main memory \\
-            \hhline{--||--||--||--||--}
-            SortCache & MM & \multicolumn{2}{c||}{\cellcolor{veryLightGray} SW} & \multicolumn{2}{c||}{\cellcolor{veryLightGray} SW} & \multicolumn{2}{c||}{\cellcolor{lightGray} NC} & \emph{(UOP, CP) $\xrightarrow{}$ VBST} & Caches \\
-            \hhline{--||--||--||--||--}
-            ASA & MM & \multicolumn{2}{c||}{\cellcolor{veryLightGray} SW} & \multicolumn{2}{c||}{\cellcolor{veryLightGray} SW} & \emph{CP} & Internal cache, Main memory & \emph{(UOP, CP)} &SPiDRE Main memory \\
-            \hhline{--||--||--||--||--}
-            GSCSp & MM & \emph{(UOP, CP) row-maj.} & Main memory & \emph{(UOP, CP) row-maj.} & Internal cache & \multicolumn{2}{c||}{\cellcolor{lightGray} NC} & \emph{(UOP, CP) row-maj.} & Main memory \\
-            \hhline{--||--||--||--||--}
-        \end{tabular}
-        \label{tab:classificationAppView}
-    \end{center}
-\end{table}
-%%%%%%%%%%%%
+% \begin{table}
+%     \caption{Target Applications and Matrix Formats of Existing Accelerators}
+%     \begin{center}
+%         \footnotesize
+%         \begin{tabular}{|c|c| *{4}{| *{2}{>{\centering\arraybackslash}m{1.15cm}|}}}
+%             \hhline{--||--------}
+%             & \multirow{5}{*}[-0.8ex]{\rotatebox{90}{\begin{minipage}{1.2cm}\raggedright\textbf{Sparse Kernel}\end{minipage}}} & \multicolumn{8}{c|}{\textbf{SpMSpV ($A \times b = c$)} or \textbf{SpMSpM ($A \times B = C$)}} \\
+%             & & \multicolumn{8}{c|}{\textit{(NC: not concerned ; SW: managed by the software ; $\xrightarrow{}$: hardware conversion / data-rearrangement ;}} \\
+%             & & \multicolumn{8}{c|}{\textit{RA: rearranged format)}} \\
+%             \hhline{~~||--------}
+%             & & \multicolumn{2}{c||}{\textbf{A}} & \multicolumn{2}{c||}{\textbf{b} or \textbf{B}} & \multicolumn{2}{c||}{\textbf{Partial c} or \textbf{Partial C}} & \multicolumn{2}{c|}{\textbf{c} or \textbf{C}} \\
+%             \hhline{~~||--||--||--||--}
+%             \textbf{Name} & & \textbf{Format} & \textbf{Stored in} & \textbf{Format} & \textbf{Stored in} & \textbf{Format} & \textbf{Stored in} & \textbf{Format} & \textbf{Stored in} \\
+%             \hhline{==::==::==::==::==}
+%             OuterSPACE & \acrshort{mm} & \emph{(UOP, CP) col.-maj.} & Main memory & \emph{(UOP, CP) row-maj.} & Main memory & \emph{(UOP, CP) col.-maj.} & Main memory & \emph{(UOP, CP) col.-maj.} & Main memory \\
+%             \hhline{--||--||--||--||--}
+%             ExTensor & \acrshort{mm} & \emph{(UOP, CP)}, tiling & Main memory & \emph{(UOP, CP)}, tiling & Main memory & \emph{CP$^{2}$} & Buffer & \emph{CP$^{2}$} & Main memory \\
+%             \hhline{--||--||--||--||--}
+%             PHI & \acrshort{mv} & \multicolumn{2}{c||}{\cellcolor{veryLightGray} SW} & \multicolumn{2}{c||}{\cellcolor{veryLightGray} SW} & \multicolumn{2}{c||}{\cellcolor{lightGray} NC} & \emph{CP} & Caches, Main memory \\
+%             \hhline{--||--||--||--||--}
+%             SPiDRE & \acrshort{mv} & \multicolumn{2}{c||}{\cellcolor{veryLightGray} SW} & \emph{CP $\xrightarrow{}$ RA} & Main memory & \multicolumn{2}{c||}{\cellcolor{lightGray} NC} & \emph{CP $\xrightarrow{}$ RA} & Main memory \\
+%             \hhline{--||--||--||--||--}
+%             MatRaptor & \acrshort{mm} & \emph{(FL, UOP, CP) channel-maj.} & Main memory & \emph{(FL, UOP, CP) channel-maj.} & Main memory & \multicolumn{2}{c||}{\cellcolor{lightGray} NC} & \emph{(UOP, CP) row-maj.} & Main memory \\
+%             \hhline{--||--||--||--||--}
+%             SpArch & \acrshort{mm} & \emph{(UOP, CP) row-maj.}, condensed column & Main memory & \emph{(UOP, CP) row-maj.} & Main memory & \emph{CP$^{2}$ row-maj.} & Main memory & \emph{(UOP, CP) row-maj.} & Main memory \\
+%             \hhline{--||--||--||--||--}
+%             Gamma & \acrshort{mm} & \emph{(UOP, CP) row-maj.} & Main memory & \emph{(UOP, CP) row-maj.} & Internal cache & \multicolumn{2}{c||}{\cellcolor{lightGray} NC} & \emph{(UOP, CP) row-maj.} & Main memory \\
+%             \hhline{--||--||--||--||--}
+%             InnerSP & \acrshort{mm} & \emph{(UOP, CP) row-maj.} & Main memory & \emph{(UOP, CP) row-maj.} & Main memory & \multicolumn{2}{c||}{\cellcolor{lightGray} NC} & \emph{(UOP, CP) row-maj.} & Main memory \\
+%             \hhline{--||--||--||--||--}
+%             SortCache & \acrshort{mm} & \multicolumn{2}{c||}{\cellcolor{veryLightGray} SW} & \multicolumn{2}{c||}{\cellcolor{veryLightGray} SW} & \multicolumn{2}{c||}{\cellcolor{lightGray} NC} & \emph{(UOP, CP) $\xrightarrow{}$ VBST} & Caches \\
+%             \hhline{--||--||--||--||--}
+%             ASA & \acrshort{mm} & \multicolumn{2}{c||}{\cellcolor{veryLightGray} SW} & \multicolumn{2}{c||}{\cellcolor{veryLightGray} SW} & \emph{CP} & Internal cache, Main memory & \emph{(UOP, CP)} &SPiDRE Main memory \\
+%             \hhline{--||--||--||--||--}
+%             GSCSp & \acrshort{mm} & \emph{(UOP, CP) row-maj.} & Main memory & \emph{(UOP, CP) row-maj.} & Internal cache & \multicolumn{2}{c||}{\cellcolor{lightGray} NC} & \emph{(UOP, CP) row-maj.} & Main memory \\
+%             \hhline{--||--||--||--||--}
+%         \end{tabular}
+%         \label{tab:classificationAppView}
+%     \end{center}
+% \end{table}
+% %%%%%%%%%%%%
