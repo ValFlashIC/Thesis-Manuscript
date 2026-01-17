@@ -17,21 +17,28 @@ From a memory perspective, the two main problems are \emph{gather} and \emph{sca
 
 After this first comparison, in Sections~\ref{sec:soa:outerspace} to~\ref{sec:soa:gamma} we present the \emph{standalone} accelerators, followed by the \emph{processor assist} accelerators in Sections~\ref{sec:soa:sortcache} to~\ref{sec:soa:asa}. In Section~\ref{sec:soa:other_accel}, we briefly touch on other accelerators.
 
-\begin{table}
+{
+    \DefTblrTemplate{caption-sep}{default}{~--\enskip}
+    \NewTblrTheme{fancy}{
+        \SetTblrStyle{caption-tag}{font=\bfseries}
+        \SetTblrStyle{caption-sep}{font=\bfseries}
+    }
     \def\ck{\ding{51}}
     \def\sa{\ding{86}\textsuperscript{1}}
     \def\sb{\ding{86}\textsuperscript{2}}
     \def\sc{\ding{86}\textsuperscript{3}}
     \def\sd{\ding{86}\textsuperscript{4}}
-    \def\na{{\tiny\textit{N/A}}}
-    \centering
-    \caption{Algorithmic and Architectural Classification of Existing Accelerators}
-    \label{tab:soa:classificationOverview}
-    \begin{tblr}{
+    \begin{longtblr}[
+            theme = fancy,
+            caption = {Algorithmic and Architectural Classification of Existing Accelerators},
+            label = {tab:soa:classificationOverview},
+        ]{
             width = {\linewidth},
             colspec = {X[3,c] X[1,c] *{12}{X[1,c]}}, % rowspec
             rows = {m, font=\footnotesize},
             colsep = {1pt},
+            rowhead = 2,
+            rowfoot = 4,
             row{1-W} = {rowsep=2pt, black!2},
             row{1-2} = {c, font=\bfseries\footnotesize, black!5},
             cell{2}{3-7,13-14} = {font=\bfseries\itshape\footnotesize},
@@ -55,16 +62,22 @@ After this first comparison, in Sections~\ref{sec:soa:outerspace} to~\ref{sec:so
         Name & Year & Autonomy & & {Position in \\ Memory Hierarchy} & & & {Most Adapted \\ Algorithm(s)} & & & {Hardware \\ Support for} & & {Sparse \\ Kernels \\ Addressed} & \\
         & & Standalone & Processor Assist & Near Processors & Near Caches & Near Main Memory & \acrlong{ip} & \acrlong{op} & \acrlong{gust} & \Gls{gather} & \Gls{scatter} & \acrshort{mv} & \acrshort{mm} \\
         %
+        EIE~\cite{Han2016_EIE}                      & 2016 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck & \ck &     \\
         OuterSPACE~\cite{Pal2018_OuterSPACE}        & 2018 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck & \ck & \ck \\
+        GraphR~\cite{Song2018_GraphR}               & 2018 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck & \ck &     \\
         SDE~\cite{Hosseinabady2019_SDE}             & 2019 & \ck &     &     &     & \sa & \ck &     & \sc & \ck & \sb & \ck & \sc \\
         ExTensor~\cite{Hegde2019_ExTensor}          & 2019 & \ck &     &     &     & \sa & \ck & \sb &     & \ck & \sb & \sc & \ck \\
         PHI~\cite{Mukkara2019_PHI}                  & 2019 &     & \ck &     & \ck &     &     & \ck & \sc &     & \ck & \ck & \sc \\
         SPiDRE~\cite{Barredo2019_SPiDRE}            & 2019 &     & \ck &     &     & \ck & \ck &     &     & \ck &     & \ck & \sc \\
+        ITS~\cite{Sadi2019_ITS}                     & 2019 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck & \ck &     \\
+        SPU~\cite{Dadu2019_SPU}                     & 2019 & \ck &     &     &     & \sa & \ck & \ck &     & \ck & \ck & \ck &     \\
         MatRaptor~\cite{Srivastava2020_MatRaptor}   & 2020 & \ck &     &     &     & \sa &     &     & \ck & \ck & \ck &     & \ck \\
         SpArch~\cite{Zhekai2020_SpArch}             & 2020 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck &     & \ck \\
+        Alrescha~\cite{Asgari2020_Alrescha}         & 2020 & \ck &     &     &     & \sa & \ck &     &     & \ck & \ck & \ck &     \\
         SpaceA~\cite{Xie2021_SpaceA}                & 2021 & \ck &     &     &     & \ck & \ck &     &     & \ck & \ck & \ck &     \\
         Gamma~\cite{Zhang2021_Gamma}                & 2021 & \ck &     &     &     & \sa &     &     & \ck & \ck & \sb &     & \ck \\
         InnerSP~\cite{Baek2021_InnerSP}             & 2021 & \ck &     &     &     & \sa &     &     & \ck & \ck & \ck &     & \ck \\
+        CoSPARSE~\cite{Feng2021_CoSPARSE}           & 2021 & \ck &     &     &     & \sa & \ck & \ck &     & \ck & \ck & \ck &     \\
         SortCache~\cite{Srikanth2021_SortCache}     & 2021 &     & \ck &     & \ck &     &     & \ck & \sc &     & \ck & \sc & \ck \\
         Sextans~\cite{Song2022_Sextans}             & 2022 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck &     & \ck \\
         ASA~\cite{Zhang2022_ASA}                    & 2022 &     & \ck & \ck &     &     &     & \sc & \ck &     & \ck & \sc & \ck \\
@@ -72,6 +85,8 @@ After this first comparison, in Sections~\ref{sec:soa:outerspace} to~\ref{sec:so
         Flexagon~\cite{Munoz-Martinez2023_Flexagon} & 2023 & \ck &     &     &     & \sa & \ck & \ck & \ck & \ck & \ck &     & \ck \\
         MOSCON~\cite{Noble2023_MOSCON}              & 2023 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck &     & \ck \\
         GSCSp~\cite{Li2023_GSCSp}                   & 2023 & \ck &     &     &     & \sa &     &     & \ck & \ck & \ck &     & \ck \\
+        SDMA~\cite{Gao2023_SDMA}                    & 2023 & \ck &     &     &     & \sa &     &     & \sd & \ck & \ck &     & \ck \\
+        SSSR~\cite{Scheffler2023_SSSR}              & 2023 &     & \ck & \ck &     &     & \ck &     &     & \ck &     & \ck & \sc \\
         Funnel~\cite{Ma2024_Funnel}                 & 2024 & \ck &     &     &     & \sa & \ck &     & \ck & \ck & \ck &     & \ck \\
         GAS~\cite{Zhang2024_GAS}                    & 2024 & \ck &     &     &     & \ck &     & \ck &     &     & \ck & \ck & \ck \\
         ACES~\cite{Lu2024_ACES}                     & 2024 & \ck &     &     &     & \sa &     &     & \ck & \ck & \ck &     & \ck \\
@@ -86,15 +101,12 @@ After this first comparison, in Sections~\ref{sec:soa:outerspace} to~\ref{sec:so
         Leda~\cite{Yi2025_Leda}                     & 2025 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck &     & \ck \\
         DMSA~\cite{Nagahara2025_DMSA}               & 2025 & \ck &     &     &     & \sa &     &     & \sd & \ck & \ck &     & \ck \\
         %
-        % Others: GraphR % ITS % SPU % Alrescha % CoSparse % SSSR % EIE % SCNN % SDMA
-        % ~\cite{}                  & 2025 &     &     &     &     &     &     &     &     &     &     &     &     \\
-        %
         \sa \; Most standalone accelerators connect directly to main memory. \\
         \sb \; Not main contribution but addressed in the article. \\
         \sc \; Could be adapted but not discussed in the article. \\
         \sd \; New complex algorithm inspired by.
-    \end{tblr}
-\end{table}
+    \end{longtblr}
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Complete accelerators
