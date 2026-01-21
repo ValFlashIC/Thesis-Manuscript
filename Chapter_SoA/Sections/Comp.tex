@@ -6,10 +6,15 @@
 \section{Comparison of Existing Accelerators}
 \label{sec:soa:comparison_and_analysis}
 
-%TODO this paragraph
-In this section, we analyze and further compare the accelerators that were described in Section~\ref{sec:soa:hw_accelerators}.%FIXME
-We start with Table~\ref{tab:soa:classificationMaturity} where we summarize the accelerators, chronologically, showing the research group where they were developed.
-We see that MIT is very active in the field, as they were involved in developing four different accelerators (\eg ExTensor, PHI, SpArch and Gamma).
+\lettrine{I}{n} this section, we analyze and compare the accelerators described in Section~\ref{sec:soa:hw_accelerators}.
+To maintain clarity and avoid information overload, we focus on a representative subset of these accelerators for the tables and analysis in Section~\ref{sec:soa:analysis}, though our observations apply more broadly.
+Table~\ref{tab:soa:classificationMaturity} lists this subset chronologically with the corresponding research institutions.
+
+Several trends emerge from this overview.
+The United States (US) and China lead in accelerator development, with China showing particularly strong activity since 2023.
+Most accelerators originate from universities and institutes, with MIT (US) notably contributing to ExTensor, PHI, SpArch, and Gamma, while ICT (China) contributed to GAS, ACES, and Mentor.
+Industry participation is also evident: NVIDIA was involved in five accelerators (\eg EIE, ExTensor, SpArch, Flexagon, and Vesper), while companies such as Axelera, Intel, Meta, Microsoft, SiFive, and Zettaflops contributed to individual projects.
+The research is geographically distributed across Canada, China, France, Hong Kong, India, Iran, Italy, Japan, Singapore, South Korea, Spain, Switzerland, the United Kingdom (UK), and the United States (US).
 
 % \begin{table}
 %     \caption{Chronological Summary of Sparse Accelerators \note{keep table for few, diverse entries in last figure / but resume for all in text}}
@@ -94,7 +99,7 @@ We see that MIT is very active in the field, as they were involved in developing
 
 \subsection{Benchmarks, Evaluation and Performance}
 
-Up to this point, we have discussed the architecture of the various accelerators, without reporting the performance they achieve.%FIXME
+Up to this point, we have discussed the architecture of various accelerators, without reporting the performance they achieve.
 Most of the matrices used for benchmarking come from the SuiteSparse Matrix Collection~\cite{Kolodziej2019_SuiteSparse} that contains a large number of matrices from diverse, real applications.
 Domain specific matrix libraries are also used~\cite{Leskovec2014_SNAP, Smith2017_FROSTT, Azad2018_HipMCL, Reddi2020_MLPerf}, as well as some synthetic matrix generators~\cite{Ang2010_Graph500, Beamer2017_GAP}.
 In Table~\ref{tab:soa:evaluation}, we note the number of matrices used for evaluation across our subset of accelerators.
@@ -102,12 +107,14 @@ Most evaluations employ around ten or several tens of matrices, with few exceedi
 Matrix densities are typically below $10^{-2}$ and can be as low as $10^{-7}$.
 Some accelerators, such as ExTensor, SortCache, and Flexagon, also include denser matrices in their benchmarks.
 All studies evaluate large matrices with several million non-zeros, which is critical since these exceed typical cache sizes.
-However, performance results often depend heavily on the specific matrices chosen.%add to list
+However, performance results often depend heavily on the matrices chosen.
 
 Matrices are typically stored in straightforward formats like \acrshort{coo} (row-major sorted) within the SuiteSparse Matrix Collection, necessitating preprocessing for compatibility with certain accelerators.
-For instance, some accelerators, such as ExTensor and MatRaptor, require conversion to their specific custom formats.%add to list
-Other \textit{standalone} accelerators utilize unique internal formats with \gls{tiling} methods but perform the conversion in hardware.%add a list
-Finally, accelerators like PHI, SortCache, and ASA do not require preprocessing as they focus solely on \gls{scatter}.%add to list
+For instance, some accelerators, such as EIE, ExTensor, MatRaptor and Alrescha, require conversion to their specific custom formats.
+Other \textit{standalone} accelerators utilize unique internal formats with \gls{tiling} methods but perform the conversion in hardware (\eg InnerSP, Spada, Flexagon, IOPS, DMSA).
+Accelerators like PHI, SortCache, and ASA do not require preprocessing as they focus solely on \gls{scatter}.
+\Gls{gather} focused accelerators such as SPiDRE and SSSR do not require preprocessing, as they directly stream matrices from standard sparse formats.
+CoSPARSE is notably the only accelerator proposing to maintain two matrix copies in main memory (one in \acrshort{csr} and one in \acrshort{csc}) to enable joint software/hardware optimization.
 Regardless, fair benchmarking must consider the costs associated with specialized preprocessing if any is required.
 
 % \begin{table}
@@ -242,37 +249,35 @@ Regardless, fair benchmarking must consider the costs associated with specialize
 
 Not all accelerators have reached the same level of design maturity, and in Table~\ref{tab:soa:evaluation}, we have shown how each design of our subset of accelerators was analyzed or simulated.
 Most designs report that they have been simulated at a cycle-accurate level.
-Most of the accelerators use custom simulators or tools like \emph{gem5}~\cite{Lowe2020_gem5}, \emph{ZSim}~\cite{SANCHEZ_2013_ZSIM} and STONNE~\cite{Munoz-Martinez2021_STONNE}, but unfortunately there is no common approach, making it difficult to fairly compare the reported performance.%add to list
-RTL descriptions are often only generated for key parts of the design, except for few that directly use the RTL for evaluation.%add list
-To estimate power and area, authors used tools such as CACTI~\cite{Balasubramonian2017_CACTI7} and McPAT~\cite{Li2009_McPAT}.%add NVSim for ReRAM?
+Most of the accelerators use custom simulators or tools such as \emph{gem5}~\cite{Lowe2020_gem5}, \emph{ZSim}~\cite{SANCHEZ_2013_ZSIM} and STONNE~\cite{Munoz-Martinez2021_STONNE}, or HSPICE (Synopsys\textregistered) for in-memory computing, but unfortunately there is no common approach, making it difficult to fairly compare the reported performance.
+RTL descriptions are often only generated for key parts of the design, except for few that directly use the RTL for evaluation (\eg EIE, ITS, SSSR, IOPS, DMSA).
+To estimate power and area, authors used tools such as CACTI~\cite{Balasubramonian2017_CACTI7}, McPAT~\cite{Li2009_McPAT} and NVSim~\cite{Dong2012_NVSim}.
 We have not attempted to compare power/energy as the data in the literature is heterogeneous and can not be fairly compared.
-In the last column of the table, we show the size of the local memory storage used in simulation by each accelerator.
-Except for SPiDRE and SpaceA which work directly in main memory, the local memories are in the range of 0.3MiB to 38MiB, corresponding to 27k to 2.8M entries.%FIXME
+In the last column of the table, we show the size of the local memory storage used in simulation by our subset of accelerators.
+Except for SPiDRE and SpaceA which work directly in main memory, the local memories are in the range of 32~KiB to 64~MiB, corresponding to 4k to 8.4M entries (if an entry is 8B).
 Thus, in the model presented in Section~\ref{sec:bg:AnalyticalModel} of the previous chapter, most of the accelerators are situated in the middle-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}, with a local memory corresponding to a few matrix rows.
+Few are closer from the bottom-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}, where matrices could be held entirely in local memory.
 
-The accelerators performance are reported as a speedup versus a baseline, which may differ according to their hardware and software platforms: typically the Intel MKL library~\cite{Intel2003_IntelMKL} and the Armadillo library~\cite{Conrad2016_Armadillo} for CPUs, or cuSPARSE~\cite{NVIDIA2014_cuSPARSE} and CUSP~\cite{Dalton2014_Cusp} for GPUs.% add GridGraph Gunrock GraphMat for graphs
+The accelerators performance are reported as a speedup versus a baseline, which may differ according to their hardware and software platforms: typically the Intel MKL library~\cite{Intel2003_IntelMKL}, the Armadillo library~\cite{Conrad2016_Armadillo} for CPUs, or GridGraph~\cite{Zhu2015_GridGraph}, Gunrock~\cite{Wang2016_Gunrock} and GraphMat~\cite{Sundaram2015_GraphMat} specifically for graphs on CPUs, or cuSPARSE~\cite{NVIDIA2014_cuSPARSE} and CUSP~\cite{Dalton2014_Cusp} for GPUs.
 Since different baselines with different numbers of threads and cores are used, these speedups need to be interpreted with care.
 The speedups are in general higher for the \emph{standalone} accelerators as they provide optimized hardware for the entire kernel, while \emph{processor assist} accelerators have less impressive speedups but aim to be general purpose and have lower area overhead.
 
 The only accelerators that have a comparable baseline are some of the \emph{standalone} ones addressing sparse \acrshort{mm} kernels.
 They all compare themselves to OuterSPACE with the same benchmark matrices, so we can sort them by their speedup: SPAGHETTI (13$\times$), Gamma (6.6$\times$), InnerSP (4.6$\times$), SpArch (4.0$\times$), SIGMA (3.0$\times$), IOPS (2.9$\times$), MatRaptor (1.8$\times$), Alrescha (1.7$\times$), MOSCON (1.1$\times$), OuterSPACE (1$\times$).
-Three of the five \emph{standalone} accelerators use the \algo{Gust} algorithm (Gamma, InnerSP and MatRaptor).%FIXME
-SpArch, an \algo{OP} accelerator employing a complex architecture, outperforms MatRaptor, but does not achieve the same performance as InnerSP or Gamma, which suggests that \algo{Gust} is most adapted to high-performance hardware accelerators.%FIXME
-
 Some accelerators compare themselves against other accelerators beyond OuterSPACE, making direct speedup comparisons problematic.
 An extended speedup ranking derived from indirect comparisons to OuterSPACE should be interpreted cautiously: GAS (26$\times$), SPAGHETTI (13$\times$), Sparm (7.9$\times$), Gamma (6.6$\times$), DMSA (6.2$\times$), InnerSP (4.6$\times$), SpArch (4.0$\times$), SIGMA (3.0$\times$), IOPS (2.9$\times$), GSCSp (1.8$\times$), MatRaptor (1.8$\times$), Alrescha (1.7$\times$), MOSCON (1.1$\times$), OuterSPACE (1$\times$).
-Additionally, Spada, ACES, and Mentor can be indirectly compared to OuterSPACE through intermediate accelerators, though the resulting speedups lack precision due to propagated uncertainties: Spada (5.8$\times$–110$\times$), ACES (12$\times$–240$\times$), and Mentor (8.6$\times$–25$\times$).
+Additionally, Spada, ACES, and Mentor can be indirectly compared to OuterSPACE through intermediate accelerators, though the resulting speedups lack precision due to propagated uncertainties: Spada (5.8$\times$-110$\times$), ACES (12$\times$-240$\times$), and Mentor (8.6$\times$-25$\times$).
 This performance inconsistency stems from the absence of a common baseline and variations in benchmark matrices across studies.
 Averaging the estimates for the three most recent accelerators yields: ACES (77$\times$), Spada (43$\times$), GAS (26$\times$), Mentor (14$\times$), SPAGHETTI (13$\times$), Sparm (7.9$\times$), Gamma (6.6$\times$), DMSA (6.2$\times$), InnerSP (4.6$\times$), SpArch (4.0$\times$), SIGMA (3.0$\times$), IOPS (2.9$\times$), GSCSp (1.8$\times$), MatRaptor (1.8$\times$), Alrescha (1.7$\times$), MOSCON (1.1$\times$), OuterSPACE (1$\times$).
 These results warrant careful interpretation.
+Even so, we observe that nine of these seventeen \emph{standalone} accelerators employ the \acrshort{gust} algorithm (\eg ACES, Spada, Mentor, Sparm, Gamma, DMSA, InnerSP, GSCSp and MatRaptor), compared to seven using \acrshort{op} (\eg GAS, SPAGHETTI, Sparm, SpArch, IOPS, MOSCON and OuterSPACE) and four using \acrshort{ip} (\eg Sparm, SIGMA, IOPS and Alrescha).
+This comparison suggests that \acrshort{gust} is the most suitable algorithm for high-performance hardware accelerators, with \acrshort{op} as the second choice.
 
-%TODO FROM HERE
-%how to transit?
 These measurements are consistent with our model presented in Section~\ref{sec:bg:AnalyticalModel} (Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}).
 OuterSPACE, the baseline, corresponds to graph~\ding{196}.
 MatRaptor, the first \algo{Gust} accelerator, was able to achieve higher performance by reducing the number of \emph{random} accesses, and creating better regularity (red to yellow), as seen in graph~\ding{197}.
 
-SpArch, is an \algo{OP} accelerator with a much larger local memory, which is used to address the red region in graph~\ding{196}.
+SpArch and GAS are \algo{OP} accelerators with a much larger local memory, which is used to address the red region in graph~\ding{196}.%HERE
 Their $A$-matrix condensing method, allows them to reduce the number of \emph{POs}, and approach the performance achievable in graph~\ding{199}, although, \emph{in fine}, it is impossible to store all the \emph{POs} in local memory.
 InnerSP and Gamma correspond to optimizations of the \algo{Gust} approach in graph~\ding{197}, to approach the performance in graph~\ding{200}.
 This is achieved by custom caches for the $B$-matrix to address the orange region.

@@ -942,6 +942,21 @@
     month={Nov},
 }
 
+@ARTICLE{Dong2012_NVSim,
+    author={Dong, Xiangyu and Xu, Cong and Xie, Yuan and Jouppi, Norman P.},
+    journal={IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems}, 
+    title={NVSim: A Circuit-Level Performance, Energy, and Area Model for Emerging Nonvolatile Memory}, 
+    year={2012},
+    volume={31},
+    number={7},
+    pages={994-1007},
+    abstract={Various new nonvolatile memory (NVM) technologies have emerged recently. Among all the investigated new NVM candidate technologies, spin-torque-transfer memory (STT-RAM, or MRAM), phase-change random-access memory (PCRAM), and resistive random-access memory (ReRAM) are regarded as the most promising candidates. As the ultimate goal of this NVM research is to deploy them into multiple levels in the memory hierarchy, it is necessary to explore the wide NVM design space and find the proper implementation at different memory hierarchy levels from highly latency-optimized caches to highly density- optimized secondary storage. While abundant tools are available as SRAM/DRAM design assistants, similar tools for NVM designs are currently missing. Thus, in this paper, we develop NVSim, a circuit-level model for NVM performance, energy, and area estimation, which supports various NVM technologies, including STT-RAM, PCRAM, ReRAM, and legacy NAND Flash. NVSim is successfully validated against industrial NVM prototypes, and it is expected to help boost architecture-level NVM-related studies.},
+    keywords={Nonvolatile memory;Arrays;Phase change random access memory;Wires;Distributed databases;Integrated circuit modeling;Analytical circuit model;MRAM;NAND Flash;nonvolatile memory;phase-change random-access memory (PCRAM);resistive random-access memory (ReRAM);spin-torque-transfer memory (STT-RAM)},
+    doi={10.1109/TCAD.2012.2185930},
+    ISSN={1937-4151},
+    month={July},
+}
+
 @INPROCEEDINGS{Temam1992_Model,
     author={Temam, O. and Jalby, W.},
     booktitle={Supercomputing '92:Proceedings of the 1992 ACM/IEEE Conference on Supercomputing}, 
@@ -1033,6 +1048,56 @@
     articleno = {77},
     numpages = {29},
     keywords = {linear algebra, performance, tensor algebra, parallelism, iteration graphs, sparse data structures, merge lattices, code generation, tensors}
+}
+
+@inproceedings{Zhu2015_GridGraph,
+    author = {Zhu, Xiaowei and Han, Wentao and Chen, Wenguang},
+    title = {GridGraph: large-scale graph processing on a single machine using 2-level hierarchical partitioning},
+    year = {2015},
+    isbn = {9781931971225},
+    publisher = {USENIX Association},
+    address = {USA},
+    abstract = {In this paper, we present GridGraph, a system for processing large-scale graphs on a single machine. Grid-Graph breaks graphs into 1D-partitioned vertex chunks and 2D-partitioned edge blocks using a first fine-grained level partitioning in preprocessing. A second coarse-grained level partitioning is applied in runtime. Through a novel dual sliding windows method, GridGraph can stream the edges and apply on-the-fly vertex updates, thus reduce the I/O amount required for computation. The partitioning of edges also enable selective scheduling so that some of the blocks can be skipped to reduce unnecessary I/O. This is very effective when the active vertex set shrinks with convergence.Our evaluation results show that GridGraph scales seamlessly with memory capacity and disk bandwidth, and outperforms state-of-the-art out-of-core systems, including GraphChi and X-Stream. Furthermore, we show that the performance of GridGraph is even competitive with distributed systems, and it also provides significant cost efficiency in cloud environment.},
+    booktitle = {Proceedings of the 2015 USENIX Conference on Usenix Annual Technical Conference},
+    pages = {375–386},
+    numpages = {12},
+    location = {Santa Clara, CA},
+    series = {USENIX ATC '15}
+}
+
+@inproceedings{Wang2016_Gunrock,
+    author = {Wang, Yangzihao and Davidson, Andrew and Pan, Yuechao and Wu, Yuduo and Riffel, Andy and Owens, John D.},
+    title = {Gunrock: a high-performance graph processing library on the GPU},
+    year = {2016},
+    isbn = {9781450340922},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/2851141.2851145},
+    doi = {10.1145/2851141.2851145},
+    abstract = {For large-scale graph analytics on the GPU, the irregularity of data access/control flow and the complexity of programming GPUs have been two significant challenges for developing a programmable high-performance graph library. "Gunrock," our high-level bulk-synchronous graph-processing system targeting the GPU, takes a new approach to abstracting GPU graph analytics: rather than designing an abstraction around computation, Gunrock instead implements a novel data-centric abstraction centered on operations on a vertex or edge frontier. Gunrock achieves a balance between performance and expressiveness by coupling high-performance GPU computing primitives and optimization strategies with a high-level programming model that allows programmers to quickly develop new graph primitives with small code size and minimal GPU programming knowledge. We evaluate Gunrock on five graph primitives (BFS, BC, SSSP, CC, and PageRank) and show that Gunrock has on average at least an order of magnitude speedup over Boost and PowerGraph, comparable performance to the fastest GPU hardwired primitives, and better performance than any other GPU high-level graph library.},
+    booktitle = {Proceedings of the 21st ACM SIGPLAN Symposium on Principles and Practice of Parallel Programming},
+    articleno = {11},
+    numpages = {12},
+    location = {Barcelona, Spain},
+    series = {PPoPP '16}
+}
+
+@article{Sundaram2015_GraphMat,
+    author = {Sundaram, Narayanan and Satish, Nadathur and Patwary, Md Mostofa Ali and Dulloor, Subramanya R. and Anderson, Michael J. and Vadlamudi, Satya Gautam and Das, Dipankar and Dubey, Pradeep},
+    title = {GraphMat: high performance graph analytics made productive},
+    year = {2015},
+    issue_date = {July 2015},
+    publisher = {VLDB Endowment},
+    volume = {8},
+    number = {11},
+    issn = {2150-8097},
+    url = {https://doi.org/10.14778/2809974.2809983},
+    doi = {10.14778/2809974.2809983},
+    abstract = {Given the growing importance of large-scale graph analytics, there is a need to improve the performance of graph analysis frameworks without compromising on productivity. GraphMat is our solution to bridge this gap between a user-friendly graph analytics framework and native, hand-optimized code. GraphMat functions by taking vertex programs and mapping them to high performance sparse matrix operations in the backend. We thus get the productivity benefits of a vertex programming framework without sacrificing performance. GraphMat is a single-node multicore graph framework written in C++ which has enabled us to write a diverse set of graph algorithms with the same effort compared to other vertex programming frameworks. GraphMat performs 1.1-7X faster than high performance frameworks such as GraphLab, CombBLAS and Galois. GraphMat also matches the performance of MapGraph, a GPU-based graph framework, despite running on a CPU platform with significantly lower compute and bandwidth resources. It achieves better multicore scalability (13-15X on 24 cores) than other frameworks and is 1.2X off native, hand-optimized code on a variety of graph algorithms. Since GraphMat performance depends mainly on a few scalable and well-understood sparse matrix operations, GraphMat can naturally benefit from the trend of increasing parallelism in future hardware.},
+    journal = {Proc. VLDB Endow.},
+    month = jul,
+    pages = {1214–1225},
+    numpages = {12}
 }
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
