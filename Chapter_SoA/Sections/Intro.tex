@@ -33,23 +33,23 @@ However, the single-core performance of software implementations can be deceivin
 
 %
 
-The two matrix operations, SpMV and SpMSpM, pose orthogonal computational challenges: (1) access to sparse input data, (2) \emph{reduction} operations on the intermediate result and (3) formatting and writing back the result to memory.
+The two matrix operations, SpMV and SpMSpM, pose orthogonal computational challenges: (1) access to sparse input data, (2) \textit{reduction} operations on the intermediate result and (3) formatting and writing back the result to memory.
 The different algorithms, which are detailed in Section~\ref{sec:bg:matrix_formats_and_algos}, are built on different articulations of these three aspects.
 % The sparse data storage scheme used in memory dictates the first aspect and is briefly explored in Section~\ref{sec:bg:matrix_formats}.
 %The sparse data storage scheme used in memory dictates the first aspect and we explore different alternatives in Subsection~\ref{subsec:matrix_formats}.
-The third aspect, \emph{i.e.} result storage, is sometimes overlooked when the output is dense and not too large.
+The third aspect, \ie result storage, is sometimes overlooked when the output is dense and not too large.
 For example, when running on a conventional CPU which is memory-bound, it becomes crucial to streamline the write accesses in order to optimize cache usage when writing a large dense vector output.
-The second aspect, \emph{i.e.} the \emph{reduction} operations, deserves different solutions according to the execution platform.
+The second aspect, \ie the \textit{reduction} operations, deserves different solutions according to the execution platform.
 On a conventional CPU, the bottleneck is memory throughput.
-Thus, most software implementations of SpMV deal with \emph{a priori} reorganization of the input matrices, by row ordering, blocking and loop optimization, for improving the data locality of operations.
+Thus, most software implementations of SpMV deal with \textit{a priori} reorganization of the input matrices, by row ordering, blocking and loop optimization, for improving the data locality of operations.
 The perspective for SpMV is different when dealing with GPU platforms.
 The challenge shifts to finding a balanced assignment of the numerous threads and warps, and to the use of local memory resources~\cite{Liu2014}.
-SpMSpM is far more complex: the intermediate \emph{reductions} introduce new $NNZ$ values at random locations, which trigger costly memory allocations and list management operations~\cite{Gao2020}.
+SpMSpM is far more complex: the intermediate \textit{reductions} introduce new $NNZ$ values at random locations, which trigger costly memory allocations and list management operations~\cite{Gao2020}.
 As a consequence, this phase dominates the execution time and becomes the main memory bottleneck on a regular CPU.
 The issue is similar on GPUs because of the limited size of the scratchpad memory for processing large matrices, which requires complex memory management and load balancing~\cite{Zachariadis2020, Nagasaka2018, Deveci2018}.
 
 %
 
-The main motivation to use custom hardware accelerators is to make better use of the intermediate memory hierarchy, ensuring the input data is available near the cores and also off-loading the accumulation and \emph{reduction} operations from the processors.
+The main motivation to use custom hardware accelerators is to make better use of the intermediate memory hierarchy, ensuring the input data is available near the cores and also off-loading the accumulation and \textit{reduction} operations from the processors.
 
 The focus of this paper is to review these architectures, to compare them and to analyze their performance. Our main focus is on accelerators that eventually target custom or ASIC implementations, although we do touch on the contributions from accelerators that were prototyped on FPGAs. The reader is referred to~\cite{MOHAMMED_2022_SPARSE} for a survey of acceleration techniques for CPUs, GPUs and FPGAs. Section~\ref{sec:bg:matrix_formats_and_algos} reviews the storage schemes and the three basic algorithms with a focus on the data access patterns and their impact on the memory hierarchy. In Section~\ref{sec:bg:hw_challenges} we study how the different algorithms stress the memory systems and propose an analytical model based on these insights. In Section~\ref{sec:soa:hw_accelerators} we present the operation of several state-of-the-art hardware accelerators, in the light of these hardware challenges. In Section~\ref{sec:soa:comparison_and_analysis}, we systematically compare these accelerators. Throughout this study, we try to be consistent, and we hope that our nomenclature will be useful for architects and designers who intend to implement dedicated hardware for problems with sparse datasets.

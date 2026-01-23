@@ -16,46 +16,8 @@ Most accelerators originate from universities and institutes, with MIT (US) nota
 Industry participation is also evident: NVIDIA was involved in five accelerators (\eg EIE, ExTensor, SpArch, Flexagon, and Vesper), while companies such as Axelera, Intel, Meta, Microsoft, SiFive, and Zettaflops contributed to individual projects.
 The research is geographically distributed across Canada, China, France, Hong Kong, India, Iran, Italy, Japan, Singapore, South Korea, Spain, Switzerland, the United Kingdom (UK), and the United States (US).
 
-% \begin{table}
-%     \caption{Chronological Summary of Sparse Accelerators \note{keep table for few, diverse entries in last figure / but resume for all in text}}
-%     \centering
-%     \footnotesize
-%     \begin{tabular}{|c|c|| >{\centering\arraybackslash}m{4.05cm}|| >{\centering\arraybackslash}m{7.19cm}|}
-%         \hhline{--||-||-}
-%         \textbf{Name} & \textbf{Date} & \textbf{Institute / University} & \textbf{Summary} \\
-%         \hhline{==::=::=}
-%         OuterSPACE~\cite{Pal2018_OuterSPACE} & 2018 & Univ. of Michigan / Arizona State Univ. & Highly parallelized SPMD, two levels cache -- \algo{OP} SpMSpM \\
-%         \hhline{--||-||-}
-%         ExTensor~\cite{Hegde2019_ExTensor} & 2019 & Univ. of Illinois / NVIDIA / MIT & General purpose tensor algebra -- With \emph{tiled} SpMSpM \\
-%         \hhline{--||-||-}
-%         PHI~\cite{Mukkara2019_PHI} & 2019 & MIT (CSAIL) / Carnegie Mellon Univ. & In cache, hash-based accelerator for \emph{reductions} \\
-%         \hhline{--||-||-}
-%         SPiDRE~\cite{Barredo2019_SPiDRE} & 2019 & UPC, BSC (Spain) / Arm Research & Near main memory data reorganisation for \emph{intersections} \\
-%         \hhline{--||-||-}
-%         % MatRaptor~\cite{Srivastava2020_MatRaptor} & 2020 & Cornell & Row-parallel with HBM-aware custom format -- \algo{Gust} SpMSpM \\
-%         \hhline{--||-||-}
-%         % SpArch~\cite{Zhekai2020_SpArch} & 2020 & MIT / Stanford / NVIDIA & Compression method to reduce \emph{POs}, \emph{multiply}/\emph{merge} pipe -- \algo{OP} SpGEMM \\
-%         \hhline{--||-||-}
-%         SpaceA~\cite{Xie2021_SpaceA} & 2021 & UC Santa Barbara & In memory accelerator for 3D DRAM -- \algo{IP} SpMV \\
-%         \hhline{--||-||-}
-%         Gamma~\cite{Zhang2021_Gamma} & 2021 & MIT (CSAIL) & Parallelized architecture with \emph{FiberCache} for $B$ -- \algo{Gust} SpMSpM \\
-%         \hhline{--||-||-}
-%         % InnerSP~\cite{Baek2021_InnerSP} & 2021 & KAIST / DGIST (S. Korea) & $A$-look-ahead, caches for $B$, \emph{Hash Reduction Unit} for $C$ -- \algo{Gust} SpMSpM \\
-%         \hhline{--||-||-}
-%         SortCache~\cite{Srikanth2021_SortCache} & 2021 & Georgia Tech / Zettaflops / Sandia Labs & In cache accelerator for \emph{reductions}, based on the VBST \\
-%         \hhline{--||-||-}
-%         ASA~\cite{Zhang2022_ASA} & 2022 & Lehigh Univ. / Lawrence Berkeley & Custom cache accelerator for \emph{reductions} -- \algo{Gust} SpGEMM \\
-%         \hhline{--||-||-}
-%         Flexagon~\cite{Munoz-Martinez2023_Flexagon} & 2023 & Univ. of Murcia / Georgia Tech / NVIDIA & Configurable accelerator supporting all three algorithms -- SpMSpM \\
-%         \hhline{--||-||-}
-%         % GSCSp~\cite{Li2023_GSCSp} & 2023 & Nanyang Technological Univ. (Singapore) & Element-wise, FPGA-based accelerator -- \algo{Gust} SpMSpM \\
-%         \hhline{--||-||-}
-%     \end{tabular}
-%     % \label{tab:soa:classificationMaturity}
-% \end{table}
-
 \begin{table}[htbp]
-    \caption{Chronological Summary of a Representative Sparse Accelerator Subset \note{keep table for few, diverse entries in last figure / but resume for all in text}}
+    \caption{Chronological Summary of a Representative Sparse Accelerator Subset}
     \label{tab:soa:classificationMaturity}
     \centering
     \begin{tblr}{
@@ -97,6 +59,7 @@ The research is geographically distributed across Canada, China, France, Hong Ko
     \end{tblr}
 \end{table}
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Benchmarks, Evaluation and Performance}
 
 Up to this point, we have discussed the architecture of various accelerators, without reporting the performance they achieve.
@@ -117,55 +80,15 @@ Accelerators like PHI, SortCache, and ASA do not require preprocessing as they f
 CoSPARSE is notably the only accelerator proposing to maintain two matrix copies in main memory (one in \acrshort{csr} and one in \acrshort{csc}) to enable joint software/hardware optimization.
 Regardless, fair benchmarking must consider the costs associated with specialized preprocessing if any is required.
 
-% \begin{table}
-%     \centering
-%     \caption{Qualitative Analysis and Evaluation of Sparse Accelerators \note{keep table for few, diverse entries in last figure / but resume for all in text}}
-%     \footnotesize
-%     \begin{tabular}{|c|| >{\centering\arraybackslash}m{1.97cm}| >{\centering\arraybackslash}m{7.17cm}| >{\centering\arraybackslash}m{2.7cm}|}
-%         \hhline{-||---}
-%         \textbf{Name} & \textbf{Preprocessing\hyperlink{fn101}{$^{1}$}} & \textbf{Functional Evaluation (Tool / Evaluation Specifics / Host\hyperlink{fn102}{$^{2}$})} & \textbf{Local Memory Size} \\
-%         \hhline{=::===}
-%         OuterSPACE~\cite{Pal2018_OuterSPACE} & $A$ $\rightarrow$ \emph{row-major} & \emph{gem5} / Model only key elements; Skip memory allocation; Ignore start-up time / $\varnothing$ & 528KiB (33.8k entries) \\ % 1kB * 16 * 16 + 16kB * 16 + 4kB * 4 = 528kB -> 33ki elements (33.8k)
-%         \hhline{-||---}
-%         ExTensor~\cite{Hegde2019_ExTensor} & $A$, $B$ $\rightarrow$ highly \emph{tiled} custom format & Custom Python simulator / Only the \emph{Coordinator} is evaluated; Remainder modeled analytically / $\varnothing$ & $\sim$38MiB (2.5M entries) \\ % 64kB * 128 + 30MB + ? = ~ 38MB -> ~ 2.4Mi elements (2.5M)
-%         \hhline{-||---}
-%         PHI~\cite{Mukkara2019_PHI} & \emph{N/A} & \emph{ZSim} / Entirely evaluated / 16-cores system with 3 level cache & 32.3MiB (2.8M entries) \\ % 32kB + 256kB + 32MB = 32.3MB -> 2.7Mi elements (2.8M)
-%         \hhline{-||---}
-%         SPiDRE~\cite{Barredo2019_SPiDRE} & Not needed & \emph{gem5} / \emph{Unknown} / Single ARM core & $\varnothing$ (main memory size) \\ % no data but works in main memory
-%         \hhline{-||---}
-%         MatRaptor~\cite{Srivastava2020_MatRaptor} & $A$, $B$ $\rightarrow$ \emph{C$^2$SR} & \emph{gem5} / Entirely evaluated / $\varnothing$ & 320KiB (27.3k entries) \\ % 8 * 10 * 4KB = 320kB -> 26.7ki elements (27.3k)
-%         \hhline{-||---}
-%         SpArch~\cite{Zhekai2020_SpArch} & $A$, $B$ $\rightarrow$ \emph{row-major} & Custom C++ simulator / Entirely evaluated / $\varnothing$ & 940KiB (62.5k entries) \\ % 1024 * 12B + 1024 * 48 * 12B + 8192 * 12B + 16*16*16B(array) * 64 = 940kB -> 61ki element (62.5k)
-%         \hhline{-||---}
-%         SpaceA~\cite{Xie2021_SpaceA} & $A$ $\rightarrow$ row-aligned to DRAM banks & Custom simulator / Simulation tracking values stored in 3D-DRAM / $\varnothing$ & 4GiB (268.4M entries) \\ % 4GB -> 256Mi elements (268.4M)
-%         \hhline{-||---}
-%         Gamma~\cite{Zhang2021_Gamma} & $A$, $B$ $\rightarrow$ \emph{row-major} & Custom simulator / Entirely evaluated / $\varnothing$ & 3MiB (262.1k entries) \\ % 3MB -> 256ki elements (262,1k)
-%         \hhline{-||---}
-%         InnerSP~\cite{Baek2021_InnerSP} & Not needed & Custom simulator / Entirely evaluated / $\varnothing$ & $\leq$976.5KiB (119.9k entries) \\ % 4B * 1024 + 12B * 4096 + 8B * 1024 + 12B * 128 * 64 + 32kB (/8) + 256(or512)kB (/8) + 2 * 4B * 1024 + 16 * 16kB (/8) + 4B * 128 + 12B * 1024 = 720.5kB -> 85.1ki elements (87.2k) OR 976.5kB -> 117.1ki elements (119.9k)
-%         \hhline{-||---}
-%         SortCache~\cite{Srikanth2021_SortCache} & \emph{N/A} & Custom simulator / Entirely evaluated / Single threaded, in-order core  with 3 level cache & 16.3MiB (1.4M entries) \\ % 32kB + 256kB + 16MB = 16.3MB -> 1.4Mi elements (1.4M)
-%         \hhline{-||---}
-%         ASA~\cite{Zhang2022_ASA} & \emph{N/A} & Modified \emph{ZSim} / Entirely evaluated, one ASA per core / 8-cores with 3 level cache & 8$\times$8KiB (8$\times$1k entries) \\ % for one ASA: 8kB -> 1ki elements (1k)
-%         \hhline{-||---}
-%         Flexagon~\cite{Munoz-Martinez2023_Flexagon} & Not needed & Custom simulator based on STONNE / Entirely evaluated / $\varnothing$ & 1.3MiB (327.7k entries) \\ % open source soon // 256B + 1MB + 256KB (/4B) = 1.3MB -> 320.1ki elements (327.7k)
-%         \hhline{-||---}
-%         GSCSp~\cite{Li2023_GSCSp} & $A$, $B$ $\rightarrow$ \emph{row-major} & HLS / FPGA Prototype / $\varnothing$ & 2.1MiB (178.2k entries) \\ % 40kB + 2MB = 2.1MB -> 174ki elements (178.2k)
-%         \hhline{-||---}
-%         \multicolumn{4}{l}{\hypertarget{fn101}{$^{1}$}We assume matrices are initially stored in \emph{(UOP, CP) column-major} format (\emph{CSC}).} \\
-%         \multicolumn{4}{l}{\hypertarget{fn102}{$^{2}$}Only for \emph{processor assist} accelerators.}
-%     \end{tabular}
-%     % \label{tab:soa:evaluation}
-% \end{table}
-
 \begin{table}[htbp]
-    \caption{Qualitative Analysis and Evaluation of Sparse Accelerators \note{keep table for few, diverse entries in last figure / but resume for all in text}}
+    \caption{Qualitative Analysis and Evaluation of Sparse Accelerators Subset}
     \label{tab:soa:evaluation}
     \centering
     \begin{tblr}{
             width = {\linewidth},
-            colspec = {X[3,c] X[10,c] X[1,c] X[3,c]}, % rowspec
+            colspec = {X[3,c] X[11,c] X[2,c] X[2.5,c]}, % rowspec
             rows = {m, font=\footnotesize},
-            colsep = {1pt},
+            colsep = {3pt},
             row{1-Y} = {rowsep=2pt, black!2},
             row{1} = {c, font=\bfseries\footnotesize, black!5},
             row{Z} = {rowsep=2pt, font=\itshape\footnotesize},
@@ -179,77 +102,34 @@ Regardless, fair benchmarking must consider the costs associated with specialize
             vline{2-4} = {1-Z}{0.5pt},
         }
         %
-        Name & Functional Evaluation (Tool / Evaluation Specifics / Host*) & \# Matrices & Local Memory Size \\
+        Name & Functional Evaluation (Tool / Evaluation Specifics / Host*) & Number of Matrices & Local Memory Size \\
         %
-        OuterSPACE~\cite{Pal2018_OuterSPACE}        & \emph{gem5} / Model only key elements; Skip memory allocation; Ignore start-up time / $\varnothing$ & 20 & 528KiB (33.8k entries) \\
-        ExTensor~\cite{Hegde2019_ExTensor}          & Custom Python simulator / Only the \emph{Coordinator} is evaluated; Remainder modeled analytically / $\varnothing$ & 14 & $\sim$38MiB (2.5M entries) \\
-        PHI~\cite{Mukkara2019_PHI}                  & \emph{ZSim} / Entirely evaluated / 16-cores system with 3 level cache & 6 & 32.3MiB (2.8M entries) \\
-        SPiDRE~\cite{Barredo2019_SPiDRE}            & \emph{gem5} / \emph{Unknown} / Single ARM core & \textit{unk} & $\varnothing$ (main memory size) \\
-        ITS~\cite{Sadi2019_ITS}                     & $\varnothing$ / Evaluated on ASIC and FPGA / $\varnothing$ & 31 & >64~MiB \\
-        SPU~\cite{Dadu2019_SPU}                     & \emph{gem5} / SPU part implemented in Chisel, Control core simulated / $\varnothing$ & 24 & 2.5~MiB \\
-        SpaceA~\cite{Xie2021_SpaceA}                & Custom simulator / Simulation tracking values stored in 3D-DRAM / $\varnothing$ & 15 & 4GiB (268.4M entries) \\
-        Gamma~\cite{Zhang2021_Gamma}                & Custom simulator / Entirely evaluated / $\varnothing$ & 37 & 3MiB (262.1k entries) \\
-        SortCache~\cite{Srikanth2021_SortCache}     & Custom simulator / Entirely evaluated / Single threaded, in-order core  with 3 level cache & 11 & 16.3MiB (1.4M entries) \\
-        ASA~\cite{Zhang2022_ASA}                    & Modified \emph{ZSim} / Entirely evaluated, one ASA per core / 8-cores with 3 level cache & 9 & 8$\times$8KiB (8$\times$1k entries) \\
-        Spada~\cite{Li2023_Spada}                   & Custom Rust simulator / Entirely simulated, RTL of key components / $\varnothing$ & 27 & 1.5~MiB \\
-        Flexagon~\cite{Munoz-Martinez2023_Flexagon} & Custom simulator based on STONNE / Entirely evaluated / $\varnothing$ & 9 & 1.3MiB (327.7k entries) \\
-        SSSR~\cite{Scheffler2023_SSSR}              & $\varnothing$ / Entirely evaluated through RTL implementation / RISC-V Snitch System & \textit{unk} & 128~KiB \\
-        GAS~\cite{Zhang2024_GAS}                    & HSPICE / Entirely simulated, models for FeFETs and MOSFETs / 96 cores CPU, NVIDIA GPU & 20 & 40~MiB \\
-        ACES~\cite{Lu2024_ACES}                     & ? / RTL of main components / $\varnothing$ & 18 & 2~MiB \\
-        \textbf{SpDCache}~[\ref{publ:SpDC}]         & Custom Python simulator / Entirely evaluated; Not cycle-accurate / Single-core system with one level cache & 48 & 32~KiB \\
-        IOPS~\cite{Sun2025_IOPS}                    & $\varnothing$ / Entirely evaluated through RTL implementation / $\varnothing$ & 10 & 77~KiB \\
-        DMSA~\cite{Nagahara2025_DMSA}               & $\varnothing$ / Evaluated on FPGA / $\varnothing$ & 10 & >22~MiB \\
+        OuterSPACE~\cite{Pal2018_OuterSPACE}        & \textit{gem5} / Model only key elements; Skip memory allocation; Ignore start-up time / $\varnothing$                & 20               & 528~KiB \\
+        ExTensor~\cite{Hegde2019_ExTensor}          & Custom Python simulator / Only the \textit{Coordinator} is evaluated; Remainder modeled analytically / $\varnothing$ & 14               & $\sim$38~MiB \\
+        PHI~\cite{Mukkara2019_PHI}                  & \textit{ZSim} / Entirely evaluated / 16-cores system with 3 level cache                                              & 6                & 32.3~MiB \\
+        SPiDRE~\cite{Barredo2019_SPiDRE}            & \textit{gem5} / \textit{Unknown} / Single ARM core                                                                   & \textit{unknown} & $\varnothing$ (main memory size) \\
+        ITS~\cite{Sadi2019_ITS}                     & $\varnothing$ / Evaluated on ASIC and FPGA / $\varnothing$                                                           & 31               & $\sim$64~MiB \\
+        SPU~\cite{Dadu2019_SPU}                     & \textit{gem5} / SPU part implemented in Chisel; Control core simulated / $\varnothing$                               & 24               & $\sim$2.5~MiB \\
+        SpaceA~\cite{Xie2021_SpaceA}                & Custom simulator / Simulation tracking values stored in 3D-DRAM / $\varnothing$                                      & 15               & 4~GiB (main memory size) \\
+        Gamma~\cite{Zhang2021_Gamma}                & Custom simulator / Entirely evaluated / $\varnothing$                                                                & 37               & 3~MiB \\
+        SortCache~\cite{Srikanth2021_SortCache}     & Custom simulator / Entirely evaluated / Single threaded, in-order core  with 3 level cache                           & 11               & 16.3~MiB \\
+        ASA~\cite{Zhang2022_ASA}                    & Modified \textit{ZSim} / Entirely evaluated; One ASA per core / 8-cores with 3 level cache                           & 9                & 8$\times$8~KiB \\
+        Spada~\cite{Li2023_Spada}                   & Custom Rust simulator / Entirely simulated; RTL of key components / $\varnothing$                                    & 27               & 1.5~MiB \\
+        Flexagon~\cite{Munoz-Martinez2023_Flexagon} & Custom simulator based on STONNE / Entirely evaluated / $\varnothing$                                                & 9                & 1.3~MiB \\
+        SSSR~\cite{Scheffler2023_SSSR}              & $\varnothing$ / Entirely evaluated through RTL implementation / RISC-V Snitch System                                 & \textit{unknown} & 128~KiB \\
+        GAS~\cite{Zhang2024_GAS}                    & HSPICE / Entirely simulated; Models for FeFETs and MOSFETs / 96 cores CPU, NVIDIA GPU                                & 20               & $\sim$40~MiB \\
+        ACES~\cite{Lu2024_ACES}                     & Custom simulator / RTL of main components / $\varnothing$                                                            & 18               & 2~MiB \\
+        \textbf{SpDCache}~[\ref{publ:SpDC}]         & Custom Python simulator / Entirely evaluated; Not cycle-accurate / Single-core system with one level cache           & 48               & 32~KiB \\
+        IOPS~\cite{Sun2025_IOPS}                    & $\varnothing$ / Entirely evaluated through RTL implementation / $\varnothing$                                        & 10               & $\sim$77~KiB \\
+        DMSA~\cite{Nagahara2025_DMSA}               & $\varnothing$ / Evaluated on FPGA / $\varnothing$                                                                    & 10               & $\sim$22~MiB \\
         %
         * Mainly for \textit{processor assist} accelerators.
     \end{tblr}
 \end{table}
 
-% \begin{table}
-%     \caption{Benchmark Matrices for Sparse \acrshort{mm} and \acrshort{mv}}
-%     \begin{center}
-%         \small
-%         \begin{tabular}{|c||c|c|c|c|}
-%             \hhline{-||----}
-%             \textbf{Name} & \textbf{\# Matrices} & \textbf{Density Range} & \textbf{Largest NNZ} & \textbf{Sources} \\
-%             \hhline{=::====}
-%             \multirow{2}{*}{OuterSPACE~\cite{Pal2018_OuterSPACE}} & 20 & from 0.0001\% to 1.082\% & 16,518,948 & SuiteSparse and SNAP \\
-%             \cline{2-5}
-%             & \textit{unknown} & \textit{unknown} & \textit{unknown} & Graph500 R-MAT synthetic matrices \\
-%             \hhline{-||----}
-%             ExTensor~\cite{Hegde2019_ExTensor} & 14 & from 0.0002\% to 20.3\% & 11,524,432 & SuiteSparse and FROSTT \\
-%             \hhline{-||----}
-%             PHI~\cite{Mukkara2019_PHI} & 1 & 0.0001\% & 1,949,412,601 & SuiteSparse \\
-%             \hhline{-||----}
-%             SPiDRE~\cite{Barredo2019_SPiDRE} & \textit{unknown} & \textit{unknown} & \textit{unknown} & \textit{unknown} \\
-%             \hhline{-||----}
-%             MatRaptor~\cite{Srivastava2020_MatRaptor} & 14 & from 0.00061\% to 1.1\% & 5,105,039 & same as OuterSPACE \\
-%             \hhline{-||----}
-%             SpArch~\cite{Zhekai2020_SpArch} & 20 & from 0.0001\% to 1.082\% & 16,518,948 & same as OuterSPACE \\
-%             \hhline{-||----}
-%             SpaceA~\cite{Xie2021_SpaceA} & 15 & from 0.0003\% to 0.347\% & 14,148,858 & SuiteSparse \\
-%             \hhline{-||----}
-%             Gamma~\cite{Zhang2021_Gamma} & 37 & from 0.0001\% to 1\% & 16,518,948 & same as OuterSPACE plus SuiteSparse \\
-%             \hhline{-||----}
-%             \multirow{2}{*}{InnerSP~\cite{Baek2021_InnerSP}} & set of 755 & \textit{unknown} & 5,105,039 & SuiteSparse and SNAP \\
-%             \cline{2-5}
-%             & 14 & from 0.00061\% to 1.1\% & 5,105,039 & from OuterSPACE \\
-%             \hhline{-||----}
-%             SortCache~\cite{Srikanth2021_SortCache} & 11 & from 0.4\% to 78.5\% & 2,097,566 & SuiteSparse \\
-%             \hhline{-||----}
-%             ASA~\cite{Zhang2022_ASA} & 9 & from 0.00002\% to 0.3\% & $\sim$104,000,000 & HipMCL, SNAP and GAP \\
-%             \hhline{-||----}
-%             Flexagon~\cite{Munoz-Martinez2023_Flexagon} & 9 & from 6\% to 100\% & 2,718,144 & MLPerf \\
-%             \hhline{-||----}
-%             GSCSp~\cite{LI_2023_GSCSp} & 10 & from 0.09\% to 2.80\% & 484,256 & SuiteSparse \\
-%             \hhline{-||----}
-%         \end{tabular}
-%         \label{tab:classificationMatrices}
-%     \end{center}
-% \end{table}
-
 Not all accelerators have reached the same level of design maturity, and in Table~\ref{tab:soa:evaluation}, we have shown how each design of our subset of accelerators was analyzed or simulated.
 Most designs report that they have been simulated at a cycle-accurate level.
-Most of the accelerators use custom simulators or tools such as \emph{gem5}~\cite{Lowe2020_gem5}, \emph{ZSim}~\cite{SANCHEZ_2013_ZSIM} and STONNE~\cite{Munoz-Martinez2021_STONNE}, or HSPICE (Synopsys\textregistered) for in-memory computing, but unfortunately there is no common approach, making it difficult to fairly compare the reported performance.
+Most of the accelerators use custom simulators or tools such as \textit{gem5}~\cite{Lowe2020_gem5}, \textit{ZSim}~\cite{SANCHEZ_2013_ZSIM} and STONNE~\cite{Munoz-Martinez2021_STONNE}, or HSPICE (Synopsys\textregistered) for in-memory computing, but unfortunately there is no common approach, making it difficult to fairly compare the reported performance.
 RTL descriptions are often only generated for key parts of the design, except for few that directly use the RTL for evaluation (\eg EIE, ITS, SSSR, IOPS, DMSA).
 To estimate power and area, authors used tools such as CACTI~\cite{Balasubramonian2017_CACTI7}, McPAT~\cite{Li2009_McPAT} and NVSim~\cite{Dong2012_NVSim}.
 We have not attempted to compare power/energy as the data in the literature is heterogeneous and can not be fairly compared.
@@ -260,178 +140,71 @@ Few are closer from the bottom-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}
 
 The accelerators performance are reported as a speedup versus a baseline, which may differ according to their hardware and software platforms: typically the Intel MKL library~\cite{Intel2003_IntelMKL}, the Armadillo library~\cite{Conrad2016_Armadillo} for CPUs, or GridGraph~\cite{Zhu2015_GridGraph}, Gunrock~\cite{Wang2016_Gunrock} and GraphMat~\cite{Sundaram2015_GraphMat} specifically for graphs on CPUs, or cuSPARSE~\cite{NVIDIA2014_cuSPARSE} and CUSP~\cite{Dalton2014_Cusp} for GPUs.
 Since different baselines with different numbers of threads and cores are used, these speedups need to be interpreted with care.
-The speedups are in general higher for the \emph{standalone} accelerators as they provide optimized hardware for the entire kernel, while \emph{processor assist} accelerators have less impressive speedups but aim to be general purpose and have lower area overhead.
+The speedups are in general higher for the \textit{standalone} accelerators as they provide optimized hardware for the entire kernel, while \textit{processor assist} accelerators have less impressive speedups but aim to be general purpose and have lower area overhead.
 
-The only accelerators that have a comparable baseline are some of the \emph{standalone} ones addressing sparse \acrshort{mm} kernels.
+The only accelerators that have a comparable baseline are some of the \textit{standalone} ones addressing sparse \acrshort{mm} kernels.
 They all compare themselves to OuterSPACE with the same benchmark matrices, so we can sort them by their speedup: SPAGHETTI (13$\times$), Gamma (6.6$\times$), InnerSP (4.6$\times$), SpArch (4.0$\times$), SIGMA (3.0$\times$), IOPS (2.9$\times$), MatRaptor (1.8$\times$), Alrescha (1.7$\times$), MOSCON (1.1$\times$), OuterSPACE (1$\times$).
 Some accelerators compare themselves against other accelerators beyond OuterSPACE, making direct speedup comparisons problematic.
 An extended speedup ranking derived from indirect comparisons to OuterSPACE should be interpreted cautiously: GAS (26$\times$), SPAGHETTI (13$\times$), Sparm (7.9$\times$), Gamma (6.6$\times$), DMSA (6.2$\times$), InnerSP (4.6$\times$), SpArch (4.0$\times$), SIGMA (3.0$\times$), IOPS (2.9$\times$), GSCSp (1.8$\times$), MatRaptor (1.8$\times$), Alrescha (1.7$\times$), MOSCON (1.1$\times$), OuterSPACE (1$\times$).
-Additionally, Spada, ACES, and Mentor can be indirectly compared to OuterSPACE through intermediate accelerators, though the resulting speedups lack precision due to propagated uncertainties: Spada (5.8$\times$-110$\times$), ACES (12$\times$-240$\times$), and Mentor (8.6$\times$-25$\times$).
+Additionally, Spada, Flexagon, ACES, and Mentor can be indirectly compared to OuterSPACE through intermediate accelerators, though the resulting speedups lack precision due to propagated uncertainties: Spada (5.8$\times$-110$\times$), Flexagon (6.8$\times$-14$\times$), ACES (12$\times$-240$\times$), and Mentor (8.6$\times$-25$\times$).
 This performance inconsistency stems from the absence of a common baseline and variations in benchmark matrices across studies.
-Averaging the estimates for the three most recent accelerators yields: ACES (77$\times$), Spada (43$\times$), GAS (26$\times$), Mentor (14$\times$), SPAGHETTI (13$\times$), Sparm (7.9$\times$), Gamma (6.6$\times$), DMSA (6.2$\times$), InnerSP (4.6$\times$), SpArch (4.0$\times$), SIGMA (3.0$\times$), IOPS (2.9$\times$), GSCSp (1.8$\times$), MatRaptor (1.8$\times$), Alrescha (1.7$\times$), MOSCON (1.1$\times$), OuterSPACE (1$\times$).
+Averaging the estimates for the three most recent accelerators yields: ACES (77$\times$), Spada (43$\times$), GAS (26$\times$), Mentor (14$\times$), SPAGHETTI (13$\times$), Flexagon (9.8$\times$), Sparm (7.9$\times$), Gamma (6.6$\times$), DMSA (6.2$\times$), InnerSP (4.6$\times$), SpArch (4.0$\times$), SIGMA (3.0$\times$), IOPS (2.9$\times$), GSCSp (1.8$\times$), MatRaptor (1.8$\times$), Alrescha (1.7$\times$), MOSCON (1.1$\times$), OuterSPACE (1$\times$).
 These results warrant careful interpretation.
-Even so, we observe that nine of these seventeen \emph{standalone} accelerators employ the \acrshort{gust} algorithm (\eg ACES, Spada, Mentor, Sparm, Gamma, DMSA, InnerSP, GSCSp and MatRaptor), compared to seven using \acrshort{op} (\eg GAS, SPAGHETTI, Sparm, SpArch, IOPS, MOSCON and OuterSPACE) and four using \acrshort{ip} (\eg Sparm, SIGMA, IOPS and Alrescha).
+Even so, we observe that ten of these eighteen \textit{standalone} accelerators employ the \acrshort{gust} algorithm (\eg ACES, Spada, Mentor, Flexagon, Sparm, Gamma, DMSA, InnerSP, GSCSp and MatRaptor), compared to seven using \acrshort{op} (\eg GAS, SPAGHETTI, Sparm, SpArch, IOPS, MOSCON and OuterSPACE) and four using \acrshort{ip} (\eg Sparm, SIGMA, IOPS and Alrescha).
 This comparison suggests that \acrshort{gust} is the most suitable algorithm for high-performance hardware accelerators, with \acrshort{op} as the second choice.
 
 These measurements are consistent with our model presented in Section~\ref{sec:bg:AnalyticalModel} (Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}).
 OuterSPACE, the baseline, corresponds to graph~\ding{196}.
-MatRaptor, the first \algo{Gust} accelerator, was able to achieve higher performance by reducing the number of \emph{random} accesses, and creating better regularity (red to yellow), as seen in graph~\ding{197}.
+MatRaptor, the first \acrshort{gust} accelerator, was able to achieve higher performance by reducing the number of \glspl{randAccess}, and creating better regularity (\textit{red} to \textit{yellow}), as seen in graph~\ding{197}.
+SpArch and GAS are \acrshort{op} accelerators with a larger local memory, which is used to address the \textit{red} region in graph~\ding{196}.
+Their $A$-matrix condensing method of MatRaptor, allows to reduce the number of \acrfullpl{po}, and approach the performance achievable in graph~\ding{199}, although, \textit{in fine}, it is impossible to store all the \acrshortpl{po} in local memory.
+GAS leverages in-memory computing techniques to mitigate the limitations of the \acrshort{op} approach, thereby approaching the performance levels achievable in graph~\ding{199}.
+\acrshort{gust} accelerators correspond to optimizations of the algorithm approach in graph~\ding{197}, to approach the performance in graph~\ding{200}.
+This is mainly achieved by custom local memories and caches for the $B$-matrix to address the \textit{orange} region, given that it is only necessary to store a limited number of $B$-rows, and to get ahead-of-time information from the reading of the matrix $A$.
+\acrshort{ip} accelerators face inherent challenges in achieving the performance levels of other approaches, a limitation also predicted by the model in Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}.
+Nevertheless, several recent accelerators (\eg Flexagon, Sparm and IOPS) have demonstrated that \acrshort{ip} delivers competitive performance on certain matrices, comparable to \acrshort{op} and \acrshort{gust} approaches.
+To capitalize on this observation, these designs support multiple or all three algorithms, enabling adaptive algorithm selection.
+While this flexibility for \textit{standalone} accelerators increases hardware complexity, it yields substantial performance gains and drives the field toward adaptive dataflow architectures.
+These findings validate that the model presented in Section~\ref{sec:bg:AnalyticalModel} provides valuable insights into local memory requirements for sparse \acrshort{mm} accelerators.
 
-SpArch and GAS are \algo{OP} accelerators with a much larger local memory, which is used to address the red region in graph~\ding{196}.%HERE
-Their $A$-matrix condensing method, allows them to reduce the number of \emph{POs}, and approach the performance achievable in graph~\ding{199}, although, \emph{in fine}, it is impossible to store all the \emph{POs} in local memory.
-InnerSP and Gamma correspond to optimizations of the \algo{Gust} approach in graph~\ding{197}, to approach the performance in graph~\ding{200}.
-This is achieved by custom caches for the $B$-matrix to address the orange region.
-With the \algo{Gust} algorithm, it is only necessary to store a limited number of $B$-rows, which is achievable with the large local memories in these accelerators.
-%extend explanation list???
-The model presented in Section~\ref{sec:bg:AnalyticalModel} is helpful to understand the local memory requirements for SpMSpM accelerators.
+\begin{highlight}{Conclusion}{Red}
+    TODO
+\end{highlight}
 
-%% RV %%
-% \begin{table}
-%     \caption{Reported Performance of Sparse Accelerators}
-%     \begin{center}
-%         \footnotesize
-%         \begin{tabular}{|c|c|| >{\centering\arraybackslash}m{7cm} |c|c|c|}
-%             \hhline{--||----}
-%             & & \multicolumn{2}{c|}{\textbf{Baseline for Comparison}} & & \textbf{Average} \\
-%             \cline{3-4}
-%             \textbf{Name} & \textbf{Date} & \textbf{Hardware} & \textbf{Software} & \textbf{Kernels} & \textbf{Speedups} \\
-%             \hhline{==::====}
-%             %
-%             \multirow{3}{*}{OuterSPACE} & \multirow{3}{*}{2018} & 6 cores/12 threads, 3.6 GHz Intel Xeon E5-1650V4 CPU & Intel MKL & \multirow{3}{*}{SpMV, SpMSpM} & \mbox{7.9$\times$} \\
-%             \cline{3-4} \cline{6-6}
-%             & & \multirow{2}{*}{NVIDIA Tesla K40 GPU} & cuSPARSE & & \mbox{1.13$\times$} \\
-%             \cline{4-4} \cline{6-6}
-%             & & & CUSP & & \mbox{1.14$\times$} \\
-%             \hhline{==::====}
-%             %
-%             \multirow{2}{*}{ExTensor} & \multirow{2}{*}{2019} & \multirow{2}{*}{12 cores/24 threads, 3 GHz Intel Xeon E5-2687W v4 part} & \multirow{2}{*}{Intel MKL} & SpMSpM & \mbox{3.4$\times$} \\
-%             \cline{5-6}
-%             & & & & SpMM & \mbox{1.3$\times$} \\
-%             \hhline{==::====}
-%             %
-%             \multirow{2}{*}{PHI} & \multirow{2}{*}{2019} & \multirow{2}{*}{2.2 GHz, 16 core x86-64 system} & outer-product & \multirow{2}{*}{SpMV} & \mbox{7$\times$} \\
-%             \cline{4-4} \cline{6-6}
-%             & & & inner-product & & \mbox{1.4$\times$} \\
-%             \hhline{==::====}
-%             %
-%             SPiDRE & 2019 & single out-of-order Arm processor & \textit{unknown} & SpMV & \mbox{1.62$\times$} \\
-%             \hhline{==::====}
-%             %
-%             \multirow{4}{*}{MatRaptor} & \multirow{4}{*}{2020} & single-threaded, 2.20 GHz Intel Xeon E5-2699 v4 server-class CPU & \multirow{2}{*}{Intel MKL} & \multirow{4}{*}{SpMSpM} & \mbox{77.5$\times$} \\
-%             \cline{3-3} \cline{6-6}
-%             & & 12 threads, 2.20 GHz Intel Xeon E5-2699 v4 server-class CPU & & & \mbox{7.9$\times$} \\
-%             \cline{3-4} \cline{6-6}
-%             & & NVIDIA Titan Xp GPU & cuSPARSE & & \mbox{37.6$\times$} \\
-%             \cline{3-4} \cline{6-6}
-%             & & OuterSPACE & $\varnothing$ & & \mbox{1.8$\times$} \\
-%             \hhline{==::====}
-%             %
-%             \multirow{5}{*}{SpArch} & \multirow{5}{*}{2020} & 4-core ARM A53 CPU & Armadillo & \multirow{5}{*}{SpMSpM} & \mbox{1285$\times$} \\
-%             \cline{3-4} \cline{6-6}
-%             & & 6-core Intel Core-i7 5930K CPU & Intel MKL & & \mbox{19$\times$} \\
-%             \cline{3-4} \cline{6-6}
-%             & & \multirow{2}{*}{NVIDIA TITAN Xp GPU} & cuSPARSE & & \mbox{18$\times$} \\
-%             \cline{4-4} \cline{6-6}
-%             & & & CUSP & & \mbox{17$\times$} \\
-%             \cline{3-4} \cline{6-6}
-%             & & OuterSPACE & $\varnothing$ & & \mbox{4$\times$} \\
-%             \hhline{==::====}
-%             %
-%             \multirow{3}{*}{Gamma} & \multirow{3}{*}{2021} & 4-core, 8-thread Skylake Xeon E3-1240 v5 & Intel MKL & \multirow{3}{*}{SpMSpM} & \mbox{33$\times$} \\
-%             \cline{3-4} \cline{6-6}
-%             & & OuterSPACE & \multirow{2}{*}{$\varnothing$} & & \mbox{6.6$\times$} \\
-%             \cline{3-3} \cline{6-6}
-%             & & SpArch & & & \mbox{1.84$\times$} \\
-%             \hhline{==::====}
-%             %
-%             \multirow{4}{*}{InnerSP} & \multirow{4}{*}{2021} & 6-core Intel Core-i7 5930k CPU & Intel MKL & \multirow{4}{*}{SpMSpM} & \mbox{18.0$\times$} \\
-%             \cline{3-4} \cline{6-6}
-%             & & OuterSPACE & \multirow{3}{*}{$\varnothing$} & & \mbox{4.57$\times$} \\
-%             \cline{3-3} \cline{6-6}
-%             & & SpArch & & & \mbox{1.068$\times$} \\
-%             \cline{3-3} \cline{6-6}
-%             & & MatRaptor & & & \mbox{$2.45\times$} \\
-%             \hhline{==::====}
-%             %
-%             SortCache & 2021 & single-threaded & \textit{unknown} & SpGEMM & \mbox{1.56$\times$} \\
-%             \hhline{==::====}
-%             %
-%             \multirow{2}{*}{ASA} & \multirow{2}{*}{2022} & 8-core, 2.6 GHz architecture hash-based with main memory based on Micron MT40A2G4 and cache sizes and latency based on Intel i7-6700 & \textit{unknown} & \multirow{2}{*}{SpMSpM} & \mbox{2.25$\times$} \\
-%             \cline{3-4} \cline{6-6}
-%             & & HTA with similar cache sizes & $\varnothing$ & & \mbox{1.67$\times$} \\
-%             \hhline{==::====}
-%             %
-%             GSCSp & 2023 & Xilinx Zynq UltraScale ZCU106 (quad-core ARM Cortex-A53) & row-wise & SpMSpM & \mbox{1.62$\times$} \\
-%             \hhline{--||----}
-%         \end{tabular}
-%         \label{tab:classificationResults}
-%     \end{center}
-% \end{table}
-
-%% RV %%
-% (area * 14² / tech²) / 0.008 => norm_area (over PHI)
-% \begin{table}
-%     \caption{Main Memory Technology and Reported Die Area of Existing Accelerators}
-%     \begin{center}
-%         \begin{tabular}{|c|c||c|c|c||c|c|}
-%             \hhline{--||---||--}
-%             & & & & \textbf{Normalized} & \textbf{Main Memory} & \textbf{Main Memory} \\
-%             \textbf{Name} & \textbf{Date} & \textbf{Technology ($nm$)} & \textbf{Area ($mm^2$)} & \textbf{Area} & \textbf{Technology} & \textbf{Bandwidth} \\
-%             \hhline{==::===::==}
-%             OuterSPACE & 2018 & 32 & 87 & 2081.54 & HBM2 & 128GB/s \\
-%             \hhline{--||---||--}
-%             ExTensor & 2019 & 32 & 96.89 & 2318.17 & \textit{unknown} & \textit{unknown}$^{\mathrm{1}}$ \\
-%             \hhline{--||---||--}
-%             PHI & 2019 & 14 & 0.008 & 1 (base) & DDR4 & 51.2GB/s \\
-%             \hhline{--||---||--}
-%             SPiDRE & 2019 & \textit{unknown} & \textit{unknown} & \textit{unknown} & \textit{unknown} & \textit{unknown} \\
-%             \hhline{--||---||--}
-%             MatRaptor & 2020 & 28 & 2.257 & 70.53 & HBM2 & 128GB/s \\
-%             \hhline{--||---||--}
-%             SpArch & 2020 & 40 & 28.49 & 436.25 & HBM2 & 128GB/s \\
-%             \hhline{--||---||--}
-%             Gamma & 2021 & 45 & 30.6 & 370.22 & HBM2 & 128GB/s \\
-%             \hhline{--||---||--}
-%             InnerSP & 2021 & 40 & 18.7 & 286.34 & HBM2 & 128GB/s \\
-%             \hhline{--||---||--}
-%             SortCache & 2021 & 15 & 0.79 & 86.02 & \textit{unknown} & \textit{unknown} \\ % in metastrider 128MB/s HBM
-%             \hhline{--||---||--}
-%             ASA & 2022 & 14 & 0.014 & 1.75 & DDR4 & 38.4GB/s \\
-%             \hhline{--||---||--}
-%             GSCSp & 2023 & \multicolumn{3}{c||}{ZCU106: $74\%$ LUTs / $47\%$ FFs / $\sim 60\%$ U-BRAM} & DDR4 & 6.4GB/s \\
-%             \hhline{--||---||--}
-%             \multicolumn{7}{l}{$^{\mathrm{1}}$The memory bandwidth is unknown but the CPU has a theoretical maximum bandwidth of 68.256GB/s.}
-%         \end{tabular}
-%         \label{tab:classificationArea}
-%     \end{center}
-% \end{table}
-
-%%%%%%%%%%%%%%%%%%%%%EXTRA%INFOS%%%%%%%%%%%%%%%%%%%%%%
-% OuterSPACE
-% average throughput of 2.9 GFLOPS
-% memory bandwidth utilization: 59.5-68.9\% for multiply phase and 46.5-64.8\% for merge phase
-
-% SpArch
-% memory bandwidth utilization: 68.6\%
-
-% InnerSP
-% --> 15.5 Glops, with 16 multipliers at 1~GHz.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Analysis for Designers}
 \label{sec:soa:analysis}
 
-\begin{figure}
+There is no single ``best overall'' accelerator.
+A designer must consider the required performance, the available area and the class of problems to be addressed.
+In Figure~\ref{fig:soa:taxonomy} we present a flow diagram which can guide a designer towards an architecture based on their requirements.
+Starting from the top-right of the figure, the designer must first decide between a \textit{specialized accelerator} for a specific kernel or a \textit{general purpose accelerator}.
+The former is preferable if performance must be maximized, requiring a \textit{standalone} accelerator addressing both \gls{gather} and \gls{scatter} (\eg ITS, SpaceA, Gamma, Spada, Flexagon, ACES, IOPS and DMSA, from the subset of accelerators).
+
+\begin{figure}[htbp]
     \centering
-    \includegraphics[width=\linewidth]{Chapter_SoA/Figures/PDF/Taxonomy.pdf}
+    \includegraphics[width=\linewidth]{Chapter_SoA/Figures/PDF/SoA_AnalysisForDesigners.pdf}
     \caption{Flow Diagram for Architecture Selection}
     \label{fig:soa:taxonomy}
 \end{figure}
 
-There is no single "best overall" accelerator. A designer must consider the required performance, the available area and the class of problems to be addressed. In Figure~\ref{fig:soa:taxonomy} we present a flow diagram which can guide a designer towards an architecture based on their requirements. Starting from the top-right of the figure, the designer must first decide between a \emph{specialized accelerator} for a specific kernel or a \emph{general purpose accelerator}. The former is preferable if performance must be maximized, requiring a \emph{standalone} accelerator addressing both \gls{gather} and \gls{gather} (\eg MatRaptor, SpArch, Gamma and InnerSP).
+A \textit{general purpose accelerator} can either take the form of a highly configurable \textit{standalone} block (\eg OuterSPACE, ExTensor, SPU and GAS) or a \textit{processor assist} that boosts performance for a specific task (\eg ExTensor bricks, PHI, SPiDRE, SortCache, ASA, SSSR and SpDCache).
+With a \textit{processor assist} (rightmost branch in the figure), the processor still performs important parts of the kernel, typically the multiplications, but off-loads the \gls{gather} or \gls{scatter} tasks to the accelerator, as these are the tasks which are the bottleneck with a traditional cache hierarchy.
+For example, for an \acrshort{ip} algorithm, the difficult part of the \gls{gather} task is performing the \glspl{intersection} (\eg the ExTensor bricks, SPiDRE and SSSR).
+Conversely, with \acrshort{op} or \acrshort{gust}, the challenge with the \gls{scatter} is to efficiently perform \glspl{reduction} (\eg PHI, SortCache, ASA and SpDCache).
+Finally, the designer must decide whether the storage is done by reusing existing memory resources (\eg PHI, SPiDRE, SortCache and SpDCache) or through custom caches and memories.
 
-A \emph{general purpose accelerator} can either take the form of a highly configurable \emph{standalone} block (\eg OuterSPACE and ExTensor) or a \emph{processor assist} that boosts performance for a specific task. With a \emph{processor assist} (rightmost branch in the figure), the processor still performs important parts of the kernel, typically the multiplications, but off-loads the \gls{gather} or \gls{gather} tasks to the accelerator, as these are the tasks which are the bottleneck with a traditional cache hierarchy. For example, for an \algo{IP} algorithm, the difficult part of the \gls{gather} task is performing the \emph{intersection} (\eg the ExTensor bricks and SPiDRE).  Conversely, with \algo{OP} or \algo{Gust}, the challenge with the \gls{gather} is to efficiently perform \emph{reductions} (\eg PHI, SortCache and ASA). Finally, the designer must decide whether the storage is done by reusing existing memory resources (\eg PHI, SPiDRE and SortCache) or through custom caches/memories.
+Going back to the case of a \textit{standalone} accelerator, the algorithms differ according to the supported kernels.
+For sparse \acrshort{mv}, most of the accelerators studied here have opted for an \acrshort{op} algorithm.
+For sparse \acrshort{mm}, the designers of around eight of the ten highest performing accelerators have chosen \acrshort{gust} algorithm, as this algorithm provides a good trade-off, simplifying the \gls{gather} by reusing input $B$-rows and the row-by-row generation of the output, simplifying the \gls{scatter} aspect.
+The fact that the outputs are generated row-by-row, facilitates parallel implementations.
+\acrshort{gust} works well with \acrshort{csr} or \acrshort{csc}, providing consistent input and output formats.
+Beyond the basic algorithm, \gls{tiling} approaches or new dataflows mixing algorithms can be explored (\eg ExTensor, SPU, Spada, Flexagon, IOPS and DMSA).
 
-Going back to the case of a \emph{standalone} accelerator, the algorithms differ according to the supported kernels. For sparse \acrshort{mv}, the accelerators studied here have opted for an \algo{OP} algorithm. For sparse \acrshort{mm}, the designers of three of the five highest performing accelerators have chosen \algo{Gust} algorithm, as this algorithm provides a good trade-off, simplifying the \gls{gather} by reusing input $B$-rows and the row-by-row generation of the output, simplifying the \gls{gather} aspect. The fact that the outputs are generated row-by-row, facilitates parallel implementations. \algo{Gust} works well with \emph{(UOP, CP)}, providing consistent input and output formats. Beyond the basic algorithm, \emph{tiling} approaches, as proposed by ExTensor, can be explored.
+Orthogonal to previous choices, other design considerations are important.
+First, the starting point needs to be defined: some accelerators require software to perform \gls{tiling} (\eg ExTensor), to align data with DRAM-blocks (\eg SpaceA), or to rearrange the rows to improve performance (\eg Gamma).
+The cost of such preprocessing can be high, and is usually only justified if the same matrix is reused multiple times.
 
-Orthogonal to previous choices, other design considerations are important. First, the starting point needs to be defined: some accelerators require software to perform \emph{tiling} (\eg ExTensor) or to rearrange the rows to improve performance (\eg Gamma). The cost of such preprocessing can be high, and is usually only justified if the same matrix is reused multiple times.
+\begin{highlight}{Conclusion}{Red}
+    TODO
+\end{highlight}

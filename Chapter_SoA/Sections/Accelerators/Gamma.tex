@@ -6,11 +6,32 @@
 \subsection{Gamma}
 \label{sec:soa:gamma}
 
-Gamma~\cite{Zhang2021_Gamma} is a dedicated accelerator for SpMSpM kernels, which uses \algo{Gust} algorithm. The two input matrices are both stored in \emph{(UOP, CP) row-major} format and the output is generated in the same format, providing consistency.
+Gamma~\cite{Zhang2021_Gamma} is a dedicated accelerator for \acrshort{spmspm} kernels, which uses \acrshort{gust} algorithm.
+The two input matrices are both stored in \acrshort{csr} format and the output is generated in the same format, providing consistency.
 
-% Figure in Accelerators.tex
+\begin{figure}[htbp]
+    \centering
+    \centering
+    \includegraphics[width=0.7\textwidth]{Chapter_SoA/Figures/PDF/Gamma.pdf}
+    \caption{Architecture of Gamma}
+    \label{fig:soa:gamma}
+\end{figure}
 
-The Gamma architecture, presented in Figure~\ref{fig:soa:gamma}, is composed of a fetcher for the $A$-rows that contains a \emph{Distributor} to distribute them to 32 \emph{PEs}. Each \emph{PE} processes an entire $A$-row and computes the corresponding $C$-row. The \emph{PE} fetches the required $B$-rows and merges and sorts them in a 64-wide \emph{merge} block, before multiplying with the $A$-elements. As a result, the output $C$-row  is generated in order. The \emph{reduction} step is, thus, highly simplified, because any duplicate indices are adjacent. Normally, the $C$-row can be written back to main memory. However, if the $A$-row contains more than 64 non-zero elements, then it must be processed with multiple passes. After each pass, the partial $C$-row is stored temporarily. Finally, the temporary $C$-rows are read-back and merged by the \emph{PEs}.
-Of course, the $B$-rows must be accessed repeatedly by the different \emph{PEs}, and Gamma proposes \emph{FiberCache} which is a highly banked cache which fetches the $B$-rows in advance, based on the column index table of $A$. It keeps track of which rows of $B$ are most needed by the \emph{PEs}, and when an eviction is necessary, the victim, is the row which is least needed.
+The Gamma architecture, presented in Figure~\ref{fig:soa:gamma}, is composed of a fetcher for the rows of $A$ that contains a \textit{Distributor} to distribute them to 32 \acrshortpl{pe}.
+Each \acrshort{pe} processes an entire $A$-row and computes the corresponding $C$-row.
+The \acrshort{pe} fetches the required rows of $B$ and merges and sorts them in a 64-wide \textit{merge} block, before multiplying with the elements of $A$.
+As a result, the output $C$-row is generated in order.
+The \gls{reduction} step is, thus, highly simplified, because any duplicate indices are adjacent.
+Normally, the $C$-row can be written back to main memory.
+However, if the row of $A$ contains more than 64 non-zero elements, then it must be processed with multiple passes.
+After each pass, the partial $C$-row is stored temporarily.
+Finally, the temporary $C$-rows are read-back and merged by the \acrshortpl{pe}.
+Of course, the rows of $B$ must be accessed repeatedly by the different \acrshortpl{pe}, and Gamma proposes \textit{FiberCache} which is a highly banked cache which fetches the $B$-rows in advance, based on the column index table of $A$.
+It keeps track of which rows of $B$ are most needed by the \acrshortpl{pe}, and when an \gls{eviction} is necessary, the victim is the row which is least needed.
 
-Gamma encounters some difficulties when the $A$-matrix has rows that are too dense, requiring multiple iterations through the \emph{PEs}, which creates a high-load on the cache. The authors propose a software preprocessing technique which splits dense $A$-rows and rearranges them to make best use of the \emph{FiberCache}.
+Gamma encounters some difficulties when the matrix $A$ has rows that are too dense, requiring multiple iterations through the \acrshortpl{pe}, which creates a high-load on the cache.
+The authors propose a software preprocessing technique which splits dense rows od $A$ and rearranges them to make best use of the \textit{FiberCache}.
+
+\begin{highlight}{Conclusion}{Red}
+    TODO
+\end{highlight}
