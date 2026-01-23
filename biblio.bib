@@ -801,6 +801,37 @@
     doi={10.1109/TCAD.2023.3281714}
 }
 
+@INPROCEEDINGS{Zhang2015_Coup,
+  author={Zhang, Guowei and Horn, Webb and Sanchez, Daniel},
+  booktitle={2015 48th Annual IEEE/ACM International Symposium on Microarchitecture (MICRO)}, 
+  title={Exploiting commutativity to reduce the cost of updates to shared data in cache-coherent systems}, 
+  year={2015},
+  publisher = {Institute of Electrical and Electronics Engineers and Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume={},
+  number={},
+  pages={13-25},
+  doi={10.1145/2830772.2830774}
+}
+
+@inproceedings{Li2025_C3ache,
+    author = {Li, Xiaojie and Wang, Mingyu and Zhong, Baiqing and Huang, Haiqiu and Cao, Guangjie and Yu, Zhiyi},
+    title = {C3ache: Towards Hierarchical Cache-Centric Computing for Sparse Matrix Multiplication on GPGPUs},
+    year = {2025},
+    isbn = {9798400715730},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3725843.3756077},
+    doi = {10.1145/3725843.3756077},
+    abstract = {Sparse matrix multiplications (SPMMs) are fundamental kernels in various domains and are highly demanded to be executed on general-purpose graphics processing units (GPGPUs). However, it is a challenge to efficiently execute SPMMs across varying sparsity regimes on GPGPUs due to the significant variations in sparsity patterns across different domains. Most of the state-of-the-art works enhance GPGPUs by integrating dedicated accelerator units in processor, which prioritize computational density over memory subsystem optimizations. As sparsity increases, the overhead from expensive memory accesses and redundant input fetches in sparse matrices constrains the effectiveness of processor-centric optimization schemes. Consequently, these optimizations become suboptimal for workloads dominated by irregular memory access patterns and low arithmetic intensity. To address these problems, we proposed a hierarchical cache-centric computing architecture with hybrid dataflow, C3ache, to achieve near-optimal memory efficiency and data reuse. First, the hybrid dataflow based on the outer-product dataflow and Gustavson’s dataflow is proposed to decouple the SPMM computation into two distinct phases (multiplication and merging) with different behavioral characteristics and align with the memory access pattern. Furthermore, C3ache restructures the cache hierarchy through in-cache computing, transforming the two levels of cache into large-scale data parallel processing in memory (PIM) units and in-situ merging PIM units respectively to map the two computation phases of SPMMs. To synchronize the granularity of data fetching with the memory access pattern, a novel memory-aware compressed format is proposed for sparse encoding to further reduce the memory transaction and the decoding overhead of C3ache. To realize C3ache, an efficient multi-precision matrix multiplication PIM macro is also implemented. Experimental results demonstrate that C3ache achieves 7.22 \texttimes{} and 2.4 \texttimes{} speedup on average with 42.4 \texttimes{} and 22.9 \texttimes{} EDP reduction over the GPGPU CUDA Cores and Sparse Tensor Cores respectively, while reducing memory access more than 80\%.},
+    booktitle = {Proceedings of the 58th IEEE/ACM International Symposium on Microarchitecture},
+    pages = {1026–1039},
+    numpages = {14},
+    keywords = {Processing-In-Memory, SPMM, GPGPU, Hybrid Dataflow, Cache Hierarchy},
+    location = {},
+    series = {MICRO '25}
+}
+
 @ARTICLE{Li2023_OnXilinx,
     author={Li, Shiqing and Huai, Shuo and Liu, Weichen},
     journal={IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems}, 
@@ -1098,6 +1129,26 @@
     month = jul,
     pages = {1214–1225},
     numpages = {12}
+}
+
+@article{Duff2002_SparseBLAS,
+    author = {Duff, Iain S. and Heroux, Michael A. and Pozo, Roldan},
+    title = {An overview of the sparse basic linear algebra subprograms: The new standard from the BLAS technical forum},
+    year = {2002},
+    issue_date = {June 2002},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {28},
+    number = {2},
+    issn = {0098-3500},
+    url = {https://doi.org/10.1145/567806.567810},
+    doi = {10.1145/567806.567810},
+    abstract = {We discuss the interface design for the Sparse Basic Linear Algebra Subprograms (BLAS), the kernels in the recent standard from the BLAS Technical Forum that are concerned with unstructured sparse matrices. The motivation for such a standard is to encourage portable programming while allowing for library-specific optimizations. In particular, we show how this interface can shield one from concern over the specific storage scheme for the sparse matrix. This design makes it easy to add further functionality to the sparse BLAS in the future.We illustrate the use of the Sparse BLAS with examples in the three supported programming languages, Fortran 95, Fortran 77, and C.},
+    journal = {ACM Trans. Math. Softw.},
+    month = jun,
+    pages = {239–267},
+    numpages = {29},
+    keywords = {sparse matrices, sparse iterative methods, sparse BLAS, software, computational kernels, Algorithms}
 }
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1440,19 +1491,6 @@
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Others
-
-@INPROCEEDINGS{ZHANG_2015__Exploiting_Commutativity,
-  author={Zhang, Guowei and Horn, Webb and Sanchez, Daniel},
-  booktitle={2015 48th Annual IEEE/ACM International Symposium on Microarchitecture (MICRO)}, 
-  title={Exploiting commutativity to reduce the cost of updates to shared data in cache-coherent systems}, 
-  year={2015},
-  publisher = {Institute of Electrical and Electronics Engineers and Association for Computing Machinery},
-  address = {New York, NY, USA},
-  volume={},
-  number={},
-  pages={13-25},
-  doi={10.1145/2830772.2830774}
-}
 
 @inproceedings{Kiriansky2016_Milk,
     author = {Kiriansky, Vladimir and Zhang, Yunming and Amarasinghe, Saman},
@@ -1932,26 +1970,6 @@
     doi={10.1109/MCSE.2008.45},
     ISSN={1558-366X},
     month={March},
-}
-
-@article{Duff2002,
-    author = {Duff, Iain S. and Heroux, Michael A. and Pozo, Roldan},
-    title = {An Overview of the Sparse Basic Linear Algebra Subprograms: The New Standard from the BLAS Technical Forum},
-    year = {2002},
-    issue_date = {June 2002},
-    publisher = {Association for Computing Machinery},
-    address = {New York, NY, USA},
-    volume = {28},
-    number = {2},
-    issn = {0098-3500},
-    url = {https://doi.org/10.1145/567806.567810},
-    doi = {10.1145/567806.567810},
-    abstract = {We discuss the interface design for the Sparse Basic Linear Algebra Subprograms (BLAS), the kernels in the recent standard from the BLAS Technical Forum that are concerned with unstructured sparse matrices. The motivation for such a standard is to encourage portable programming while allowing for library-specific optimizations. In particular, we show how this interface can shield one from concern over the specific storage scheme for the sparse matrix. This design makes it easy to add further functionality to the sparse BLAS in the future.We illustrate the use of the Sparse BLAS with examples in the three supported programming languages, Fortran 95, Fortran 77, and C.},
-    journal = {ACM Trans. Math. Softw.},
-    month = {jun},
-    pages = {239–267},
-    numpages = {29},
-    keywords = {sparse matrices, software, Algorithms, sparse iterative methods, computational kernels, sparse BLAS}
 }
 
 @article{Penn2006,

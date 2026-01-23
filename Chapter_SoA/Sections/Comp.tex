@@ -73,9 +73,9 @@ All studies evaluate large matrices with several million non-zeros, which is cri
 However, performance results often depend heavily on the matrices chosen.
 
 Matrices are typically stored in straightforward formats like \acrshort{coo} (row-major sorted) within the SuiteSparse Matrix Collection, necessitating preprocessing for compatibility with certain accelerators.
-For instance, some accelerators, such as EIE, ExTensor, MatRaptor and Alrescha, require conversion to their specific custom formats.
+For instance, some accelerators, such as EIE, ExTensor, Tensaurus, MatRaptor, Alrescha and C3ache, require conversion to their specific custom formats.
 Other \textit{standalone} accelerators utilize unique internal formats with \gls{tiling} methods but perform the conversion in hardware (\eg InnerSP, Spada, Flexagon, IOPS, DMSA).
-Accelerators like PHI, SortCache, and ASA do not require preprocessing as they focus solely on \gls{scatter}.
+Accelerators like Coup, PHI, SortCache, and ASA do not require preprocessing as they focus solely on \gls{scatter}.
 \Gls{gather} focused accelerators such as SPiDRE and SSSR do not require preprocessing, as they directly stream matrices from standard sparse formats.
 CoSPARSE is notably the only accelerator proposing to maintain two matrix copies in main memory (one in \acrshort{csr} and one in \acrshort{csc}) to enable joint software/hardware optimization.
 Regardless, fair benchmarking must consider the costs associated with specialized preprocessing if any is required.
@@ -138,7 +138,7 @@ Except for SPiDRE and SpaceA which work directly in main memory, the local memor
 Thus, in the model presented in Section~\ref{sec:bg:AnalyticalModel} of the previous chapter, most of the accelerators are situated in the middle-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}, with a local memory corresponding to a few matrix rows.
 Few are closer from the bottom-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}, where matrices could be held entirely in local memory.
 
-The accelerators performance are reported as a speedup versus a baseline, which may differ according to their hardware and software platforms: typically the Intel MKL library~\cite{Intel2003_IntelMKL}, the Armadillo library~\cite{Conrad2016_Armadillo} for CPUs, or GridGraph~\cite{Zhu2015_GridGraph}, Gunrock~\cite{Wang2016_Gunrock} and GraphMat~\cite{Sundaram2015_GraphMat} specifically for graphs on CPUs, or cuSPARSE~\cite{NVIDIA2014_cuSPARSE} and CUSP~\cite{Dalton2014_Cusp} for GPUs.
+The accelerators performance are reported as a speedup versus a baseline, which may differ according to their hardware and software platforms: typically the Intel MKL library~\cite{Intel2003_IntelMKL}, the Armadillo library~\cite{Conrad2016_Armadillo}, SparseBLAS~\cite{Duff2002_SparseBLAS} for CPUs, or GridGraph~\cite{Zhu2015_GridGraph}, Gunrock~\cite{Wang2016_Gunrock} and GraphMat~\cite{Sundaram2015_GraphMat} specifically for graphs on CPUs, or cuSPARSE~\cite{NVIDIA2014_cuSPARSE} and CUSP~\cite{Dalton2014_Cusp} for GPUs.
 Since different baselines with different numbers of threads and cores are used, these speedups need to be interpreted with care.
 The speedups are in general higher for the \textit{standalone} accelerators as they provide optimized hardware for the entire kernel, while \textit{processor assist} accelerators have less impressive speedups but aim to be general purpose and have lower area overhead.
 
@@ -208,3 +208,5 @@ The cost of such preprocessing can be high, and is usually only justified if the
 \begin{highlight}{Conclusion}{Red}
     TODO
 \end{highlight}
+
+\pagebreak

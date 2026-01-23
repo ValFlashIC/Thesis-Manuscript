@@ -7,7 +7,7 @@
 \label{sec:bg:algos}
 
 \lettrine{T}{he} main matrix multiplication kernels that are of interest are \acrfull{mv} and \acrfull{mm}, which include \acrshort{spmv} and \acrshort{spmspv} ($A \times b = c$), \acrshort{spgemv} ($A \times b + d = c$), \acrshort{spmm} and \acrshort{spmspm} ($A \times B = C$), and \acrshort{spgemm} ($A \times B + D = C$), with `Sp' for \emph{sparse} and `GE' for \emph{general}.
-\acrshort{spmv}, as well as its variant \acrshort{spgemv}, are by far the dominant operations in modern algebraic kernels (linear solvers, eigensolvers) which have been explicitly based on them~\cite{Gilbert2008, Duff2002, Penn2006, Yamazaki2011, Itoh1995, Kjolstad2017_TACO, Hapla2013}.
+\acrshort{spmv}, as well as its variant \acrshort{spgemv}, are by far the dominant operations in modern algebraic kernels (linear solvers, eigensolvers) which have been explicitly based on them~\cite{Gilbert2008, Duff2002_SparseBLAS, Penn2006, Yamazaki2011, Itoh1995, Kjolstad2017_TACO, Hapla2013}.
 Since these kernels are ubiquitous, their efficient implementation is primordial.
 In contrast, the \acrshort{spmspm} multiplication is less frequent in standard algebraic kernels, but it is extensively used in algebraic graph manipulation~\cite{Dongen2000, Kepner2015, Gilbert2007, Rabin1989, Chan2007, Azad2015, Brin1998}, as well as in multigrid solvers~\cite{Brandt2003, Li2021, Ryabkov2022, Ayyar2023}.
 The growing importance of large graphs has motivated new research on optimizing \acrshort{spmspm} applications.
@@ -226,7 +226,7 @@ In other words, this method consists of adding \glspl{rank} to delimit the \glsp
 
 \Gls{tiling} methods make it possible to process smaller portions of the matrix and thus to adapt the working set to the size of the local memory~\cite{Lam1991_Tiling, Wilkinson2023_Tiling}, particularly when the matrix has a structure with denser regions.
 \Gls{tiling} can also increase parallelism opportunities.
-Software optimizations for sparse matrix computation, such as OSKI~\cite{Vuduc2005} and Sparse BLAS~\cite{Duff2002}, are based on \gls{tiling}.
+Software optimizations for sparse matrix computation, such as OSKI~\cite{Vuduc2005} and Sparse BLAS~\cite{Duff2002_SparseBLAS}, are based on \gls{tiling}.
 In previous sections, the study of the \acrshort{ip}, \acrshort{op} and \acrshort{gust} algorithms highlighted the influence of \gls{rank} ordering on the sequentiality and data movement, and thus, adding intermediate \glspl{rank} with \gls{tiling} breaks the regularity of pure \acrshort{ip} or \acrshort{op} algorithms, requiring additional hardware support (see Section~\ref{sec:bg:hwchallenges}).
 
 For example, let us consider the $A$-matrix in Figure~\ref{fig:bg:tiling_ex} which is divided into four \glspl{tile} (one level of \gls{tiling}).

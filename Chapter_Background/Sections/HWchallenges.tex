@@ -19,7 +19,7 @@ Depending on the algorithm, successive accesses to the same element may be too f
 In an \acrshort{ip} algorithm, the $A$-\gls{metadata} needs to be read to indirectly access the $B$-matrix (or $b$-vector), which may itself be stored in a \gls{spFormat}.
 In this case, the algorithm needs to check if the non-zero $A$-indices are present in $B$ (or $b$).
 If an index appears in neither list, there is no need to perform the multiplication (\gls{innefOp}).
-More generally, this problem applies to any \gls{fiber} and is called the \gls{intersection} search.
+More generally, this problem applies to any \gls{fiber}\footnote{This term is used in higher-dimensional tensor kernels~\cite{Srivastava2020_Tensaurus}.} and is called the \gls{intersection} search.
 As a minimum, this requires reading all the \gls{metadata} for $A$ and $B$ (or $b$), and identifying those present in both.
 
 In Algorithm~\ref{alg:bg:IPSpMSpMCSR}, we present the pseudo-code for an \acrfull{ip} \acrshort{spmspm} with $A$ and $B$ stored in \acrshort{csr} and \acrshort{csc} formats, respectively.

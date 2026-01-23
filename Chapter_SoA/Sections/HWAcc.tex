@@ -6,7 +6,7 @@
 \section{Hardware Accelerators for Sparse Matrices and Vectors}
 \label{sec:soa:hw_accelerators}
 
-\lettrine{I}{n} this section, we describe the recent (2016-2025) hardware accelerators for sparse \acrshort{mm} and \acrshort{mv}, targeting mainly ASIC-type implementation.
+\lettrine{I}{n} this section, we describe the recent (2015-2025) hardware accelerators for sparse \acrshort{mm} and \acrshort{mv}, targeting mainly ASIC-type implementation.
 We try to be consistent on notations and architecture schemes to simplify the comparison.
 Note that we added our work, the SpDCache accelerator~[\ref{publ:SpDC}], which we describe on next chapters, as we published initial results in 2024.
 Before going into more detailed overviews of the accelerators, in Table~\ref{tab:soa:classificationOverview} we present a criteria-based classification of the designs.
@@ -73,6 +73,7 @@ In Section~\ref{sec:soa:other_accel}, we give bief descriptions on other acceler
         Name & Year & Autonomy & & {Position in \\ Memory Hierarchy} & & & {Most Adapted \\ Algorithm(s)} & & & {Hardware \\ Support for} & & {Sparse \\ Kernels \\ Addressed} & \\
         & & Standalone & Processor Assist & Near Processors & Near Caches & Near Main Memory & \acrlong{ip} & \acrlong{op} & \acrlong{gust} & \Gls{gather} & \Gls{scatter} & \acrshort{mv} & \acrshort{mm} \\
         %
+        Coup~\cite{Zhang2015_Coup}                  & 2015 &     & \ck &     & \ck &     &     & \ck &     &     & \ck & \ck & \sc \\
         EIE~\cite{Han2016_EIE}                      & 2016 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck & \ck &     \\
         OuterSPACE~\cite{Pal2018_OuterSPACE}        & 2018 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck & \ck & \ck \\
         GraphR~\cite{Song2018_GraphR}               & 2018 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck & \ck &     \\
@@ -82,6 +83,7 @@ In Section~\ref{sec:soa:other_accel}, we give bief descriptions on other acceler
         SPiDRE~\cite{Barredo2019_SPiDRE}            & 2019 &     & \ck &     &     & \ck & \ck &     &     & \ck &     & \ck & \sc \\
         ITS~\cite{Sadi2019_ITS}                     & 2019 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck & \ck &     \\
         SPU~\cite{Dadu2019_SPU}                     & 2019 & \ck &     &     &     & \sa & \ck & \ck &     & \ck & \ck & \ck &     \\
+        Tensaurus~\cite{Srivastava2020_Tensaurus}   & 2020 & \ck &     &     &     & \sa & \sc & \sb &     & \ck & \ck & \ck & \ck \\
         MatRaptor~\cite{Srivastava2020_MatRaptor}   & 2020 & \ck &     &     &     & \sa &     &     & \ck & \ck & \ck &     & \ck \\
         SpArch~\cite{Zhekai2020_SpArch}             & 2020 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck &     & \ck \\
         Alrescha~\cite{Asgari2020_Alrescha}         & 2020 & \ck &     &     &     & \sa & \ck &     &     & \ck & \ck & \ck &     \\
@@ -113,6 +115,7 @@ In Section~\ref{sec:soa:other_accel}, we give bief descriptions on other acceler
         IOPS~\cite{Sun2025_IOPS}                    & 2025 & \ck &     &     &     & \sa & \ck & \ck &     & \ck & \ck &     & \ck \\
         Leda~\cite{Yi2025_Leda}                     & 2025 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck &     & \ck \\
         DMSA~\cite{Nagahara2025_DMSA}               & 2025 & \ck &     &     &     & \sa &     &     & \sd & \ck & \ck &     & \ck \\
+        C3ache~\cite{li2025_C3ache}                 & 2025 &     & \ck &     & \ck &     &     & \sd & \sd & \ck & \ck &     & \ck \\
         %
         \sa \; Most standalone accelerators connect directly to main memory. \\
         \sb \; Not main contribution but addressed in the article. \\
