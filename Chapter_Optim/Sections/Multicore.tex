@@ -9,7 +9,7 @@
 \lettrine{T}{hroughout} this manuscript, we studied \acrlong{spdc} in isolation to clearly understand its performance characteristics across different matrices.
 While we validated \acrlong{spdc}'s individual performance and provided thorough analysis, we must now address how to scale \acrlong{spdc} to a multi-level, multi-core system.
 This scaling is non-trivial and requires careful consideration.
-In this section, we describe a complete memory hierarchy for \acrlong{spdc} that we believe to be the best, though we do not evaluate it as the full system remains unimplemented.
+In this section, we describe a complete memory hierarchy for \acrlong{spdc}, though we do not evaluate it as the full system remains unimplemented.
 
 As a concrete example, we consider a simple three-level, two-core system where each core has two private consecutive caches (\acrshort{l1} and \acrshort{l2}) and shares a last-level cache (\acrshort{llc}).
 As shown in Figure~\ref{fig:optim:spdc_multicore}, each core computes half of the matrix in parallel, divided vertically.
@@ -66,12 +66,17 @@ Similarly, adjusting \gls{band} sizing policies involves trade-offs: sizing \acr
 Our example vertically partitions the matrix into two parts for simplicity and \acrshort{csc} alignment.
 However, alternatives exist: for instance, odd and even columns could be assigned to separate cores, remaining \acrshort{csc}-compliant while allowing both cores to do \glspl{reduction} on the same addresses at the same time and thus using the entire \acrshort{llc} \acrshort{drc} size for the \gls{band} width.
 The drawback is reduced \acrshort{l1} and \acrshort{l2} \gls{hit} rates, concentrating most \glspl{hit} (and accumulations) in the \acrshort{llc}, potentially causing congestion.
+Additionally, dynamic partitioning strategies could be explored through a dedicated scheduler, distributing columns to available cores for example, enabling comprehensive load-balancing analysis for multi-core \acrlong{spdc} implementations.
 Determining the optimal approach requires empirical evaluation.
 Many other matrix partitioning and system configurations are conceivable and warrant investigation, but remain beyond this manuscript's scope.
 
+Note that computing multiple \acrshortpl{spmv} simultaneously is feasible.
+For instance, each core could execute a distinct \acrshort{spmv} operation on the same matrix $A$ but with different input vectors $b$.
+The \acrshort{llc} \acrshort{drc} \gls{band}-width must then be divided by the number of \acrshortpl{spmv} to prevent overlap in the allocated space for each output vector $c$.
+
 \begin{highlight}{Conclusion}{Red}
     The proposed multi-level, multi-core architecture for \acrlong{spdc} \textbf{effectively addresses the challenges of scaling across cache levels and cores} while optimizing memory usage.
-    Future work should focus on empirical evaluations of various configurations to validate performance and efficiency.
+    Future work could focus on evaluations of various configurations to validate performance.
 \end{highlight}
 
 \pagebreak

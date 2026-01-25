@@ -149,28 +149,142 @@ In Section~\ref{sec:soa:other_accel}, we give bief descriptions on other acceler
 In the above sections, we have described few sparse accelerators, covering different matrix multiplication algorithms and architectures.
 In the following paragraphs we present the other accelerators which we cover in less detail, to avoid unnecessary overload of information.
 
-%Sortcache, ASA, InnerSP, MatRaptor, SpArch, SPiDER
-%all others
-
 \subsubsection{SPiDRE}
 
-The authors of SPiDRE (Sparse Data Rearrange Engine)~\cite{Barredo2019_SPiDRE} propose a solution for the poor utilization of the memory hierarchy in sparse applications. They propose a near-memory data rearrangement engine. This engine can preprocess data, near memory, to create new data-structures that are dense and benefit from the memory hierarchy. For example, with a SpMV kernel, the input vector could be rearranged through a user defined function to a dense format where all non-zero elements are in the right order of computation.
+% The authors of SPiDRE (Sparse Data Rearrange Engine)~\cite{Barredo2019_SPiDRE} propose a solution for the poor utilization of the memory hierarchy in sparse applications.
+% They propose a near-memory data rearrangement engine.
+% This engine can preprocess data, near memory, to create new data-structures that are dense and benefit from the memory hierarchy.
+% For example, with a \acrshort{spmv} kernel, the input vector $b$ could be rearranged through a user defined function to a dense format where all non-zero elements are in the right order of computation.
 
-\subsubsection{PHI}
+SPiDRE (Sparse Data Rearrange Engine) is a near-memory hardware accelerator designed to optimize sparse and irregular memory access patterns by transforming sparse data into dense, locality-friendly structures.
+It operates by decoupling data access from execution, allowing the host core to compute while SPiDRE reorganizes data in parallel.
+The accelerator uses a user-specified rearrange function to compact sparse data, improving cache block utilization and enabling efficient prefetching.
+SPiDRE maintains memory consistency by flushing and invalidating data as needed and synchronizes with the host core to ensure data is ready before access.
+Its architecture supports multiple devices working in parallel, enhancing bandwidth efficiency and reducing memory latency for applications with irregular access patterns.
 
-The authors of PHI~\cite{Mukkara2019_PHI} note that many large graph algorithms favour pull (each node reads inputs from its neighbours) compared to push implementations (each node propagates results to its neighbours), as push implementations require read-modify-writes which require accessing complete cache lines, even though a small unit of data is modified. The authors include \acrshort{op} SpMV (a push algorithm) in their evaluation.
+\subsubsection{SortCache}
 
-PHI is a modified cache optimized to efficiently process commutative \gls{gather} updates. When an update is received but the line is not in the cache, the line is not fetched, but rather marked as being in \textit{update mode}, where it simply stores the update. If subsequent updates hit the line, they are stored, or combined via the commutative operator. When a cache line is evicted, if it contains multiple updates, PHI assumes that the coalescing has been effective, and it processes the operations via a read-modify-write from main memory. If a cache contains few updates when evicted, PHI batches these updates as $(address, value)$ tuples, allocating a new cache line to assemble the batch. Groups of updates are organized by \textit{bins} corresponding to a small memory region. The batches are streamed to main memory. Later, the reading of the batches is also efficient, as they are contiguous.
+SortCache~\cite{Srikanth2021_SortCache} is a near-processor accelerator designed to optimize sparse data workloads by intelligently managing on-chip cache resources.
+It leverages Vectorized Binary Search Trees (VBSTs) to dynamically reorder sparse data during gather-scatter operations, extracting sequential locality and maximizing cache bandwidth utilization.
+The system integrates specialized hardware for merging and preconditioning data, enabling efficient parallel reductions and minimizing redundant memory access.
+SortCache operates with minimal programmer intervention, requiring only simple annotations to specify parameters like cache size and reduction operations.
+By focusing on moderately sparse workloads—common in machine learning, graph analytics, and HPC—it enhances cache efficiency without disrupting the traditional processor-memory interface.
 
-In multi-core systems, private caches act as local buffers, thus coalescing the updates reduces coherency protocol traffic. This combination of in-cache coalescing and update buffering enables PHI to take advantage of locality when possible (like Coup~\cite{ZHANG_2015__Exploiting_Commutativity}), but with the addition of \textit{update batching}, PHI improves memory utilization, even when the data being updated is too large to fit in the cache.
+\subsubsection{ASA}
+
+ASA (Accelerating Sparse Accumulation) is a hardware accelerator designed to optimize the sparse accumulation (SPA) step in column-wise SpGEMM operations.
+It replaces traditional software-based hash table lookups—prone to branch mispredictions and collisions—with a dedicated, set-associative on-chip cache and a pipelined hardware accumulator.
+ASA extends the processor’s instruction set with a Hardware Probing and Accumulation (HPA) instruction, eliminating data-dependent branches and enabling efficient, atomic search-and-accumulate operations.
+Overflowed entries are stored in a pre-allocated memory buffer and merged later, minimizing stalls.
+The design integrates seamlessly with general-purpose processors, requiring minimal hardware overhead and providing a simple software interface for sparse accumulation tasks.
+
+\subsubsection{InnerSP}
+
+InnerSP is a hardware accelerator designed to optimize sparse matrix multiplication by leveraging a row-wise inner product approach, avoiding the memory bloating issues common in outer product methods.
+It uses a smart caching scheme to exploit locality in the second input matrix, reducing memory traffic and improving efficiency.
+InnerSP features an on-chip hash table for accumulating intermediate results, preventing overflows through pre-scanning and row splitting/merging techniques.
+The accelerator integrates B caches (row and column-value) to further enhance data reuse, and employs a locality-aware replacement policy to minimize cache misses.
+By processing rows in parallel and dynamically adjusting row-block sizes, InnerSP maximizes parallelism while maintaining memory efficiency.
+
+\subsubsection{MatRaptor}
+
+MatRaptor is a hardware accelerator designed for sparse-sparse matrix multiplication (SpGEMM), leveraging a row-wise product approach to optimize data reuse and on-chip memory efficiency.
+It introduces a novel Cyclic Channel Sparse Row (C²SR) storage format, which enables parallel, vectorized, and streaming memory access, maximizing bandwidth utilization.
+The accelerator uses a systolic array architecture with specialized loaders for input matrices and processing elements (PEs) that perform multiplication and merge operations using queues for efficient sorting and accumulation.
+MatRaptor avoids synchronization bottlenecks and minimizes on-chip memory requirements by processing rows asynchronously and using a round-robin allocation strategy for load balancing.
+Its design ensures high memory bandwidth utilization and eliminates the need for index matching, making it particularly effective for large, highly sparse matrices.
+
+\subsubsection{SpArch}
+
+SpArch is a domain-specific accelerator designed to optimize sparse matrix-matrix multiplication (SpGEMM) by jointly improving input and output data reuse.
+It employs a highly parallelized, streaming-based merger to pipeline the multiply and merge stages, enabling on-chip merging of partial matrices immediately after generation.
+SpArch introduces a condensed matrix representation to reduce the number of partial matrices by up to three orders of magnitude, minimizing DRAM access.
+A Huffman tree scheduler optimizes the merge order of partial matrices, further reducing memory traffic, while a row prefetcher with near-optimal buffer replacement recovers input reuse lost during matrix condensing.
+This architecture efficiently balances memory bandwidth and computational parallelism, ensuring high performance for large, sparse matrices.
 
 \subsubsection{GSCSp}
 
-GSCSp~\cite{LI_2023_GSCSp} is a FPGA-based accelerator based on \acrshort{gust} algorithm. In other \acrshort{gust} accelerators, a \textit{PE} processes a full $A$-row but the authors note that when there is variability in the number of elements in the $A$-rows, \textit{PEs} may be blocked, waiting for another \textit{PE} to complete. Thus the authors propose to distribute the elements in an $A$-row to different \textit{PEs} (\textit{element-wise} parallelism). Initially, each \textit{PE} buffers its output $C$-row, and when a \textit{PE} advances to the next row, it pushes its partial $C$-row to a final merger. The authors also propose to use separate caches for the \textit{metadata} for the $B$-rows and the values, and report that combined with the \textit{element-wise} parallelism, the approach is effective for reducing the memory traffic for accessing $B$-rows.
+% GSCSp~\cite{LI_2023_GSCSp} is a FPGA-based accelerator based on \acrshort{gust} algorithm. In other \acrshort{gust} accelerators, a \textit{PE} processes a full $A$-row but the authors note that when there is variability in the number of elements in the $A$-rows, \textit{PEs} may be blocked, waiting for another \textit{PE} to complete. Thus the authors propose to distribute the elements in an $A$-row to different \textit{PEs} (\textit{element-wise} parallelism). Initially, each \textit{PE} buffers its output $C$-row, and when a \textit{PE} advances to the next row, it pushes its partial $C$-row to a final merger. The authors also propose to use separate caches for the \textit{metadata} for the $B$-rows and the values, and report that combined with the \textit{element-wise} parallelism, the approach is effective for reducing the memory traffic for accessing $B$-rows.
+
+GSCSp is an efficient Gustavson-based sparse matrix-matrix multiplication (SpMM) accelerator designed for embedded FPGAs.
+It optimizes memory traffic and parallelism by employing element-wise parallelism, which evenly distributes workloads across processing elements (PEs) and reduces idle time caused by synchronization.
+The accelerator features SpCache, an access pattern-aware caching scheme that combines streaming and caching to handle irregular memory accesses and unpredictable row lengths in sparse matrices.
+GSCSp also introduces an optimized merge algorithm that processes only partial results, eliminating redundant merges and improving efficiency.
+By leveraging the Gustavson’s algorithm and tailored hardware components, GSCSp minimizes off-chip memory traffic and maximizes resource utilization on FPGA platforms.
 
 \subsubsection{Flexagon}
 
-Flexagon~\cite{Munoz-Martinez2023_Flexagon} is a SpMSpM accelerator for DNN applications. The authors claim that the optimal algorithm (\acrshort{ip}, \acrshort{op} and \acrshort{gust}) depends on the matrix structure, potentially varying between DNN models and layers within a DNN, although in the majority of the cases, their data shows that \acrshort{gust} is the most efficient. Flexagon is configurable: it can implement all three  algorithms. To achieve that, the authors designed a \textit{Merger-Reduction Network} (\textit{MRN}) that is able to perform multiplications (for \textit{partial sum} generation), accumulations (for \textit{reductions} operations) and comparisons (for \textit{intersection} searches and \textit{merge} phases) via a binary tree structure. Flexagon addresses the memory access issues of each algorithms via three custom memories: a FIFO for the $A$-matrix that is always read sequentially, a cache for the $B$-matrix that is subject to high temporal and spatial reuse in each of the three algorithms, and a PSRAM to store \textit{POs} for \acrshort{op} and \acrshort{gust} algorithms.
+% Flexagon~\cite{Munoz-Martinez2023_Flexagon} is a SpMSpM accelerator for DNN applications. The authors claim that the optimal algorithm (\acrshort{ip}, \acrshort{op} and \acrshort{gust}) depends on the matrix structure, potentially varying between DNN models and layers within a DNN, although in the majority of the cases, their data shows that \acrshort{gust} is the most efficient. Flexagon is configurable: it can implement all three  algorithms. To achieve that, the authors designed a \textit{Merger-Reduction Network} (\textit{MRN}) that is able to perform multiplications (for \textit{partial sum} generation), accumulations (for \textit{reductions} operations) and comparisons (for \textit{intersection} searches and \textit{merge} phases) via a binary tree structure. Flexagon addresses the memory access issues of each algorithms via three custom memories: a FIFO for the $A$-matrix that is always read sequentially, a cache for the $B$-matrix that is subject to high temporal and spatial reuse in each of the three algorithms, and a PSRAM to store \textit{POs} for \acrshort{op} and \acrshort{gust} algorithms.
+
+Flexagon is a reconfigurable sparse matrix-matrix multiplication (SpMSpM) accelerator designed to dynamically adapt to the most efficient dataflow (Inner Product, Outer Product, or Gustavson’s) for each layer of a DNN model.
+It features a novel Merger-Reduction Network (MRN), which unifies reduction and merging operations in a single, tree-based topology, allowing seamless switching between dataflows without hardware overhead.
+The accelerator includes a three-tier memory hierarchy—comprising a FIFO for stationary data, a cache for streaming data, and a specialized PSRAM for partial sums—tailored to the access patterns of each dataflow.
+Flexagon’s unified memory controllers and flexible interconnects enable efficient handling of diverse sparsity patterns and matrix dimensions.
+By eliminating the need for explicit format conversions between layers, it optimizes both performance and resource utilization for sparse DNN workloads.
+
+\subsubsection{ACES}
+
+ACES is a sparse matrix-matrix multiplication (SpMM) accelerator designed to dynamically adapt its execution flow to diverse sparsity patterns, optimizing both data reuse and parallelism.
+It features an adaptive execution flow that adjusts the condensing degree of input matrices, balancing input reuse and synchronization requirements, while a concurrency-aware cache management policy (PureFiber) optimizes global cache performance by considering both data locality and concurrent access patterns.
+The accelerator integrates a non-blocking buffer with the global cache to minimize stalls from cache misses, enhancing data access concurrency.
+ACES’s hardware architecture pairs each multiplication processing element (MPE) with an addition processing element (APE), enabling fine-grained parallelism and reducing inter-PE dependencies.
+By combining these innovations, ACES efficiently supports adaptive execution, advanced cache optimizations, and parallel processing for SpMM workloads.
+
+\subsubsection{DMSA}
+
+DMSA is a sparse-sparse matrix multiplication (SpMSpM) accelerator that introduces the Distribute-Merge Product (DMP) dataflow, which evenly distributes workloads across multiple computation streams and merges partial results efficiently.
+It eliminates the need for explicit synchronization between partial matrix computations by distributing elements of matrix A into parallel streams, each computing a partial matrix using scalar-vector products.
+DMSA incorporates a multibank-based input data loading mechanism with a protocol to manage unpredictable data sizes for matrix B, and a credit-based flow control mechanism to handle dataflow irregularities during computation and merging.
+The architecture also features a two-stage accumulation process for partial results, simplifying the design of the postprocessing unit and ensuring high throughput.
+By leveraging these techniques, DMSA optimizes parallelism and memory access efficiency for SpMSpM operations.
+
+\subsubsection{DTC-SpMM}
+
+DTC-SpMM is a Tensor Core (TC)-based accelerator designed to optimize general sparse matrix-matrix multiplication (SpMM) by addressing key challenges in memory efficiency, TC utilization, and workload imbalance.
+It introduces a memory-efficient compressed format (ME-TCF) to reduce storage overhead and a two-level TCU-Cache-Aware reordering technique to enhance the density of TC blocks, improving data locality and reuse.
+The runtime pipeline features shared-memory bypassing, sparse double buffering, and index precomputing to maximize TC pipeline utilization and minimize redundant computations.
+A simulation-based Selector dynamically chooses between balanced and unbalanced workload distributions to mitigate input-adaptive imbalances.
+By integrating these optimizations, DTC-SpMM bridges the gap between TC hardware and irregular sparse matrices, enabling efficient SpMM acceleration for diverse applications.
+
+\subsubsection{DySpMM}
+
+DySpMM is a dynamic FPGA-based accelerator for sparse matrix-matrix multiplication (SpMM), designed to address the limitations of fixed-configuration approaches.
+It features a configurable data distributor that dynamically adjusts sub-matrix sizes to minimize memory access, and an element-wise allocator that balances workloads across processing units (PUs) to improve utilization.
+The accelerator includes an interleaved reorder unit to avoid read-after-write (RAW) hazards at runtime, eliminating the need for time-consuming pre-processing.
+DySpMM’s merge tree efficiently combines results from adjacent PUs, while its scalable architecture supports parallel processing and memory bandwidth optimization.
+By integrating these dynamic design methodologies, DySpMM adapts to varying sparsity, element distribution, and data dependencies, enhancing efficiency for SpMM workloads.
+
+\subsubsection{FullSparse}
+
+FullSparse is a sparse-aware GEMM accelerator designed to handle diverse sparsity levels (0.2\% to 99\%) in deep neural networks (DNNs) by dynamically adapting its processing modes.
+It employs an online sparsity detector to switch between dense and sparse computation modes, optimizing resource usage for varying input sparsity.
+The accelerator features a multi-sparsity-compatible PE array that efficiently processes convolutions with irregular output data using collision-free methods, ensuring high computational efficiency.
+A result sparsity predictor, based on an XGBoost model, dynamically adjusts data storage formats to enhance off-chip memory access efficiency.
+By integrating these components, FullSparse balances storage efficiency and computational power, making it adaptable to a wide range of sparse DNN workloads.
+
+\subsubsection{Funnel}
+
+Funnel is a sparse attention accelerator designed to dynamically predict and efficiently process unstructured sparse data in Transformer-based models.
+It uses a fast quantization method based on lookup tables to estimate the attention score matrix, followed by Top-k sorting to generate a sparse score matrix, minimizing prediction overhead.
+The Funnel Computing Unit (FCU) unifies the computation of SDDMM and SpMM through a multi-dataflow fusion approach, leveraging a reconfigurable one-dimensional systolic array and a grouped summation network to handle irregular data distribution.
+A lightweight buffer and data tiling strategy enhance data reuse, while a sensible partitioning method aligns matrix granularity with the accelerator array size.
+By integrating these features, Funnel achieves high hardware efficiency and adaptability for sparse attention computations.
+
+\subsubsection{GAS}
+
+GAS is a general-purpose in-memory computing (IMC) accelerator designed for sparse matrix multiplication, supporting SpMV, SpMSpV, SpMM, and SpMSpM operations.
+It integrates FeFET-based content-addressable memory (CAM) arrays for index matching and multiply-add computation (MAC) arrays for in-situ floating-point operations, using a unified outer product-based methodology to handle all four functions.
+The accelerator employs three working phases—write, load, and compute—to efficiently process sparse matrices, with optimization techniques like zero-padding adjustment, early termination, and workload balancing to enhance performance.
+GAS dynamically aligns mantissas and handles exponent sums to support double-precision floating-point arithmetic directly within the memory arrays.
+By combining CAM and MAC arrays, GAS minimizes memory access bottlenecks and maximizes computational efficiency for diverse sparse matrix operations.
+
+\subsubsection{IOPS}
+
+% Put PDF and: Write a very short description of this accelerator operating, about 4-5 sentences, without mentioning performance results.
+% if no name, second gen: Redo by using its name, which is xxxx.
+% 20 requests. 2 hours after reset.
+
+
 
 \subsubsection{Other Accelerators}
 
