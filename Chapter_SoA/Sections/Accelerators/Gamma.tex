@@ -11,14 +11,27 @@ The two input matrices are both stored in \acrshort{csr} format and the output i
 
 \begin{figure}[htbp]
     \centering
-    \centering
-    \includegraphics[width=0.7\textwidth]{Chapter_SoA/Figures/PDF/Gamma.pdf}
-    \caption{Architecture of Gamma}
-    \label{fig:soa:gamma}
+    \begin{minipage}[b]{0.49074074\linewidth}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth]{Chapter_SoA/Figures/PDF/SoA_AcceleratorsArchis_Gamma.pdf}
+            \caption{Architecture of Gamma}
+            \label{fig:soa:gamma}
+        \end{figure}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[b]{0.49074074\linewidth}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth]{Chapter_SoA/Figures/PDF/SoA_AcceleratorsArchis_Gamma_DF.pdf}
+            \caption{Gamma Dataflow}
+            \label{fig:soa:gammaHow}
+        \end{figure}
+    \end{minipage}
 \end{figure}
 
 The Gamma architecture, presented in Figure~\ref{fig:soa:gamma}, is composed of a fetcher for the rows of $A$ that contains a \textit{Distributor} to distribute them to 32 \acrshortpl{pe}.
-Each \acrshort{pe} processes an entire $A$-row and computes the corresponding $C$-row.
+Each \acrshort{pe} processes an entire $A$-row and computes the corresponding $C$-row, as shown in Figure~\ref{fig:soa:gammaHow}.
 The \acrshort{pe} fetches the required rows of $B$ and merges and sorts them in a 64-wide \textit{merge} block, before multiplying with the elements of $A$.
 As a result, the output $C$-row is generated in order.
 The \gls{reduction} step is, thus, highly simplified, because any duplicate indices are adjacent.
