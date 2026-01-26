@@ -68,12 +68,12 @@ Domain specific matrix libraries are also used~\cite{Leskovec2014_SNAP, Smith201
 In Table~\ref{tab:soa:evaluation}, we note the number of matrices used for evaluation across our subset of accelerators.
 Most evaluations employ around ten or several tens of matrices, with few exceeding one hundred (none in the table).
 Matrix densities are typically below $10^{-2}$ and can be as low as $10^{-7}$.
-Some accelerators, such as ExTensor, SortCache, and Flexagon, also include denser matrices in their benchmarks.
+Some accelerators, such as ExTensor, Tensaurus, SortCache, and Flexagon, also include denser matrices in their benchmarks.
 All studies evaluate large matrices with several million non-zeros, which is critical since these exceed typical cache sizes.
 However, performance results often depend heavily on the matrices chosen.
 
 Matrices are typically stored in straightforward formats like \acrshort{coo} (row-major sorted) within the SuiteSparse Matrix Collection, necessitating preprocessing for compatibility with certain accelerators.
-For instance, some accelerators, such as EIE, ExTensor, Tensaurus, MatRaptor, Alrescha and C3ache, require conversion to their specific custom formats.
+For instance, some accelerators, such as EIE, ExTensor, Tensaurus, MatRaptor, Alrescha and C\textsuperscript{3}ache, require conversion to their specific custom formats.
 Other \textit{standalone} accelerators utilize unique internal formats with \gls{tiling} methods but perform the conversion in hardware (\eg InnerSP, Spada, Flexagon, IOPS, DMSA).
 Accelerators like Coup, PHI, SortCache, and ASA do not require preprocessing as they focus solely on \gls{scatter}.
 \Gls{gather} focused accelerators such as SPiDRE and SSSR do not require preprocessing, as they directly stream matrices from standard sparse formats.
@@ -108,9 +108,9 @@ Regardless, fair benchmarking must consider the costs associated with specialize
         ExTensor~\cite{Hegde2019_ExTensor}          & Custom Python simulator / Only the \textit{Coordinator} is evaluated; Remainder modeled analytically / $\varnothing$ & 14               & $\sim$38~MiB \\
         PHI~\cite{Mukkara2019_PHI}                  & \textit{ZSim} / Entirely evaluated / 16-cores system with 3 level cache                                              & 6                & 32.3~MiB \\
         SPiDRE~\cite{Barredo2019_SPiDRE}            & \textit{gem5} / \textit{Unknown} / Single ARM core                                                                   & \textit{unknown} & $\varnothing$ (main memory size) \\
-        ITS~\cite{Sadi2019_ITS}                     & $\varnothing$ / Evaluated on ASIC and FPGA / $\varnothing$                                                           & 31               & $\sim$64~MiB \\
+        ITS~\cite{Sadi2019_ITS}                     & $\varnothing$ / Evaluated on \acrshort{asic} and \acrshort{fpga} / $\varnothing$                                     & 31               & $\sim$64~MiB \\
         SPU~\cite{Dadu2019_SPU}                     & \textit{gem5} / SPU part implemented in Chisel; Control core simulated / $\varnothing$                               & 24               & $\sim$2.5~MiB \\
-        SpaceA~\cite{Xie2021_SpaceA}                & Custom simulator / Simulation tracking values stored in 3D-DRAM / $\varnothing$                                      & 15               & 4~GiB (main memory size) \\
+        SpaceA~\cite{Xie2021_SpaceA}                & Custom simulator / Simulation tracking values stored in 3D-\acrshort{dram} / $\varnothing$                                      & 15               & 4~GiB (main memory size) \\
         Gamma~\cite{Zhang2021_Gamma}                & Custom simulator / Entirely evaluated / $\varnothing$                                                                & 37               & 3~MiB \\
         SortCache~\cite{Srikanth2021_SortCache}     & Custom simulator / Entirely evaluated / Single threaded, in-order core  with 3 level cache                           & 11               & 16.3~MiB \\
         ASA~\cite{Zhang2022_ASA}                    & Modified \textit{ZSim} / Entirely evaluated; One ASA per core / 8-cores with 3 level cache                           & 9                & 8$\times$8~KiB \\
@@ -121,7 +121,7 @@ Regardless, fair benchmarking must consider the costs associated with specialize
         ACES~\cite{Lu2024_ACES}                     & Custom simulator / RTL of main components / $\varnothing$                                                            & 18               & 2~MiB \\
         \textbf{SpDCache}~[\ref{publ:SpDC}]         & Custom Python simulator / Entirely evaluated; Not cycle-accurate / Single-core system with one level cache           & 48               & 32~KiB \\
         IOPS~\cite{Sun2025_IOPS}                    & $\varnothing$ / Entirely evaluated through RTL implementation / $\varnothing$                                        & 10               & $\sim$77~KiB \\
-        DMSA~\cite{Nagahara2025_DMSA}               & $\varnothing$ / Evaluated on FPGA / $\varnothing$                                                                    & 10               & $\sim$22~MiB \\
+        DMSA~\cite{Nagahara2025_DMSA}               & $\varnothing$ / Evaluated on \acrshort{fpga} / $\varnothing$                                                         & 10               & $\sim$22~MiB \\
         %
         * Mainly for \textit{processor assist} accelerators.
     \end{tblr}
@@ -162,7 +162,7 @@ GAS leverages in-memory computing techniques to mitigate the limitations of the 
 \acrshort{gust} accelerators correspond to optimizations of the algorithm approach in graph~\ding{197}, to approach the performance in graph~\ding{200}.
 This is mainly achieved by custom local memories and caches for the $B$-matrix to address the \textit{orange} region, given that it is only necessary to store a limited number of $B$-rows, and to get ahead-of-time information from the reading of the matrix $A$.
 \acrshort{ip} accelerators face inherent challenges in achieving the performance levels of other approaches, a limitation also predicted by the model in Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}.
-Nevertheless, several recent accelerators (\eg Flexagon, Sparm and IOPS) have demonstrated that \acrshort{ip} delivers competitive performance on certain matrices, comparable to \acrshort{op} and \acrshort{gust} approaches.
+Nevertheless, several recent accelerators (\eg CoSPARSE, Flexagon, Sparm, Vesper and IOPS) have demonstrated that \acrshort{ip} delivers competitive performance on certain matrices, comparable to \acrshort{op} and \acrshort{gust} approaches.
 To capitalize on this observation, these designs support multiple or all three algorithms, enabling adaptive algorithm selection.
 While this flexibility for \textit{standalone} accelerators increases hardware complexity, it yields substantial performance gains and drives the field toward adaptive dataflow architectures.
 These findings validate that the model presented in Section~\ref{sec:bg:AnalyticalModel} provides valuable insights into local memory requirements for sparse \acrshort{mm} accelerators.
@@ -202,7 +202,7 @@ The fact that the outputs are generated row-by-row, facilitates parallel impleme
 Beyond the basic algorithm, \gls{tiling} approaches or new dataflows mixing algorithms can be explored (\eg ExTensor, SPU, Spada, Flexagon, IOPS and DMSA).
 
 Orthogonal to previous choices, other design considerations are important.
-First, the starting point needs to be defined: some accelerators require software to perform \gls{tiling} (\eg ExTensor), to align data with DRAM-blocks (\eg SpaceA), or to rearrange the rows to improve performance (\eg Gamma).
+First, the starting point needs to be defined: some accelerators require software to perform \gls{tiling} (\eg ExTensor), to align data with \acrshort{dram}-blocks (\eg SpaceA), or to rearrange the rows to improve performance (\eg Gamma).
 The cost of such preprocessing can be high, and is usually only justified if the same matrix is reused multiple times.
 
 \begin{highlight}{Conclusion}{Red}

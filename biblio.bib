@@ -847,6 +847,205 @@
     month={Dec}
 }
 
+@article{Chen2022_ThunderGP,
+    author = {Chen, Xinyu and Cheng, Feng and Tan, Hongshi and Chen, Yao and He, Bingsheng and Wong, Weng-Fai and Chen, Deming},
+    title = {ThunderGP: Resource-Efficient Graph Processing Framework on FPGAs with HLS},
+    year = {2022},
+    issue_date = {December 2022},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {15},
+    number = {4},
+    issn = {1936-7406},
+    url = {https://doi.org/10.1145/3517141},
+    doi = {10.1145/3517141},
+    abstract = {FPGA has been an emerging computing infrastructure in datacenters benefiting from fine-grained parallelism, energy efficiency, and reconfigurability. Meanwhile, graph processing has attracted tremendous interest in data analytics, and its performance is in increasing demand with the rapid growth of data. Many works have been proposed to tackle the challenges of designing efficient FPGA-based accelerators for graph processing. However, the largely overlooked programmability still requires hardware design expertise and sizable development efforts from developers. ThunderGP, a high-level synthesis based graph processing framework on FPGAs, is hence proposed to close the gap, with which developers could enjoy high performance of FPGA-accelerated graph processing by writing only a few high-level functions with no knowledge of the hardware. ThunderGP adopts the gather-apply-scatter model as the abstraction of various graph algorithms and realizes the model by a built-in highly parallel and memory-efficient accelerator template. With high-level functions as inputs, ThunderGP automatically explores massive resources of multiple super-logic regions of modern FPGA platforms to generate and deploy accelerators, as well as schedule tasks for them. Although ThunderGP on DRAM-based platforms is memory bandwidth bounded, recent high bandwidth memory (HBM) brings large potentials to performance. However, the system bottleneck shifts from memory bandwidth to resource consumption on HBM-enabled platforms. Therefore, we further propose to improve resource efficiency of ThunderGP to utilize more memory bandwidth from HBM. We conduct evaluation with seven common graph applications and 19 graphs. ThunderGP on DRAM-based hardware platforms provides 1.9\texttimes{} ∼ 5.2\texttimes{} improvement on bandwidth efficiency over the state of the art, whereas ThunderGP on HBM-based hardware platforms delivers up to 5.2\texttimes{} speedup over the state-of-the-art RTL-based approach. This work is open sourced on GitHub at https://github.com/Xtra-Computing/ThunderGP .},
+    journal = {ACM Trans. Reconfigurable Technol. Syst.},
+    month = dec,
+    articleno = {44},
+    numpages = {31},
+    keywords = {FPGA, HBM, HLS, graph processing, framework}
+}
+
+@INPROCEEDINGS{Tang2025_AiSpGEMM,
+    author={Tang, Enhao and Li, Shun and Zhou, Hao and Dai, Guohao and Lin, Jun and Wang, Kun},
+    booktitle={2025 Design, Automation \& Test in Europe Conference (DATE)}, 
+    title={AiSpGEMM: Accelerating Imbalanced SpGEMM on FPGAs with Flexible Interconnect and Intra-row Parallel Merging}, 
+    year={2025},
+    volume={},
+    number={},
+    pages={1-7},
+    abstract={The row-wise product algorithm shows significant potential for sparse matrix-matrix multiplication (SpGEMM) on hardware accelerators. Recent studies have made notable progress in accelerating SpGEMM using this algorithm. However, several challenges remain in accelerating imbalanced SpGEMM, where the distribution of non-zero elements across different rows is imbalanced. These challenges include: (1) the fixed dataflow of the merger tree, which leads to lower PE utilization, and (2) highly imbalanced data distributions, such as single rows with numerous non-zero elements, which result in intensive computations. This imbalance significantly challenges SpGEMM acceleration, leading to time-consuming processes that dominate overall computation time. In this paper, we propose AiSpGEMM to accelerate imbalanced SpGEMM on FPGAs. First, we improved the C2SR format to adapt it for imbalanced SpGEMM acceleration based on the row-wise product algorithm. This reduces off-chip memory bank conflicts and increases data reuse of matrix B. Secondly, we design a reconfigurable merger (R-merger) with flexible interconnects to improve PE utilization. Additionally, we propose an intra-row parallel merging algorithm and its corresponding hardware architecture, the parallel merger (P-merger), to accelerate intensive operations. Experimental results demonstrate that AiSpGEMM achieves a geometric mean (geomean) speedup of 5.8× compared to the state-of-the-art FPGA-based SpGEMM accelerator. In Geomean, AiSpGEMM achieves a 3.0× speedup and a 9.8× improvement in energy efficiency compared to the NVIDIA cuSPARSE library running on an NVIDIA A6000 GPU. Moreover, AiSpGEMM-21 demonstrated a 4× increase in average throughput compared to the same GPU.},
+    keywords={Corporate acquisitions;Merging;Graphics processing units;Performance gain;Parallel processing;Throughput;Libraries;Energy efficiency;Sparse matrices;Field programmable gate arrays;SpGEMM;FPGA;row-wise product;accelerator},
+    doi={10.23919/DATE64628.2025.10993117},
+    ISSN={1558-1101},
+    month={March},
+}
+
+@inproceedings{Kim2023_HARP,
+    author = {Kim, Jinkwon and Jang, Myeongjae and Nam, Haejin and Kim, Soontae},
+    title = {HARP: Hardware-Based Pseudo-Tiling for Sparse Matrix Multiplication Accelerator},
+    year = {2023},
+    isbn = {9798400703294},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3613424.3623790},
+    doi = {10.1145/3613424.3623790},
+    abstract = {General sparse matrix-matrix multiplication (SpGEMM) is a memory-bound workload, due to the compression format used. To minimize data movements for input matrices, outer product accelerators have been proposed. Since these accelerators access input matrices only once and then generate numerous partial products, managing the generated partial products is the key optimization factor. To reduce the number of partial products handled, the state-of-the-art accelerator uses software to tile an input matrix. However, the software-based tiling has three limitations. First, a user manually executes the tiling software and manages the tiles. Second, generating a compression format for each tile incurs memory-intensive operations. Third, an accelerator that uses the compression format cannot skip ineffectual accesses for input matrices. To overcome these limitations, this paper proposes hardware-based pseudo-tiling (HARP), which enables logical tiling of the original compressed matrix without generating a compression format for each tile. To this end, HARP utilizes our proposed Runtime Operand Descriptor to point to an effectual column-row pair in a pseudo-tile. Consequently, HARP enables a user to use the accelerator as a normal SpGEMM operation does without tiling. Furthermore, HARP does not require a compression format for each tile and can skip ineffectual accesses for input matrices. To further improve the efficiency of pseudo-tiling, HARP performs super-tiling to combine pseudo-tiles and sub-tiling to further tile a pseudo-tile. Experiment results show that HARP achieves 4 \texttimes{}, 35 \texttimes{}, and 33 \texttimes{} speedup and 5 \texttimes{}, 664 \texttimes{}, and 233 \texttimes{} energy efficiency on average compared to the state-of-the-art outer product accelerator, CPU (MKL), and GPU (cuSPARSE), respectively.},
+    booktitle = {Proceedings of the 56th Annual IEEE/ACM International Symposium on Microarchitecture},
+    pages = {1148–1162},
+    numpages = {15},
+    keywords = {Application-specific hardware, Hardware accelerator, SpGEMM, Spare matrix tiling, Sparse Matrix, Sparse matrix multiplication, Tiling},
+    location = {Toronto, ON, Canada},
+    series = {MICRO '23}
+}
+
+@ARTICLE{Zhou2019_HitGraph,
+    author={Zhou, Shijie and Kannan, Rajgopal and Prasanna, Viktor K. and Seetharaman, Guna and Wu, Qing},
+    journal={IEEE Transactions on Parallel and Distributed Systems}, 
+    title={HitGraph: High-throughput Graph Processing Framework on FPGA}, 
+    year={2019},
+    volume={30},
+    number={10},
+    pages={2249-2264},
+    abstract={This paper presents, HitGraph, an FPGA framework to accelerate graph processing based on the edge-centric paradigm. HitGraph takes in an edge-centric graph algorithm and hardware resource constraints, determines design parameters and then generates a Register Transfer Level (RTL) FPGA design. This makes accelerator design for various graph analytics transparent and user-friendly by masking internal details of the accelerator design process. HitGraph enables increased data reuse and parallelism through novel algorithmic optimizations, including (1) an optimized data layout that reduces non-sequential external memory accesses, (2) an efficient update merging and filtering scheme to reduce the data communication between the FPGA and external memory, and (3) a partition skipping scheme to reduce redundant edge traversals for non-stationary graph algorithms. Based on our design methodology, we accelerate Sparse Matrix Vector Multiplication (SpMV), PageRank (PR), Single Source Shortest Path (SSSP), and Weakly Connected Component (WCC). Experimental results show that HitGraph sustains a high throughput of 2076 Million Traversed Edges Per Second (MTEPS) for SpMV, 2225 MTEPS for PR, 2916 MTEPS for SSSP, and 3493 MTEPS for WCC, respectively. Compared with highly-optimized multi-core implementations, HitGraph achieves up to 37.9× speedup. Compared with state-of-the-art FPGA frameworks, HitGraph achieves up to 50.7× throughput improvement.},
+    keywords={Field programmable gate arrays;Acceleration;Optimization;Sparse matrices;Throughput;Program processors;Memory management;FPGA framework;graph processing;energy-efficient acceleration},
+    doi={10.1109/TPDS.2019.2910068},
+    ISSN={1558-2183},
+    month={Oct},
+}
+
+@inproceedings{Gondimalla2019_SparTen,
+    author = {Gondimalla, Ashish and Chesnut, Noah and Thottethodi, Mithuna and Vijaykumar, T. N.},
+    title = {SparTen: A Sparse Tensor Accelerator for Convolutional Neural Networks},
+    year = {2019},
+    isbn = {9781450369381},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3352460.3358291},
+    doi = {10.1145/3352460.3358291},
+    abstract = {Convolutional neural networks (CNNs) are emerging as powerful tools for image processing. Recent machine learning work has reduced CNNs' compute and data volumes by exploiting the naturally-occurring and actively-transformed zeros in the feature maps and filters. While previous semi-sparse architectures exploit one-sided sparsity either in the feature maps or the filters, but not both, a recent fully-sparse architecture, called Sparse CNN (SCNN), exploits two-sided sparsity to improve performance and energy over dense architectures. However, sparse vector-vector dot product, a key primitive in sparse CNNs, would be inefficient using the representation adopted by SCNN. The dot product requires finding and accessing non-zero elements in matching positions in the two sparse vectors -- an inner join using the position as the key with a single value field. SCNN avoids the inner join by performing a Cartesian product capturing the relevant multiplications. However, SCNN's approach incurs several considerable overheads and is not applicable to non-unit-stride convolutions. Further, exploiting reuse in sparse CNNs fundamentally causes systematic load imbalance not addressed by SCNN. We propose SparTen which achieves efficient inner join by providing support for native two-sided sparse execution and memory storage. To tackle load imbalance, SparTen employs a software scheme, called greedy balancing, which groups filters by density via two variants, a software-only one which uses whole-filter density and a software-hardware hybrid which uses finer-grain density. Our simulations show that, on average, SparTen performs 4.7x, 1.8x, and 3x better than a dense architecture, one-sided sparse architecture, and SCNN, respectively. An FPGA implementation shows that SparTen performs 4.3x and 1.9x better than a dense architecture and a one-sided sparse architecture, respectively.},
+    booktitle = {Proceedings of the 52nd Annual IEEE/ACM International Symposium on Microarchitecture},
+    pages = {151–165},
+    numpages = {15},
+    keywords = {Accelerators, Convolutional neural networks, Sparse tensors},
+    location = {Columbus, OH, USA},
+    series = {MICRO-52}
+}
+
+@inproceedings{Zhang2025_RTSpMSpM,
+    author = {Zhang, Hongrui and Zhang, Yunan and Tseng, Hung-Wei},
+    title = {RTSpMSpM: Harnessing Ray Tracing for Efficient Sparse Matrix Computations},
+    year = {2025},
+    isbn = {9798400712616},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3695053.3731072},
+    doi = {10.1145/3695053.3731072},
+    abstract = {The significance of sparse matrix algebra pushes the development of sparse matrix accelerators. Despite the general reception of using hardware accelerators to address application demands and the convincement of substantial performance gain, integrating heterogeneous hardware accelerators always introduces manufacturing costs on new hardware and challenges the system interconnects.Inspired by the similar algorithmic behaviors between ray tracing and sparse matrix problems, this paper exploits ray tracing hardware. This increasingly popular accelerator has become the standard in modern GPU architectures to address the demand for virtual/augmented/mixed reality applications. We propose an algorithm that maps the most classical sparse matrix multiplication problem (SpMSpM) as a ray tracing problem. By implementing the proposed algorithm using a modern ray tracing programming framework, the resulting program, SW-RTSpMSpM can leverage the accelerated intersection test unit in commercialized GPUs and reveals 1.85 \texttimes{} speedup over the state-of-the-art SpMSpM library.Despite the “similarities” in both problems enabling the potential of accelerating SpMSpM using existing ray tracing hardware, the “difference” between these two algorithms leaves room for performance gain with architectural optimizations. The insights from evaluating SW-RTSpMSpM guide the proposal of RT+SpMSpM, where we present two major architectural optimizations that (1) allow simultaneous computation on multiplications along with intersection tests and (2) ray mapping and scheduling and a small row accumulation engine to leverage Gustavson’s dataflow and eliminate the reliance of additional shader functions and redundant memory operations.The resulting RT+SpMSpM only introduces 0.2\% area overhead to a modern high-end ray-tracing-hardware-equipped GPU and improves SW-RTSpMSpM by 1.66 \texttimes{}, achieving 3.06 \texttimes{} speedup over software library and 80\% performance per area compared to a state-of-the-art SpMSpM accelerator, without losing the capability in supporting ray tracing.},
+    booktitle = {Proceedings of the 52nd Annual International Symposium on Computer Architecture},
+    pages = {359–373},
+    numpages = {15},
+    location = {
+    },
+    series = {ISCA '25}
+}
+
+@inproceedings{Ningxin2022_SparTA,
+    author = {Ningxin Zheng and Bin Lin and Quanlu Zhang and Lingxiao Ma and Yuqing Yang and Fan Yang and Yang Wang and Mao Yang and Lidong Zhou},
+    title = {{SparTA}: {Deep-Learning} Model Sparsity via {Tensor-with-Sparsity-Attribute}},
+    booktitle = {16th USENIX Symposium on Operating Systems Design and Implementation (OSDI 22)},
+    year = {2022},
+    isbn = {978-1-939133-28-1},
+    address = {Carlsbad, CA},
+    pages = {213--232},
+    url = {https://www.usenix.org/conference/osdi22/presentation/zheng-ningxin},
+    publisher = {USENIX Association},
+    month = jul
+}
+
+@inproceedings{Peng2024_MaxK-GNN,
+    author = {Peng, Hongwu and Xie, Xi and Shivdikar, Kaustubh and Hasan, Md Amit and Zhao, Jiahui and Huang, Shaoyi and Khan, Omer and Kaeli, David and Ding, Caiwen},
+    title = {MaxK-GNN: Extremely Fast GPU Kernel Design for Accelerating Graph Neural Networks Training},
+    year = {2024},
+    isbn = {9798400703850},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3620665.3640426},
+    doi = {10.1145/3620665.3640426},
+    abstract = {In the acceleration of deep neural network training, the graphics processing unit (GPU) has become the mainstream platform. GPUs face substantial challenges on Graph Neural Networks (GNNs), such as workload imbalance and memory access irregularities, leading to underutilized hardware. Existing solutions such as PyG, DGL with cuSPARSE, and GNNAdvisor frameworks partially address these challenges. However, the memory traffic involved with Sparse-Dense Matrix Matrix Multiplication (SpMM) is still significant.We argue that drastic performance improvements can only be achieved by the vertical optimization of algorithm and system innovations, rather than treating the speedup optimization as an "after-thought" (i.e., (i) given a GNN algorithm, designing an accelerator, or (ii) given hardware, mainly optimizing the GNN algorithm). In this paper, we present MaxK-GNN, an advanced high-performance GPU training system integrating algorithm and system innovation. (i) We introduce the MaxK nonlinearity and provide a theoretical analysis of MaxK nonlinearity as a universal approximator, and present the Compressed Balanced Sparse Row (CBSR) format, designed to store the data and index of the feature matrix after nonlinearity; (ii) We design a coalescing enhanced forward computation with row-wise product-based Sparse Matrix-Matrix Multiplication (SpGEMM) Kernel using CBSR for input feature matrix fetching and strategic placement of a sparse output accumulation buffer in shared memory; (iii) We develop an optimized backward computation with outer product-based and Sampled Sparse Matrix Dense Matrix Multiplication (SSpMM) Kernel.We conduct extensive evaluations of MaxK-GNN and report the system training time. Experiments show that MaxK-GNN system could approach the speedup limit according to Amdahl's law. We achieve comparable accuracy to SOTA GNNs, but at a significantly increased speed: 3.22\texttimes{}/4.24\texttimes{} speedup (vs. 5.52\texttimes{}/7.27\texttimes{}) on Reddit compared to DGL and GNNAdvisor implementations. Our implementation can be found on GitHub1.},
+    booktitle = {Proceedings of the 29th ACM International Conference on Architectural Support for Programming Languages and Operating Systems, Volume 2},
+    pages = {683–698},
+    numpages = {16},
+    keywords = {graph neural network, SpMM, SpGEMM, sampled sparse matrix dense matrix multiplication (SSpMM), MaxK nonlinearity, parallel computing, GPUs},
+    location = {La Jolla, CA, USA},
+    series = {ASPLOS '24}
+}
+
+@inproceedings{Fan2024_DTC-SpMM,
+    author = {Fan, Ruibo and Wang, Wei and Chu, Xiaowen},
+    title = {DTC-SpMM: Bridging the Gap in Accelerating General Sparse Matrix Multiplication with Tensor Cores},
+    year = {2024},
+    isbn = {9798400703867},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3620666.3651378},
+    doi = {10.1145/3620666.3651378},
+    abstract = {Sparse Matrix-Matrix Multiplication (SpMM) is a building-block operation in scientific computing and machine learning applications. Recent advancements in hardware, notably Tensor Cores (TCs), have created promising opportunities for accelerating SpMM. However, harnessing these hardware accelerators to speed up general SpMM necessitates considerable effort. In this paper, we undertake a comprehensive analysis of the state-of-the-art techniques for accelerating TC-based SpMM and identify crucial performance gaps. Drawing upon these insights, we propose DTC-SpMM, a novel approach with systematic optimizations tailored for accelerating general SpMM on TCs. DTC-SpMM encapsulates diverse aspects, including efficient compression formats, reordering methods, and runtime pipeline optimizations. Our extensive experiments on modern GPUs with a diverse range of benchmark matrices demonstrate remarkable performance improvements in SpMM acceleration by TCs in conjunction with our proposed optimizations. The case study also shows that DTC-SpMM speeds up end-to-end GNN training by up to 1.91\texttimes{} against popular GNN frameworks.},
+    booktitle = {Proceedings of the 29th ACM International Conference on Architectural Support for Programming Languages and Operating Systems, Volume 3},
+    pages = {253–267},
+    numpages = {15},
+    keywords = {sparse matrix-matrix multiplication, SpMM, unstructured sparsity, GPU, tensor core},
+    location = {La Jolla, CA, USA},
+    series = {ASPLOS '24}
+}
+
+@inproceedings{Yuke2023_TC-GNN,
+    author = {Yuke Wang and Boyuan Feng and Zheng Wang and Guyue Huang and Yufei Ding},
+    title = {{TC-GNN}: Bridging Sparse {GNN} Computation and Dense Tensor Cores on {GPUs}},
+    booktitle = {2023 USENIX Annual Technical Conference (USENIX ATC 23)},
+    year = {2023},
+    isbn = {978-1-939133-35-9},
+    address = {Boston, MA},
+    pages = {149--164},
+    url = {https://www.usenix.org/conference/atc23/presentation/wang-yuke},
+    publisher = {USENIX Association},
+    month = jul
+}
+
+@inproceedings{Gale2020_vectorSparse,
+    author = {Gale, Trevor and Zaharia, Matei and Young, Cliff and Elsen, Erich},
+    title = {Sparse GPU kernels for deep learning},
+    year = {2020},
+    isbn = {9781728199986},
+    publisher = {IEEE Press},
+    abstract = {Scientific workloads have traditionally exploited high levels of sparsity to accelerate computation and reduce memory requirements. While deep neural networks can be made sparse, achieving practical speedups on GPUs is difficult because these applications have relatively moderate levels of sparsity that are not sufficient for existing sparse kernels to outperform their dense counterparts. In this work, we study sparse matrices from deep learning applications and identify favorable properties that can be exploited to accelerate computation. Based on these insights, we develop high-performance GPU kernels for two sparse matrix operations widely applicable in neural networks: sparse matrix-dense matrix multiplication and sampled dense-dense matrix multiplication. Our kernels reach 27\% of single-precision peak on Nvidia V100 GPUs. Using our kernels, we demonstrate sparse Transformer and MobileNet models that achieve 1.2--2.1X speedups and up to 12.8X memory savings without sacrificing accuracy.},
+    booktitle = {Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis},
+    articleno = {17},
+    numpages = {14},
+    keywords = {graphics processing units, neural networks, sparse matrices},
+    location = {Atlanta, Georgia},
+    series = {SC '20}
+}
+
+@article{Xia2023_Flash-LLM,
+    author = {Xia, Haojun and Zheng, Zhen and Li, Yuchao and Zhuang, Donglin and Zhou, Zhongzhu and Qiu, Xiafei and Li, Yong and Lin, Wei and Song, Shuaiwen Leon},
+    title = {Flash-LLM: Enabling Cost-Effective and Highly-Efficient Large Generative Model Inference with Unstructured Sparsity},
+    year = {2023},
+    issue_date = {October 2023},
+    publisher = {VLDB Endowment},
+    volume = {17},
+    number = {2},
+    issn = {2150-8097},
+    url = {https://doi.org/10.14778/3626292.3626303},
+    doi = {10.14778/3626292.3626303},
+    abstract = {With the fast growth of parameter size, it becomes increasingly challenging to deploy large generative models as they typically require large GPU memory consumption and massive computation. Unstructured model pruning has been a common approach to reduce both GPU memory footprint and the overall computation while retaining good model accuracy. However, the existing solutions do not provide an efficient support for handling unstructured sparsity on modern GPUs, especially on the highly-structured tensor core hardware. Therefore, we propose Flash-LLM for enabling low-cost and highly efficient large generative model inference with the sophisticated support of unstructured sparsity on high-performance but highly restrictive tensor cores. Based on our key observation that the main bottleneck of generative model inference is the several skinny matrix multiplications for which tensor cores would be significantly under-utilized due to low computational intensity, we propose a general Load-as-Sparse and Compute-as-Dense methodology for unstructured sparse matrix multiplication (SpMM). The basic insight is to address the significant memory bandwidth bottleneck while tolerating redundant computations that are not critical for end-to-end performance on tensor cores. Based on this, we design an effective software framework for tensor core based unstructured SpMM, leveraging on-chip resources for efficient sparse data extraction and computation/memory-access overlapping. Extensive evaluations demonstrate that (1) at SpMM kernel level, Flash-LLM significantly outperforms the state-of-the-art library, i.e., Sputnik and SparTA by an average of 2.9X and 1.5X, respectively.(2) At end-to-end framework level on OPT-30B/66B/175B models, for tokens per GPU-second, Flash-LLM achieves up to 3.8X and 3.6X improvement over DeepSpeed and FasterTransformer, respectively, with significantly lower inference cost.},
+    journal = {Proc. VLDB Endow.},
+    month = oct,
+    pages = {211–224},
+    numpages = {14}
+}
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Simulators and Compilers
 
@@ -1729,6 +1928,24 @@
     doi={10.1109/ESSCIR.1998.186227},
     ISSN={},
     month={Sep.},
+}
+
+@inproceedings{Chen2016_XGBoost,
+    author = {Chen, Tianqi and Guestrin, Carlos},
+    title = {XGBoost: A Scalable Tree Boosting System},
+    year = {2016},
+    isbn = {9781450342322},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/2939672.2939785},
+    doi = {10.1145/2939672.2939785},
+    abstract = {Tree boosting is a highly effective and widely used machine learning method. In this paper, we describe a scalable end-to-end tree boosting system called XGBoost, which is used widely by data scientists to achieve state-of-the-art results on many machine learning challenges. We propose a novel sparsity-aware algorithm for sparse data and weighted quantile sketch for approximate tree learning. More importantly, we provide insights on cache access patterns, data compression and sharding to build a scalable tree boosting system. By combining these insights, XGBoost scales beyond billions of examples using far fewer resources than existing systems.},
+    booktitle = {Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
+    pages = {785–794},
+    numpages = {10},
+    keywords = {large-scale machine learning},
+    location = {San Francisco, California, USA},
+    series = {KDD '16}
 }
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
