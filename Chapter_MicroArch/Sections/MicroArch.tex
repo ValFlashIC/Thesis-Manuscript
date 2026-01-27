@@ -6,7 +6,7 @@
 \section{SpDCache Microarchitecture}
 \label{sec:arch:microarch}
 
-\lettrine{S}{pDCache} is implemented as an L1 data cache for a CVA6 RISC-V core, building upon an existing open-source high-performance set-associative data cache known as HPDcache~\cite{Fuguet2023_HPDcache}.
+\lettrine{S}{pDCache} is implemented as an L1 data cache for a CVA6 RISC-V core, building upon an existing open-source high-performance set-associative data cache known as HPDcache~\cite{Fuguet2023_HPDcache}, fully implemented in \acrshort{rtl} with SystemVerilog.
 In contrast to previous RISC-V data caches, HPDcache introduces new features, including buffering techniques for memory writes, set-associative storage to manage read \gls{miss} requests, and dynamic configurability of each cache-line to operate in either write-back or write-through modes.
 It is designed for high performance, utilizing a three-stage \gls{pipeline} to handle multiple instructions while minimizing stalls through out-of-order cache execution.
 The CPU can issue multiple types of read and write requests to the cache including atomic operations (AMOs), cache management operations (\acrshortpl{cmo}) as well as the new \gls{reduction} operation (\acrshort{red}) introduced by \acrlong{spdc}.
@@ -31,10 +31,10 @@ This \gls{pipeline} serves as the foundation for implementing \acrlong{spdc}'s \
     \label{fig:arch:microarch}
 \end{figure}
 
-The \textit{cache controller} coordinates several auxiliary units.
-The \textit{miss handler}, is allocated requests from \textit{st2}, tracks outstanding memory read requests and notifies the cache controller with a \textit{refill} request when responses arrive.
+The \textit{cache controller} (\textit{cache ctrl}, top of the figure) coordinates several auxiliary units.
+The \textit{miss handler}, is allocated requests from \textit{st2}, tracks outstanding memory read requests and notifies the \textit{cache controller} with a \textit{refill} request when responses arrive.
 An optional \textit{write buffer} gathers recent writes to memory, allowing coalescing of transactions that target the same cache-line.
-The \textit{flush controller}, also invoked by \textit{st2}, reads cache-line data from the \textit{Data} \acrshortpl{ram} and issues memory writes.
+The \textit{flush controller} (\textit{flush ctrl}), also invoked by \textit{st2}, reads cache-line data from the \textit{Data} \acrshortpl{ram} and issues memory writes.
 It temporarily stalls the \gls{pipeline} to prevent \acrshort{ram} conflicts.
 HPDcache further provides an \textit{UC} unit to handle uncached transactions.
 Finally, the \textit{\acrshort{cmo} handler} performs internal cache operations (\eg, invalidations and flushes).
@@ -54,12 +54,12 @@ The changes to \acrlong{spdc} were done in a way such that, by simply changing p
 \label{sec:arch:spdcache}
 
 We configure the original HPDcache as a 4-way set-associative cache with 128 \glspl{set} and 64-byte cache-lines, resulting in a total cache size of 32~KiB.
-We extend the three-stage \gls{pipeline} to handle the new \acrshort{red} instruction.
+We extend the three-stage \gls{pipeline} to handle the new \acrshort{red} instruction ($\mathit{RED}(key, value)$).
 Figure~\ref{fig:arch:microarch} provides an overview of \acrlong{spdc}'s microarchitecture, highlighting new blocks in \textit{red}, modified blocks in \textit{blue}, and untouched components in \textit{black}.
 The overall architecture aligns with the design presented in Chapter~\ref{cha:spdc}, adapted here for hardware implementation.
 Let us briefly describe the operation of the \acrshort{drc} under three scenarios: \glspl{hit}, \glspl{miss} with available cache-lines, and \glspl{miss} requiring \gls{eviction}.
 
-In the case of a \gls{hit}, the value of the \acrshort{red} instruction is accumulated with its corresponding value in the cache.
+In the case of a \gls{hit}, the value of the \acrshort{red} instruction is accumulated with its corresponding value in the cache ($\mathit{data}_\mathit{key} \acc \mathit{value}$).
 At \textit{st1}, the cache value, read in \textit{st0} from \textit{Data}, is accumulated with the \acrshort{red} value using a dedicated accumulator (\textit{Acc}).
 The result is written back to \textit{Data} at \textit{st2}.
 
@@ -132,14 +132,14 @@ Finally, we have included an instruction to enable and disable the \gls{reductio
 
 We demonstrate a simple example in Source Code~\ref{src:arch:red_ex} that accumulates multiple values at a single address.
 Before executing \acrshort{red} transactions, the \gls{reduction} engine must be enabled (line~3).
-The cache transitions from a fully generic state to \acrshort{spdc} with multiple regions using a hardware-defined static configuration.
+The cache transitions from a fully generic state to \acrlong{spdc} with multiple regions using a hardware-defined static configuration.
 This example assumes a configuration with three regions: \acrshort{grc}, \acrshort{drc}, and \acrshort{srt}.
 For a simpler \gls{redC} configuration with only two regions (\acrshort{grc} and \acrshort{drc}), the \acrshort{reg} instruction would be unnecessary.
 Additionally, the instruction can accept a dynamic configuration argument specifying word granularity and operation type.
-A future optimization would allow passing the entire configuration as a parameter, enabling dynamic configuration of \acrshort{spdc} regions at runtime.
-Next, at line~8, we select the \acrshort{ibr} region using the \acrshort{reg} instruction.
+A future optimization would allow passing the entire configuration as a parameter, enabling dynamic configuration of \acrlong{spdc} regions at runtime.
+Next, at line~8, we select the \acrfull{ibr} region using the \acrshort{reg} instruction.
 The subsequent two \acrshort{red} instructions are then executed and stored in the \acrshort{drc}.
-At line~13, we switch to the \acrshort{obr} region, causing the following \acrshort{red} instruction to be processed by the \acrshort{srt}.
+At line~13, we switch to the \acrfull{obr} region, causing the following \acrshort{red} instruction to be processed by the \acrshort{srt}.
 Once all \acrshort{red} operations complete, \acrlong{spdc} is flushed at line~17 before disabling the reduction engine, reverting to standard cache operation.
 
 \sourcecode{Chapter_MicroArch/Code/red_example.c}{A Simple Example of \acrshort{red} Operations Usage}{src:arch:red_ex}{htbp}
@@ -307,7 +307,7 @@ The \acrshort{rmwq} independently issues atomic \acrshort{rmw} transactions to m
 \begin{highlight}{Note}{SkyBlue}
     This implementation leverages most of the original \gls{pipeline} capabilities while keeping modifications to a minimum.
     We do not claim this is the optimal design for \acrlong{spdc}.
-    A ground-up redesign or significant modifications to HPDcache could yield better performance.
+    Further optimizations and architectural refinements are likely possible.
 \end{highlight}
 
 \begin{highlight}{Conclusion}{Red}

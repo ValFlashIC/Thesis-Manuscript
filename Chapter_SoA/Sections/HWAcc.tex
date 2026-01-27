@@ -116,6 +116,7 @@ In Section~\ref{sec:soa:other_accel}, we give bief descriptions on other acceler
         Leda~\cite{Yi2025_Leda}                       & 2025 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck &     & \ck \\
         DMSA~\cite{Nagahara2025_DMSA}                 & 2025 & \ck &     &     &     & \sa &     &     & \sd & \ck & \ck &     & \ck \\
         C\textsuperscript{3}ache~\cite{li2025_C3ache} & 2025 &     & \ck &     & \ck &     &     & \sd & \sd & \ck & \ck &     & \ck \\
+        ScanNow~\cite{Ma2025_ScanNow}                 & 2025 & \ck &     &     &     & \sa &     &     & \sd & \ck & \ck &     & \ck \\
         %
         \sa \; Most standalone accelerators connect directly to main memory. \\
         \sb \; Not main contribution but addressed in the article. \\
@@ -155,14 +156,14 @@ Coup~\cite{Zhang2015_Coup} (Commutative Updates Protocol) is a cache-coherence e
 It leverages the commutativity of operations like addition or bitwise logic, enabling caches to locally buffer and coalesce updates without requiring immediate synchronization or global traffic.
 When a read request occurs, Coup triggers a \gls{reduction} phase, gathering all partial updates from private caches to produce the correct, up-to-date value before granting read permission.
 The protocol integrates seamlessly with existing coherence schemes (\eg MESI) and requires minimal hardware changes, such as a \gls{reduction} unit in shared caches and additional directory bits to track update types.
-By decoupling read and write permissions, Coup eliminates unnecessary invalidations and serialization, making it ideal for update-heavy workloads like histograms, sparse matrix operations, or reference counting.
+% By decoupling read and write permissions, Coup eliminates unnecessary invalidations and serialization, making it ideal for update-heavy workloads like histograms, sparse matrix operations, or reference counting.
 
 \paragraph{EIE}
 
 EIE~\cite{Han2016_EIE} (Efficient Inference Engine) is a specialized \acrshort{asic} accelerator designed for inference on compressed \acrfullpl{dnn}, optimizing the \acrshort{spmv} kernel with weight sharing and activation sparsity.
 It employs a scalable array of \acrfullpl{pe}, each storing a partition of the compressed network in on-chip \acrshort{sram} and performing computations locally, while a central control unit broadcasts non-zero input activations to all \acrshortpl{pe}.
 EIE leverages dynamic activation sparsity (skipping zero activations) and static weight sparsity (pruned connections), using a 4-bit index for shared weights to reduce storage and memory access energy.
-The accelerator uses a distributed leading non-zero detection network to efficiently collect and broadcast sparse activations, and a custom \acrshort{csc} format to store weights, enabling fast, energy-efficient inference on large \acrshort{dnn} models like AlexNet and VGGNet.
+The accelerator uses a distributed leading non-zero detection network to efficiently collect and broadcast sparse activations, and a custom \acrshort{csc} format to store weights.%, enabling fast, energy-efficient inference on large \acrshort{dnn} models like AlexNet and VGGNet.
 
 \paragraph{GraphR}
 
@@ -170,7 +171,7 @@ GraphR~\cite{Song2018_GraphR} is a \acrshort{reram}-based graph processing accel
 It consists of two main components: memory \acrshort{reram}, which stores graph data in compressed \gls{spFormat}, and graph engines, composed of \acrshort{reram} crossbars that perform parallel \acrfull{mv} operations on small subgraphs.
 GraphR employs a streaming-apply execution model to process subgraphs sequentially, converting compressed edge lists into \gls{spFormat} for in-memory computation, while using simple logic units for \gls{reduction} and convergence checks.
 The architecture supports a wide range of graph algorithms (\eg PageRank, BFS, SSSP) by expressing their vertex programs in \acrshort{spmv} form, enabling high parallelism and energy efficiency.
-By minimizing data movement and exploiting \acrshort{reram}'s low-cost, high-density properties, GraphR achieves significant improvements in both performance and energy consumption for graph processing tasks.
+% By minimizing data movement and exploiting \acrshort{reram}'s low-cost, high-density properties, GraphR achieves significant improvements in both performance and energy consumption for graph processing tasks.
 
 \paragraph{SDE}
 
@@ -178,7 +179,7 @@ SDE~\cite{Hosseinabady2019_SDE} (Streaming Dataflow Engine) is a high-performanc
 It leverages loop pipelining, dataflow graphs, and data streaming to maximize memory bandwidth utilization, addressing the memory-bound nature of \acrshort{spmv}.
 The engine employs a modified \acrshort{csr} (MCSR) format to make loop iteration lengths predictable, enabling efficient pipelining and unrolling, and uses zero-padding to align row sizes for parallel processing.
 SDE supports multiport streaming to reduce memory port usage and load balancing to evenly distribute workloads across parallel computing processes, ensuring high throughput and scalability.
-Integrated with HLS, SDE provides a flexible, resource-efficient solution for edge computing applications, such as machine learning and support vector machines (SVM), by adapting to various sparse matrix formats and optimizing memory access patterns.
+% Integrated with HLS, SDE provides a flexible, resource-efficient solution for edge computing applications, such as machine learning and support vector machines (SVM), by adapting to various sparse matrix formats and optimizing memory access patterns.
 
 \paragraph{SPiDRE}
 
@@ -186,7 +187,7 @@ SPiDRE~\cite{Barredo2019_SPiDRE} (Sparse Data Rearrange Engine) is a near-memory
 It operates by decoupling data access from execution, allowing the host core to compute while SPiDRE reorganizes data in parallel.
 The accelerator uses a user-specified rearrange function to compact sparse data, improving cache block utilization and enabling efficient prefetching.
 SPiDRE maintains memory consistency by flushing and invalidating data as needed and synchronizes with the host core to ensure data is ready before access.
-Its architecture supports multiple devices working in parallel, enhancing bandwidth efficiency and reducing memory latency for applications with \gls{irrAccess} patterns.
+% Its architecture supports multiple devices working in parallel, enhancing bandwidth efficiency and reducing memory latency for applications with \gls{irrAccess} patterns.
 
 \paragraph{ITS}
 
@@ -194,7 +195,7 @@ ITS~\cite{Sadi2019_ITS} (Iteration Overlapped Two-Step \acrshort{spmv}) is a cus
 The accelerator splits \acrshort{spmv} into two phases: partial \acrshort{spmv} between a source vector segment and a corresponding matrix stripe, followed by a multi-way merge of intermediate sparse vectors to produce the final result.
 To handle the computationally intensive merge operation, it employs a scalable, radix-based pre-sorter that parallelizes the merge process across multiple cores, each processing a subset of keys, ensuring high throughput and efficient use of off-chip bandwidth.
 Additional optimizations include Variable Length Delta Index (VLDI) compression to reduce off-chip traffic, iteration overlap to minimize data movement between iterations, and a Bloom Filter-based method to efficiently process nodes with exceptionally high degrees in power-law graphs.
-By combining these techniques, ITS minimizes dependence on fast on-chip memory, fully utilizes main memory bandwidth, and efficiently handles matrices with billions of nodes.
+% By combining these techniques, ITS minimizes dependence on fast on-chip memory, fully utilizes main memory bandwidth, and efficiently handles matrices with billions of nodes.
 
 \paragraph{SPU}
 
@@ -202,7 +203,7 @@ SPU~\cite{Dadu2019_SPU} (Sparse Processing Unit) is a general-purpose accelerato
 It integrates a systolic-style coarse-grained reconfigurable architecture with a compute-enabled scratchpad and aggressive stream reordering to support high-bandwidth indirect memory access and fully-pipelined stream-join operations.
 The accelerator employs decomposability across compute, network, and memory pipelines to flexibly support various data types, enabling independent flow control for finer-grain resources.
 SPU's stream-dataflow ISA and multicore mesh network-on-chip facilitate efficient communication, synchronization, and workload partitioning, making it adaptable across domains like machine learning, graph processing, and databases.
-By combining these features, SPU achieves high throughput and hardware utilization for both sparse and dense computations while maintaining a domain-neutral interface.
+% By combining these features, SPU achieves high throughput and hardware utilization for both sparse and dense computations while maintaining a domain-neutral interface.
 
 \paragraph{Tensaurus}
 
@@ -210,7 +211,7 @@ Tensaurus~\cite{Srivastava2020_Tensaurus} is a versatile hardware accelerator de
 It leverages a co-designed sparse storage format called CISS (Compressed Interleaved Sparse Slice), which enables vectorized, streaming access to sparse data, maximizing memory bandwidth utilization.
 The accelerator implements a common compute pattern (SF\textsuperscript{3}), scalar-\gls{fiber} product followed by \gls{fiber}-\gls{fiber} products, allowing it to efficiently handle diverse tensor and matrix operations with a unified hardware design.
 Tensaurus features a 2D array of \acrfullpl{pe}, scratchpad memories, and specialized load/store units to manage data movement, while its systolic array architecture ensures high parallelism and efficient reuse of dense operand matrices.
-By combining these innovations, Tensaurus optimizes both sparse and dense computations, adapting seamlessly to varying sparsity levels and workloads.
+% By combining these innovations, Tensaurus optimizes both sparse and dense computations, adapting seamlessly to varying sparsity levels and workloads.
 
 \paragraph{MatRaptor}
 
@@ -218,7 +219,7 @@ MatRaptor~\cite{Srivastava2020_MatRaptor} is a hardware accelerator designed for
 It introduces a novel Cyclic Channel Sparse Row (C\textsuperscript{2}SR) \gls{spFormat}, which enables parallel, vectorized, and streaming memory access, maximizing bandwidth utilization.
 The accelerator uses a systolic array architecture with specialized loaders for input matrices and \acrfullpl{pe} that perform multiplication and merge operations using queues for efficient sorting and accumulation.
 MatRaptor avoids synchronization bottlenecks and minimizes on-chip memory requirements by processing rows asynchronously and using a round-robin allocation strategy for load balancing.
-Its design ensures high memory bandwidth utilization and eliminates the need for index matching, making it particularly effective for large, highly sparse matrices.
+% Its design ensures high memory bandwidth utilization and eliminates the need for index matching, making it particularly effective for large, highly sparse matrices.
 
 \paragraph{SpArch}
 
@@ -226,7 +227,7 @@ SpArch~\cite{Zhekai2020_SpArch} is a domain-specific accelerator designed to opt
 It employs a highly parallelized, streaming-based merger to pipeline the multiply and merge stages, enabling on-chip merging of \acrlong{po} matrices immediately after generation.
 SpArch introduces a condensed matrix representation to reduce the number of \acrlong{po} matrices by up to three orders of magnitude, minimizing \acrshort{dram} access.
 A Huffman tree scheduler optimizes the merge order of \acrlong{po} matrices, further reducing memory traffic, while a row prefetcher with near-optimal buffer replacement recovers input reuse lost during matrix condensing.
-This architecture efficiently balances memory bandwidth and computational parallelism, ensuring high performance for large, sparse matrices.
+% This architecture efficiently balances memory bandwidth and computational parallelism, ensuring high performance for large, sparse matrices.
 
 \paragraph{Alrescha}
 
@@ -234,7 +235,7 @@ Alrescha~\cite{Asgari2020_Alrescha} is a lightweight, reconfigurable sparse-comp
 It employs mathematical transformations to break down computations into mostly parallel and minimally dependent parts, reordering these parts to maximize performance.
 The accelerator features a hybrid compute engine with a fixed unit for parallel operations and a small reconfigurable unit for data-dependent tasks, enabling fast runtime switching between different computation modes.
 Alrescha uses a locally-dense storage format that aligns the order of non-zero values with the computation sequence, eliminating \gls{metadata} transfer and enabling uninterrupted streaming from memory.
-By combining these innovations, Alrescha efficiently handles both scientific sparse problems and graph analytics, dynamically adapting to diverse sparsity patterns and computation requirements.
+% By combining these innovations, Alrescha efficiently handles both scientific sparse problems and graph analytics, dynamically adapting to diverse sparsity patterns and computation requirements.
 
 \paragraph{SIGMA}
 
@@ -242,7 +243,7 @@ SIGMA~\cite{Qin2020_SIGMA} is a flexible and scalable accelerator designed for t
 It features a Flexible Dot Product Engine (Flex-DPE) with a 1D substrate of multipliers, Benes network for non-blocking data distribution, and a Forwarding Adder Network (FAN) for efficient spatial \gls{reduction}, enabling variable-sized dot-products and high compute utilization.
 SIGMA composes multiple Flex-DPEs into Flexible Dot Product Units (Flex-DPUs) via a mesh network-on-chip, allowing dynamic allocation of resources for different \acrshort{spgemm} dimensions and sparsity levels.
 The accelerator supports unstructured sparsity using a bitmap compression format and a sparsity controller to map only non-zero elements, minimizing memory overhead and maximizing efficiency.
-By combining these features, SIGMA efficiently handles \acrshort{spgemm} kernel while maintaining scalability and flexibility for diverse deep learning workloads.
+% By combining these features, SIGMA efficiently handles \acrshort{spgemm} kernel while maintaining scalability and flexibility for diverse deep learning workloads.
 
 \paragraph{SpaceA}
 
@@ -250,7 +251,7 @@ SpaceA~\cite{Xie2021_SpaceA} is a processing-in-memory (PIM) accelerator designe
 It integrates \acrfullpl{pe} near each memory bank, enabling high-bandwidth, low-latency access to local data while hiding remote access latency through outstanding memory requests and memory-level parallelism.
 The accelerator employs \acrfull{cam} buffers at both bank and vault levels to cache frequently accessed input vector elements, reducing inter-bank traffic and improving locality.
 A custom mapping scheme distributes non-zero matrix elements across \acrshortpl{pe} to balance workloads and maximize data reuse, while Product-\acrshortpl{pe} and Accumulation-\acrshortpl{pe} handle partial dot-products and result accumulation, respectively.
-By combining these features, SpaceA efficiently exploits bank-level bandwidth and minimizes energy overhead, making it ideal for memory-bound \acrshort{spmv} workloads.
+% By combining these features, SpaceA efficiently exploits bank-level bandwidth and minimizes energy overhead, making it ideal for memory-bound \acrshort{spmv} workloads.
 
 \paragraph{SPAGHETTI}
 
@@ -258,7 +259,7 @@ SPAGHETTI~\cite{Hojabr2021_SPAGHETTI} is an \acrshort{fpga}-optimized, open-sour
 It employs an \acrlong{op}-based algorithm, which splits the computation into a parallel multiplication phase followed by a merge phase, avoiding the index-matching overhead of \acrlong{ip} methods.
 The accelerator features a pattern-aware software scheduler that partitions input matrices into \glspl{tile}, maximizing output reuse and ensuring \glspl{psum} fit on-chip to eliminate \acrshort{dram} refetching.
 Its streaming microarchitecture includes parallel multipliers, a round-robin allocator, and scalable sort-and-merge units that pipeline multiple rows of the output, adapting to \acrshort{fpga} resource constraints and memory bandwidth.
-By leveraging \glspl{spFormat} (\acrshort{csr}/\acrshort{csc}) and dynamic input segmentation, SPAGHETTI optimizes both input and output data reuse, reducing \acrshort{dram} traffic and improving efficiency for irregular sparse patterns.
+% By leveraging \glspl{spFormat} (\acrshort{csr}/\acrshort{csc}) and dynamic input segmentation, SPAGHETTI optimizes both input and output data reuse, reducing \acrshort{dram} traffic and improving efficiency for irregular sparse patterns.
 
 \paragraph{InnerSP}
 
@@ -266,7 +267,7 @@ InnerSP~\cite{Baek2021_InnerSP} is a hardware accelerator designed to optimize s
 It uses a smart caching scheme to exploit locality in the second input matrix ($B$), reducing memory traffic and improving efficiency.
 InnerSP features an on-chip hash table for accumulating intermediate results, preventing overflows through pre-scanning and row splitting/merging techniques.
 The accelerator integrates $B$-caches (row and column-value of $B$) to further enhance data reuse, and employs a locality-aware replacement policy to minimize cache \glspl{miss}.
-By processing rows in parallel and dynamically adjusting row-block sizes, InnerSP maximizes parallelism while maintaining memory efficiency.
+% By processing rows in parallel and dynamically adjusting row-block sizes, InnerSP maximizes parallelism while maintaining memory efficiency.
 
 \paragraph{CoSPARSE}
 
@@ -274,7 +275,7 @@ CoSPARSE~\cite{Feng2021_CoSPARSE} is a reconfigurable \acrshort{spmv} framework 
 It supports two \acrshort{spmv} algorithms, \acrlong{ip} and \acrlong{op}, and automatically selects the optimal one based on the density of the input vector, while also reconfiguring the on-chip memory hierarchy (shared/private, cache/scratchpad) to maximize data reuse and minimize memory access overhead.
 The framework features workload-balancing strategies, including static matrix partitioning and dynamic task distribution, to handle sparse matrices efficiently, ensuring balanced workloads across \acrfullpl{pe}.
 CoSPARSE is built on a programmable, many-core hardware substrate (Transmuter), enabling runtime reconfiguration of memory and dataflow with minimal overhead, and abstracts hardware complexity through a high-level software interface.
-By integrating these optimizations, CoSPARSE provides a flexible, high-performance solution for \acrshort{spmv}-based graph algorithms, adapting seamlessly to diverse graph structures and iterative workloads.
+% By integrating these optimizations, CoSPARSE provides a flexible, high-performance solution for \acrshort{spmv}-based graph algorithms, adapting seamlessly to diverse graph structures and iterative workloads.
 
 \paragraph{SortCache}
 
@@ -282,7 +283,7 @@ SortCache~\cite{Srikanth2021_SortCache} is a near-cache accelerator designed to 
 It leverages Vectorized Binary Search Trees (VBSTs) to dynamically reorder sparse data during \gls{gather}-\gls{scatter} operations, extracting sequential locality and maximizing cache bandwidth utilization.
 The system integrates specialized hardware for merging and preconditioning data, enabling efficient parallel \glspl{reduction} and minimizing redundant memory access.
 SortCache operates with minimal programmer intervention, requiring only simple annotations to specify parameters like cache size and \gls{reduction} operations.
-By focusing on moderately sparse workloads (common in machine learning, graph analytics, and high-performance computing) it enhances cache efficiency without disrupting the traditional processor-memory interface.
+% By focusing on moderately sparse workloads (common in machine learning, graph analytics, and high-performance computing) it enhances cache efficiency without disrupting the traditional processor-memory interface.
 
 \paragraph{Sextans}
 
@@ -290,7 +291,7 @@ Sextans~\cite{Song2022_Sextans} is a streaming accelerator designed for the \acr
 It employs a hierarchical architecture with processing engine groups and \acrfullpl{pe} to handle workload imbalance, using \acrshort{pe}-aware non-zero scheduling to achieve an II=1 \gls{pipeline} (Initiation Interval of 1 cycle) and balance workloads across \acrshortpl{pe}.
 The accelerator leverages multi-level memory optimizations, including on-chip BRAMs and URAMs for fast random access, and streams large matrices from off-chip \acrshort{hbm} in batches to minimize latency.
 Sextans also features hardware flexibility, allowing it to support \acrshortpl{spgemm} of varying sizes without re-synthesis, by using a pointer list to dynamically schedule non-zero elements.
-This design ensures efficient memory access, balanced workloads, and adaptability to different problem configurations.
+% This design ensures efficient memory access, balanced workloads, and adaptability to different problem configurations.
 
 \paragraph{ASA}
 
@@ -298,14 +299,14 @@ ASA~\cite{Zhang2022_ASA} (Accelerating Sparse Accumulation) is a hardware accele
 It replaces traditional software-based hash table lookups (prone to branch mispredictions and collisions) with a dedicated, set-associative on-chip cache and a pipelined hardware accumulator.
 ASA extends the processor's instruction set with a Hardware Probing and Accumulation (HPA) instruction, eliminating data-dependent branches and enabling efficient, atomic search-and-accumulate operations.
 Overflowed entries are stored in a pre-allocated memory buffer and merged later, minimizing stalls.
-The design integrates seamlessly with general-purpose processors, requiring minimal hardware overhead and providing a simple software interface for sparse accumulation tasks.
+% The design integrates seamlessly with general-purpose processors, requiring minimal hardware overhead and providing a simple software interface for sparse accumulation tasks.
 
 \paragraph{Spada}
 
 Spada~\cite{Li2023_Spada} is a hardware-software co-designed accelerator for the \acrshort{spgemm} kernel, featuring a window-based adaptive dataflow based on \acrlong{gust}'s algorithm that dynamically adjusts execution modes to optimize for input or output data reuse based on local sparse patterns.
 The accelerator uses reconfigurable multiplication \acrlongpl{pe} with dynamically partitioned lanes and addition \acrlongpl{pe} for efficient merging of \glspl{psum}, supported by a global cache with an optimized replacement policy to maximize data locality.
 A profiling-guided window shape adaption algorithm detects sparse patterns in real-time, enabling Spada to switch between modes that prioritize either input reuse (like \acrlong{op}) or output reuse (like \acrlong{gust}) as needed.
-By integrating dynamic load balancing, flexible lane grouping, and efficient task pipelining, Spada ensures high utilization of multipliers and memory bandwidth across diverse sparse workloads.
+% By integrating dynamic load balancing, flexible lane grouping, and efficient task pipelining, Spada ensures high utilization of multipliers and memory bandwidth across diverse sparse workloads.
 
 \paragraph{Flexagon}
 
@@ -313,7 +314,7 @@ Flexagon~\cite{Munoz-Martinez2023_Flexagon} is a reconfigurable \acrshort{spmspm
 It features a novel Merger-Reduction Network (MRN), which unifies \gls{reduction} and merging operations in a single, tree-based topology, allowing seamless switching between algorithms without hardware overhead.
 The accelerator includes a three-tier memory hierarchy, comprising a \acrshort{fifo} for stationary data, a cache for streaming data, and a specialized PSRAM for \glspl{psum}, tailored to the access patterns of each algorithm.
 Flexagon's unified memory controllers and flexible interconnects enable efficient handling of diverse sparsity patterns and matrix dimensions.
-By eliminating the need for explicit format conversions between layers, it optimizes both performance and resource utilization for sparse \acrshort{dnn} workloads.
+% By eliminating the need for explicit format conversions between layers, it optimizes both performance and resource utilization for sparse \acrshort{dnn} workloads.
 
 \paragraph{MOSCON}
 
@@ -321,7 +322,7 @@ MOSCON~\cite{Noble2023_MOSCON} is a modified \acrlong{op}-based \acrshort{spgemm
 It employs configurable \glspl{tile} with 16 \acrfullpl{pe} arranged in sub-\glspl{tile}, allowing flexible allocation of rows or columns to maximize load balance and parallelism.
 The architecture uses bitonic parallel sorting for efficient merging of \glspl{psum}, reducing execution time compared to bubble sort-based implementations.
 MOSCON incorporates a sparsity checking unit to identify and skip zero rows/columns early, and an element parsing unit to dynamically configure sub-\glspl{tile} based on row/column sparsity.
-By leveraging streaming data access and optimized \gls{tile} allocation, MOSCON minimizes memory overhead and enhances computational efficiency for sparse matrices of any dimension.
+% By leveraging streaming data access and optimized \gls{tile} allocation, MOSCON minimizes memory overhead and enhances computational efficiency for sparse matrices of any dimension.
 
 \paragraph{GSCSp}
 
@@ -329,7 +330,7 @@ GSCSp~\cite{Li2023_GSCSp} is an efficient \acrlong{gust}-based \acrshort{spmm} a
 It optimizes memory traffic and parallelism by employing element-wise parallelism, which evenly distributes workloads across \acrfullpl{pe} and reduces idle time caused by synchronization.
 The accelerator features SpCache, an access pattern-aware caching scheme that combines streaming and caching to handle irregular memory accesses and unpredictable row lengths in sparse matrices.
 GSCSp also introduces an optimized merge algorithm that processes only \acrlongpl{po}, eliminating redundant merges and improving efficiency.
-By leveraging the \acrlong{gust}'s algorithm and tailored hardware components, GSCSp minimizes off-chip memory traffic and maximizes resource utilization on \acrshort{fpga} platforms.
+% By leveraging the \acrlong{gust}'s algorithm and tailored hardware components, GSCSp minimizes off-chip memory traffic and maximizes resource utilization on \acrshort{fpga} platforms.
 
 \paragraph{SDMA}
 
@@ -337,7 +338,7 @@ SDMA~\cite{Gao2023_SDMA} is a sparsity-aware \acrshort{spmm} accelerator designe
 It employs an equal-value partition method to evenly distribute sparse data, ensuring balanced workloads during data movement, and a vertex-clustering optimization to exploit data locality by aggregating vertices with shared neighbors, reducing global memory traffic.
 The accelerator uses an adaptive dataflow based on \acrlong{gust}'s algorithm, which decouples computation into multiplication and merging phases, enabling efficient parallelism and minimizing intermediate data overhead.
 SDMA's hardware architecture features multiple processing units with \acrfullpl{pe} and accumulation units, organized in a \acrshort{simd} fashion, and ping-pong buffers to overlap communication and computation.
-By integrating these optimizations, SDMA efficiently handles highly sparse and irregular graph data, maximizing resource utilization and data reuse.
+% By integrating these optimizations, SDMA efficiently handles highly sparse and irregular graph data, maximizing resource utilization and data reuse.
 
 \paragraph{SSSR}
 
@@ -345,7 +346,7 @@ Sparse Stream Semantic Registers~\cite{Scheffler2023_SSSR} (SSSRs) is a lightwei
 It extends Stream Semantic Registers (SSRs), which map memory streams to architectural registers, to support sparse tensor formats like \acrshort{csr} and \acrshort{csf}, enabling efficient streaming of both sparse-dense and sparse-sparse computations.
 SSSRs introduce indirection SSRs (ISSR) for reading index streams and generating indirect addresses, and egress SSRs (ESSR) for writing back indices, while an index comparator enables \gls{intersection} and union of sparse operands.
 By offloading index processing and comparison to hardware, SSSRs reduce control overhead and maximize \acrfull{fpu} utilization, supporting flexible dataflows and a wide range of sparsity without requiring structural constraints.
-Integrated into the Snitch core and cluster, SSSRs maintain backward compatibility and incur minimal area overhead, making them suitable for general-purpose sparse compute acceleration.
+% Integrated into the Snitch core and cluster, SSSRs maintain backward compatibility and incur minimal area overhead, making them suitable for general-purpose sparse compute acceleration.
 
 \paragraph{Funnel}
 
@@ -353,7 +354,7 @@ Funnel~\cite{Ma2024_Funnel} is a sparse attention accelerator designed to dynami
 It uses a fast quantization method based on lookup tables to estimate the attention score matrix, followed by Top-k sorting to generate a sparse score matrix, minimizing prediction overhead.
 The Funnel Computing Unit (FCU) unifies the computation of dense \acrshort{mm} and \acrshort{spmm} through a multi-dataflow fusion approach, leveraging a reconfigurable one-dimensional systolic array and a grouped summation network to handle \gls{irrData} distribution.
 A lightweight buffer and data \gls{tiling} strategy enhance data reuse, while a sensible partitioning method aligns matrix granularity with the accelerator array size.
-By integrating these features, Funnel achieves high hardware efficiency and adaptability for sparse attention computations.
+% By integrating these features, Funnel achieves high hardware efficiency and adaptability for sparse attention computations.
 
 \paragraph{GAS}
 
@@ -361,7 +362,7 @@ GAS~\cite{Zhang2024_GAS} is a general-purpose in-memory computing (IMC) accelera
 It integrates FeFET-based \acrfull{cam} arrays for index matching and multiply-add computation (MAC) arrays for in-situ floating-point operations, using a unified \acrlong{op}-based methodology to handle all four functions.
 The accelerator employs three working phases, write, load, and compute, to efficiently process sparse matrices, with optimization techniques like zero-padding adjustment, early termination, and workload balancing to enhance performance.
 GAS dynamically aligns mantissas and handles exponent sums to support double-precision floating-point arithmetic directly within the memory arrays.
-By combining \acrshort{cam} and MAC arrays, GAS minimizes memory access bottlenecks and maximizes computational efficiency for diverse sparse matrix operations.
+% By combining \acrshort{cam} and MAC arrays, GAS minimizes memory access bottlenecks and maximizes computational efficiency for diverse sparse matrix operations.
 
 \paragraph{ACES}
 
@@ -369,7 +370,7 @@ ACES~\cite{Lu2024_ACES} is a \acrshort{spmm} accelerator designed to dynamically
 It features an adaptive execution flow based on \acrlong{gust} that adjusts the condensing degree of input matrices, balancing input reuse and synchronization requirements, while a concurrency-aware cache management policy (PureFiber) optimizes global cache performance by considering both data locality and concurrent access patterns.
 The accelerator integrates a non-blocking buffer with the global cache to minimize stalls from cache \glspl{miss}, enhancing data access concurrency.
 ACES's hardware architecture pairs each multiplication \acrlong{pe} with an addition \acrlong{pe}, enabling fine-grained parallelism and reducing inter-\acrshort{pe} dependencies.
-By combining these innovations, ACES efficiently supports adaptive execution, advanced cache optimizations, and parallel processing for \acrshort{spmm} workloads.
+% By combining these innovations, ACES efficiently supports adaptive execution, advanced cache optimizations, and parallel processing for \acrshort{spmm} workloads.
 
 \paragraph{FullSparse}
 
@@ -377,7 +378,7 @@ FullSparse~\cite{Yu2024_FullSparse} is a \acrshort{spgemm} accelerator designed 
 It employs an online sparsity detector to switch between dense and sparse computation modes, optimizing resource usage for varying input sparsity.
 The accelerator features a multi-sparsity-compatible \acrshort{pe} array that efficiently processes convolutions with irregular output data using collision-free methods, ensuring high computational efficiency.
 A result sparsity predictor, based on an XGBoost~\cite{Chen2016_XGBoost} model, dynamically adjusts data storage formats to enhance off-chip memory access efficiency.
-By integrating these components, FullSparse balances storage efficiency and computational power, making it adaptable to a wide range of sparse \acrshort{dnn} workloads.
+% By integrating these components, FullSparse balances storage efficiency and computational power, making it adaptable to a wide range of sparse \acrshort{dnn} workloads.
 
 \paragraph{Sparm}
 
@@ -385,7 +386,7 @@ Sparm~\cite{Luo2024_Sparm} is a \acrshort{spgemm} accelerator designed to suppor
 It features a Merge Manager and Bitindex \acrshort{sram} to regularize the merging of \glspl{psum}, avoiding the ``blockage'' issues seen in prior designs like Flexagon~\cite{Munoz-Martinez2023_Flexagon} by precomputing index \glspl{intersection} and controlling \acrshort{fifo} reads.
 The accelerator retains Flexagon's StaFIFO, StrCache, and PSRAM for efficient data storage and employs a row/column prefetcher to proactively load streaming matrices, reducing \acrshort{dram} access.
 Sparm's reconfigurable network-on-chip connects on-chip components, enabling adaptive dataflow execution while minimizing hardware overhead.
-By combining these innovations, Sparm optimizes memory access, reduces on-chip traffic, and efficiently handles highly sparse matrices across various dataflows.
+% By combining these innovations, Sparm optimizes memory access, reduces on-chip traffic, and efficiently handles highly sparse matrices across various dataflows.
 
 \paragraph{SPADES}
 
@@ -393,7 +394,7 @@ SPADES~\cite{Huang2024_SPADES} is a \acrshort{spmv} accelerator that integrates 
 It employs a segmented GZIP (SGZIP) format, dividing sparse matrices into independently compressed blocks that are decompressed in parallel by four dedicated decompression modules, each featuring a parallel Huffman decoder capable of decoding one symbol per cycle.
 The decompressed data is streamed to a \acrfull{pe} with a pipelined 64-bit floating-point multiply-accumulate compute unit, which performs \acrshort{spmv} using buffered input vectors and accumulates results in an output buffer.
 A custom microcontroller coordinates data flow, managing \acrshort{dma} transfers and dynamically configuring the \acrshort{pe} based on decompressed block sizes.
-By combining GZIP decompression with \acrshort{spmv} computation, SPADES minimizes off-chip memory traffic while maintaining efficient on-chip processing.
+% By combining GZIP decompression with \acrshort{spmv} computation, SPADES minimizes off-chip memory traffic while maintaining efficient on-chip processing.
 
 \paragraph{DySpMM}
 
@@ -401,7 +402,7 @@ DySpMM~\cite{Wang2024_DySpMM} is a dynamic \acrshort{fpga}-based accelerator for
 It features a configurable data distributor that dynamically adjusts sub-matrix sizes to minimize memory access, and an element-wise allocator that balances workloads across \acrfullpl{pe} to improve utilization.
 The accelerator includes an interleaved reorder unit to avoid read-after-write hazards at runtime, eliminating the need for time-consuming preprocessing.
 DySpMM's merge tree efficiently combines results from adjacent \acrshortpl{pe}, while its scalable architecture supports parallel processing and memory bandwidth optimization.
-By integrating these dynamic design methodologies, DySpMM adapts to varying sparsity, element distribution, and data dependencies, enhancing efficiency for \acrshort{spmm} workloads.
+% By integrating these dynamic design methodologies, DySpMM adapts to varying sparsity, element distribution, and data dependencies, enhancing efficiency for \acrshort{spmm} workloads.
 
 \paragraph{Vesper}
 
@@ -409,7 +410,7 @@ Vesper~\cite{Jin2024_Vesper} is a versatile sparse linear algebra accelerator de
 It employs a distributed architecture with \acrfullpl{pe}, operand access units, and \acrshort{hbm} burst engines, connected via butterfly networks-on-chip, to maximize memory bandwidth utilization and minimize channel conflicts.
 Vesper uses a configurable on-chip buffer and double-buffered 4-way merge trees to handle data reuse and \gls{psum} accumulation, while a specialized caching mechanism enhances \acrshort{spgemm} performance for denser matrices.
 An analytical model guides runtime configuration, enabling rapid selection of optimal compute patterns, \gls{tiling} schemes, and parallelization strategies.
-By leveraging these features, Vesper efficiently balances resource sharing, bandwidth efficiency, and adaptability across diverse sparse linear algebra kernels.
+% By leveraging these features, Vesper efficiently balances resource sharing, bandwidth efficiency, and adaptability across diverse sparse linear algebra kernels.
 
 \paragraph{Mentor}
 
@@ -417,7 +418,7 @@ Mentor~\cite{Lu2024_Mentor} is a memory-efficient \acrshort{spmm} accelerator th
 It employs a streaming construction scheme at the software level, preprocessing input matrices to enable streaming memory access and resolve read-after-write conflicts by introducing control elements like Rest, Padding, and Blocking.
 The hardware architecture features a fully pipelined design with four stages, read, multiplication, accumulation, and write, using double-buffered on-chip scratchpads to avoid pipeline stalls and maximize throughput.
 Mentor's delayed feeding strategy balances bandwidth requirements and \acrfull{pe} utilization, while its analytical model guides hardware parameter selection for optimal performance.
-By combining these innovations, Mentor achieves efficient, streaming-based \acrshort{spmm} acceleration with minimal memory overhead.
+% By combining these innovations, Mentor achieves efficient, streaming-based \acrshort{spmm} acceleration with minimal memory overhead.
 
 \paragraph{IOPS}
 
@@ -425,7 +426,7 @@ IOPS~\cite{Sun2025_IOPS} is a unified \acrshort{spmm} accelerator that combines 
 It reuses input submatrices across \acrfullpl{pe} using \acrshort{ip}, while skipping zero-element calculations within each \acrshort{pe} using \acrshort{op}, balancing data reuse and computational efficiency.
 The accelerator supports both sparse-sparse and sparse-dense matrix multiplications, employing RP-\acrshort{csc} and CP-\acrshort{csr} encoding formats for submatrix reuse and an address mapping method to handle irregular \gls{psum} accumulation.
 An adaptive partition strategy dynamically \glspl{tile} input matrices based on sparsity, optimizing on-chip storage and reducing \acrshort{dram} access.
-IOPS's modular architecture, including encoders, \acrshort{pe} arrays, and address mapping units, enables efficient switching between sparse and dense multiplication modes, maximizing resource utilization.
+% IOPS's modular architecture, including encoders, \acrshort{pe} arrays, and address mapping units, enables efficient switching between sparse and dense multiplication modes, maximizing resource utilization.
 
 \paragraph{Leda}
 
@@ -433,7 +434,7 @@ Leda~\cite{Yi2025_Leda} is a high-performance \acrshort{spmm} accelerator design
 It employs a \gls{tiling} \gls{spFormat} to balance workloads across \acrfullpl{pe} and enhance data locality, mitigating load imbalance and random memory access issues.
 Leda uses an improved \acrlong{op} dataflow to reduce memory bottlenecks and a minimum similarity reordering algorithm to optimize read-after-write dependencies, improving compute occupancy and throughput.
 The accelerator features a highly parallel hardware architecture with a matrix multiplication unit (MMU)-centric design, enabling efficient input reuse and high throughput.
-By leveraging \acrshort{hbm}'s high bandwidth and custom dataflow optimizations, Leda maximizes performance and energy efficiency for \acrshort{spmm} in \acrshortpl{gnn}.
+% By leveraging \acrshort{hbm}'s high bandwidth and custom dataflow optimizations, Leda maximizes performance and energy efficiency for \acrshort{spmm} in \acrshortpl{gnn}.
 
 \paragraph{DMSA}
 
@@ -441,7 +442,7 @@ DMSA~\cite{Nagahara2025_DMSA} is a \acrshort{spmspm} accelerator that introduces
 It eliminates the need for explicit synchronization between partial matrix computations by distributing elements of matrix $A$ into parallel streams, each computing a partial matrix using scalar-vector products.
 DMSA incorporates a multibank-based input data loading mechanism with a protocol to manage unpredictable data sizes for matrix $B$, and a credit-based flow control mechanism to handle dataflow irregularities during computation and merging.
 The architecture also features a two-stage accumulation process for \acrlongpl{po}, simplifying the design of the postprocessing unit and ensuring high throughput.
-By leveraging these techniques, DMSA optimizes parallelism and memory access efficiency for \acrshort{spmspm} operations.
+% By leveraging these techniques, DMSA optimizes parallelism and memory access efficiency for \acrshort{spmspm} operations.
 
 \paragraph{C\textsuperscript{3}ache}
 
@@ -449,15 +450,15 @@ C\textsuperscript{3}ache is a hierarchical cache-centric computing architecture 
 It introduces a hybrid dataflow that combines \acrlong{op} and \acrlong{gust}'s algorithms, decoupling \acrshort{spmm} into two phases, multiplication and merging, to align with memory access patterns and maximize data reuse.
 The architecture restructures the GPGPU cache hierarchy into large-scale data-parallel Processing-in-Memory (PIM) units in \acrshort{l1} cache for multiplication and in-situ merging PIM units in \acrshort{l2} cache for merging, reducing memory transactions and synchronization overhead.
 A memory-aware compressed format (C3SR) optimizes sparse matrix encoding by compressing multiple short sparse rows into a single cache-line, further reducing memory overhead.
-C\textsuperscript{3}ache also employs an efficient multi-precision matrix multiplication \acrshort{sram}-PIM macro (MSPM) to support vector computations, enhancing throughput and energy efficiency through pipelined exponent-mantissa processing and in-memory Booth encoding.
+C\textsuperscript{3}ache also employs an efficient multi-precision matrix multiplication \acrshort{sram}-PIM macro (MSPM) to support vector computations.%, enhancing throughput and energy efficiency through pipelined exponent-mantissa processing and in-memory Booth encoding.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Put PDF and: Write a very short description of this accelerator operating, about 4-5 sentences, without mentioning performance results.
-% if no name, second gen: Redo by using its name, which is xxxx.
-% 20 requests. 2 hours after reset.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{ScanNow}
 
-% ScanNow ??
+ScanNow~\cite{Ma2025_ScanNow} is a scan window-based \acrshort{spmm} accelerator, inspired by \acrlong{gust}'s algorithm, designed to dynamically balance input and output data reuse for diverse sparse patterns.
+It introduces a scan window-based task dispatch scheme that prioritizes tasks enhancing input reuse while ensuring output reuse, by constructing vertical scan windows to detect potential tasks in adjacent rows.
+The accelerator employs a hardware architecture featuring multiple memory components, including a scalar buffer, global cache, and partial vector buffer, along with multiplication \acrlongpl{pe} and accumulation \acrlongpl{pe} to handle scalar-vector multiplication and element-wise addition tasks, respectively.
+A task dispatcher dynamically schedules tasks based on sparse patterns, while an accumulation scheduler manages the merging of \acrlongpl{po}.
+% By combining these features, ScanNow efficiently adapts to varying sparsity patterns, minimizing off-chip memory access and maximizing computational parallelism.
 
 \paragraph{Other Accelerators}
 
@@ -476,10 +477,10 @@ We provide brief descriptions of selected accelerators in the following paragrap
         It employs Runtime Operand Descriptors (RODs) to point to effectual column-row pairs and dynamically adjusts \gls{tiling} boundaries via super-\gls{tiling} and sub-\gls{tiling}.
         %
         \item AiSpGEMM~\cite{Tang2025_AiSpGEMM}: An \acrshort{fpga}-based \acrshort{spgemm} accelerator using an optimized C\textsuperscript{2}SR format to resolve memory bank conflicts and reuse matrix $B$.
-        It features a reconfigurable merger and a parallel merger for accelerating evil row computations.
+        It features reconfigurable and parallel mergers for accelerating row computations.
         %
         \item RTSpMSpM~\cite{Zhang2025_RTSpMSpM}: Harnesses ray tracing hardware to accelerate \acrshort{spmspm} by mapping \acrshort{spmspm} operations to ray tracing problems.
-        It leverages existing ray tracing units for \gls{intersection} tests and introduces architectural optimizations to perform multiplications and accumulations directly in the ray tracing hardware, reducing memory overhead and improving performance.
+        It leverages existing ray tracing units for \gls{intersection} tests and introduces architectural optimizations to perform multiplications and accumulations directly in the ray tracing hardware.
     \end{itemize}
     %
     \item Sparse Matrix Accelerators for Graph Processing
@@ -488,7 +489,7 @@ We provide brief descriptions of selected accelerators in the following paragrap
         %
         \item GraphLily~\cite{Hu2021_GraphLily}: A graph linear algebra overlay for \acrshort{hbm}-equipped \acrshortpl{fpga}, supporting \acrshort{spmv} with a cyclic packed streams of rows (CPSR) format for streaming accesses and a cluster-shared vector buffer (CSVecBuf) to exploit data reuse.
         %
-        \item ThunderGP~\cite{Chen2022_ThunderGP}: An \acrshort{fpga}-based graph processing framework using DDR memory, optimized for \acrshort{spmv} with a focus on high bandwidth efficiency and frequency.
+        \item ThunderGP~\cite{Chen2022_ThunderGP}: An \acrshort{fpga}-based graph processing framework using DDR memory, optimized for \acrshort{spmv}.
     \end{itemize}
     %
     \item Sparse Matrix Accelerators for Neural Networks
@@ -501,7 +502,7 @@ We provide brief descriptions of selected accelerators in the following paragrap
         %
         \item SparTA~\cite{Ningxin2022_SparTA}: Targets unstructured weight sparsity in \acrshortpl{dnn}, partitioning matrices into structured and unstructured sparse components to leverage both sparse tensor cores and CUDA cores.
         %
-        \item MaxK-GNN~\cite{Peng2024_MaxK-GNN}: A GPU-based \acrshort{gnn} training system that introduces MaxK nonlinearity to sparsify feature matrices, reducing memory traffic and improving computational efficiency.
+        \item MaxK-GNN~\cite{Peng2024_MaxK-GNN}: A GPU-based \acrshort{gnn} training system that introduces MaxK nonlinearity to sparsify feature matrices.
         It uses a Compressed Balanced Sparse Row (CBSR) format and optimized \acrshort{spgemm} kernel for forward and backward computations.
     \end{itemize}
     %

@@ -87,6 +87,7 @@
     "precomputes",
     "prefetcher",
     "PSRAM",
+    "RMWQ",
     "SCNN",
     "SDMA",
     "SGZIP",

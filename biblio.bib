@@ -1046,6 +1046,21 @@
     numpages = {14}
 }
 
+@INPROCEEDINGS{Ma2025_ScanNow,
+    author={Ma, Chaofang and Jiang, Lin and Li, Zeyu and Fan, Hanwei and Wang, Maolin and Xu, Jiang and Zhang, Wei},
+    booktitle={2025 IEEE/ACM International Conference On Computer Aided Design (ICCAD)}, 
+    title={ScanNow: A Scan Window-Based Sparse Matrix Multiplication Accelerator Design}, 
+    year={2025},
+    volume={},
+    number={},
+    pages={1-9},
+    abstract={Sparse matrix-matrix multiplication (SpMM) is a prevailing kernel in scientific and artificial intelligence applications. However, the irregular memory access behaviors caused by diverse sparse patterns in SpMM lead to a significant performance bottleneck for traditional computing platforms, driving the demand for dedicated hardware accelerators. Unfortunately, the existing hardware accelerators are not flexible enough to handle diverse SpMM workloads due to their rigid task dispatch schemes, limiting the overall performance.To address the challenge, this paper introduces ScanNow, a scan window-based SpMM accelerator design. ScanNow first presents a scan window-based task dispatch scheme designed to minimize the time-consuming irregular memory access behaviors by exploiting potential data reuse opportunities. The proposed task dispatch scheme effectively and dynamically balances input and output data reuse for row-wise dataflow according to real-time sparse patterns. Moreover, a tailored hardware architecture, featuring multiple memory components and customized schedulers, is proposed to accommodate the task dispatch scheme and improve computation parallelism. Experiments demonstrate that ScanNow achieves an average speedup of 1.67x across a wide range of SpMM workloads compared to the state-of-the-art hardware accelerator.},
+    keywords={Limiting;Design automation;Memory architecture;Parallel processing;Real-time systems;Sparse matrices;Kernel;Artificial intelligence;Hardware acceleration;hardware accelerator;sparse matrix-matrix multiplication;data reuse;task dispatch scheme},
+    doi={10.1109/ICCAD66269.2025.11240912},
+    ISSN={1558-2434},
+    month={Oct},
+}
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Simulators and Compilers
 
