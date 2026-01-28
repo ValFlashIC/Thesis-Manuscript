@@ -6,39 +6,52 @@
 \section{Conclusion}
 \label{sec:soa:conclu}
 
-% TODO
+\lettrine{T}{he} rapid expansion of data-intensive applications in computational physics, machine learning, and graph analytics has driven the development of numerous hardware accelerators over the past ten years, each aiming to surpass the performance limitations of traditional CPUs and GPUs.
+This chapter presented a comprehensive review of the most significant designs, offering a structured comparison and highlighting the core hardware challenges associated with sparse matrix multiplication kernels.
 
+Our analysis reveals that the primary challenge in sparse matrix computations lies in efficiently managing memory access patterns, particularly the dereferencing required for \glspl{spFormat}.
+Depending on the chosen algorithm, \acrfull{ip}, \acrfull{op}, or \acrlong{gust}'s (\acrshort{gust}), the main bottleneck shifts between \gls{gather} and \gls{intersection} operations (for \acrshort{ip}) or \gls{scatter} and \gls{reduction} operations (for \acrshort{op}).
+\acrlong{gust}'s algorithm emerges as a balanced solution, as it reduces the number of $B$-rows that need to be accessed while generating outputs row-by-row, simplifying both \gls{gather} and \gls{scatter} processes.
+The most advanced \acrlong{gust}-based accelerators further optimize performance through intelligent cache \gls{eviction} strategies, where victims are selected based on forward-looking analysis of $A$-indices.
 
+While \textit{standalone} accelerators dominate the landscape, \textit{processor-assist} designs, such as those that modify cache behavior or leverage existing memory resources, also play a crucial role, particularly in systems where flexibility and lower area overhead are prioritized.
+In contrast, high-performance \textit{standalone} accelerators often feature dedicated, massively parallel \gls{reduction}/merger units to maximize parallelism and minimize memory bottlenecks.
 
+The diversity of existing designs underscores that there is no single ``best'' sparse accelerator.
+Instead, the optimal architecture depends on the specific problem class, matrix structure, and performance requirements.
+Future advancements will likely focus on tailoring accelerators to the unique characteristics of different matrix structures, ensuring that caches, memory hierarchies, and computational units are optimized for the workload at hand.
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Conclusion 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% % Messages à passer
-% \begin{itemize}
-% \item Emerging field, increased activity
-% \item Comparison of the SoA
-% \item Memory hierarchy - not just a processing problem
-% \item Gustavson
-% \item Meta-data can be used to optimize caching strategies
-% \item Innovative re-Use (re-purpose) of existing HW memory resources --> these accelerators can be integrated into existing memory systems
-% \item Perhaps the key challenging is a highly parallelized reduction/merger
-% \item None of the existing accelerators has focused on specific matrix structures
-% \end{itemize}
-
-The size of the datasets considered in computational physics, machine learning and graph analytics is continuing to grow and over the last six years, we note the emergence of many hardware accelerators designed to improve upon the performance of CPUs and GPUs. In this paper, we have presented the most important designs and established a comparison, while highlighting the underlying hardware challenges associated with sparse multiplication kernels.
-
-As we have seen, with this class of problem, the challenge is to efficiently use the memory system despite the dereferencing required to access the \textit{metadata} associated with the \textit{sparse data formats}. Depending on the selected \acrshort{mm} algorithm, the major challenge is either with the \gls{gather} and \textit{intersection} or with the \gls{gather} updates. We have identified that accelerators based on \textit{Gustavson's} algorithm achieve a trade-off, where, on the \gls{gather} side, a limited number of $B$-rows need to be accessed, and on the output side, the result is generated row-by-row, simplifying the \gls{gather} updates. The best \textit{Gustavson} accelerators have implemented further optimizations such as smart cache eviction strategies where the victim is selected by looking ahead at the $A$-indices. Several of the smaller \textit{processor assist} accelerators reuse existing cache memories and simply modify the behaviour of the control logic (directories, tags, eviction policies) to optimize the operation for sparse matrices. On the other hand, the highest performance accelerators propose dedicated, massively parallel \textit{reduction}/\textit{mergers}, to maximize parallelism.
-
-Given the number and diversity of existing designs, it is clear that further hardware optimizations and improvements are possible. As stated earlier, there may never be a single "best" sparse accelerator, but rather designs that are best suited to specific classes of problems. We believe that the structure of the matrices is critical in terms of the sizing of caches and other resources, and that in the coming years, new accelerators will be increasingly tailored based on the structure of the matrices for specific classes of problems.
-
-%%%%%%%%%%%%%%%%%
+This chapter not only synthesizes the current state of sparse matrix acceleration but also provides a roadmap for future research, emphasizing the need for architectures that are both highly efficient and adaptable to the diverse and evolving landscape of sparse data processing.
 
 \bigskip\bigskip
 
 \begin{highlight}{Takeaways}{Mulberry}
-    \colorbf{Mulberry}{TODO}
+    \colorbf{Mulberry}{Classification of Sparse Matrix Accelerators:}
+    Hardware accelerators for sparse matrix computations can be categorized by:
+    \begin{itemize}
+        \item \textbf{Autonomy:} \textit{standalone} versus \textit{processor-assist}
+        \item \textbf{Position in the memory hierarchy:} near-processor, near-cache, or near-main-memory
+        \item \textbf{Algorithm compatibility:} \acrfull{ip}, \acrfull{op}, or \acrfull{gust}
+        \item \textbf{Core operations:} \gls{gather}/\gls{scatter} hardware support
+        \item \textbf{Targeted kernels:} sparse \acrfull{mv}, sparse \acrfull{mm}, or both
+    \end{itemize}
+
+    \bigskip
+    \colorbf{Mulberry}{Key Findings:}
+    \begin{itemize}
+        \item \textbf{Algorithm Selection:} \acrlong{gust}'s algorithm offers the best trade-off for hardware implementation, balancing input reuse and output generation, while the \acrlong{op} algorithm remains a strong alternative, particularly for parallelism.
+        \item \textbf{Memory Optimization:} Efficient use of local memory, whether through custom caches or smart \gls{eviction} policies, is critical to reducing off-chip traffic and improving performance.
+        \item \textbf{Adaptability:} The most successful accelerators dynamically adjust their dataflows and memory strategies to match the sparsity patterns of the input matrices, highlighting the importance of flexibility in hardware design.
+        \item \textbf{Scalability and Parallelism:} High-performance designs leverage parallel \gls{reduction} and merger units and optimized memory hierarchies to handle large-scale, irregular workloads efficiently.
+    \end{itemize}
+
+    \bigskip
+    \colorbf{Mulberry}{Future Research Directions:}
+    Next-generation accelerators will increasingly feature \textbf{adaptive mechanisms}, \textbf{multi-core architectures}, and \textbf{specialized memory systems} tailored to diverse sparse matrix structures and evolving application requirements.
+
+    \bigskip
+    \colorbf{Mulberry}{SpDCache:}
+    Our work focuses on near-cache, \textit{processor-assist} accelerators that compute \gls{scatter}-focused \acrlong{op} \acrshort{spmv} kernels.
 \end{highlight}
 
 \clearpage

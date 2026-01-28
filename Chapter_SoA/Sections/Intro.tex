@@ -6,52 +6,25 @@
 \section{Introduction}
 \label{sec:soa:intro}
 
-% TODO
+\lettrine{T}{he} challenges of efficiently processing sparse matrices have been recognized since the 1960s, when it became clear that using dense array representations for sparse datasets was highly inefficient~\cite{Saad2003_COO_CSR_DIA_ELL}.
+The seminal work of OSKI~\cite{Vuduc2005} in 2003 formalized alternative sparse representations and identified numerous optimization opportunities, paving the way for specialized software libraries for sparse algebra~\cite{Williams2007}.
+However, even with these advancements, single-core software implementations often achieve only around 10\% of peak performance [37], highlighting the need for more efficient hardware solutions.
+Sparse matrix operations, particularly sparse \acrfull{mv} and sparse \acrfull{mm} multiplication, pose distinct computational challenges:
+\begin{itemize}
+    \item Access to sparse input data, which requires efficient handling of irregular memory patterns.
+    \item \Gls{reduction} operations on intermediate results, where \glspl{psum} must be accumulated and managed.
+    \item Formatting and writing back results to memory, which becomes critical when outputs are large or dense.
+\end{itemize}
 
-
-
-
-%%%%%%%%%%%%%%%%%
-
-%%drom ASAP intr that can be a short conclu
-% The state-of-the-art can be divided into two classes: 
-% (1) accelerators that process the entire kernel and (2) accelerators that
-% provide a processor assist, typically accelerating either
-% the gathering of the inputs or the output scattering.
-% Processor assists require less hardware 
-% and are more flexible as the main processor executes the kernel.
-
-
-\note{From SoA paper}
-
-%from intro
-
-It was recognized early in the 1960s~\cite{Saad2003_COO_CSR_DIA_ELL} that working on these sparse data sets using dense array representations was inefficient.
-The seminal work of OSKI~\cite{Vuduc2005} in 2003 formalized the sparse representation alternatives and identified many optimizations.
-This opened the path for specialized software libraries for sparse algebra~\cite{Williams2007}.
-However, the single-core performance of software implementations can be deceiving, often only reaching 10\% of peak performance~\cite{Gale2020}.
-
-%
-
-The two matrix operations, SpMV and SpMSpM, pose orthogonal computational challenges: (1) access to sparse input data, (2) \textit{reduction} operations on the intermediate result and (3) formatting and writing back the result to memory.
-The different algorithms, which are detailed in Section~\ref{sec:bg:matrix_formats_and_algos}, are built on different articulations of these three aspects.
-% The sparse data storage scheme used in memory dictates the first aspect and is briefly explored in Section~\ref{sec:bg:matrix_formats}.
-%The sparse data storage scheme used in memory dictates the first aspect and we explore different alternatives in Subsection~\ref{subsec:matrix_formats}.
-The third aspect, \ie result storage, is sometimes overlooked when the output is dense and not too large.
-For example, when running on a conventional CPU which is memory-bound, it becomes crucial to streamline the write accesses in order to optimize cache usage when writing a large dense vector output.
-The second aspect, \ie the \textit{reduction} operations, deserves different solutions according to the execution platform.
-On a conventional CPU, the bottleneck is memory throughput.
-Thus, most software implementations of SpMV deal with \textit{a priori} reorganization of the input matrices, by row ordering, blocking and loop optimization, for improving the data locality of operations.
-The perspective for SpMV is different when dealing with GPU platforms.
-The challenge shifts to finding a balanced assignment of the numerous threads and warps, and to the use of local memory resources~\cite{Liu2014}.
-SpMSpM is far more complex: the intermediate \textit{reductions} introduce new $NNZ$ values at random locations, which trigger costly memory allocations and list management operations~\cite{Gao2020}.
-As a consequence, this phase dominates the execution time and becomes the main memory bottleneck on a regular CPU.
-The issue is similar on GPUs because of the limited size of the scratchpad memory for processing large matrices, which requires complex memory management and load balancing~\cite{Zachariadis2020, Nagasaka2018, Deveci2018}.
-
-%
-
-The main motivation to use custom hardware accelerators is to make better use of the intermediate memory hierarchy, ensuring the input data is available near the cores and also off-loading the accumulation and \textit{reduction} operations from the processors.
-
-The focus of this paper is to review these architectures, to compare them and to analyze their performance. Our main focus is on accelerators that eventually target custom or ASIC implementations, although we do touch on the contributions from accelerators that were prototyped on \acrshortpl{fpga}. The reader is referred to~\cite{MOHAMMED_2022_SPARSE} for a survey of acceleration techniques for CPUs, GPUs and \acrshortpl{fpga}. Section~\ref{sec:bg:matrix_formats_and_algos} reviews the storage schemes and the three basic algorithms with a focus on the data access patterns and their impact on the memory hierarchy. In Section~\ref{sec:bg:hw_challenges} we study how the different algorithms stress the memory systems and propose an analytical model based on these insights. In Section~\ref{sec:soa:hw_accelerators} we present the operation of several state-of-the-art hardware accelerators, in the light of these hardware challenges. In Section~\ref{sec:soa:comparison_and_analysis}, we systematically compare these accelerators. Throughout this study, we try to be consistent, and we hope that our nomenclature will be useful for architects and designers who intend to implement dedicated hardware for problems with sparse datasets.
+As seen in the previous chapter, the choice of algorithm, \eg \acrfull{ip}, \acrfull{op}, or \acrlong{gust}'s (\acrshort{gust}), directly influences how these challenges are addressed.
+For example, \acrshort{ip} algorithms struggle with \gls{intersection} searches (\gls{gather} problem), while \acrshort{op} algorithms face irregular updates (\gls{scatter} problem).
+\acrlong{gust}'s algorithm offers a trade-off, balancing input reuse and output generation but still requires careful optimization.
+On conventional CPUs, memory throughput is the primary bottleneck, leading to optimizations such as row reordering, blocking, and loop transformations to improve data locality.
+For GPUs, the challenge shifts to thread assignment, warp balancing, and efficient use of shared memory~\cite{Liu2014}.
+Sparse \acrshort{mm} introduces additional complexity due to dynamic \glspl{reduction} and irregular output generation~\cite{Gao2020}, which dominate execution time and memory traffic on both CPUs and GPUs~\cite{Zachariadis2020, Nagasaka2018, Deveci2018}.
+Hardware accelerators address these issues by optimizing the memory hierarchy, ensuring input data availability near compute units and offloading accumulation/\gls{reduction} operations from processors.
+This chapter reviews state-of-the-art hardware accelerators for sparse matrix computations, comparing their architectures, algorithms, and performance.
+Our analysis identifies common architectural trends, evaluates design trade-offs, and provides insights for future accelerator development.
+The goal is to offer a structured comparison that helps designers select or refine architectures based on specific workload requirements.
 
 \clearpage

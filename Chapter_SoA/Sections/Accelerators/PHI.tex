@@ -55,8 +55,8 @@ Three new features are introduced, compared to a standard cache:
 \end{figure}
 
 This combination of in-cache coalescing and update buffering enables PHI to take advantage of locality when possible (like Coup~\cite{Zhang2015_Coup}), but with the addition of \textit{UB}, PHI improves memory utilization, even when the data being updated is too large to fit in the cache.
-For \acrshort{spmv}, the authors report that much of the benefit comes from the reduction in memory synchronization traffic.
+For \acrshort{spmv}, the authors report that much of the benefit comes from the \gls{reduction} in memory synchronization traffic.
 
 \begin{highlight}{Conclusion}{Red}
-    TODO
+    \textbf{PHI} is a \gls{reduction}-aware cache architecture that optimizes commutative \gls{scatter} updates by combining in-cache coalescing, output batching, and reduced synchronization traffic, effectively improving memory utilization for mixed \textit{immediate} and \textit{deferred update} \acrshort{op} \acrshort{spmv} kernel.
 \end{highlight}

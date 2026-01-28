@@ -168,7 +168,7 @@ While this flexibility for \textit{standalone} accelerators increases hardware c
 These findings validate that the model presented in Section~\ref{sec:bg:AnalyticalModel} provides valuable insights into local memory requirements for sparse \acrshort{mm} accelerators.
 
 \begin{highlight}{Conclusion}{Red}
-    TODO
+    This comparative analysis of state-of-the-art sparse matrix accelerators reveals that \textbf{\acrlong{gust}'s algorithm is the most effective for high-performance} when coupled with \textit{standalone} hardware implementations, \textbf{followed by \acrlong{op}} which is particularly leveraged in \textit{processor assist} designs, with \acrlong{ip} showing competitive results in specific cases, highlighting the importance of algorithmic adaptability and tailored memory hierarchies in optimizing sparse computations.
 \end{highlight}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -206,7 +206,7 @@ First, the starting point needs to be defined: some accelerators require softwar
 The cost of such preprocessing can be high, and is usually only justified if the same matrix is reused multiple times.
 
 \begin{highlight}{Conclusion}{Red}
-    TODO
+    This analysis provides a structured decision-making framework for designers, emphasizing that the choice between specialized (\textit{standalone}) and general-purpose (\textit{processor assist}) accelerators \textbf{depends on performance needs, area constraints, and problem-specific requirements}, with algorithm selection (\eg \acrlong{gust} for sparse \acrshort{mm}, \acrlong{op} for sparse \acrshort{mv}) and memory optimization strategies playing pivotal roles in tailoring solutions to diverse sparse computing challenges.
 \end{highlight}
 
 \clearpage

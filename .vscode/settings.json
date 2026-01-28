@@ -84,6 +84,7 @@
     "MTTKRP",
     "multibank",
     "multiport",
+    "OSKI",
     "precomputes",
     "prefetcher",
     "PSRAM",
