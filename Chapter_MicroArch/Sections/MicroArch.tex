@@ -44,6 +44,10 @@ Most of these units are reused and extended to implement \acrlong{spdc}.
 HPDcache provides extensive static and dynamic configurability, making it a flexible foundation for further extensions.
 The changes to \acrlong{spdc} were done in a way such that, by simply changing parameters, the same \acrshort{rtl} code can implement (1) the original generic cache (\acrshort{gc}) as the first baseline, (2) a standard \gls{redC} (\acrshort{redc}) as the second baseline, or (3) \acrlong{spdc} (\acrshort{spdc}), the solution presented in the previous chapters.
 
+\begin{highlight}{Note}{SkyBlue}
+    Statistics on the development effort and timeline for the complete SpDCache implementation are provided in Appendix~\ref{app:stats}.
+\end{highlight}
+
 \begin{highlight}{Conclusion}{Red}
     \textbf{HPDcache} is an \textbf{open-source}, high-performance cache which we used as the \textbf{starting point} for our work.
     We extended it to support \gls{reduction} operations, \textbf{operating configurably} as either a simple \gls{redC} (\acrshort{redc}) or as the full \acrlong{spdc} outlined in the previous chapters.

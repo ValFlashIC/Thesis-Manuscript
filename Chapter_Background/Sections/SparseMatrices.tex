@@ -37,8 +37,8 @@ Moreover, numerical techniques exist to transform matrices into \gls{banded} mat
 A \gls{banded} matrix is a matrix which has a dense region around its main diagonal and which is sparser away from the diagonal.
 To give a few visual examples, Figure~\ref{fig:bg:example_matrix_structure} shows the structure plots for four typical matrices found in the SuiteSparse Matrix Collection~\cite{Kolodziej2019_SuiteSparse}, having a high-density \gls{band} along the diagonal.
 In Figure~\ref{fig:bg:banded_mat_def}, we illustrate a \gls{banded}, square matrix of dimension $M$.
-We define $w_B$ as the width of the \gls{banded} region, or \gls{bandwidth}, as shown in \textit{red} in the figure.
-Sometimes it is easier to refer to the half-\gls{bandwidth}, $w_{hB}$, which respects the relation $w_B = 2 \times w_\mathit{hB} - 1$.
+We define $w_B$ as the width of the \gls{banded} region, or \gls{bw}, as shown in \textit{red} in the figure.
+Sometimes it is easier to refer to the half-\gls{bw}, $w_{hB}$, which respects the relation $w_B = 2 \times w_\mathit{hB} - 1$.
 The average density in the \gls{band} and out of the \gls{band} is defined as $d_\mathit{IB}$ and $d_\mathit{OB}$, respectively.
 As in Figure~\ref{fig:bg:raefsky3}, in a \gls{PBanded} matrix, there are no elements outside the \gls{band}, thus $d_\mathit{OB} = 0$.
 

@@ -15,7 +15,7 @@ We show the benefit of storing the in- and out-of-\gls{band} of the matrix in se
 \label{sec:theory:perfectband_vs_cache}
 
 In the previous chapter, we presented \acrlong{spdc} and a \gls{redC} baseline with a specific region (\acrshort{drc}) dedicated to storing the \gls{banded} part of the matrix.
-We defined the \gls{band}-width of the matrix based on the \acrshort{drc} size.
+We defined the \gls{bw} of the matrix based on the \acrshort{drc} size.
 In this section, we explain and justify this choice by analyzing the behavior of a \gls{redC} when processing an \acrshort{op} \acrshort{spmv} kernel with a \gls{PBanded} matrix.
 
 We show that the \gls{redC} must be `properly' dimensioned with respect to the \gls{band} width of a \gls{PBanded} matrix, in order to avoid unnecessary \glspl{eviction}.
@@ -149,7 +149,7 @@ In subsequent sections, we analyse the out-of-\gls{band} traffic.
 \subsection{Design Analysis for Out-of-Band Region}
 \label{sec:theory:graph2}
 
-For the type of large matrices under study, there are usually too many non-zero elements in the out-of-\gls{band} region for them to be cached from one column to the next, thus making it difficult to achieve a high-level of reuse from column to column.
+For the type of large matrices under study, there are usually too many non-zero elements in the out-of-\gls{band} region for them to be cached from one column to the next, thus making it difficult to achieve a high level of reuse from column to column.
 Therefore, the size of the cache for the out-of-\gls{band} is not as important as the choice of associativity and data granularity.
 To justify this affirmation, we use the analytical model from Section~\ref{sec:theory:model} to analyse the performance of the \gls{redC} when processing only the non-zero elements outside of the \gls{band}.
 As we have already discussed the handling of the in-\gls{band} region, we now consider only the out-of-\gls{band} elements, which is equivalent to setting the in-\gls{band} density to $d_\mathit{IB} = 0$.
@@ -268,5 +268,3 @@ In other words, our uniform assumption leads to a pessimistic prediction of memo
     To minimize memory traffic when processing \gls{banded} matrices with a \gls{redC}, it is important to \textbf{divide} the cache into two dedicated regions: (1) an \textbf{in-\gls{band} region} dedicated to a \gls{band} in the matrix whose size respects the relationship in Equation~\ref{eq:theory:in_band_cond}, and configured as a \textbf{set-associative line-wise} cache, and (2) an \textbf{out-of-\gls{band} region} configured as a \textbf{fully-associative element-wise} cache with an \textbf{element-wise memory interface}.
     The \textbf{out-of-\gls{band} region} should be made as large as practical, as it has a greater impact on memory traffic than enlarging the in-\gls{band} region.
 \end{highlight}
-
-\clearpage

@@ -72,11 +72,9 @@ Many other matrix partitioning and system configurations are conceivable and war
 
 Note that computing multiple \acrshortpl{spmv} simultaneously is feasible.
 For instance, each core could execute a distinct \acrshort{spmv} operation on the same matrix $A$ but with different input vectors $b$.
-The \acrshort{llc} \acrshort{drc} \gls{band}-width must then be divided by the number of \acrshortpl{spmv} to prevent overlap in the allocated space for each output vector $c$.
+The \acrshort{llc} \acrshort{drc} \gls{bw} must then be divided by the number of \acrshortpl{spmv} to prevent overlap in the allocated space for each output vector $c$.
 
 \begin{highlight}{Conclusion}{Red}
     The proposed multi-level, multi-core architecture for \acrlong{spdc} \textbf{effectively addresses the challenges of scaling across cache levels and cores} while optimizing memory usage.
     Future work could focus on evaluations of various configurations to validate performance.
 \end{highlight}
-
-\pagebreak

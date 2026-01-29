@@ -70,6 +70,7 @@
 \usepackage[titles]{tocloft} % add subfigure option if the subfigure package is used
 \usepackage{listings}
 \usepackage[most]{tcolorbox}
+\usepackage[explicit]{titlesec}
 \if\DoMinitoc\YES \usepackage{minitoc}
 \else \usepackage{mtcoff} \fi
 
@@ -338,6 +339,60 @@
 \fancyfoot[R]{Page \thepage/\pageref{LastPage}}
 
 \fancypagestyle{plain}{}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Personalize Chapter Titles
+\newtcolorbox{titlecolorbox}[1]{
+	sharp corners,
+	rounded corners=northeast,
+	frame hidden,
+    coltext=white,
+    boxrule=0pt,
+    arc=5pt,
+    notitle,
+    height=28pt,
+	interior style = {draw=none, fill=none, left color=black!2, right color=black},
+    before=\hfill,
+	enhanced
+}
+
+\titleformat{\chapter}[display]
+	{\Huge}
+	{}
+	{0pt}
+	{
+		\begin{titlecolorbox}{}
+			\raggedleft
+			{\Large\sffamily\MakeUppercase{\chaptername}}
+		\end{titlecolorbox}
+		\vspace*{-1.0em}
+		\begin{minipage}[b]{0.79\linewidth}
+			\vspace*{-1.1em}
+			\raggedright\singlespacing\scshape{#1}
+		\end{minipage}
+		\hfill
+		\begin{minipage}[b]{0.19\linewidth}
+			\hfill\fontsize{70}{60}\selectfont\thechapter
+		\end{minipage}
+	}
+	[]
+
+\titleformat{name=\chapter,numberless}[display]
+	{\Huge}
+	{}
+	{0pt}
+	{
+		\begin{titlecolorbox}{}
+		\end{titlecolorbox}
+		\vspace*{-1.0em}
+		\begin{minipage}[b]{0.79\linewidth}
+			\vspace*{-1.1em}
+			\raggedright\singlespacing\scshape{#1}
+		\end{minipage}
+		\hfill
+	}
+	[]
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

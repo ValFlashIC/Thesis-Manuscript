@@ -145,7 +145,7 @@ Again, for this algorithm, exchanging $M$ and $N$ causes the three matrices to b
 \subsubsection{Comparison of the Algorithms}
 
 In Table~\ref{tab:AlgosCompSum}, we summarize the main features of \acrshort{ip}, \acrshort{op} and \acrshort{gust} in terms of accesses to the matrix $A$, $B$ (or $b$) and $C$ (or $c$).
-From this high level analysis, we can easily see that the data that is accessed with indirections shifts depending on the algorithm, from the input $B$ (or $b$) to the output $C$ (or $c$), with \acrshort{gust} being a trade-off between \acrshort{ip} and \acrshort{op} for \acrshort{mm} multiplication.
+From this \gls{highLevel} analysis, we can easily see that the data that is accessed with indirections shifts depending on the algorithm, from the input $B$ (or $b$) to the output $C$ (or $c$), with \acrshort{gust} being a trade-off between \acrshort{ip} and \acrshort{op} for \acrshort{mm} multiplication.
 To have a better understanding of the consequences on the actual number of memory accesses, we propose a more detailed analysis in Section~\ref{sec:bg:AnalyticalModel}, for the case of \acrshort{spmspm}.
 
 \begin{highlight}{Note}{SkyBlue}

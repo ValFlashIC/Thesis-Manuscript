@@ -186,9 +186,9 @@ The work spanned multiple repositories managed through Git version control.
 
 During the first year and a half, extensive exploration was conducted using Python scripts, culminating in the Python model. This work was maintained in the \textit{Python Script} repository.
 The second half focused on the \acrshort{rtl} implementation, distributed across several repositories: \textit{SpDCache RTL} containing the core \acrshort{rtl} implementation, \textit{CVA6 RTL} with modifications to the CVA6 RISC-V core for \acrlong{spdc}'s new instructions, \textit{RTL Platform} providing the compilation and simulation environment, and \textit{Software} containing C programs for the \acrlong{op} \acrshort{spmv} kernel.
-In parallel, the \textit{Benchmarks} repository was developed for efficient benchmarking and performance evaluation, contributed by student Jules DUBOIS during an internship (ORCID: 0009-0006-3165-3372).
+In parallel, the \textit{Benchmarks} repository was developed for efficient benchmarking and performance evaluation, contributed by student Jules DUBOIS during an internship.
 
-Throughout the project, several publications were produced: a state-of-the-art survey~\ref{publ:SoA}, initial \acrlong{spdc} results~\ref{publ:SpDC}, a patent covering the development concepts around \acrlong{spdc}, a paper on the \acrshort{rtl} implementation and analytical model (currently under resubmission), and this manuscript.
+Throughout the thesis, several publications were produced: a state-of-the-art survey~[\ref{publ:SoA}], a paper on initial \acrlong{spdc} results~[\ref{publ:SpDC}], a patent covering the development concepts around \acrlong{spdc}~[\ref{publ:patent}], a paper on the \acrshort{rtl} implementation and analytical model (currently under resubmission), and this manuscript.
 Figure~\ref{fig:app:stats:commits} illustrates the timeline of all commits across each repository.
 
 \begin{figure}[htbp]
@@ -198,8 +198,7 @@ Figure~\ref{fig:app:stats:commits} illustrates the timeline of all commits acros
     \label{fig:app:stats:commits}
 \end{figure}
 
-To provide a sense of the work delivered, we present the number of new lines of code for each repository (excluding papers) after final modifications.
-Additionally, Figure~\ref{fig:app:stats:languages} shows the programming language distribution across each repository.
+To provide a sense of the work delivered, we present the number of new lines of code for each repository (excluding papers) after final modifications:
 \begin{itemize}
     \item \textit{Python Scripts}: 18,590 lines;
     \item \textit{SpDCache RTL}: 5,808 lines (33,696 $\to$ 39,504 total);
@@ -208,6 +207,7 @@ Additionally, Figure~\ref{fig:app:stats:languages} shows the programming languag
     \item \textit{Software}: 1,554 lines;
     \item \textit{Benchmarks}: 7,642 lines.
 \end{itemize}
+Additionally, Figure~\ref{fig:app:stats:languages} shows the programming language distribution across each repository.
 
 \begin{figure}[htbp]
     \centering

@@ -176,7 +176,7 @@ The architecture supports a wide range of graph algorithms (\eg PageRank, BFS, S
 
 \paragraph{SDE}
 
-SDE~\cite{Hosseinabady2019_SDE} (Streaming Dataflow Engine) is a high-performance, adaptable streaming dataflow accelerator designed for the \acrshort{spmv} kernel on embedded \acrshortpl{fpga}, optimized using high-level synthesis (HLS).
+SDE~\cite{Hosseinabady2019_SDE} (Streaming Dataflow Engine) is a high-performance, adaptable streaming dataflow accelerator designed for the \acrshort{spmv} kernel on embedded \acrshortpl{fpga}, optimized using \gls{highLevel} synthesis (HLS).
 It leverages loop pipelining, dataflow graphs, and data streaming to maximize memory bandwidth utilization, addressing the memory-bound nature of \acrshort{spmv}.
 The engine employs a modified \acrshort{csr} (MCSR) format to make loop iteration lengths predictable, enabling efficient pipelining and unrolling, and uses zero-padding to align row sizes for parallel processing.
 SDE supports multiport streaming to reduce memory port usage and load balancing to evenly distribute workloads across parallel computing processes, ensuring high throughput and scalability.
@@ -275,7 +275,7 @@ The accelerator integrates $B$-caches (row and column-value of $B$) to further e
 CoSPARSE~\cite{Feng2021_CoSPARSE} is a reconfigurable \acrshort{spmv} framework designed for graph analytics, combining software and hardware optimizations to adapt dynamically to varying input characteristics.
 It supports two \acrshort{spmv} algorithms, \acrlong{ip} and \acrlong{op}, and automatically selects the optimal one based on the density of the input vector, while also reconfiguring the on-chip memory hierarchy (shared/private, cache/scratchpad) to maximize data reuse and minimize memory access overhead.
 The framework features workload-balancing strategies, including static matrix partitioning and dynamic task distribution, to handle sparse matrices efficiently, ensuring balanced workloads across \acrfullpl{pe}.
-CoSPARSE is built on a programmable, many-core hardware substrate (Transmuter), enabling runtime reconfiguration of memory and dataflow with minimal overhead, and abstracts hardware complexity through a high-level software interface.
+CoSPARSE is built on a programmable, many-core hardware substrate (Transmuter), enabling runtime reconfiguration of memory and dataflow with minimal overhead, and abstracts hardware complexity through a \gls{highLevel} software interface.
 % By integrating these optimizations, CoSPARSE provides a flexible, high-performance solution for \acrshort{spmv}-based graph algorithms, adapting seamlessly to diverse graph structures and iterative workloads.
 
 \paragraph{SortCache}

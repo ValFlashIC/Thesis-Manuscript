@@ -65,9 +65,9 @@ The required \acrlong{spdc} modifications are:
 \begin{itemize}
     \item Configuration: The initial instruction enabling \acrlong{spdc}'s \gls{reduction} mode must accept a configuration argument specifying the word size in bytes ($s_w$), the output vector address ($c$), and the \acrshort{drc} size in bytes ($s_\mathit{DRC}$).
     The hardware could fetch the last parameter independently.
-    When this instruction is issued, prior to each \acrshort{spmv}, the half-\gls{band}-width is computed and retained until reconfigured, where $s_l$ denotes cache-line size in bytes:
+    When this instruction is issued, prior to each \acrshort{spmv}, the half-\gls{bw} is computed and retained until reconfigured, where $s_l$ denotes cache-line size in bytes:
     $$w_\mathit{hB} = \dfrac{s_\mathit{DRC}-s_l}{2s_w}+1$$
-    The half-\gls{band}-width could also be computed in software, and given as argument to the configuration.
+    The half-\gls{bw} could also be computed in software, and given as argument to the configuration.
     %
     \item Column indexing: Each outer-loop iteration requires issuing a new instruction containing the current column index $j \in \ldb 0; M-1 \rdb$, denoted $CCOL(j)$.
     This value persists until the next $CCOL$ instruction arrives, consuming one cycle per outer-loop iteration.

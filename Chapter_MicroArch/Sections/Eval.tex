@@ -153,7 +153,7 @@ This limitation, addressable with a higher-register CPU, highlights another adva
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Matrix Selection for the RTL Evaluation}
 
-We have selected an extended set of 62 square matrices from the SuiteSparse Matrix Collection~\cite{Kolodziej2019_SuiteSparse} which includes virtually all the matrices used by recent hardware accelerators~\cite{Zhang2021_Gamma, Xie2021_SpaceA, Zhang2022_ASA, Srikanth2021_SortCache, Pal2018_OuterSPACE}.
+We have selected an extended set of 62 square matrices from the SuiteSparse Matrix Collection~\cite{Kolodziej2019_SuiteSparse} which includes virtually all the matrices used by recent hardware accelerators~\cite{Zhang2021_Gamma, Xie2021_SpaceA, Zhang2022_ASA, Srikanth2021_SortCache, Pal2018_OuterSPACE} (full list in Appendix~\ref{app:mat_list}).
 We verified that this set is diverse containing \gls{banded} and non-\gls{banded} sparse matrices with various sizes ($M \in [1.2\times10^{2}, 2.0\times10^{6}]$), numbers of non-zero elements ($nnz \in [2.2\times10^{3}, 1.4\times10^{7}]$) and a wide range of densities ($d \in [1.4\times10^{-6}, 7.8\times10^{-1}]$).
 
 Based on our experimental results presented in the following section, we categorize these matrices into two groups according to their performance characteristics.
@@ -601,5 +601,3 @@ This out-of-order execution capability, inherited from HPDcache, thus contribute
 \begin{highlight}{Conclusion}{Red}
     Over a set of real application matrices, the \acrshort{rtl} implementation corroborates the Python simulations, exhibiting slightly better memory traffic performance.
 \end{highlight}
-
-\clearpage

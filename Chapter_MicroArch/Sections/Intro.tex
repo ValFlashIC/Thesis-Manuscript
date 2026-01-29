@@ -6,7 +6,7 @@
 \section{Introduction}
 \label{sec:arch:intro}
 
-\lettrine{I}{n} the previous chapters, we established the theoretical foundations and high-level design principles for \acrlong{spdc}, a specialized cache architecture tailored to optimize memory transactions for sparse matrix computations.
+\lettrine{I}{n} the previous chapters, we established the theoretical foundations and \gls{highLevel} design principles for \acrlong{spdc}, a specialized cache architecture tailored to optimize memory transactions for sparse matrix computations.
 This chapter bridges theory and practice by presenting the microarchitectural implementation of \acrlong{spdc} and evaluating its performance through \acrfull{rtl} simulations.
 
 We begin by detailing the microarchitecture of \acrlong{spdc}, focusing on its three distinct regions: the \acrfull{grc}, the \acrfull{drc}, and the \acrfull{srt}.
@@ -19,5 +19,3 @@ We analyze the behavior of \acrlong{spdc} across a diverse set of sparse matrice
 
 By translating the theoretical model into a practical hardware design, this chapter demonstrates the effectiveness of \acrlong{spdc} in minimizing memory traffic and improving computational efficiency for sparse matrix kernels.
 The results underscore the importance of region-based caching and \gls{reduction} support, paving the way for further optimizations and scalability enhancements discussed in the subsequent chapter.
-
-\clearpage

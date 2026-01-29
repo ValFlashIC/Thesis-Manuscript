@@ -23,10 +23,10 @@ In the next chapter, we will delve into the microarchitectural details of \acrlo
     \colorbf{Mulberry}{Simulating \emph{reduction caches} and SpDCache} \\
     To study the concepts presented in this thesis, three models were developed with varying levels of abstraction. Starting from the most abstract model:
     \begin{itemize}
-        \item \textbf{High level probabilistic/fast model in C} (\ref{sec:theory:cmodel}):
+        \item \textbf{\Gls{highLevel} probabilistic/fast model in C} (\ref{sec:theory:cmodel}):
         \begin{itemize}
             \item fast simulation ($\sim10^5$ $nnz/s$), using generic matrix density distributions, easy parameter exploration, deep understanding of cache behaviors, but,
-            \item very high level (some approximations and hypothesis), limited on \gls{eviction} policies.
+            \item very \gls{highLevel} (some approximations and hypothesis), limited on \gls{eviction} policies.
         \end{itemize}
         \item \textbf{Transaction level model in Python} (\ref{sec:spdc:eval}):
         \begin{itemize}
