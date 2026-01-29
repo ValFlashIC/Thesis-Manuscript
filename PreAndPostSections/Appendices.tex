@@ -30,324 +30,6 @@
 \newpage
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Sparse Formats
-
-\addtocounter{appendCnt}{1}
-\section{Sparse Formats}
-\label{app:sparse_formats}
-
-TODO
-
-\paragraph{COO} The simplest \emph{sparse format} is called \emph{COO} (\emph{COOrdinate})~\cite{Tewarson1973_COO_CSR_LIL_first, Saad2003_COO_CSR_DIA_ELL, Chou2018_COO_CSR_DIA_ELL_HASH}.
-It consists in three separate tables, one filled only with the non-zero elements of the matrix, a row index table containing the row of the corresponding elements, and similarly a column index table (see Figure~\ref{}).
-The two latter are \emph{metadata} tables and all three tables are of size \emph{nnz}.
-In this format, the elements are not necessarily sorted, the memory footprint does not depend on the structure of the matrix and all elements are stored independently of each other.
-
-\paragraph{CSR \& CSC} The most commonly used \emph{sparse format} is called \emph{CSR} (\emph{Compressed Sparse Row})~\cite{Tewarson1973_COO_CSR_LIL_first, Barrett1994_CSR_BCSR_DIA_ELL, Saad2003_COO_CSR_DIA_ELL, Chou2018_COO_CSR_DIA_ELL_HASH}.
-It is similar to the \emph{COO} format except that the row index table is replaced by a set of indices that point to the position of the start of each row in the column index table (see Figure~\ref{}).
-The size of this table is the number of rows plus one, and, in practical cases, the memory footprint is smaller than with \emph{COO}.
-However, the non-zero elements need to be sorted in \emph{row-wise} order.
-This format has a \emph{column-wise} variant called \emph{CSC} (\emph{Compressed Sparse Column}) where the column index table stores the positions of columns instead of rows.
-These two formats are symmetrical but with \emph{CSR}, it is the traversal of rows that is efficient because they are sequential whereas in \emph{CSC}, column traversal is efficient.
-
-\paragraph{BCSR} Even in sparse matrices, there can be regions, or blocks, that have a large fraction of non-zero values.
-In this case, the \emph{BCSR} format~\cite{Barrett1994_CSR_BCSR_DIA_ELL}, which is an extension of the \emph{CSR} format with \emph{tiling}, can be attractive.
-We use the term \emph{tiling} to describe a level of hierarchy in a storage format.
-That is, a \emph{tile} refers to a sub-matrix, which itself may be dense, as in the case of \emph{BCSR}, or which could be sparse.
-With the \emph{BCSR} format, we simply replace the non-zero elements of the \emph{CSR} format with dense, fixed-size sub-matrices (see Figure~\ref{}).
-Within these sub-matrices, it is possible to have some zero elements.
-The advantage of the \emph{BCSR} format is that the dense sub-matrices can be processed using techniques optimized for dense matrices, particularly using vector units or GPUs~\cite{Im2004_TilingBCSR}.
-Compared to the \emph{CSR} format, \emph{BCSR} makes it possible to accelerate the computation within the dense \emph{tiles}, but this comes with the overhead of storing some zero values.
-Not all matrices are well suited to the \emph{BCSR} format.
-
-\paragraph{DIA} For diagonally structured matrices
-($\forall(i, j) \in \ldb0, M\rdb \times \ldb0, N\rdb, \; a_{i,j}=0 \; for \; \lvert i-j \rvert > K$), a format called \emph{DIA} (\emph{DIAgonal}) is particularly well suited~\cite{Barrett1994_CSR_BCSR_DIA_ELL, Saad2003_COO_CSR_DIA_ELL, Chou2018_COO_CSR_DIA_ELL_HASH}.
-It consists in storing the values along the $2 \times K+1$ diagonals in a table and keeping information about the position of the diagonals in the matrix (see Figure~\ref{}).
-The organization of the non-zero data and selection of the diagonals can be tailored to the matrices and access patterns.
-This format is well suited to diagonal matrices, has a low overhead for storing indices and can be combined with other formats to better fit more complex structures.
-
-\paragraph{ELL} Another format called \emph{ELL} (\emph{ELLPACK})~\cite{Kincaid1989_ELLPACK, Barrett1994_CSR_BCSR_DIA_ELL, Saad2003_COO_CSR_DIA_ELL, Chou2018_COO_CSR_DIA_ELL_HASH} is well suited when the number of non-zero elements per row can be bounded by $K$.
-In this case, the non-zero values in a $M \times N$ matrix can be stored as a dense $M \times K$ matrix, augmented with an index table, of the same dimensions, which gives the column position of each non-zero value (see Figure~\ref{}).
-This format is not efficient if the number of non-zero elements per row is highly variable, as many entries in the $M \times K$ table are unused.
-This format is well suited to GPUs~\cite{Vazquez2009_ELLforGPUs, Cao2010_ELLforGPUs} since it transforms a sparse matrix into a dense one in memory.
-
-\paragraph{HYB} The \emph{HYB} format (HYBrid)~\cite{Bell2009_HYB} is an example of a format which combines \emph{ELL} and
-\emph{COO}.
-The \emph{ELL} format can be used, but with a value of $K$ (the width of the value table) that is smaller than the maximum non-zero entries per row in the 
-original matrix (see Figure~\ref{}).
-For the small number of rows where the table lacks a sufficient number of columns, the \emph{COO} format can be used to store the extra values.
-In this way, the storage efficiency of \emph{ELL} is improved, and it can be applied to a broader class of matrices.
-
-\newpage
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Generic Representation for Sparse Formats
-
-\addtocounter{appendCnt}{1}
-\section{A Generic Representation for \emph{Sparse Formats}}
-\label{app:sparse_formats_rep}
-
-\begin{figure}
-    \centering
-    \begin{minipage}[b]{0.30\linewidth}
-        \begin{figure}[H]
-            \centering
-            \includegraphics[width=\textwidth]{Chapter_Background/Figures/PDF/FiberTreeEx_JustCSR.pdf}
-            \caption{Example of the \emph{FiberTree} Representation with \acrshort{csr} Format}
-            \label{fig:app:FiberTreeExCSR}
-        \end{figure}
-    \end{minipage}
-\end{figure}
-
-A visual representation of compressed matrices, called \emph{FiberTree}~\cite{Sze2020_FiberTree}, is helpful to understand these \glspl{spFormat}. Each \emph{rank} of a matrix represents a level of a tree where the nodes are filled with either the \gls{metadata} of the child nodes or the matrix data which can only appear in the leaves (see Figure~\ref{fig:app:FiberTreeExCSR}). With this representation, we clearly identify the number of \emph{ranks}, which define the \emph{fibers}. A \emph{fiber} is the generic term to describe a one-dimensional stream of data or \gls{metadata}, which corresponds to a row or column in the case of a two-dimensional matrix. A stream of indices is a \emph{fiber} of \gls{metadata}.% in glossary !!
-Figure~\ref{fig:app:FiberTreeExCSR} presents, as an example, a \emph{FiberTree} representation of the matrix of Figure~\ref{fig:bg:FormatEx:Dense}, matching the \acrshort{csr} format: each \emph{rank} in the tree corresponds to a \emph{fiber} stored in the table \emph{Row PTR} or \emph{Col IDX} of Figure~\ref{fig:bg:FormatEx:CSR}.
-
-% \begin{figure}
-%     \centering
-%     \begin{subfigure}{0,386995238\textwidth} % 330.73 / 854.61
-%         \centering
-%         \includegraphics[width=\textwidth]{Figures/PDF/FiberTreeEx_CPCP.pdf}
-%         \caption{\emph{(CP, CP) row-major}}
-%         \label{fig:FiberTreeExCPCP}
-%     \end{subfigure}
-%     \hfill
-%     \begin{subfigure}{0,300312423\textwidth} % 256.65 / 854.61
-%         \centering
-%         \includegraphics[width=\textwidth]{Figures/PDF/FiberTreeEx_COO.pdf}
-%         \caption{\textbf{COO}: \emph{$CP^2$ row-major}}
-%         \label{fig:FiberTreeExCOO}
-%     \end{subfigure}
-%     \hfill
-%     \begin{subfigure}{0,300312423\textwidth} % 256.65 / 854.61
-%         \centering
-%         \includegraphics[width=\textwidth]{Figures/PDF/FiberTreeEx_CSR.pdf}
-%         \caption{\textbf{CSR}: \emph{(UOP, CP) row-major}}
-%         \label{fig:FiberTreeExCSR}
-%     \end{subfigure}
-%     \caption{Some Examples of the FiberTree Representation}
-%     \label{fig:FiberTreeEx}
-% \end{figure}
-
-In a recent work~\cite{Wu2022_SparseLoop}, a systematic nomenclature for \emph{sparse matrix (and tensor) formats} was proposed, based on \emph{FiberTree} representation. In fact, in the example of Figure~\ref{fig:app:FiberTreeExCSR}, the \emph{fibers} are compressed with different methods. Thus each \emph{rank} can be characterized by a label indicating how it is compressed: \emph{Uncompressed} (\emph{U}), \emph{Coordinate Payload} (\emph{CP}), \emph{Uncompressed Offset Pairs} (\emph{UOP}).
-\emph{U} defines \emph{ranks} where all data values are stored contiguously in memory. \emph{CP} defines \emph{ranks} that store the indices of each payload, a payload being either a non-zero element or a sub-matrix\footnote{In this section, we use the term sub-matrix but this is extended to the notion of \gls{tiling} in Section~\ref{sec:bg:tiling}.}. \emph{UOP} defines \emph{ranks} that store pointers (offsets) to delimit sub-matrices of the next \emph{rank}\footnote{If some sub-matrices are empty, pointers will be repeated, hence 'uncompressed'.}.
-These are the three main ones as they are used in the most common \glspl{spFormat} but many others exist or can be created.
-
-%%%% VL %%%%
-% These are described below and summarized in Table~\ref{tab:SAFs}.
-% \begin{itemize}
-%     \item \emph{U} (\emph{Uncompressed}) defines \emph{ranks} where all data values are stored contiguously in memory.
-%     \item \emph{CP} (\emph{Coordinate Payload}) defines \emph{ranks} that store the indices of each payload. A payload can be either a non-zero element or a \gls{tile}.
-%     \item \emph{UOP} (\emph{Uncompressed Offset Pairs}) defines \emph{ranks} that store pointers (offsets) to delimit \glspl{tile} of their next \emph{rank}. If some \glspl{tile} are empty, pointers will be repeated, hence 'uncompressed'.
-%     \item \emph{B} (\emph{Bitmask}) defines \emph{ranks} that store a bitmap for the payloads (data or \glspl{tile}) with the value one marking non-zero payloads.
-%     \item \emph{RLE} (\emph{Run Length Encoding}) defines \emph{ranks} that store the numbers of zero (data or \glspl{tile}) present before each non-zero element.
-% \end{itemize}
-% This list is not exhaustive but covers the most common \emph{SAF}s.
-%%%%%%%%%%%%
-
-%%%% VC %%%%
-With this nomenclature, the \glspl{spFormat} can be classified according to their \emph{rank} compression methods. For example, the \acrshort{csr} format is denoted as \emph{(UOP, CP) row-major} since its \emph{Row PTR} table stores pointers (offsets) to rows. The \acrshort{csr} and \acrshort{csc} formats are both of type \emph{(UOP, CP)}, one being \emph{row-major}, the other \emph{column-major}. The \acrshort{coo} format is denoted as $CP^2$ because there are two coordinates (row and column) for each non-zero element, as it is a \emph{CP fiber} having two indices per data element instead of one.
-%%%% VL %%%%
-% With this nomenclature, that can be easily extended, the \glspl{spFormat} described earlier can be classified according to the \emph{SAFs}, as shown in Table~\ref{tab:SAFs_ex}. For example, the \acrshort{coo} format is described as $CP^2$ because there are two coordinates (row and column) for each payload element, which, in the case of \acrshort{coo}, are simply the non-zero elements.
-%%%%%%%%%%%%
-User defined formats can also be easily described and named. For example, a user could define a storage format with a nested \acrshort{csr}. That is, each non-zero element in the outer \acrshort{csr}, corresponds to a sub-matrix, itself stored in \acrshort{csr} format. Such a representation would be labeled \emph{(UOP, CP, UOP, CP)}.
-A similar nomenclature is proposed by TACO~\cite{Chou2018_COO_CSR_DIA_ELL_HASH}. It is more adapted to code generation applications, where the \emph{FiberTree}-based nomenclature better describes the memory storage of the \gls{spFormat}. For example, \emph{U} corresponds to \emph{Dense}, \emph{CP} to \emph{Singleton}, the pair \emph{(UOP, CP)} is translated as \emph{Compressed} while \emph{UOP} alone corresponds to \emph{Offset}. We chose to adopt the \emph{FiberTree}-based nomenclature in this article since it is more suited to a hardware context.
-
-% \begin{figure}
-%     \centering
-%     \begin{minipage}[t]{0.39\linewidth}
-%         \begin{table}[H] %htbp
-%             \begin{center}
-%                 \caption{\emph{FiberTree}-based vs TACO Nomenclatures}
-%                 \begin{tabular}{|c|c|}
-%                     \hline
-%                     \textbf{\emph{FiberTree}-based}~\cite{Wu2022_SparseLoop} & \textbf{TACO}~\cite{Chou2018_COO_CSR_DIA_ELL_HASH} \\
-%                     \hline
-%                     \emph{U} & Dense \\
-%                     \hline
-%                     \emph{CP} & Singleton \\
-%                     \hline
-%                     \emph{(UOP, CP)} & Compressed \\
-%                     \hline
-%                     \emph{UOP} & Offset \\
-%                     \hline
-%                 \end{tabular}
-%                 \label{tab:FTvsTACO}
-%             \end{center}
-%         \end{table}
-%     \end{minipage}
-%     \hfill
-%     \begin{minipage}[t]{0.59\linewidth}
-%         \begin{table}[H] %htbp
-%             \begin{center}
-%                 \caption{\emph{FiberTree}-based vs TACO \emph{Sparse Format} Examples}
-%                 \begin{tabular}{|c|c|}
-%                     \hline
-%                     \textbf{\emph{FiberTree}-based}~\cite{Wu2022_SparseLoop} & \textbf{TACO}~\cite{Chou2018_COO_CSR_DIA_ELL_HASH} \\
-%                     \hline
-%                     $U^2$ & (Dense, Dense) \\
-%                     \hline
-%                     $CP^2$ & (Compressed ($\neg$U), Singleton)\hyperlink{fn1}{$^a$} \\
-%                     \hline
-%                     \emph{(UOP, CP) row-major} & (Dense, Compressed)\hyperlink{fn2}{$^b$} \emph{row-major} \\
-%                     \hline
-%                     \multicolumn{2}{l}{\emph{($\neg$U)} denotes a non-unique level.} \\
-%                     \multicolumn{2}{l}{\hypertarget{fn1}{$^a$}Translated as \emph{(UOP, $CP^2$)} but the \emph{UOP} fiber is not necessary.} \\
-%                     \multicolumn{2}{l}{\hypertarget{fn2}{$^b$}Translated as \emph{(U, UOP, CP)} but the \emph{U} fiber is not necessary.}
-%                 \end{tabular}
-%                 \label{tab:FTvsTACO_Ex}
-%             \end{center}
-%         \end{table}
-%     \end{minipage}
-% \end{figure}
-
-%%%% VL %%%%
-% \begin{figure}
-%     \centering
-%     \begin{minipage}[t]{0.42\linewidth}
-%         \begin{table}[H] %htbp
-%             \caption{Frequently Used SAFs}
-%             \begin{center}
-%                 \begin{tabular}{|c|c|}
-%                     \hline
-%                     U & Uncompressed \\
-%                     \hline
-%                     CP & Coordinate Payload \\
-%                     \hline
-%                     UOP & Uncompressed Offset Pairs \\
-%                     \hline
-%                     B & Bitmask \\
-%                     \hline
-%                     RLE & Run Length Encoding \\
-%                     \hline
-%                 \end{tabular}
-%                 \label{tab:SAFs}
-%             \end{center}
-%         \end{table}
-%     \end{minipage}
-%     \hfill
-%     \begin{minipage}[t]{0.56\linewidth}
-%         \begin{table}[H] %htbp
-%             \caption{SAFs Examples}
-%             \begin{center}
-%                 \begin{tabular}{|c||c|c|c|}
-%                     \hhline{-||---}
-%                     \textbf{Format} & \textbf{Number} & \textbf{Unified} & \textbf{Storage} \\
-%                     \textbf{Name} & \textbf{of \emph{Ranks}} & \textbf{Format Name} & \textbf{Order} \\
-%                     \hhline{=::===}
-%                     V & 1 & \emph{U} & \\
-%                     \hhline{-||---}
-%                     SpV & 1 & \emph{CP} & \\
-%                     \hhline{-||---}
-%                     COO & 2 & \emph{CP$^{2}$} & \\
-%                     \hhline{-||---}
-%                     CSR & 2 & \emph{(UOP, CP)} & \emph{row-major} \\
-%                     \hhline{-||---}
-%                     CSC & 2 & \emph{(UOP, CP)} & \emph{column-major} \\
-%                     \hhline{-||---}
-%                     ELL & 2 & \emph{(U, CP)} & \emph{row-major} \\
-%                     \hhline{-||---}
-%                     HYB & 2, 2 & \emph{(U, CP), CP$^{2}$} & \emph{row-major} \\
-%                     \hhline{-||---}
-%                     DIA & 3 & \emph{(CP, UOP, CP)} & \emph{diagonal-major} \\
-%                     \hhline{-||---}
-%                     BCSR & 4 & \emph{(UOP, CP, U$^{2}$)} & \emph{row-major} \\
-%                     \hhline{-||---}
-%                 \end{tabular}
-%                 \label{tab:SAFs_ex}
-%             \end{center}
-%         \end{table}
-%     \end{minipage}
-% \end{figure}
-%%%%%%%%%%%%
-
-%%%% VL %%%%
-% \begin{figure}
-%     \centering
-%     \begin{subfigure}[t]{\textwidth}
-%         \begin{subfigure}[t]{0.2414\textwidth} % 7/29
-%             \centering
-%             \includegraphics[width=\textwidth]{Figures/PDF/SparseFormats/Dense.pdf}
-%             \caption{\textbf{Dense}: \emph{U$^{2}$}}
-%             \label{fig:FormatEx:Dense}
-%         \end{subfigure}
-%         \hfill
-%         \begin{subfigure}[t]{0.3448\textwidth} % 10/29
-%             \centering
-%             \includegraphics[width=\textwidth]{Figures/PDF/SparseFormats/COO.pdf}
-%             \caption{\textbf{COO}: \emph{CP$^{2}$ (row-maj. sorted)}}
-%             \label{fig:FormatEx:COO}
-%         \end{subfigure}
-%         \hfill
-%         \begin{subfigure}[t]{0.3448\textwidth} % 10/29
-%             \centering
-%             \includegraphics[width=\textwidth]{Figures/PDF/SparseFormats/CSR.pdf}
-%             \caption{\textbf{CSR}: \emph{(UOP, CP) row-maj.}}
-%             \label{fig:FormatEx:CSR}
-%         \end{subfigure}
-%     \end{subfigure}
-%     \par\bigskip
-%     \begin{subfigure}[b]{\textwidth}
-%         \begin{subfigure}[b]{0.3448\textwidth} % 10/29
-%             \centering
-%             \begin{subfigure}[t]{0.7000\textwidth} % 7/10
-%                 \centering
-%                 \includegraphics[width=\textwidth]{Figures/PDF/SparseFormats/ELL.pdf}
-%                 \caption{\textbf{ELL}: \emph{(U, CP) row-maj.}}
-%                 \label{fig:FormatEx:ELL}
-%             \end{subfigure}
-%             \par\bigskip
-%             \begin{subfigure}[b]{0.8000\textwidth} % 8/10
-%                 \centering
-%                 \includegraphics[width=0.7500\textwidth]{Figures/PDF/SparseFormats/HYB.pdf} % 6/8
-%                 \caption{\textbf{HYB}: \emph{(U, CP) row-maj., CP$^{2}$}}
-%                 \label{fig:FormatEx:HYB}
-%             \end{subfigure}
-%         \end{subfigure}
-%         \hfill
-%         \begin{subfigure}[b]{0.5862\textwidth} % 17/29
-%             \centering
-%             \begin{subfigure}[t]{0.9412\textwidth} % 16/17
-%                 \centering
-%                 \includegraphics[width=\textwidth]{Figures/PDF/SparseFormats/BCSR.pdf}
-%                 \caption{\textbf{BCSR}: \emph{(UOP, CP, U$^{2}$) row-maj.}}
-%                 \label{fig:FormatEx:BCSR}
-%             \end{subfigure}
-%             \par\bigskip
-%             \begin{subfigure}[t]{0.9412\textwidth} % 16/17
-%                 \centering
-%                 \includegraphics[width=\textwidth]{Figures/PDF/SparseFormats/DIA2.pdf}
-%                 \caption{\textbf{DIA}: \emph{(CP, U) diagonal-maj.}}
-%                 \label{fig:FormatEx:DIA2}
-%             \end{subfigure}
-%             \par\bigskip
-%             \begin{subfigure}[t]{0.5882\textwidth} % 10/17
-%                 \centering
-%                 \includegraphics[width=\textwidth]{Figures/PDF/SparseFormats/DIA1.pdf}
-%                 \caption{\textbf{DIA}: \emph{(CP, UOP, CP) diagonal-maj.}}
-%                 \label{fig:FormatEx:DIA1}
-%             \end{subfigure}
-%         \end{subfigure}
-%     \end{subfigure}
-%     \caption{An Example of a Sparse Matrix Stored in Several Compressed Formats (every cell corresponds to a word in memory, including those which are empty).}
-%     \label{fig:FormatEx}
-% \end{figure}
-
-% The nomenclature from~\cite{Wu2022_SparseLoop} is more precise than the common format names. For example, the \acrshort{dia} format describes the principle of storing the values around the diagonal, that is an outer level of \emph{(CP, ...)} that is \emph{diagonal-major}. However, the values along the diagonals could themselves be stored in a dense or \gls{spFormat}. If the diagonals are dense, this corresponds to \emph{(CP, U)}~\cite{Chou2018_COO_CSR_DIA_ELL_HASH}, as shown in Figure~\ref{fig:FormatEx:DIA2}. If the diagonals are stored with a \acrshort{csr} like storage, then it would be referred to as \emph{(CP, UOP, CP)}, as shown in Figure~\ref{fig:FormatEx:DIA1}. Other variants of \acrshort{dia} are also possible, for example, in \cite{Barrett1994_CSR_BCSR_DIA_ELL, Saad2003_COO_CSR_DIA_ELL, Bell2009_HYB} they propose to store the diagonals in a dense, \emph{column-major} two-dimensional table which corresponds to \emph{(CP, U, U)}.
-
-\newpage
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Other Accelerators of SoA
-
-\addtocounter{appendCnt}{1}
-\section{Extended Overview of the State-of-the-Art Accelerators for Sparse Computing}
-\label{app:soa_acc}
-
-TODO
-
-\newpage
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Matrix List
 
 \addtocounter{appendCnt}{1}
@@ -493,37 +175,46 @@ We also indicate which evaluations use each matrix (Python or \acrshort{rtl}; th
 \newpage
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Analytical Model
-
-\addtocounter{appendCnt}{1}
-\section{Analytical Model of a \emph{Reduction Cache} Computing an \algo{OP} SpMV Kernel}
-\label{app:analytic_model}
-
-TODO
-
-\newpage
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Python Model
-
-\addtocounter{appendCnt}{1}
-\section{Python Model of a Data-Cache with Support for \emph{Reductions}}
-\label{app:python_model}
-
-TODO
-
-\newpage
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Statistics
 
 \addtocounter{appendCnt}{1}
-\section{Statistics}
+\section{Thesis Statistics}
 \label{app:stats}
 
-TODO (get infos before end of contract)
+\lettrine{T}{o} provide insight into the scope and duration of this thesis work, we present statistics and key information in this appendix.
+The work spanned multiple repositories managed through Git version control.
 
-(commits, nb. of lines, bugs, timeline -> into figures?)
+During the first year and a half, extensive exploration was conducted using Python scripts, culminating in the Python model. This work was maintained in the \textit{Python Script} repository.
+The second half focused on the \acrshort{rtl} implementation, distributed across several repositories: \textit{SpDCache RTL} containing the core \acrshort{rtl} implementation, \textit{CVA6 RTL} with modifications to the CVA6 RISC-V core for \acrlong{spdc}'s new instructions, \textit{RTL Platform} providing the compilation and simulation environment, and \textit{Software} containing C programs for the \acrlong{op} \acrshort{spmv} kernel.
+In parallel, the \textit{Benchmarks} repository was developed for efficient benchmarking and performance evaluation, contributed by student Jules DUBOIS during an internship (ORCID: 0009-0006-3165-3372).
+
+Throughout the project, several publications were produced: a state-of-the-art survey~\ref{publ:SoA}, initial \acrlong{spdc} results~\ref{publ:SpDC}, a patent covering the development concepts around \acrlong{spdc}, a paper on the \acrshort{rtl} implementation and analytical model (currently under resubmission), and this manuscript.
+Figure~\ref{fig:app:stats:commits} illustrates the timeline of all commits across each repository.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{PreAndPostSections/Figures/PDF/Stats_Commits.pdf}
+    \caption{Timeline of Commits Across All Working Repositories and Publications}
+    \label{fig:app:stats:commits}
+\end{figure}
+
+To provide a sense of the work delivered, we present the number of new lines of code for each repository (excluding papers) after final modifications.
+Additionally, Figure~\ref{fig:app:stats:languages} shows the programming language distribution across each repository.
+\begin{itemize}
+    \item \textit{Python Scripts}: 18,590 lines;
+    \item \textit{SpDCache RTL}: 5,808 lines (33,696 $\to$ 39,504 total);
+    \item \textit{CVA6 RTL}: 255 lines (36,623 $\to$ 36,878 total);
+    \item \textit{RTL Platform}: 56 lines (6,156 $\to$ 6,212 total);
+    \item \textit{Software}: 1,554 lines;
+    \item \textit{Benchmarks}: 7,642 lines.
+\end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{PreAndPostSections/Figures/PDF/Stats_Languages.pdf}
+    \caption{Programming Language Distribution Across All Working Repositories}
+    \label{fig:app:stats:languages}
+\end{figure}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
