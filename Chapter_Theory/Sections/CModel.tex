@@ -16,7 +16,7 @@ By counting the \glspl{eviction}, we evaluate the output memory traffic, the mem
 We can thus predict the total number of memory accesses for different types of matrices and quickly explore different \gls{redC} configurations.
 
 We do not consider the sequential accesses to the input matrix $A$ and vector $b$ in our model.
-Indeed, the matrix tables $\mathit{val}$, $\mathit{idx}$ and $\mathit{ptr}$, and the vector $b$ are each read once, giving a total memory traffic of $2\mathit{nnz} + (M+1) + M$ elements.
+Indeed, the matrix tables $\mathit{val}$, $\mathit{idx}$ and $\mathit{ptr}$, and the vector $b$ are each read once, giving a total memory traffic of $2 \times \mathit{nnz} + (M+1) + M$ elements.
 We showed in the previous section that a simple generic cache of reasonable size is sufficient to minimize the associated memory traffic.
 
 Our model uses the cache configuration parameters $S$, $W$ and $l$.
@@ -117,7 +117,7 @@ After the last iteration, we account for the memory transactions required to flu
 $\mathit{nbFlush}$ will never exceed \mbox{$S \times W$}.
 
 In a \gls{redC}, \glspl{eviction} and flushes result in a line-wise memory read, a modification, and a line-wise memory write.
-The update memory traffic is $2 l (\mathit{nbEvict} + \mathit{nbFlush})$ elements, and $\mathit{normMT}$ is this value divided by $nnz$.
+The update memory traffic is $2 \times l \times (\mathit{nbEvict} + \mathit{nbFlush})$ elements, and $\mathit{normMT}$ is this value divided by $nnz$.
 
 \begin{highlight}{Conclusion}{Red}
     We have presented a \textbf{hybrid probabilistic/fast simulation analytical model} for a \gls{redC}, processing \acrshort{op} \acrshort{spmv}, which predicts the volume of memory traffic issued by the L1 cache, starting from a \textbf{matrix density distribution} and a \textbf{cache configuration}.

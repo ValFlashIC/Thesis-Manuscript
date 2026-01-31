@@ -100,7 +100,7 @@ In the next sections, we extend this analysis to \gls{banded} matrices, studying
 
 We now apply the analytical model of Section~\ref{sec:theory:model} to study the performance of a \gls{redC} for \gls{banded} matrices, processing an \acrshort{op} \acrshort{spmv} kernel ($A \times b = c$).
 We consider \gls{banded} matrices of dimension $M = 1000$, with a half-\gls{band} of size $w_\mathit{hB} = 125$ and an in-\gls{band} density $d_\mathit{IB} = 1$.
-We analyse a 4-way set-associative cache ($W = 4$) with a cache-line size of $l = 8$ elements, with a \textit{random} \gls{eviction} policy.
+We analyse a 4-way \gls{set}-associative cache ($W = 4$) with a cache-line size of $l = 8$ elements, with a \textit{random} \gls{eviction} policy.
 The size of the cache varies from $S = 1$ to $S = 32$ \textit{sets}.
 When the cache-size reaches $S = 32$, the cache can hold the full output vector: $S \times W \times l \geqslant M$.
 We developed a C program which implements the hybrid probabilistic-fast simulation model and in Figure~\ref{fig:theory:theory_traffic_vs_d_ob}, we plot the normalized memory traffic, $\mathit{normMT}$, for the output vector $c$, depending on the out-of-\gls{band} density $d_\mathit{OB}$, for varying cache-sizes.
@@ -153,7 +153,7 @@ For the type of large matrices under study, there are usually too many non-zero 
 Therefore, the size of the cache for the out-of-\gls{band} is not as important as the choice of associativity and data granularity.
 To justify this affirmation, we use the analytical model from Section~\ref{sec:theory:model} to analyse the performance of the \gls{redC} when processing only the non-zero elements outside of the \gls{band}.
 As we have already discussed the handling of the in-\gls{band} region, we now consider only the out-of-\gls{band} elements, which is equivalent to setting the in-\gls{band} density to $d_\mathit{IB} = 0$.
-Using the same matrix parameters as in the previous section, we explore different choices of cache-line size ($l \in \{1, 8\}$ elements), associativity (set-associative or fully-associative), memory transaction type (\textit{R/W} or \acrshort{rmw}), and total cache-size ($s_C \in \{128, 256\}$ elements).
+Using the same matrix parameters as in the previous section, we explore different choices of cache-line size ($l \in \{1, 8\}$ elements), associativity (\gls{set}-associative or fully-associative), memory transaction type (\textit{R/W} or \acrshort{rmw}), and total cache-size ($s_C \in \{128, 256\}$ elements).
 Because the out-of-\gls{band} data is highly sparse, we want to explore having an element-wise cache ($l = 1$) instead of the typical line-wise cache ($l = 8$).
 As this cache region can be relatively small, a fully-associative configuration ($S = 1$, $l = 1$) is reasonable in terms of hardware implementation, and this full associativity enables more efficient storage of the data elements.
 Indeed, when dealing with sparse elements, it is wasteful to bring a full line into the cache to only modify one element and then evict it, which we denote as \textit{R/W}.
@@ -172,7 +172,7 @@ In Figure~\ref{fig:theory:theory_OBtraffic_vs_d_OB}, we plot $\mathit{normMT}$ f
     \label{fig:theory:theory_OBtraffic_vs_d_OB}
 \end{figure}
 
-Let us start by considering a classic set-associative cache with a line-wise memory interface (\textit{solid blue}, \textit{dot}), where we see a dependence of $\mathit{normMT}$ on $d_\mathit{OB}$ on the right of the graph ($d_\mathit{OB} \geqslant \frac{1}{l}$).
+Let us start by considering a classic \gls{set}-associative cache with a line-wise memory interface (\textit{solid blue}, \textit{dot}), where we see a dependence of $\mathit{normMT}$ on $d_\mathit{OB}$ on the right of the graph ($d_\mathit{OB} \geqslant \frac{1}{l}$).
 Indeed, we observe the same behavior as in Section~\ref{sec:theory:graph1}, where the cache behavior approaches that seen for a dense matrix.
 
 Looking at the plot for the fully-associative cache with a line-wise memory interface (\textit{solid green}, \textit{square}), we see that the normalized traffic is not impacted by the density of the out-of-\gls{band}, as expected.
@@ -250,7 +250,7 @@ We thus validate the proposition to divide the available cache memory into two d
 
 To obtain the efficient rotating pattern for the in-\gls{band} region, which is the key to massively reducing memory traffic, Equation~\ref{eq:theory:in_band_cond} must be respected.
 In practice, this defines the size of the \gls{band} that can be allocated to the in-\gls{band} cache region.
-As we have seen, this cache region can operate efficiently with a set-associative line-wise configuration, on a wide range of in-\gls{band} densities.
+As we have seen, this cache region can operate efficiently with a \gls{set}-associative line-wise configuration, on a wide range of in-\gls{band} densities.
 
 For the out-of-\gls{band} region, a fully-associative element-wise cache with an element-wise memory interface can significantly reduce the memory traffic.
 
@@ -265,6 +265,6 @@ Indeed, if the non-zero elements are clumped, the cache-lines tend to be better 
 In other words, our uniform assumption leads to a pessimistic prediction of memory traffic.
 
 \begin{highlight}{Conclusion}{Red}
-    To minimize memory traffic when processing \gls{banded} matrices with a \gls{redC}, it is important to \textbf{divide} the cache into two dedicated regions: (1) an \textbf{in-\gls{band} region} dedicated to a \gls{band} in the matrix whose size respects the relationship in Equation~\ref{eq:theory:in_band_cond}, and configured as a \textbf{set-associative line-wise} cache, and (2) an \textbf{out-of-\gls{band} region} configured as a \textbf{fully-associative element-wise} cache with an \textbf{element-wise memory interface}.
+    To minimize memory traffic when processing \gls{banded} matrices with a \gls{redC}, it is important to \textbf{divide} the cache into two dedicated regions: (1) an \textbf{in-\gls{band} region} dedicated to a \gls{band} in the matrix whose size respects the relationship in Equation~\ref{eq:theory:in_band_cond}, and configured as a \textbf{\gls{set}-associative line-wise} cache, and (2) an \textbf{out-of-\gls{band} region} configured as a \textbf{fully-associative element-wise} cache with an \textbf{element-wise memory interface}.
     The \textbf{out-of-\gls{band} region} should be made as large as practical, as it has a greater impact on memory traffic than enlarging the in-\gls{band} region.
 \end{highlight}

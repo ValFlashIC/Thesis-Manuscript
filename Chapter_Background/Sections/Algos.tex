@@ -21,7 +21,7 @@ Indeed, in many cases, they have to be accessed multiple times, as discussed in 
 
 \begin{highlight}{Note}{SkyBlue}
     In this manuscript, we focus on only two kernels, \acrshort{spmv} and \acrshort{spmspm}.
-    Note that, among \acrshort{mv} kernels, \acrshort{spmv} is the most used and we specifically work on this kernel in Chapter~\ref{cha:eval}.
+    Note that, among \acrshort{mv} kernels, \acrshort{spmv} is the most used and we specifically work on this kernel from Chapter~\ref{cha:spdc}.
     \acrshort{spmspm} is also widely used and studying this \acrshort{mm} kernel is of interest as the memory access patterns in both matrices are irregular.
 
     The \emph{general} (`GE') version of these kernels is not fundamentally different, as the majority of the compute operations are in the matrix multiplication, so going forward, we will ignore the `GE' variants.

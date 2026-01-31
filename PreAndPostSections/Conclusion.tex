@@ -10,17 +10,7 @@
 \chapter*{\sectitle}
 \addstarredchapter{\sectitle}
 
-\minitoc
-
-\newcounter{concluCnt}
-\setcounter{concluCnt}{0}
-\renewcommand{\thesection}{\arabic{concluCnt}}
-
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Conclu 1
-
-\addtocounter{concluCnt}{1}
-\section{TODO}
 
 \lettrine{I}{n} this thesis, we addressed the central question of \colorbf{Mulberry}{how hardware and architectural mechanisms can be designed to efficiently support computation with sparse data, while ensuring scalability, adaptability, and high performance across diverse workloads}.
 Our approach focused on the challenges posed by irregular memory access patterns in sparse matrix computations, particularly in the context of the \textbf{\acrfull{op} \acrfull{spmv}} kernel.
@@ -36,98 +26,70 @@ This work also demonstrated how \textbf{simple yet targeted modifications} to ca
 While our approach has limitations, such as the absence of a full evaluation on multi-level, multi-core systems and the early-stage refinement of \acrlong{spdc}, we intentionally focused on \textbf{precision and conceptual clarity} over raw performance metrics.
 This emphasis on intrinsic understanding, rather than merely achieving impressive results, offers a more meaningful response to our central question and addresses a gap often overlooked in existing accelerator research.
 
-\subsection*{Summary of Contributions}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Summary of Contributions}
 
 \paragraph*{Chapter~\ref{cha:background}. Analysis of Sparse Data Computing}
 
 We established a foundational understanding of sparse matrices, their storage formats, and the hardware challenges associated with their computation.
-Our analysis of \textbf{\acrfull{ip}, \acrfull{op}, and \acrfull{gust}} algorithms revealed that \acrshort{op} and \acrshort{gust} are the most promising for hardware acceleration, particularly due to their potential for parallelism and data reuse.
-We identified \textbf{\gls{gather} (\gls{intersection} searches)} and \textbf{\gls{scatter} (``random'' \glspl{reduction})} as the two core challenges in sparse matrix processing, which guided our subsequent architectural choices.
+Our analysis of \acrfull{ip}, \acrfull{op}, and \acrfull{gust} algorithms revealed that \acrshort{op} and \acrshort{gust} are the most promising for hardware acceleration, particularly due to their potential for parallelism and data reuse.
+We identified \gls{gather} (\gls{intersection} searches) and \gls{scatter} (``random'' \glspl{reduction}) as the two core challenges in sparse matrix processing, which guided our subsequent architectural choices.
 
 \paragraph*{Chapter~\ref{cha:soa}. Survey and Classification of State-of-the-Art Accelerators}
-We conducted a comprehensive review of recent hardware accelerators for sparse matrix computations, categorizing them based on **autonomy, memory hierarchy position, algorithm compatibility, and hardware support for gather/scatter operations**. Our comparative analysis highlighted that **Gustavson-based accelerators** often achieve the best performance due to their balanced approach to input reuse and output generation. This survey informed the design of **SpDCache**, positioning it as a **processor-assist, near-cache accelerator** optimized for **OP SpMV kernels**.
 
-\paragraph*{Chapter~\ref{cha:spdc}. Design of SpDCache for "Random" Reductions}
-We introduced **SpDCache**, a **region-based reduction cache** that partitions memory into **In-Band (IBR) and Out-of-Band (OBR) regions** to optimize handling of both dense and sparse data. Our **Python-based simulation model** demonstrated that SpDCache significantly reduces memory traffic compared to generic caches, particularly for **banded matrices**. The architecture’s **virtual partitioning** and **reduction support** enable efficient management of irregular updates, addressing the scatter problem inherent in OP algorithms.
+We conducted a comprehensive review of recent hardware accelerators for sparse matrix computations, categorizing them based on autonomy, memory hierarchy position, algorithm compatibility, and hardware support for \gls{gather}/\gls{scatter} operations.
+Our comparative analysis highlighted that \acrlong{gust}-based accelerators often achieve the best performance due to their balanced approach to input reuse and output generation.
+This survey informed the design of \acrlong{spdc}, positioning it as a \textit{processor-assist}, near-cache accelerator optimized for \acrshort{op} \acrshort{spmv} kernels.
+
+\paragraph*{Chapter~\ref{cha:spdc}. Design of \acrlong{spdc} for ``Random'' \Glspl{reduction}}
+
+We introduced \acrlong{spdc}, a region-based \gls{redC} that partitions memory into in-\gls{band} (\acrshort{ibr}) and out-of-\gls{band} (\acrshort{obr}) regions to optimize handling of both dense and sparse data.
+Our Python-based simulation model demonstrated that \acrlong{spdc} significantly reduces memory traffic compared to generic caches (4.1$\times$).
+The cache region partitioning and \gls{reduction} support enable efficient management of irregular updates, addressing the \gls{scatter} problem inherent in \acrshort{op} algorithms.
 
 \paragraph*{Chapter~\ref{cha:theory}. Probabilistic Modeling and Exploration of Cache Behavior}
-We developed a **hybrid probabilistic and analytical model** to simulate SpDCache’s behavior during OP SpMV operations. This model allowed us to explore how different cache configurations impact memory traffic, particularly for **banded matrices**. Our analysis revealed **two distinct groups of matrices** based on their **fine-grain structure**, as measured by the **$d_{CD}$ metric** (density of non-zero elements in the central diagonal region). This distinction underscores the importance of **adapting cache regions** to the specific structure of the input matrices.
 
-\paragraph*{Chapter~\ref{cha:arch}. Microarchitecture and RTL Evaluation}
-We detailed the **microarchitectural implementation of SpDCache**, featuring **three dedicated regions: Generic Region Cache (GRC), Dense Region Cache (DRC), and Sparse Region Table (SRT)**. Our **RTL simulations** validated the architecture’s effectiveness, showing **significant reductions in memory traffic** and **improved cache utilization**. The results confirmed that SpDCache efficiently handles both **coarse-grain** (region-based partitioning) and **fine-grain** (matrix structure-dependent) optimizations, making it adaptable to a wide range of sparse matrices.
+We developed a hybrid probabilistic and analytical model to simulate \acrlong{spdc}'s behavior during \acrshort{op} \acrshort{spmv} operations.
+This model allowed us to explore how different cache configurations impact memory traffic, particularly for \gls{banded} matrices.
+Our findings demonstrated that a fully-associative table of moderate size, dedicated to handling isolated elements, is sufficient to substantially reduce memory traffic while allowing the remainder of the cache to operate at peak efficiency on dense data.
+
+\paragraph*{Chapter~\ref{cha:arch}. Microarchitecture and \acrshort{rtl} Evaluation}
+
+We detailed the microarchitectural implementation of \acrlong{spdc}, featuring three dedicated regions: \acrfull{grc}, \acrfull{drc}, and \acrfull{srt}, all virtually separated in the cache memory.
+Our \acrshort{rtl} simulations validated the architecture's effectiveness, showing significant reductions in memory traffic (3.9$\times$) and improved cache utilization.
+Our analysis revealed two distinct groups of matrices based on their fine-grain structure.
+This distinction underscores the importance of adapting cache regions to the specific structure of the input matrices.
 
 \paragraph*{Chapter~\ref{cha:optim}. Optimizations and Future Directions}
-We explored **RTL-level optimizations** to refine SpDCache’s performance, including **multi-core integration** and **extensions to SpMSpM kernels**. These enhancements position SpDCache as a **scalable, versatile solution** for modern sparse matrix processing systems. Our findings lay the groundwork for future research in **high-performance, energy-efficient architectures** for sparse data computations, with a focus on **bandwidth efficiency** and **adaptability to diverse workloads**.
 
----
+We explored \acrshort{rtl}-level optimizations for \acrlong{spdc}, including multi-core integration and extensions to sparse \acrshort{mm} kernels.
+These enhancements position \acrlong{spdc} as a scalable, easy-to-use, versatile solution for modern sparse matrix processing systems.
 
-\subsection*{Key Results and Insights}
+\bigskip
+\begin{highlight}{Key Results and Insights}{Mulberry}
+    \colorbf{Mulberry}{Algorithmic Choice:}
+    \acrlong{op} and \acrlong{gust}'s algorithms are the most effective for hardware acceleration, with \textbf{\acrlong{gust} offering the best trade-off} for sparse \acrlong{mm} kernels on \textit{standalone} accelerators.
+    Recent advances in \textbf{hybrid algorithmic approaches} that adaptively mix sparse matrix algorithms are emerging as \textbf{high-performance solutions}, suggesting a promising direction for future accelerator designs.
 
-- **Algorithmic Choice:** OP and Gust algorithms are the most effective for hardware acceleration, with **Gustavson offering the best trade-off** for SpMSpM kernels.
-- **Cache Optimization:** SpDCache’s **region-based partitioning** and **reduction support** significantly reduce memory traffic, particularly for matrices with **structured sparsity** (e.g., banded matrices).
-- **Fine-Grain Structure Matters:** The **$d_{CD}$ metric** revealed two distinct matrix groups, highlighting the need for **adaptive cache configurations** tailored to matrix structure.
-- **Scalability and Usability:** SpDCache’s **multi-core extensions** and **optimizations for SpMSpM** demonstrate its potential for **scalable, high-performance sparse matrix processing**.
+    \bigskip
+    \colorbf{Mulberry}{Cache Optimization:}
+    \acrlong{spdc}'s \textbf{region-based partitioning} and \textbf{reduction support} significantly reduce memory traffic, particularly for matrices with \textbf{structured sparsity} (\eg \gls{banded} matrices), while maintaining \textbf{low implementation overhead}.
 
----
+    \bigskip
+    \colorbf{Mulberry}{Fine-Grain Structure Matters:}
+    The \textbf{\textit{d\textsubscript{cd}} metric} revealed two distinct matrix groups based on their local cache-line densities, highlighting the need for \textbf{adaptive cache configurations} tailored to matrix structure.
 
-\subsection*{Future Work}
+    \bigskip
+    \colorbf{Mulberry}{Scalability and Usability:}
+    \acrlong{spdc}'s \textbf{multi-core extensions} and \textbf{optimizations for \acrshort{spmspm}} demonstrate its potential for \textbf{scalable, high-performance sparse matrix processing}, while maintaining \textbf{versatility and ease of use}.
+\end{highlight}
 
-While SpDCache advances the state-of-the-art in cache architectures for sparse data, several avenues remain for future exploration:
-- **Multi-Level Cache Hierarchies:** Extending SpDCache to **multi-level cache systems** could further improve performance for large-scale applications.
-- **Dynamic Region Sizing:** Implementing **runtime-adaptive region sizing** based on matrix structure could enhance flexibility and efficiency.
-- **Integration with Emerging Technologies:** Exploring SpDCache’s compatibility with **in-memory computing** and **processing-in-memory (PIM)** architectures may unlock new performance gains.
-- **Broader Application Domains:** Evaluating SpDCache in **graph analytics, deep learning, and scientific computing** could demonstrate its versatility across diverse sparse workloads.
-
----
-
-\subsection*{Final Thoughts}
-
-This thesis contributes a **novel, reduction-aware cache architecture** that bridges the gap between theoretical insights and practical hardware implementations for sparse matrix computing. By addressing the challenges of **irregular memory accesses** and **efficient data reuse**, SpDCache provides a **scalable, adaptable solution** for modern computational demands. As sparse data continues to grow in importance across scientific, machine learning, and graph analytics applications, architectures like SpDCache will play a critical role in enabling **high-performance, energy-efficient processing** of these challenging workloads.
-
-
-%%%%%%%%%%%%%%%
-
-
-
-
-
-
-
-
-
-Our contributions include:
-- **A comprehensive analysis of sparse matrix algorithms and hardware challenges**, highlighting the inefficiencies of traditional caches in handling irregular accesses and reductions.
-- **The design and evaluation of SpDCache**, which partitions memory into **In-Band (IBR) and Out-of-Band (OBR) regions** to efficiently manage both dense and sparse data, significantly reducing memory traffic compared to generic caches.
-- **Theoretical and probabilistic modeling** to analyze cache behavior, revealing the importance of **fine-grain matrix structure** (measured by the $d_{CD}$ metric) in optimizing performance.
-- **Microarchitectural implementation and RTL simulations**, validating SpDCache’s effectiveness in reducing memory traffic and improving cache utilization, while identifying two distinct groups of matrices with different performance profiles.
-- **Optimizations and extensions** for multi-core systems and SpMSpM kernels, positioning SpDCache as a scalable solution for modern sparse matrix processing.
-
-However, our work has some limitations:
-- **Single-core, single-cache level focus**: Our evaluation was constrained to a single-core, single-cache level system, which limits raw performance compared to more complex, multi-level, or multi-core architectures.
-- **Uniformity assumptions**: The analytical model assumes a uniform distribution of non-zero elements, which may not always reflect real-world matrix structures, potentially affecting performance predictions.
-- **Hardware complexity**: The fully-associative nature of the Sparse Region Table (SRT) and specialized eviction policies introduce hardware complexity, which could impact scalability and implementation costs.
-- **RTL implementation optimization**: The current RTL implementation is a first iteration and could be further refined, as some features are still missing or not fully optimized.
-
-While SpDCache advances the state-of-the-art in cache architectures for sparse data, future work could explore **multi-level cache hierarchies, dynamic region sizing, and integration with emerging technologies** like in-memory computing to further enhance performance and scalability. Additionally, broader application domains, such as graph analytics and deep learning, could be investigated to demonstrate SpDCache’s versatility across diverse sparse workloads.
-
-
-% \subsection{A Section}
-
-% \subsubsection{A Subsection}
-
-% \lipsum[3]
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Conclu 2
-
-% \addtocounter{concluCnt}{1}
-% \section{Second element}
-
-% \lipsum[1-5]
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
+\bigskip
+\begin{highlight}{Final Thoughts}{Red}
+    This thesis contributes a \colorbf{Red}{novel, reduction-aware cache architecture} that bridges the gap between theoretical insights and practical hardware implementations for sparse matrix computing.
+    By addressing the challenges of \colorbf{Red}{irregular memory accesses} and \colorbf{Red}{efficient data reuse}, \acrlong{spdc} provides a \colorbf{Red}{scalable, adaptable solution} for modern computational demands.
+    As sparse data continues to grow in importance across scientific, machine learning, and graph analytics applications, architectures like \acrlong{spdc} will play a critical role in enabling \colorbf{Red}{high-performance, energy-efficient processing} of these challenging workloads.
+\end{highlight}
 
 \cleardoublepage %% Comment this line if this section occupies the last pages
 % \adjustmtc %% Commented for the appendices minitoc to not disappear

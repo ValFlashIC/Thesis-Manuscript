@@ -123,7 +123,7 @@ Regardless, fair benchmarking must consider the costs associated with specialize
         IOPS~\cite{Sun2025_IOPS}                    & $\varnothing$ / Entirely evaluated through RTL implementation / $\varnothing$                                        & 10               & $\sim$77~KiB \\
         DMSA~\cite{Nagahara2025_DMSA}               & $\varnothing$ / Evaluated on \acrshort{fpga} / $\varnothing$                                                         & 10               & $\sim$22~MiB \\
         %
-        * Mainly for \textit{processor assist} accelerators.
+        * Mainly for \textit{processor-assist} accelerators.
     \end{tblr}
 \end{table}
 
@@ -140,7 +140,7 @@ Few are closer from the bottom-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}
 
 The accelerators performance are reported as a speedup versus a baseline, which may differ according to their hardware and software platforms: typically the Intel MKL library~\cite{Intel2003_IntelMKL}, the Armadillo library~\cite{Conrad2016_Armadillo}, SparseBLAS~\cite{Duff2002_SparseBLAS} for CPUs, or GridGraph~\cite{Zhu2015_GridGraph}, Gunrock~\cite{Wang2016_Gunrock} and GraphMat~\cite{Sundaram2015_GraphMat} specifically for graphs on CPUs, or cuSPARSE~\cite{NVIDIA2014_cuSPARSE} and CUSP~\cite{Dalton2014_Cusp} for GPUs.
 Since different baselines with different numbers of threads and cores are used, these speedups need to be interpreted with care.
-The speedups are in general higher for the \textit{standalone} accelerators as they provide optimized hardware for the entire kernel, while \textit{processor assist} accelerators have less impressive speedups but aim to be general purpose and have lower area overhead.
+The speedups are in general higher for the \textit{standalone} accelerators as they provide optimized hardware for the entire kernel, while \textit{processor-assist} accelerators have less impressive speedups but aim to be general purpose and have lower area overhead.
 
 The only accelerators that have a comparable baseline are some of the \textit{standalone} ones addressing sparse \acrshort{mm} kernels.
 They all compare themselves to OuterSPACE with the same benchmark matrices, so we can sort them by their speedup: SPAGHETTI (13$\times$), Gamma (6.6$\times$), InnerSP (4.6$\times$), SpArch (4.0$\times$), SIGMA (3.0$\times$), IOPS (2.9$\times$), MatRaptor (1.8$\times$), Alrescha (1.7$\times$), MOSCON (1.1$\times$), OuterSPACE (1$\times$).
@@ -168,7 +168,7 @@ While this flexibility for \textit{standalone} accelerators increases hardware c
 These findings validate that the model presented in Section~\ref{sec:bg:AnalyticalModel} provides valuable insights into local memory requirements for sparse \acrshort{mm} accelerators.
 
 \begin{highlight}{Conclusion}{Red}
-    This comparative analysis of state-of-the-art sparse matrix accelerators reveals that \textbf{\acrlong{gust}'s algorithm is the most effective for high-performance} when coupled with \textit{standalone} hardware implementations, \textbf{followed by \acrlong{op}} which is particularly leveraged in \textit{processor assist} designs, with \acrlong{ip} showing competitive results in specific cases, highlighting the importance of algorithmic adaptability and tailored memory hierarchies in optimizing sparse computations.
+    This comparative analysis of state-of-the-art sparse matrix accelerators reveals that \textbf{\acrlong{gust}'s algorithm is the most effective for high-performance} when coupled with \textit{standalone} hardware implementations, \textbf{followed by \acrlong{op}} which is particularly leveraged in \textit{processor-assist} designs, with \acrlong{ip} showing competitive results in specific cases, highlighting the importance of algorithmic adaptability and tailored memory hierarchies in optimizing sparse computations.
 \end{highlight}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -188,8 +188,8 @@ The former is preferable if performance must be maximized, requiring a \textit{s
     \label{fig:soa:taxonomy}
 \end{figure}
 
-A \textit{general purpose accelerator} can either take the form of a highly configurable \textit{standalone} block (\eg OuterSPACE, ExTensor, SPU and GAS) or a \textit{processor assist} that boosts performance for a specific task (\eg ExTensor bricks, PHI, SPiDRE, SortCache, ASA, SSSR and SpDCache).
-With a \textit{processor assist} (rightmost branch in the figure), the processor still performs important parts of the kernel, typically the multiplications, but off-loads the \gls{gather} or \gls{scatter} tasks to the accelerator, as these are the tasks which are the bottleneck with a traditional cache hierarchy.
+A \textit{general purpose accelerator} can either take the form of a highly configurable \textit{standalone} block (\eg OuterSPACE, ExTensor, SPU and GAS) or a \textit{processor-assist} that boosts performance for a specific task (\eg ExTensor bricks, PHI, SPiDRE, SortCache, ASA, SSSR and SpDCache).
+With a \textit{processor-assist} (rightmost branch in the figure), the processor still performs important parts of the kernel, typically the multiplications, but off-loads the \gls{gather} or \gls{scatter} tasks to the accelerator, as these are the tasks which are the bottleneck with a traditional cache hierarchy.
 For example, for an \acrshort{ip} algorithm, the difficult part of the \gls{gather} task is performing the \glspl{intersection} (\eg the ExTensor bricks, SPiDRE and SSSR).
 Conversely, with \acrshort{op} or \acrshort{gust}, the challenge with the \gls{scatter} is to efficiently perform \glspl{reduction} (\eg PHI, SortCache, ASA and SpDCache).
 Finally, the designer must decide whether the storage is done by reusing existing memory resources (\eg PHI, SPiDRE, SortCache and SpDCache) or through custom caches and memories.
@@ -206,5 +206,5 @@ First, the starting point needs to be defined: some accelerators require softwar
 The cost of such preprocessing can be high, and is usually only justified if the same matrix is reused multiple times.
 
 \begin{highlight}{Conclusion}{Red}
-    This analysis provides a structured decision-making framework for designers, emphasizing that the choice between specialized (\textit{standalone}) and general-purpose (\textit{processor assist}) accelerators \textbf{depends on performance needs, area constraints, and problem-specific requirements}, with algorithm selection (\eg \acrlong{gust} for sparse \acrshort{mm}, \acrlong{op} for sparse \acrshort{mv}) and memory optimization strategies playing pivotal roles in tailoring solutions to diverse sparse computing challenges.
+    This analysis provides a structured decision-making framework for designers, emphasizing that the choice between specialized (\textit{standalone}) and general-purpose (\textit{processor-assist}) accelerators \textbf{depends on performance needs, area constraints, and problem-specific requirements}, with algorithm selection (\eg \acrlong{gust} for sparse \acrshort{mm}, \acrlong{op} for sparse \acrshort{mv}) and memory optimization strategies playing pivotal roles in tailoring solutions to diverse sparse computing challenges.
 \end{highlight}

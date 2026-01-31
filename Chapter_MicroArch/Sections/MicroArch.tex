@@ -6,8 +6,8 @@
 \section{SpDCache Microarchitecture}
 \label{sec:arch:microarch}
 
-\lettrine{S}{pDCache} is implemented as an L1 data cache for a CVA6 RISC-V core, building upon an existing open-source high-performance set-associative data cache known as HPDcache~\cite{Fuguet2023_HPDcache}, fully implemented in \acrshort{rtl} with SystemVerilog.
-In contrast to previous RISC-V data caches, HPDcache introduces new features, including buffering techniques for memory writes, set-associative storage to manage read \gls{miss} requests, and dynamic configurability of each cache-line to operate in either write-back or write-through modes.
+\lettrine{S}{pDCache} is implemented as an L1 data cache for a CVA6 RISC-V core, building upon an existing open-source high-performance \gls{set}-associative data cache known as HPDcache~\cite{Fuguet2023_HPDcache}, fully implemented in \acrshort{rtl} with SystemVerilog.
+In contrast to previous RISC-V data caches, HPDcache introduces new features, including buffering techniques for memory writes, \gls{set}-associative storage to manage read \gls{miss} requests, and dynamic configurability of each cache-line to operate in either write-back or write-through modes.
 It is designed for high performance, utilizing a three-stage \gls{pipeline} to handle multiple instructions while minimizing stalls through out-of-order cache execution.
 The CPU can issue multiple types of read and write requests to the cache including atomic operations (AMOs), cache management operations (\acrshortpl{cmo}) as well as the new \gls{reduction} operation (\acrshort{red}) introduced by \acrlong{spdc}.
 In this way, we can say that HPDCache and \acrlong{spdc} executes ``instructions'' which correspond to these different types of operations.
@@ -57,7 +57,7 @@ The changes to \acrlong{spdc} were done in a way such that, by simply changing p
 \subsection{RTL Implementation of SpDCache}
 \label{sec:arch:spdcache}
 
-We configure the original HPDcache as a 4-way set-associative cache with 128 \glspl{set} and 64-byte cache-lines, resulting in a total cache size of 32~KiB.
+We configure the original HPDcache as a 4-way \gls{set}-associative cache with 128 \glspl{set} and 64-byte cache-lines, resulting in a total cache size of 32~KiB.
 We extend the three-stage \gls{pipeline} to handle the new \acrshort{red} instruction ($\mathit{RED}(key, value)$).
 Figure~\ref{fig:arch:microarch} provides an overview of \acrlong{spdc}'s microarchitecture, highlighting new blocks in \textit{red}, modified blocks in \textit{blue}, and untouched components in \textit{black}.
 The overall architecture aligns with the design presented in Chapter~\ref{cha:spdc}, adapted here for hardware implementation.
@@ -82,7 +82,7 @@ It then accumulates the cache-line with the data, word by word, and sends the 64
 
 With the changes described above, we have transformed \mbox{HPDcache} into a \gls{redC}.
 To achieve multiple cache regions, we virtually separate the cache \acrshortpl{ram}.
-To maintain HPDcache's set-associative operation, we divide the cache memory along its \glspl{set}.
+To maintain HPDcache's \gls{set}-associative operation, we divide the cache memory along its \glspl{set}.
 Thus, each region of the cache has the same structure as the overall cache but is smaller in size: each \gls{set} contains a fixed number (the number of ways) of 64B cache-lines, as depicted in Figure~\ref{fig:arch:set_redirection}.
 Each region can thus map any possible address.
 To ensure that every address matches a unique \gls{set} within each region, we allocate a power-of-two number of consecutive \glspl{set} to a region.

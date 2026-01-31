@@ -12,6 +12,7 @@ In this section, we detail the major features and optimizations that are still t
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Floating-Point Support Implementation}
+\label{sec:optim:rtloptims:fp}
 
 The key focus of this thesis has been the structure on the non-zero elements in the matrix, however, the data-type of the matrices plays an important role in their storage footprint and the arithmetic complexity.
 Indeed, in scientific computing, matrices are primarily stored in double precision (64-bits) floating-point.
@@ -33,6 +34,7 @@ Our expectation is that the associated \acrshort{rtl} changes, while time-consum
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Region-Sizes Configuration}
+\label{sec:optim:rtloptims:config}
 
 One strength of \acrlong{spdc}'s \acrshort{rtl} implementation is its highly configurable design, inherited from the HPDcache implementation used as a foundation.
 This allowed us to develop a single \acrshort{rtl} codebase that could be compiled and simulated for multiple designs, \acrshort{gc}, \acrshort{redc}, and \acrshort{spdc}, each with different region size configurations.
@@ -56,6 +58,7 @@ A practical compromise would be to provide one or two predefined configurations 
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Hardware Calculation of Region and Band-Width}
+\label{sec:optim:rtloptims:regionInHW}
 
 \acrlong{spdc} evaluation shows that depending on matrix characteristics, the \acrshort{op} \acrshort{spmv} kernel can be compute-bound, making region calculation a critical software bottleneck.
 We addressed this by using a custom sparse format that converts latency costs into memory traffic costs.
@@ -66,14 +69,14 @@ The required \acrlong{spdc} modifications are:
     \item Configuration: The initial instruction enabling \acrlong{spdc}'s \gls{reduction} mode must accept a configuration argument specifying the word size in bytes ($s_w$), the output vector address ($c$), and the \acrshort{drc} size in bytes ($s_\mathit{DRC}$).
     The hardware could fetch the last parameter independently.
     When this instruction is issued, prior to each \acrshort{spmv}, the half-\gls{bw} is computed and retained until reconfigured, where $s_l$ denotes cache-line size in bytes:
-    $$w_\mathit{hB} = \dfrac{s_\mathit{DRC}-s_l}{2s_w}+1$$
+    $$w_\mathit{hB} = \dfrac{s_\mathit{DRC}-s_l}{2 \times s_w}+1$$
     The half-\gls{bw} could also be computed in software, and given as argument to the configuration.
     %
     \item Column indexing: Each outer-loop iteration requires issuing a new instruction containing the current column index $j \in \ldb 0; M-1 \rdb$, denoted $CCOL(j)$.
     This value persists until the next $CCOL$ instruction arrives, consuming one cycle per outer-loop iteration.
     Note that the \acrshort{reg} instruction becomes unnecessary.
     %
-    \item Region determination: For each $RED(addr, val)$ instruction, \acrshort{spdc} computes the current row $i \in \ldb 0; M-1 \rdb$ from the address: $i = \dfrac{addr-c}{s_w}$, then determines the region as \acrshort{ibr} if $|i-j| \leq w_\mathit{hB}$, otherwise \acrshort{obr}.
+    \item Region determination: For each $RED(addr, val)$ instruction, \acrshort{spdc} computes the current row $i \in \ldb 0; M-1 \rdb$ from the address: $i = \dfrac{addr-c}{s_w}$, then determines the region as \acrshort{ibr} if $|i-j| \leqslant w_\mathit{hB}$, otherwise \acrshort{obr}.
 \end{itemize}
 These modifications impose minimal hardware overhead, with per-\gls{reduction} computations executed at \textit{st0} in the \acrlong{spdc} \gls{pipeline}.
 This feature becomes essential when extending \acrshort{spdc} to multi-level, multi-core architectures (Section~\ref{sec:optim:multicore}).
@@ -84,11 +87,12 @@ This feature becomes essential when extending \acrshort{spdc} to multi-level, mu
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Complete Inter-Region Cache Coherency}
+\label{sec:optim:rtloptims:coherency}
 
 When executing an \acrshort{op} \acrshort{spmv} kernel with \acrlong{spdc}, we assume that the processor issues \acrshort{red} instructions strictly on addresses of the output vector $c$, and that loads and stores are issued only on addresses not in the output vector $c$.
 \acrlong{spdc}'s current implementation provides no hardware safeguards if this assumption is violated.
 While we provide local coherency between the two \gls{reduction} regions (\acrshort{drc} and \acrshort{srt}) to prevent $c$ address duplication, we lack coherency with the \acrshort{grc}.
-A simple detection system could verify that \glspl{reduction} are issued exclusively on addresses within the output vector $c$'s range, while other instructions operate outside this range.
+A simple detection system could verify that \glspl{reduction} are issued exclusively on addresses within the output vector's range, while other instructions operate outside this range.
 PHI~\cite{Mukkara2019_PHI} demonstrates that full coherency is achievable, as required in their design, proving that \glspl{reduction} and generic instructions can safely coexist within the same cache hierarchy.
 In \acrlong{spdc}'s case, implementing global inter-region coherency would require the following modifications:
 \begin{itemize}

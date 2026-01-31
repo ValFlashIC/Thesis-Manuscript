@@ -12,18 +12,78 @@
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Your Text %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% mathematical notations (double square brackets, etc)
-$$\forall (a, b) \in \mathbb{Z}^2, [\![a, b]\!] = [a, b] \cap \mathbb{Z}$$
-
-\bigskip
-
-$nnz$, $M$, $A$, $b$ and $c$, $\overline{nnz_r}$, $d_r$ ...
-
-\bigskip
-
-\begin{center}
-    {\color{red} \textbf{TODO}}
-\end{center}
+{
+    \DefTblrTemplate{firsthead,middlehead,lasthead}{default}{}
+    \DefTblrTemplate{contfoot-text}{normal}{}
+    \SetTblrTemplate{contfoot-text}{normal}
+    \begin{longtblr}{
+            width = {\linewidth},
+            colspec = {X[2.5,r] X[10,j]}, % rowspec
+            rows = {t},
+            colsep = {0pt},
+            row{1,10,22,25,31,43} = {font=\bfseries\large},
+            row{10,22,25,31,43} = {font=\bfseries\large, abovesep=10pt},
+            column{1} = {rightsep=12pt},
+            column{2} = {leftsep=12pt},
+            cell{1,10,22,25,31,43}{1} = {c=2}{l},
+            hspan = {minimal},
+            % hlines, vlines,
+            % rulesep = {-1pt},
+        }
+        %
+        General Notations \\
+        $[a, b]$                               & Real interval, \eg $[a, b]$ contains any real value in $\mathbb{R}$ ranging between $a \in \mathbb{R}$ and $b \in \mathbb{R}$, both included \\
+        $\ldb a, b \rdb$                       & Integer interval, \eg $\ldb a, b \rdb$ contains any integer value in $\mathbb{Z}$ ranging between $a \in \mathbb{Z}$ and $b \in \mathbb{Z}$, both included; can be seen as $[a, b] \cap \mathbb{Z}$; can also be noted $a \leqslant i,j \leqslant b \in \mathbb{Z}$ \\
+        $a\%b$                                 & $a$ modulo $b$ \\
+        $\{a, b, c\}$                          & Set, containing $a$, $b$ and $c$ in this example \\
+        0.00 e-0                               & Scientific notation, equivalent with $0.00 \times 10^{-0}$ \\
+        $a \acc b$                             & Accumulation, \eg $a$ gets $a + b$ \\
+        $|x|$                                  & Absolute value of $x$ \\
+        $\left\lceil x \right\rceil$           & Ceil value of $x$ \\
+        %
+        Matrix Related \\
+        %
+        $A$, $B$, $C$                          & Matrices \\
+        $b$, $c$                               & Vectors \\
+        $M$, $N$, $K$                          & Dimensions of matrices and vectors, \ex $A(M,K)$, $c(N)$ \\
+        $i$, $j$, $k$                          & Matrix and vectors indices (for $M$, $N$ and $K$, respectively), \ex $A_{i,k}$, $c_j$ \\
+        $\mathit{nnz}$                         & Number of non-zero elements; can be annotated, \ex $\mathit{nnz}_A$ or $\mathit{nnz}(A)$ \\
+        $\overline{nnz_r}$, $\overline{nnz_c}$ & Average number of non-zero elements per row or column, respectively; can be annotated, \ex $\overline{nnz_r}(A)$ \\
+        $d$                                    & Density; can be annotated, \ex $d_A$ or $d(A)$ \\
+        $d_\mathit{IB}$, $d_\mathit{OB}$       & Densities of in- and out-of-\gls{band} regions of a matrix \\
+        $w_B$                                  & \Gls{bw} of a matrix \\
+        $w_\mathit{hB}$                        & Half-\gls{bw} of a matrix, such that $w_B = 2 \times w_\mathit{hB} - 1$ \\
+        $d_\mathit{cd}$                        & Average density of non-empty lines of a cache, or vertical-stripes of a matrix, ranging between $\frac{1}{l}$ and 1 \\
+        %
+        \Gls{spFormat} Related \\
+        $ptr$, $idx$, $val$                    & Storages tables used for \acrshort{csr} and \acrshort{csc} formats; can be annotated, \ex $A.idx$, $A.ptr$, $A.val$ \\
+        $pos$                                  & Index for the $ptr$ table \\
+        %
+        Cache Related \\
+        $S$, $W$, $l$                          & Cache characteristics, \eg the number of \glspl{set}, the number of \glspl{way} and the number of elements per cache-line, respectively \\
+        $s$                                    & Index for a \gls{set} of the cache, ranging between 0 and $S-1$; can be annotated, \ex $s_\mathit{region}$ for a \gls{set} in a cache region \\
+        $s_C$                                  & Size of the cache in number of elements, such that $s_C = S \times W \times l$; can be annotated, \ex $s_C(GRC)$ \\
+        $s_\mathit{DRC}$, $s_w$, $s_l$         & Size in bytes of the \acrshort{drc}, a word and a cache-line, respectively (used once in Section~\ref{sec:optim:rtloptims:regionInHW}) \\
+        $L_1$ to $L_4$                         & Indices for cache-lines (used once in Section~\ref{sec:theory:perfectband_vs_cache}) \\
+        %
+        Analytical Model Related (Chapter~\ref{cha:theory}) \\
+        $\mathit{normMT}$                      & Memory traffic normalized over $nnz$ \\
+        $M_l$                                  & The dimension $M$ divided by the cache-line size, such that $M_l = \left\lceil \frac{M}{l} \right\rceil$ \\
+        $\kappa$                               & Index of the $M_l$ dimension, from the current iteration \\
+        $\mathit{DCDT}$                        & Disjoint Cache Density Table, the cache representation, of size $M_l$; can be indexed, \ex $\mathit{DCDT}_\kappa$ \\
+        $\mathit{MDT}$                         & Matrix Density Table, the matrix representation, of size $(M_l,M)$; can be indexed, \ex $\mathit{MDT}_{\kappa,j}$ \\
+        $d_\mathit{lM}$                        & Disjoint-density of a vertical-stripe, equal to 0 or ranging between $\frac{1}{l}$ and 1; can be annotated, \ex $d_\mathit{lM}(\kappa)$ \\
+        $\mathit{nnzcl}$                       & Number of valid (non-empty, \eg non-zero) cache-lines; can be indexed, \ex $\mathit{nnzcl}_\kappa$ \\
+        $\mathit{miss}(\kappa)$                & A \gls{miss} occurs at the current iteration \\
+        $\mathit{evict}(\kappa)$               & An \gls{eviction} occurs at the current iteration \\
+        $\mathit{nbEvict}$                     & Total number of \glspl{eviction} \\
+        $\mathit{nbFlush}$                     & Total number of cache-lines flushed \\
+        %
+        Others \\
+        KiB, MiB, GiB                          & Kibibyte ($1024^1$), Mebibyte ($1024^2$) and Gibibyte ($1024^3$), respectively \\
+        25/50/25\%                             & Regions Configuration for \acrlong{spdc}, \ex 25\% of total size for the \acrshort{grc}, 50\% for the \acrshort{drc} and 25\% for the \acrshort{srt} \\
+    \end{longtblr}
+}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

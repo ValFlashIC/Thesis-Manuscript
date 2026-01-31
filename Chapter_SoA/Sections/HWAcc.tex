@@ -25,7 +25,7 @@ Certain accelerators offer solutions for one, the other or both.
 For example, some accelerators (\ex OuterSPACE) are specialized for an \acrshort{op} algorithm but optimize both \gls{gather} and \gls{scatter}.
 Finally, accelerators preferably focus on sparse \acrshort{mm}, \acrshort{mv} or both, our final criterion.
 
-After this first comparison, in Sections~\ref{sec:soa:outerspace} to~\ref{sec:soa:phi} we present in detail three \textit{standalone} accelerators (\eg OuterSPACE, ExTensor and Gamma) and one \textit{processor assist} accelerator (\eg PHI), which cover several types of architectures and algorithms.
+After this first comparison, in Sections~\ref{sec:soa:outerspace} to~\ref{sec:soa:phi} we present in detail three \textit{standalone} accelerators (\eg OuterSPACE, ExTensor and Gamma) and one \textit{processor-assist} accelerator (\eg PHI), which cover several types of architectures and algorithms.
 In Section~\ref{sec:soa:other_accel}, we give bief descriptions on other accelerators of Table~\ref{tab:soa:classificationOverview}.
 
 {
@@ -71,7 +71,7 @@ In Section~\ref{sec:soa:other_accel}, we give bief descriptions on other acceler
         }
         %
         Name & Year & Autonomy & & {Position in \\ Memory Hierarchy} & & & {Most Adapted \\ Algorithm(s)} & & & {Hardware \\ Support for} & & {Sparse \\ Kernels \\ Addressed} & \\
-        & & Standalone & Processor Assist & Near Processors & Near Caches & Near Main Memory & \acrlong{ip} & \acrlong{op} & \acrlong{gust} & \Gls{gather} & \Gls{scatter} & \acrshort{mv} & \acrshort{mm} \\
+        & & Standalone & Processor-Assist & Near Processors & Near Caches & Near Main Memory & \acrlong{ip} & \acrlong{op} & \acrlong{gust} & \Gls{gather} & \Gls{scatter} & \acrshort{mv} & \acrshort{mm} \\
         %
         Coup~\cite{Zhang2015_Coup}                    & 2015 &     & \ck &     & \ck &     &     & \ck &     &     & \ck & \ck & \sc \\
         EIE~\cite{Han2016_EIE}                        & 2016 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck & \ck &     \\
@@ -126,7 +126,7 @@ In Section~\ref{sec:soa:other_accel}, we give bief descriptions on other acceler
 }
 
 \begin{highlight}{Conclusion}{Red}
-    Hardware accelerators for sparse matrix operations are categorized by \textbf{autonomy} level (\textit{standalone}, \textit{processor assist}), \textbf{memory hierarchy position} (near-core, near-cache, near-main memory), supported \textbf{algorithms} (\acrshort{ip}, \acrshort{op} and \acrshort{gust}), supported \textbf{core operations} (\gls{gather} and \gls{scatter}), and handled \textbf{kernels} (sparse \acrshort{mv} and \acrshort{mm}).
+    Hardware accelerators for sparse matrix operations are categorized by \textbf{autonomy} level (\textit{standalone}, \textit{processor-assist}), \textbf{memory hierarchy position} (near-core, near-cache, near-main memory), supported \textbf{algorithms} (\acrshort{ip}, \acrshort{op} and \acrshort{gust}), supported \textbf{core operations} (\gls{gather} and \gls{scatter}), and handled \textbf{kernels} (sparse \acrshort{mv} and \acrshort{mm}).
     While \textbf{\textit{standalone} accelerators dominate} the landscape with diverse architectural approaches focusing on specific applications, recent trends show \textbf{increased focus on algorithm-adaptive designs and \textit{processor-assist} variants} for generic problem classes.
 \end{highlight}
 
@@ -297,7 +297,7 @@ Sextans also features hardware flexibility, allowing it to support \acrshortpl{s
 \paragraph{ASA}
 
 ASA~\cite{Zhang2022_ASA} (Accelerating Sparse Accumulation) is a hardware accelerator designed to optimize the sparse accumulation (SPA) step in column-wise \acrshort{spgemm} operations.
-It replaces traditional software-based hash table lookups (prone to branch mispredictions and collisions) with a dedicated, set-associative on-chip cache and a pipelined hardware accumulator.
+It replaces traditional software-based hash table lookups (prone to branch mispredictions and collisions) with a dedicated, \gls{set}-associative on-chip cache and a pipelined hardware accumulator.
 ASA extends the processor's instruction set with a Hardware Probing and Accumulation (HPA) instruction, eliminating data-dependent branches and enabling efficient, atomic search-and-accumulate operations.
 Overflowed entries are stored in a pre-allocated memory buffer and merged later, minimizing stalls.
 % The design integrates seamlessly with general-purpose processors, requiring minimal hardware overhead and providing a simple software interface for sparse accumulation tasks.

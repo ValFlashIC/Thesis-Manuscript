@@ -10,7 +10,7 @@
 A C program implementing a hybrid probabilistic/fast simulation model was developed, and we demonstrated how the structure of \gls{banded} matrices can be leveraged to optimize cache performance.
 
 Our analysis highlighted the importance of separating the in-\gls{band} and out-of-\gls{band} regions of the matrix into dedicated cache regions.
-For the in-\gls{band} region, a set-associative, line-wise cache configuration ensures efficient data reuse by maintaining a rotating \gls{eviction} pattern, minimizing unnecessary memory transactions.
+For the in-\gls{band} region, a \gls{set}-associative, line-wise cache configuration ensures efficient data reuse by maintaining a rotating \gls{eviction} pattern, minimizing unnecessary memory transactions.
 For the out-of-\gls{band} region, a fully-associative, element-wise cache with an element-wise memory interface significantly reduces memory traffic by avoiding the transfer of mostly empty cache-lines.
 
 The theoretical insights gained from this model validate the architectural choices of \acrlong{spdc}, particularly the use of distinct regions for denser and sparser data.

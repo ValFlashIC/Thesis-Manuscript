@@ -29,7 +29,7 @@ Several mapping policies exist.
 In a direct-mapped cache, each memory block maps to a single cache-line.
 This approach is simple to implement but results in conflicts and poor utilization.
 A $n$-\gls{way} \gls{set}-associative cache allows each block to be placed in one of $n$ possible cache-lines within a \gls{set}, improving \gls{hit} rate with only a moderate additional hardware cost.
-A \emph{fully associative} cache removes these constraints, as any block may occupy any cache-line, but requires more complex \gls{tag} searches.
+A fully-associative cache removes these constraints, as any block may occupy any cache-line, but requires more complex \gls{tag} searches.
 In all cases, when a line must be evicted and multiple candidates exist, a replacement policy such as \acrfull{lru} or \emph{Random} decides which entry is evicted.
 
 Caches have different policies when writes occur.
