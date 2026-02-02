@@ -23,7 +23,7 @@ Our model uses the cache configuration parameters $S$, $W$ and $l$.
 Although our model is not limited to \gls{banded} matrices, they are the focus of this work.
 The matrix density distribution thus takes on two different values, either $d_\mathit{IB}$ in the band, or $d_\mathit{OB}$ outside of the band.
 
-We normalize the memory traffic by dividing the number of elements that are read or written by the number of non-zero elements ($nnz$) in the matrix, so we can compare performance between matrices of different sizes and densities.
+We normalize the memory traffic by dividing the number of elements that are read or written by the number of non-zero elements ($\mathit{nnz}$) in the matrix, so we can compare performance between matrices of different sizes and densities.
 Indeed, we can interpret the normalized memory traffic, $\mathit{normMT}$, as the number of elements transferred from/to memory per non-zero matrix element.
 If the memory traffic remains constant while the matrix density increases, we expect $\mathit{normMT}$ to decrease.
 
@@ -117,7 +117,7 @@ After the last iteration, we account for the memory transactions required to flu
 $\mathit{nbFlush}$ will never exceed \mbox{$S \times W$}.
 
 In a \gls{redC}, \glspl{eviction} and flushes result in a line-wise memory read, a modification, and a line-wise memory write.
-The update memory traffic is $2 \times l \times (\mathit{nbEvict} + \mathit{nbFlush})$ elements, and $\mathit{normMT}$ is this value divided by $nnz$.
+The update memory traffic is $2 \times l \times (\mathit{nbEvict} + \mathit{nbFlush})$ elements, and $\mathit{normMT}$ is this value divided by $\mathit{nnz}$.
 
 \begin{highlight}{Conclusion}{Red}
     We have presented a \textbf{hybrid probabilistic/fast simulation analytical model} for a \gls{redC}, processing \acrshort{op} \acrshort{spmv}, which predicts the volume of memory traffic issued by the L1 cache, starting from a \textbf{matrix density distribution} and a \textbf{cache configuration}.

@@ -1015,7 +1015,7 @@
          id="tspan21172-9-7-4"
          x="435.00003"
          y="368.87494"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.1111px;line-height:5.64444px;font-family:Cambria;-inkscape-font-specification:'Cambria Italic';text-align:start;text-anchor:start;stroke-width:0.264583">Set associative</tspan></text>
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.1111px;line-height:5.64444px;font-family:Cambria;-inkscape-font-specification:'Cambria Italic';text-align:start;text-anchor:start;stroke-width:0.264583">Set-associative</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.1111px;line-height:5.64444px;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
@@ -1026,6 +1026,6 @@
          id="tspan21172-9-7-5"
          x="435.00003"
          y="408.87494"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.1111px;line-height:5.64444px;font-family:Cambria;-inkscape-font-specification:'Cambria Italic';text-align:start;text-anchor:start;stroke-width:0.264583">Fully associative</tspan></text>
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.1111px;line-height:5.64444px;font-family:Cambria;-inkscape-font-specification:'Cambria Italic';text-align:start;text-anchor:start;stroke-width:0.264583">Fully-associative</tspan></text>
   </g>
 </svg>

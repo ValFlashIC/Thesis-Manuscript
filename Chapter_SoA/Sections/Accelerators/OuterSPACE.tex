@@ -34,7 +34,7 @@ The \acrfullpl{po} and final output matrix $C$ are stored in \acrshort{csc} form
 
 The computation is temporally divided into the \textit{multiply} and \textit{merge} phases, as shown in Figure~\ref{fig:soa:outerspaceHow}.
 During the first phase, inputs are divided into \glspl{tile} of several rows of $A$ and columns of $B$ and distributed through the \acrfullpl{pt} by a \textit{control unit}.
-Within each \acrshort{pt}, each \acrshort{pe} processes multiplications of one element of the $k^{th}$ column od $A$ with all elements of the $k^{th}$ row of $B$ and an L0 cache in the \acrshort{pt} facilitates the reuse of the $B$-rows between \acrshortpl{pe}.
+Within each \acrshort{pt}, each \acrshort{pe} processes multiplications of one element of the $k$\textsuperscript{th} column od $A$ with all elements of the $k$\textsuperscript{th} row of $B$ and an L0 cache in the \acrshort{pt} facilitates the reuse of the $B$-rows between \acrshortpl{pe}.
 This phase generates a \acrshort{po} per \acrshort{pt}, corresponding to the \gls{tile} of rows of $A$ and columns of $B$ that it was assigned.
 
 Then, during the \textit{merge} phase, the \acrshortpl{po} are combined to generate the final matrix $C$.

@@ -25,18 +25,18 @@ In the next chapter, we will delve into the microarchitectural details of \acrlo
     \begin{itemize}
         \item \textbf{\Gls{highLevel} probabilistic/fast model in C} (\ref{sec:theory:cmodel}):
         \begin{itemize}
-            \item fast simulation ($\sim10^5$ $nnz/s$), using generic matrix density distributions, easy parameter exploration, deep understanding of cache behaviors, but,
+            \item fast simulation ($\sim$10\textsuperscript{5} $nnz/s$), using generic matrix density distributions, easy parameter exploration, deep understanding of cache behaviors, but,
             \item very \gls{highLevel} (some approximations and hypothesis), limited on \gls{eviction} policies.
         \end{itemize}
         \item \textbf{Transaction level model in Python} (\ref{sec:spdc:eval}):
         \begin{itemize}
-            \item faster than a full RTL simulation ($\sim10^3$ $nnz/s$), accurate performance on memory traffic, functional testing, but,
+            \item faster than a full RTL simulation ($\sim$10\textsuperscript{3} $nnz/s$), accurate performance on memory traffic, functional testing, but,
             \item slower than the probabilistic model, demands real matrices as input, two factors that alleviate the parameter exploration capabilities, no latency performance compared to RTL simulation.
         \end{itemize}
         \item \textbf{RTL implementation} (next chapter):
         \begin{itemize}
             \item accurate results in both memory traffic and latencies, hardware testing, but,
-            \item slow simulation ($\sim10$ $nnz/s$), demands real matrices in input, time-consuming implementation.
+            \item slow simulation ($\sim$10 $nnz/s$), demands real matrices in input, time-consuming implementation.
         \end{itemize}
     \end{itemize}
 

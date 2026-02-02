@@ -21,7 +21,7 @@ To simplify the design complexity of \acrlong{spdc}, we chose to work with 64-bi
 This results in the same data-traffic as double floating-point, but simplifies the design, as the arithmetic operations (accumulations) can be done in a single cycle.
 To deploy \acrlong{spdc} for high-performance computing applications, it must be extended to support the double data-type.
 
-To support the accumulation of double format data between \textit{st1} and \textit{st2} in the \gls{pipeline} (Section~\ref{sec:arch:pipeline}), we could either deploy a single-cycle high-performance \acrshort{fpu} with the area trade-offs, or extend the \gls{pipeline} to accommodate two-cycle, for example, floating-point accumulation.
+To support the accumulation of double format data between \textit{st1} and \textit{st2} in the \gls{pipeline} (Section~\ref{sec:arch:pipeline}), we could either deploy a single-cycle high-performance \acrshort{fpu} with the area trade-offs, or extend the \gls{pipeline} to accommodate two-cycles, for example, floating-point accumulation.
 The latter approach better suits our \textit{accumulation table}, which does not stall the \gls{pipeline} and can parallelize element-wise accumulations across stored 64-byte lines.
 Additionally, full floating-point support requires extending the AXI port to handle element-wise \acrfull{rmw} operations beyond its native integer capabilities~\cite{ARM2023_AXI}.
 
@@ -46,7 +46,7 @@ To enhance software flexibility, \acrshort{spdc} should support dynamic configur
 
 A fundamental limitation is that region sizes are restricted to powers of two, which severely constrains configuration options and led to the 25/50/25\% configuration used in the previous chapter.
 This restriction stems from address decoding that uses bit shifts to extract the \gls{set} index, an approach inherited from HPDcache.
-Supporting arbitrary region sizes would require integer division and modulo operations, which could introduce long, critical paths.
+Supporting arbitrary region sizes would require integer division and modulo operations, which could introduce longer, critical paths.
 However, our Python simulations in Chapter~\ref{cha:spdc} demonstrate that precise region sizing is unnecessary for achieving good performance, making this optimization less important.
 
 A practical compromise would be to provide one or two predefined configurations for \acrshort{redc} and \acrshort{spdc}, allowing dynamic selection by software while maintaining a simple user interface.
@@ -76,10 +76,10 @@ The required \acrlong{spdc} modifications are:
     This value persists until the next $CCOL$ instruction arrives, consuming one cycle per outer-loop iteration.
     Note that the \acrshort{reg} instruction becomes unnecessary.
     %
-    \item Region determination: For each $RED(addr, val)$ instruction, \acrshort{spdc} computes the current row $i \in \ldb 0; M-1 \rdb$ from the address: $i = \dfrac{addr-c}{s_w}$, then determines the region as \acrshort{ibr} if $|i-j| \leqslant w_\mathit{hB}$, otherwise \acrshort{obr}.
+    \item Region determination: For each $RED(addr, val)$ instruction, \acrlong{spdc} computes the current row $i \in \ldb 0; M-1 \rdb$ from the address: $i = \dfrac{addr-c}{s_w}$, then determines the region as \acrshort{ibr} if $|i-j| \leqslant w_\mathit{hB}$, otherwise \acrshort{obr}.
 \end{itemize}
 These modifications impose minimal hardware overhead, with per-\gls{reduction} computations executed at \textit{st0} in the \acrlong{spdc} \gls{pipeline}.
-This feature becomes essential when extending \acrshort{spdc} to multi-level, multi-core architectures (Section~\ref{sec:optim:multicore}).
+This feature becomes essential when extending \acrlong{spdc} to multi-level, multi-core architectures (Section~\ref{sec:optim:multicore}).
 
 \begin{highlight}{Conclusion}{Red}
     \textbf{Hardware-based region computation} eliminates unnecessary instructions in the software's inner-loop, enabling \acrshort{csc} format compatibility and simplifying the \acrshort{spmv} kernel with minimal hardware overhead.

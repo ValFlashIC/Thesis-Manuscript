@@ -8,12 +8,12 @@
 
 \lettrine{S}{parse} matrices are two dimensional arrays filled with many zeros and stored in compressed formats in memory.
 These sparse matrices are commonly used in diverse fields such as linear algebra, where sparse matrix multiplication is used to solve linear systems of equations for scientific purposes or simulation, as well as graph analytics where the vertices of a graph are represented as a sparse matrix~\cite{Buluc2011}, or finally transformers or other similar AI features where weights and activations can be represented and processed as sparse matrices~\cite{Gale2020, Farina2024}.
-In these contexts, matrices are large, with dimensions up to billions of elements, and highly sparse, with non-zero densities down to $10^{-7}$~\cite{Kolodziej2019_SuiteSparse}.
+In these contexts, matrices are large, with dimensions up to billions of elements, and highly sparse, with non-zero densities down to 10\textsuperscript{-7}~\cite{Kolodziej2019_SuiteSparse}.
 
 We note matrices with capital letters $A$, $B$, $C$, conversely to vectors $a$, $b$, $c$.
 Their dimension are denoted using $M$, $N$ and $K$.
 For example, we can define a square matrix $A$ of dimension $M$, or a matrix $B$ of dimension $(K, N)$.
-We note $nnz$ the number of non-zero elements of a matrix, and $d$ the associated density.
+We note $\mathit{nnz}$ the number of non-zero elements of a matrix, and $d$ the associated density.
 With the example of a matrix $A(M, N)$: $$d_A = \frac{nnz_A}{M \times N}$$
 
 \begin{highlight}{Definition}{LimeGreen}

@@ -19,7 +19,7 @@ In fact, the \emph{key} is determined via an indirection with an access to $\mat
     \For(\tcp*[f]{Loop over the columns of A}){$n \in \ldb 0, N-1 \rdb$}{
         \For{$pos \in \ldb ptr_n, ptr_{n+1}-1 \rdb$}{
             $key \gets idx_{pos}$\tcp*[r]{Row index}
-            $val \gets val_{pos} \times b_n$\tcp*[r]{val = A\textsubscript{key,n} $\times$ b\textsubscript{n}}
+            $val \gets val_{pos} \times b_n$\tcp*[r]{val = A\textsubscript{key,n} \tm b\textsubscript{n}}
             $\mathit{RED}(key, val)$\tcp*[r]{c\textsubscript{key} += val}
         }
     }

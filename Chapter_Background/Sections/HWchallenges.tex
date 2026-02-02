@@ -158,44 +158,7 @@ As we see in Chapter~\ref{cha:soa}, hardware accelerators may combine the \emph{
     }
     \tcp{Merge phase}
     \For(\tcp*[f]{Naive serial merge of the K partial outputs}){$k \in \ldb 0, K-2 \rdb$}{
-        % $\mathit{MergedPO} \gets \{\}$\;
-        % $pos_1 \gets 0$; $pos_2 \gets 0$; $pos_M \gets 0$\;
-        % \While{$pos_1 < length(\mathit{PO}_k)$ \textbf{and} $pos_2 < length(\mathit{PO}_{k+1})$}{
-        %     \If{$\mathit{PO_k.row}_{pos_1} < \mathit{PO_{k+1}.row}_{pos_2}$}{
-        %         $\mathit{MergedPO}_{pos_M} \gets \mathit{PO_k}_{pos_1}$\;
-        %         $pos_1 \gets pos_1 + 1$\;
-        %     }
-        %     \ElseIf{$\mathit{PO_k.row}_{pos_1} > \mathit{PO_{k+1}.row}_{pos_2}$}{
-        %         $\mathit{MergedPO}_{pos_M} \gets \mathit{PO_{k+1}}_{pos_2}$\;
-        %         $pos_2 \gets pos_2 + 1$\;
-        %     }
-        %     \Else{
-        %         \If{$\mathit{PO_k.col}_{pos_1} < \mathit{PO_{k+1}.col}_{pos_2}$}{
-        %             $\mathit{MergedPO}_{pos_M} \gets \mathit{PO_k}_{pos_1}$\;
-        %             $pos_1 \gets pos_1 + 1$\;
-        %         }
-        %         \ElseIf{$\mathit{PO_k.col}_{pos_1} > \mathit{PO_{k+1}.col}_{pos_2}$}{
-        %             $\mathit{MergedPO}_{pos_M} \gets \mathit{PO_{k+1}}_{pos_2}$\;
-        %             $pos_2 \gets pos_2 + 1$\;
-        %         }
-        %         \Else{
-        %             $\mathit{MergedPO}_{pos_M} \gets \mathit{PO_k}_{pos_1} + \mathit{PO_{k+1}}_{pos_2}$\;
-        %             $pos_1 \gets pos_1 + 1$\;
-        %             $pos_2 \gets pos_2 + 1$\;
-        %         }
-        %     }
-        %     $pos_M \gets pos_M + 1$\;
-        % }
-        % \While{$pos_1 < length(\mathit{PO}_k)$}{
-        %     $\mathit{MergedPO}_{pos_M} \gets \mathit{PO_k}_{pos_1}$\;
-        %     $pos_1 \gets pos_1 + 1$; $pos_M \gets pos_M + 1$\;
-        % }
-        % \While{$pos_2 < length(\mathit{PO}_{k+1})$}{
-        %     $\mathit{MergedPO}_{pos_M} \gets \mathit{PO_{k+1}}_{pos_2}$\;
-        %     $pos_2 \gets pos_2 + 1$; $pos_M \gets pos_M + 1$\;
-        % }
         $\mathit{PO}_{k+1} \gets \mathit{2DListsMerge}(\mathit{PO}_k, \mathit{PO}_{k+1})$\;
-        % $\mathit{PO}_{k+1} \gets \mathit{MergedPO}$\;
     }
     \tcp{PO\textsubscript{K-1} is C stored in COO format}
     \For{$pos \in \ldb 0, length(\mathit{PO}_{K-1})-1 \rdb$}{
@@ -332,7 +295,7 @@ The color code shows the access pattern, based on the five categories described 
     \label{tab:bg:spmspm_access_count}
     \begin{tblr}{
             width = {\linewidth},
-            colspec = {X[-1,c] *{3}{X[l]}}, % rowspec
+            colspec = {X[-1,c] *{3}{X[1,l]}}, % rowspec
             rows = {m, font=\small},
             colsep = {4pt},
             row{1-Y} = {rowsep=1pt, black!2},
@@ -374,7 +337,7 @@ The color code shows the access pattern, based on the five categories described 
         {\textbf{0D}: $2 \times M \times d(A) \times nnz(B)$ \\
          \textbf{1D}-\textbf{2D}: $nnz(C)$ (max: $M \times N$)\hyperlink{fn0}{$^{\mathrm{1}}$}} \\
         %
-        \hypertarget{fn0}{$^{\mathrm{1}}$} We can not easily quantify $nnz(C)$ knowing $nnz(A)$ and $nnz(B)$. We thus use a statistic approximation.
+        \begin{minipage}{0.95\linewidth}\hypertarget{fn0}{$^{\mathrm{1}}$} We can not easily quantify $nnz(C)$ knowing $nnz(A)$ and $nnz(B)$. We thus use a statistic approximation.\end{minipage}
     \end{tblr}
 \end{table}
 

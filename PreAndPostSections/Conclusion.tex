@@ -44,7 +44,7 @@ This survey informed the design of \acrlong{spdc}, positioning it as a \textit{p
 \paragraph*{Chapter~\ref{cha:spdc}. Design of \acrlong{spdc} for ``Random'' \Glspl{reduction}}
 
 We introduced \acrlong{spdc}, a region-based \gls{redC} that partitions memory into in-\gls{band} (\acrshort{ibr}) and out-of-\gls{band} (\acrshort{obr}) regions to optimize handling of both dense and sparse data.
-Our Python-based simulation model demonstrated that \acrlong{spdc} significantly reduces memory traffic compared to generic caches (4.1$\times$).
+Our Python-based simulation model demonstrated that \acrlong{spdc} significantly reduces memory traffic compared to generic caches (4.1\tm).
 The cache region partitioning and \gls{reduction} support enable efficient management of irregular updates, addressing the \gls{scatter} problem inherent in \acrshort{op} algorithms.
 
 \paragraph*{Chapter~\ref{cha:theory}. Probabilistic Modeling and Exploration of Cache Behavior}
@@ -56,7 +56,7 @@ Our findings demonstrated that a fully-associative table of moderate size, dedic
 \paragraph*{Chapter~\ref{cha:arch}. Microarchitecture and \acrshort{rtl} Evaluation}
 
 We detailed the microarchitectural implementation of \acrlong{spdc}, featuring three dedicated regions: \acrfull{grc}, \acrfull{drc}, and \acrfull{srt}, all virtually separated in the cache memory.
-Our \acrshort{rtl} simulations validated the architecture's effectiveness, showing significant reductions in memory traffic (3.9$\times$) and improved cache utilization.
+Our \acrshort{rtl} simulations validated the architecture's effectiveness, showing significant reductions in memory traffic (3.9\tm) and improved cache utilization.
 Our analysis revealed two distinct groups of matrices based on their fine-grain structure.
 This distinction underscores the importance of adapting cache regions to the specific structure of the input matrices.
 

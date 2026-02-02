@@ -73,17 +73,17 @@ Most, but not all, of the matrices have a dense \gls{band} and even some matrice
         Outperform \acrshort{gc}   & 45.8 & 100  & \O   & \O   & 45.8 & 91.7 & \O   & 64.6 & 100  \\
         Outperform \acrshort{redc} & \O   & 93.8 & \O   & \O   & \O   & 85.4 & \O   & \O   & 77.1 \\
         %
-        \hypertarget{fn0}{$^\mathrm{a}$Decrease by 4.1$\times$ compared to \acrshort{gc}, and 3.6$\times$ compared to \acrshort{redc}.} \\
+        \hypertarget{fn0}{$^\mathrm{a}$Decrease by 4.1\tm compared to \acrshort{gc}, and 3.6\tm compared to \acrshort{redc}.} \\
         %
-        \hypertarget{fn1}{$^\mathrm{b}$Increase by 2.0$\times$ compared to \acrshort{gc}, and 2.0$\times$ compared to \acrshort{redc}.} \\
+        \hypertarget{fn1}{$^\mathrm{b}$Increase by 2.0\tm compared to \acrshort{gc}, and 2.0\tm compared to \acrshort{redc}.} \\
         %
-        \hypertarget{fn2}{$^\mathrm{c}$Increase by 2.1$\times$ compared to \acrshort{gc}, and 1.6$\times$ compared to \acrshort{redc}.}
+        \hypertarget{fn2}{$^\mathrm{c}$Increase by 2.1\tm compared to \acrshort{gc}, and 1.6\tm compared to \acrshort{redc}.}
     \end{tblr}
 \end{table}
 
 As expected, the simple \gls{redC} (\acrshort{redc}) decreases the main memory traffic to 89.2\% of the \acrshort{gc} baseline (10.8\% decrease).
 \acrlong{spdc} has significantly better performance than \acrshort{redc}, reducing the traffic to 24.5\% (75.5\% decrease).
-\acrlong{spdc} thus achieves a 4.1$\times$ decrease in memory traffic compared to \acrshort{gc}, and a 3.6$\times$ decrease compared to \acrshort{redc}, on average over the set of matrices.
+\acrlong{spdc} thus achieves a 4.1\tm decrease in memory traffic compared to \acrshort{gc}, and a 3.6\tm decrease compared to \acrshort{redc}, on average over the set of matrices.
 \acrlong{spdc} outperforms \acrshort{gc} on all matrices, and \acrshort{redc} on 93.8\% of them.
 
 The benefits of \acrlong{spdc} can be partly explained by the improved utilization of the cache-lines.
@@ -105,8 +105,8 @@ In this case, 25\% of the available memory was unused.
 The \acrshort{srt} size could be adjusted to gain performance.
 
 \begin{highlight}{Conclusion}{Red}
-    \acrlong{spdc} achieves a 4.1$\times$ \textbf{decrease in memory traffic} on the output vector $c$ compared to a generic cache, over a set of 48 matrices.
-    It also \textbf{outperforms a simple \gls{redC}} by 3.6$\times$, showing the importance of having separate dedicated cache regions for the in- and out-of-band of a matrix.
+    \acrlong{spdc} achieves a 4.1\tm \textbf{decrease in memory traffic} on the output vector $c$ compared to a generic cache, over a set of 48 matrices.
+    It also \textbf{outperforms a simple \gls{redC}} by 3.6\tm, showing the importance of having separate dedicated cache regions for the in- and out-of-band of a matrix.
 \end{highlight}
 
 \section{State-of-the-Art Comparison and Region Sizing}
@@ -181,8 +181,8 @@ In Table~\ref{tab:spdc:results_overall}, we report the results for PHI alongside
 \end{table}
 
 As expected, PHI (\no5) achieves a significant reduction in memory traffic compared to the \acrshort{gc} (\no1), a 50.4\% reduction on average.
-This represents a 2.0$\times$ decrease compared to the \acrshort{gc}, which is consistent with the results reported in the original PHI paper~\cite{Mukkara2019_PHI}, and a 1.8$\times$ decrease compared to the \acrshort{redc} (\no2).
-However, \acrlong{spdc} (\no6) still outperforms PHI, cutting memory traffic by 2.1$\times$.
+This represents a 2.0\tm decrease compared to the \acrshort{gc}, which is consistent with the results reported in the original PHI paper~\cite{Mukkara2019_PHI}, and a 1.8\tm decrease compared to the \acrshort{redc} (\no2).
+However, \acrlong{spdc} (\no6) still outperforms PHI, cutting memory traffic by 2.1\tm.
 The improved performance of \acrlong{spdc} can again be explained by the better utilization of the cache-lines, with 7.21 useful words per evicted line, compared to 5.00 for PHI.
 The overall cache memory utilization is also significantly better with \acrlong{spdc}, with 75.2\% of the cache holding useful data, compared to only 30.6\% for PHI.
 
@@ -193,7 +193,7 @@ When a cache-line is evicted and contains fewer non-zero entries than a fixed th
 These \acrshortpl{po} are processed in the second phase of the algorithm, as in the `deferred updates' variant.
 If the threshold is set too high, PHI batches many entries and increases second-phase memory traffic.
 If it is set too low, PHI batches few entries, reducing batching effectiveness and increasing the number of `immediate updates', making PHI behavior closer to a \gls{redC}.
-PHI sets this threshold to one non-zero word per eight words in a cache-line, meaning that for each batched evicted line, PHI reduces bytes transferred by 4$\times$ (4 $(word, \, address)$ tuples fitting in a single 64B cache-line, instead of 4 full 64B lines with 7 unused words each).
+PHI sets this threshold to one non-zero word per eight words in a cache-line, meaning that for each batched evicted line, PHI reduces bytes transferred by 4\tm (4 $(word, \, address)$ tuples fitting in a single 64B cache-line, instead of 4 full 64B lines with 7 unused words each).
 However, we observed that, on the geometric mean over the 48 matrices, only 4.2\% of PHI's output memory traffic comes from these batched updates (maximum 28.6\%), indicating that PHI's overall behavior remains close to a \gls{redC}.
 In contrast, \acrlong{spdc} addresses the drawbacks of a \gls{redC} by using dedicated regions for denser and sparser accesses, avoiding unnecessary \glspl{eviction}, without incurring the additional second-phase traffic introduced by PHI's batching mechanism.
 
@@ -210,6 +210,6 @@ We also explored different sizing strategies for the \acrshort{redc} baseline (c
 Allocating more than 75\% of the cache (96 \glspl{set}) to store \acrshort{red} transactions slightly improves performance, as it increases the likelihood of capturing multiple updates to the same output element before \gls{eviction}, without overly compromising the storage of input elements.
 
 \begin{highlight}{Conclusion}{Red}
-    \textbf{\acrlong{spdc} outperforms PHI}, a state-of-the-art \gls{reduction} cache, achieving a 2.1$\times$ decrease in memory traffic, due to the dedicated regions which improve the effectiveness of the cache in dense regions, and the use of external atomic accesses to reduce the cost of isolated updates.
+    \textbf{\acrlong{spdc} outperforms PHI}, a state-of-the-art \gls{reduction} cache, achieving a 2.1\tm decrease in memory traffic, due to the dedicated regions which improve the effectiveness of the cache in dense regions, and the use of external atomic accesses to reduce the cost of isolated updates.
     Additionally, we show that the initial region sizing of \acrlong{spdc} (25/50/25\%) provides good performance with only minor variations observed when adjusting the sizes of the \acrshort{grc}, \acrshort{drc}, and \acrshort{srt}.
 \end{highlight}

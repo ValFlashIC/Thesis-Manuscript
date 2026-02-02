@@ -7,7 +7,7 @@
 \label{sec:spdc:conclu}
 
 \lettrine{W}{e} have presented the concept of \acrlong{spdc}, a \gls{redC} that has optimized storage and compute techniques for the sparse and dense regions of \gls{banded} matrices.
-This approach does not reduce the number of compute operations, however, it significantly decreases memory traffic (4.1$\times$).
+This approach does not reduce the number of compute operations, however, it significantly decreases memory traffic (4.1\tm).
 These benefits can be attributed to three techniques: (1) blocking the dense part of the \gls{band} in the \acrshort{drc} to take benefit of the existing spatial locality, (2) using fine-grained storage in the \acrshort{srt} to adapt to isolated elements, and (3) off-loading the \glspl{reduction} for isolated elements to the downstream caches to prevent local \glspl{eviction} and reduce traffic.
 
 Exploiting the coarse-grain structure of matrices is key to designing hardware optimized for sparse matrix kernels.
@@ -35,7 +35,7 @@ In the next chapter, we present a more theoretical analysis of the behavior of \
             \item \textbf{\acrshort{srt}}, sparse region table for \glspl{reduction} in the sparse region of the matrix.
         \end{itemize}
         \item Uses memory transactions adapted to the region density: \textbf{cache-line-wise versus element-wise} for the \acrshort{drc} and the \acrshort{srt}, respectively.
-        \item For a set of 48 matrices, results in \textbf{4.1$\times$ less memory traffic} for \acrshort{op} \acrshort{spmv} kernel.
+        \item For a set of 48 matrices, results in \textbf{4.1\tm less memory traffic} for \acrshort{op} \acrshort{spmv} kernel.
     \end{itemize}
 \end{highlight}
 
