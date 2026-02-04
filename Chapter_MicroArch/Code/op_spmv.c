@@ -1,3 +1,9 @@
+/* Data:
+ *   A(M, N), stored in CSC: A.ptr, A.idx, A.val
+ *   b(N), dense:            b
+ *   c(M), dense:            c
+ * */
+
 redEngineOn(config);
 
 int currCol = A.ptr[0];

@@ -42,7 +42,7 @@ When active it takes control of the cache and can invoke the \textit{flush contr
 Most of these units are reused and extended to implement \acrlong{spdc}.
 
 HPDcache provides extensive static and dynamic configurability, making it a flexible foundation for further extensions.
-The changes to \acrlong{spdc} were done in a way such that, by simply changing parameters, the same \acrshort{rtl} code can implement (1) the original generic cache (\acrshort{gc}) as the first baseline, (2) a standard \gls{redC} (\acrshort{redc}) as the second baseline, or (3) \acrlong{spdc} (\acrshort{spdc}), the solution presented in the previous chapters.
+The changes to \acrlong{spdc} were done in a way such that, by simply changing SystemVerilog parameters, the same \acrshort{rtl} code can implement (1) the original generic cache (\acrshort{gc}) as the first baseline, (2) a standard \gls{redC} (\acrshort{redc}) as the second baseline, or (3) \acrlong{spdc} (\acrshort{spdc}), the solution presented in the previous chapters.
 
 \begin{highlight}{Note}{SkyBlue}
     Statistics on the development effort and timeline for the complete SpDCache implementation are provided in Appendix~\ref{app:stats}.
@@ -103,7 +103,7 @@ This region operates as if all the \glspl{set} were combined into a single \gls{
 Each element requires its own directory entry.
 Therefore, we replace the \textit{Dir} \acrshortpl{ram} of this region with a \acrshort{cam} (\textit{Content-Addressable Memory}) containing the addresses of each valid element in the \acrshort{srt} region.
 With the \acrshort{cam}, we can check for a \gls{hit} across the entire region and retrieve the matching value stored in the \textit{Data} \acrshortpl{ram}.
-We also added a queue (\textit{RMWQ}) to manage the element-wise \gls{rmw} memory transactions.
+We also added a queue (\textit{RMWQ}) to buffer the outstanding element-wise \gls{rmw} memory transactions.
 
 To avoid address duplication between regions, the \textit{MultiHit fetcher} in Figure~\ref{fig:arch:microarch} manages coherency between the \acrshort{drc} and \acrshort{srt}, following the rules defined in Section~\ref{sec:spdc:archispdc}.
 Since software selects the region for each operation, it is possible that addresses that were allocated in the \acrshort{srt} need to be move to the \acrshort{drc}.
@@ -154,7 +154,7 @@ Once all \acrshort{red} operations complete, \acrlong{spdc} is flushed at line~1
 \end{highlight}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Details on SpDCache Pipeline Operation}
+\subsection{Detailed Operation of the SpDCache Pipeline}
 \label{sec:arch:pipeline}
 
 In this section, we detail the \acrlong{spdc} \gls{pipeline} architecture, which extends the HPDcache original \gls{pipeline} by adding new behavior for \gls{reduction} operations while preserving existing functionality.
@@ -315,6 +315,6 @@ The \acrshort{rmwq} independently issues atomic \acrshort{rmw} transactions to m
 \end{highlight}
 
 \begin{highlight}{Conclusion}{Red}
-    We implemented \textbf{\acrlong{spdc}} in \acrshort{rtl} by extending HPDcache with \textbf{minimal modifications}, introducing support for \gls{reduction} operations and multiple cache regions without requiring additional memory.
-    This \textbf{configurable design} allows a single \acrshort{rtl} implementation to function as a generic cache, a traditional \gls{redC}, or the region-based \acrlong{spdc} variant, facilitating comprehensive performance evaluation.
+    In this section we explained the exact steps that a \gls{reduction} instruction takes when it targets either the \acrshort{ibr} or \acrshort{obr}.
+    In both cases we need to handle the cases of \glspl{hit}, \glspl{miss} and \glspl{eviction} while \textbf{preventing duplications}.
 \end{highlight}

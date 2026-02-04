@@ -1,3 +1,9 @@
+/* Data:
+ *   A(M, N), stored in BaCSC: A.ptr, A.idx, A.val
+ *   b(N), dense:              b
+ *   c(M), dense:              c
+ * */
+
 redEngineOn(config);
 
 /* A is stored in BaCSC format with pointers delimiting the band sections */
