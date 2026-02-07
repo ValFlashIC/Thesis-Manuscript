@@ -32,7 +32,7 @@ This chapter not only synthesizes the current state of sparse matrix acceleratio
         \item \textbf{Autonomy:} \textit{standalone} versus \textit{processor-assist}
         \item \textbf{Position in the memory hierarchy:} near-processor, near-cache, or near-main-memory
         \item \textbf{Algorithm compatibility:} \acrfull{ip}, \acrfull{op}, or \acrfull{gust}
-        \item \textbf{Core operations:} \gls{gather}/\gls{scatter} hardware support
+        \item \textbf{Supported Memory Flows:} \gls{gather}/\gls{scatter} hardware support
         \item \textbf{Targeted kernels:} sparse \acrfull{mv}, sparse \acrfull{mm}, or both
     \end{itemize}
 
@@ -40,9 +40,9 @@ This chapter not only synthesizes the current state of sparse matrix acceleratio
     \colorbf{Mulberry}{Key Findings:}
     \begin{itemize}
         \item \textbf{Algorithm Selection:} \acrlong{gust}'s algorithm offers the best trade-off for hardware implementation, balancing input reuse and output generation, while the \acrlong{op} algorithm remains a strong alternative, particularly for parallelism.
-        \item \textbf{Memory Optimization:} Efficient use of local memory, whether through custom caches or smart \gls{eviction} policies, is critical to reducing off-chip traffic and improving performance.
-        \item \textbf{Adaptability:} The most successful accelerators dynamically adjust their dataflows and memory strategies to match the sparsity patterns of the input matrices, highlighting the importance of flexibility in hardware design.
-        \item \textbf{Scalability and Parallelism:} High-performance designs leverage parallel \gls{reduction} and merger units and optimized memory hierarchies to handle large-scale, irregular workloads efficiently.
+        \item \textbf{Memory Optimization:} Efficient use of local memory, whether through custom caches or smart \gls{eviction} policies, is critical to reduce off-chip traffic and to improve performance.
+        \item \textbf{Adaptability:} The most successful accelerators dynamically adjust their dataflows and memory strategies to match the sparsity patterns of the input matrices, highlighting the importance of adaptability.
+        \item \textbf{Scalability and Parallelism:} High-performance designs leverage parallel \gls{reduction} and merger units and optimized memory hierarchies.
     \end{itemize}
 
     \bigskip

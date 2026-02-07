@@ -25,9 +25,9 @@ Consequently, each core reads a different portion of matrix $A$ and vector $b$, 
 
 Two key requirements emerge: first, all core updates must eventually be merged into main memory; second, the \gls{reduction} process must remain ``fire-and-forget'' across cache levels to prevent stalling the entire memory hierarchy through inter-level dependencies.
 
-Our proposed architecture replaces each cache level with adapted \acrlong{spdc} versions, where the \acrshort{drc} \gls{band} width scales with cache size.
+Our proposed architecture replaces each cache level with adapted \acrlong{spdc} versions, where the \acrshort{drc} \gls{bw} scales with cache size.
 As shown in the figure, the memory hierarchy separates into two parts: \acrshortpl{grc} function as a conventional memory hierarchy with coherency management, while \acrshortpl{drc} and \acrshortpl{srt} manage \glspl{reduction} independently.
-\acrshort{drc} \gls{band} width grows from \acrshort{l1} to \acrshort{llc}, with the \acrshort{llc} defining the matrix \gls{band}, portions of which cascade to \acrshort{l1} and \acrshort{l2}.
+\acrshort{drc} \gls{bw} grows from \acrshort{l1} to \acrshort{llc}, with the \acrshort{llc} defining the matrix \gls{band}, portions of which cascade to \acrshort{l1} and \acrshort{l2}.
 The out-of-\gls{band} region is fixed by the \acrshort{llc} and remains constant across levels.
 
 When \acrshort{l1} receives a RED instruction from its core, the \acrlong{spdc} procedure routes it to the \acrshort{drc} or \acrshort{srt} (checking the \acrshort{drc} first, then the region argument, with \acrshort{srt}-to-\acrshort{drc} transfers preventing duplication, as seen Chapter~\ref{cha:spdc}).
@@ -53,9 +53,9 @@ This system requires detecting four matrix regions rather than two, from \acrsho
 Software-based region calculation would significantly increase per-iteration latency, and extending the \acrshort{bacsc} format risks substantial memory overhead.
 Therefore, hardware-based region calculation (Section~\ref{sec:optim:rtloptims}) is necessary for scalability.
 
-Note that \acrshort{llc} \acrshort{drc} \gls{band} width calculation differs slightly from other levels: two matrix \gls{band} portions are simultaneously computed by both cores.
+Note that \acrshort{llc} \acrshort{drc} \gls{bw} calculation differs slightly from other levels: two matrix \gls{band} portions are simultaneously computed by both cores.
 The \acrshort{llc} must allocate sufficient memory space for both portions to prevent one core's \glspl{reduction} from evicting the other's.
-Thus, \acrshort{llc} \acrshort{drc} \gls{band} width should be calculated as: \acrshort{drc} size divided by the number of cores.
+Thus, \acrshort{llc} \acrshort{drc} \gls{bw} should be calculated as: \acrshort{drc} size divided by the number of cores.
 
 This system carries congestion risk when merging \acrshort{llc} requests, as many element-wise and line-wise \glspl{reduction} compete for the accumulator.
 Further investigation with proper evaluation is warranted.
@@ -64,7 +64,7 @@ Alternative configurations merit exploration: for example, \acrlong{spdc} at \ac
 Similarly, adjusting \gls{band} sizing policies involves trade-offs: sizing \acrshort{l1} \gls{band}s identically across \acrshort{l2} and \acrshort{llc} simplifies region calculation and eliminates RED forwarding but underutilizes \acrshort{l2} and \acrshort{llc} \acrshort{drc} space; conversely, sizing by \acrshort{llc} \gls{band} would cause unwanted \acrshort{l1} and \acrshort{l2} \glspl{eviction}.
 
 Our example vertically partitions the matrix into two parts for simplicity and \acrshort{csc} alignment.
-However, alternatives exist: for instance, odd and even columns could be assigned to separate cores, remaining \acrshort{csc}-compliant while allowing both cores to do \glspl{reduction} on the same addresses at the same time and thus using the entire \acrshort{llc} \acrshort{drc} size for the \gls{band} width.
+However, alternatives exist: for instance, odd and even columns could be assigned to separate cores, remaining \acrshort{csc}-compliant while allowing both cores to do \glspl{reduction} on the same addresses at the same time and thus using the entire \acrshort{llc} \acrshort{drc} size for the \gls{bw}.
 The drawback is reduced \acrshort{l1} and \acrshort{l2} \gls{hit} rates, concentrating most \glspl{hit} (and accumulations) in the \acrshort{llc}, potentially causing congestion.
 Additionally, dynamic partitioning strategies could be explored through a dedicated scheduler, distributing columns to available cores for example, enabling comprehensive load-balancing analysis for multi-core \acrlong{spdc} implementations.
 Determining the optimal approach requires empirical evaluation.

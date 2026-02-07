@@ -14,7 +14,7 @@ Several trends emerge from this overview.
 The United States (US) and China lead in accelerator development, with China showing particularly strong activity since 2023.
 Most accelerators originate from universities and institutes, with MIT (US) notably contributing to ExTensor, PHI, SpArch, and Gamma, while ICT (China) contributed to GAS, ACES, and Mentor.
 Industry participation is also evident: NVIDIA was involved in five accelerators (\eg EIE, ExTensor, SpArch, Flexagon, and Vesper), while companies such as Axelera, Intel, Meta, Microsoft, SiFive, and Zettaflops contributed to individual projects.
-The research is geographically distributed across Canada, China, France, Hong Kong, India, Iran, Italy, Japan, Singapore, South Korea, Spain, Switzerland, the United Kingdom (UK), and the United States (US).
+The research is geographically distributed across Canada, China, France, Hong Kong, India, Iran, Italy, Japan, Singapore, South Korea, Spain, Switzerland, the United Kingdom, and the United States.
 
 \begin{table}[htbp]
     \caption{Chronological Summary of a Representative Sparse Accelerator Subset}
@@ -67,18 +67,20 @@ Most of the matrices used for benchmarking come from the SuiteSparse Matrix Coll
 Domain specific matrix libraries are also used~\cite{Leskovec2014_SNAP, Smith2017_FROSTT, Azad2018_HipMCL, Reddi2020_MLPerf}, as well as some synthetic matrix generators~\cite{Ang2010_Graph500, Beamer2017_GAP}.
 In Table~\ref{tab:soa:evaluation}, we note the number of matrices used for evaluation across our subset of accelerators.
 Most evaluations employ around ten or several tens of matrices, with few exceeding one hundred (none in the table).
+Given the significant performance variation across different matrices, evaluating with a larger matrix set provides more reliable performance estimates.
+Consequently, we evaluate \acrlong{spdc} using a comprehensive set of matrices (detailed in Chapters~\ref{cha:spdc} and~\ref{cha:arch}).
 Matrix densities are typically below 10\textsuperscript{-2} and can be as low as 10\textsuperscript{-7}.
 Some accelerators, such as ExTensor, Tensaurus, SortCache, and Flexagon, also include denser matrices in their benchmarks.
 All studies evaluate large matrices with several million non-zeros, which is critical since these exceed typical cache sizes.
 However, performance results often depend heavily on the matrices chosen.
 
-Matrices are typically stored in straightforward formats like \acrshort{coo} (row-major sorted) within the SuiteSparse Matrix Collection, necessitating preprocessing for compatibility with certain accelerators.
-For instance, some accelerators, such as EIE, ExTensor, Tensaurus, MatRaptor, Alrescha and C\textsuperscript{3}ache, require conversion to their specific custom formats.
+Matrices are typically stored in straightforward formats like \acrshort{coo} (row-major sorted) as found in the SuiteSparse Matrix Collection, necessitating preprocessing for compatibility with certain accelerators.
+For instance, some accelerators, such as EIE, ExTensor, Tensaurus, MatRaptor, Alrescha, \acrlong{spdc} and C\textsuperscript{3}ache, require conversion to their specific custom formats.
 Other \textit{standalone} accelerators utilize unique internal formats with \gls{tiling} methods but perform the conversion in hardware (\eg InnerSP, Spada, Flexagon, IOPS, DMSA).
 Accelerators like Coup, PHI, SortCache, and ASA do not require preprocessing as they focus solely on \gls{scatter}.
 \Gls{gather} focused accelerators such as SPiDRE and SSSR do not require preprocessing, as they directly stream matrices from standard sparse formats.
 CoSPARSE is notably the only accelerator proposing to maintain two matrix copies in main memory (one in \acrshort{csr} and one in \acrshort{csc}) to enable joint software/hardware optimization.
-Regardless, fair benchmarking must consider the costs associated with specialized preprocessing if any is required.
+Regardless, fair benchmarking must consider the costs associated with specialized preprocessing if this is required.
 
 \begin{table}[htbp]
     \caption{Qualitative Analysis and Evaluation of Sparse Accelerators Subset}
@@ -114,13 +116,13 @@ Regardless, fair benchmarking must consider the costs associated with specialize
         Gamma~\cite{Zhang2021_Gamma}                & Custom simulator / Entirely evaluated / $\varnothing$                                                                & 37               & 3~MiB \\
         SortCache~\cite{Srikanth2021_SortCache}     & Custom simulator / Entirely evaluated / Single threaded, in-order core  with 3 level cache                           & 11               & 16.3~MiB \\
         ASA~\cite{Zhang2022_ASA}                    & Modified \textit{ZSim} / Entirely evaluated; One ASA per core / 8-cores with 3 level cache                           & 9                & 8\tm8~KiB \\
-        Spada~\cite{Li2023_Spada}                   & Custom Rust simulator / Entirely simulated; RTL of key components / $\varnothing$                                    & 27               & 1.5~MiB \\
+        Spada~\cite{Li2023_Spada}                   & Custom Rust simulator / Entirely simulated; \acrshort{rtl} of key components / $\varnothing$                                    & 27               & 1.5~MiB \\
         Flexagon~\cite{Munoz-Martinez2023_Flexagon} & Custom simulator based on STONNE / Entirely evaluated / $\varnothing$                                                & 9                & 1.3~MiB \\
-        SSSR~\cite{Scheffler2023_SSSR}              & $\varnothing$ / Entirely evaluated through RTL implementation / RISC-V Snitch System                                 & \textit{unknown} & 128~KiB \\
+        SSSR~\cite{Scheffler2023_SSSR}              & $\varnothing$ / Entirely evaluated through \acrshort{rtl} implementation / RISC-V Snitch System                                 & \textit{unknown} & 128~KiB \\
         GAS~\cite{Zhang2024_GAS}                    & HSPICE / Entirely simulated; Models for FeFETs and MOSFETs / 96 cores CPU, NVIDIA GPU                                & 20               & $\sim$40~MiB \\
-        ACES~\cite{Lu2024_ACES}                     & Custom simulator / RTL of main components / $\varnothing$                                                            & 18               & 2~MiB \\
+        ACES~\cite{Lu2024_ACES}                     & Custom simulator / \acrshort{rtl} of main components / $\varnothing$                                                            & 18               & 2~MiB \\
         \textbf{SpDCache}~[\ref{publ:SpDC}]         & Custom Python simulator / Entirely evaluated; Not cycle-accurate / Single-core system with one level cache           & 48               & 32~KiB \\
-        IOPS~\cite{Sun2025_IOPS}                    & $\varnothing$ / Entirely evaluated through RTL implementation / $\varnothing$                                        & 10               & $\sim$77~KiB \\
+        IOPS~\cite{Sun2025_IOPS}                    & $\varnothing$ / Entirely evaluated through \acrshort{rtl} implementation / $\varnothing$                                        & 10               & $\sim$77~KiB \\
         DMSA~\cite{Nagahara2025_DMSA}               & $\varnothing$ / Evaluated on \acrshort{fpga} / $\varnothing$                                                         & 10               & $\sim$22~MiB \\
         %
         * Mainly for \textit{processor-assist} accelerators.
@@ -130,23 +132,25 @@ Regardless, fair benchmarking must consider the costs associated with specialize
 Not all accelerators have reached the same level of design maturity, and in Table~\ref{tab:soa:evaluation}, we have shown how each design of our subset of accelerators was analyzed or simulated.
 Most designs report that they have been simulated at a cycle-accurate level.
 Most of the accelerators use custom simulators or tools such as \textit{gem5}~\cite{Lowe2020_gem5}, \textit{ZSim}~\cite{SANCHEZ_2013_ZSIM} and STONNE~\cite{Munoz-Martinez2021_STONNE}, or HSPICE (Synopsys\textregistered) for in-memory computing, but unfortunately there is no common approach, making it difficult to fairly compare the reported performance.
-RTL descriptions are often only generated for key parts of the design, except for few that directly use the RTL for evaluation (\eg EIE, ITS, SSSR, IOPS, DMSA).
+\acrshort{rtl} descriptions are often only generated for key parts of the design, except for a few that actually simulate the \acrshort{rtl} for evaluation (\eg EIE, ITS, SSSR, IOPS, DMSA\footnote{\acrlong{spdc} from Paper~\ref{publ:SpDC} has no \acrshort{rtl} evaluation. We provide a full \acrshort{rtl} evaluation in Chapter~\ref{cha:arch}.}).
 To estimate power and area, authors used tools such as CACTI~\cite{Balasubramonian2017_CACTI7}, McPAT~\cite{Li2009_McPAT} and NVSim~\cite{Dong2012_NVSim}.
 We have not attempted to compare power/energy as the data in the literature is heterogeneous and can not be fairly compared.
 In the last column of the table, we show the size of the local memory storage used in simulation by our subset of accelerators.
 Except for SPiDRE and SpaceA which work directly in main memory, the local memories are in the range of 32~KiB to 64~MiB, corresponding to 4k to 8.4M entries (if an entry is 8B).
 Thus, in the model presented in Section~\ref{sec:bg:AnalyticalModel} of the previous chapter, most of the accelerators are situated in the middle-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}, with a local memory corresponding to a few matrix rows.
-Few are closer from the bottom-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}, where matrices could be held entirely in local memory.
+Indeed, some accelerators have so much storage, they are closer to the bottom-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}, where the full matrix could be held entirely in local memory.
 
-The accelerators performance are reported as a speedup versus a baseline, which may differ according to their hardware and software platforms: typically the Intel MKL library~\cite{Intel2003_IntelMKL}, the Armadillo library~\cite{Conrad2016_Armadillo}, SparseBLAS~\cite{Duff2002_SparseBLAS} for CPUs, or GridGraph~\cite{Zhu2015_GridGraph}, Gunrock~\cite{Wang2016_Gunrock} and GraphMat~\cite{Sundaram2015_GraphMat} specifically for graphs on CPUs, or cuSPARSE~\cite{NVIDIA2014_cuSPARSE} and CUSP~\cite{Dalton2014_Cusp} for GPUs.
+The accelerators performance is reported as a speedup versus a baseline, which may differ according to their hardware and software platforms: typically the Intel MKL library~\cite{Intel2003_IntelMKL}, the Armadillo library~\cite{Conrad2016_Armadillo}, SparseBLAS~\cite{Duff2002_SparseBLAS} for CPUs, or GridGraph~\cite{Zhu2015_GridGraph}, Gunrock~\cite{Wang2016_Gunrock} and GraphMat~\cite{Sundaram2015_GraphMat} specifically for graphs on CPUs, or cuSPARSE~\cite{NVIDIA2014_cuSPARSE} and CUSP~\cite{Dalton2014_Cusp} for GPUs.
 Since different baselines with different numbers of threads and cores are used, these speedups need to be interpreted with care.
-The speedups are in general higher for the \textit{standalone} accelerators as they provide optimized hardware for the entire kernel, while \textit{processor-assist} accelerators have less impressive speedups but aim to be general purpose and have lower area overhead.
+The speedups are in general higher for the \textit{standalone} accelerators as they provide optimized hardware for the entire kernel, while \textit{processor-assist} accelerators have less impressive speedups.
+Although many \textit{standalone} sparse accelerators have been proposed by the academic community, it is not clear how such an accelerator could become an economically viable product.
+However, light-weight \textit{processor-assists} could be integrated into general purpose processors or caches to improve their performance, while remaining general purpose.
 
 The only accelerators that have a comparable baseline are some of the \textit{standalone} ones addressing sparse \acrshort{mm} kernels.
-They all compare themselves to OuterSPACE with the same benchmark matrices, so we can sort them by their speedup: SPAGHETTI (13\tm), Gamma (6.6\tm), InnerSP (4.6\tm), SpArch (4.0\tm), SIGMA (3.0\tm), IOPS (2.9\tm), MatRaptor (1.8\tm), Alrescha (1.7\tm), MOSCON (1.1\tm), OuterSPACE (1\tm).
+Some of them compare themselves to OuterSPACE with the same benchmark matrices, so we can sort them by their speedup: SPAGHETTI (13\tm), Gamma (6.6\tm), InnerSP (4.6\tm), SpArch (4.0\tm), SIGMA (3.0\tm), IOPS (2.9\tm), MatRaptor (1.8\tm), Alrescha (1.7\tm), MOSCON (1.1\tm), OuterSPACE (1\tm).
 Some accelerators compare themselves against other accelerators beyond OuterSPACE, making direct speedup comparisons problematic.
 An extended speedup ranking derived from indirect comparisons to OuterSPACE should be interpreted cautiously: GAS (26\tm), SPAGHETTI (13\tm), Sparm (7.9\tm), Gamma (6.6\tm), DMSA (6.2\tm), InnerSP (4.6\tm), SpArch (4.0\tm), SIGMA (3.0\tm), IOPS (2.9\tm), GSCSp (1.8\tm), MatRaptor (1.8\tm), Alrescha (1.7\tm), MOSCON (1.1\tm), OuterSPACE (1\tm).
-Additionally, Spada, Flexagon, ACES, and Mentor can be indirectly compared to OuterSPACE through intermediate accelerators, though the resulting speedups lack precision due to propagated uncertainties: Spada (5.8\tm-110\tm), Flexagon (6.8\tm-14\tm), ACES (12\tm-240\tm), Mentor (8.6\tm-25\tm), and ScanNow (20\tm-440\tm).
+Additionally, Spada, Flexagon, ACES, and Mentor can be indirectly compared to OuterSPACE through intermediate accelerators, though the resulting speedups lack accuracy due to propagated uncertainties: Spada (5.8\tm-110\tm), Flexagon (6.8\tm-14\tm), ACES (12\tm-240\tm), Mentor (8.6\tm-25\tm), and ScanNow (20\tm-440\tm).
 This performance inconsistency stems from the absence of a common baseline and variations in benchmark matrices across studies.
 Averaging the estimates for the three most recent accelerators yields: ScanNow (140\tm), ACES (77\tm), Spada (43\tm), GAS (26\tm), Mentor (14\tm), SPAGHETTI (13\tm), Flexagon (9.8\tm), Sparm (7.9\tm), Gamma (6.6\tm), DMSA (6.2\tm), InnerSP (4.6\tm), SpArch (4.0\tm), SIGMA (3.0\tm), IOPS (2.9\tm), GSCSp (1.8\tm), MatRaptor (1.8\tm), Alrescha (1.7\tm), MOSCON (1.1\tm), OuterSPACE (1\tm).
 These results warrant careful interpretation.
@@ -157,7 +161,7 @@ These measurements are consistent with our model presented in Section~\ref{sec:b
 OuterSPACE, the baseline, corresponds to graph~\ding{196}.
 MatRaptor, the first \acrshort{gust} accelerator, was able to achieve higher performance by reducing the number of \glspl{randAccess}, and creating better regularity (\textit{red} to \textit{yellow}), as seen in graph~\ding{197}.
 SpArch and GAS are \acrshort{op} accelerators with a larger local memory, which is used to address the \textit{red} region in graph~\ding{196}.
-Their $A$-matrix condensing method of MatRaptor, allows to reduce the number of \acrfullpl{po}, and approach the performance achievable in graph~\ding{199}, although, \textit{in fine}, it is impossible to store all the \acrshortpl{po} in local memory.
+The $A$-matrix condensing method of MatRaptor, allows to reduce the number of \acrfullpl{po}, and approach the performance achievable in graph~\ding{199}, although, \textit{in fine}, it is impossible to store all the \acrshortpl{po} in local memory.
 GAS leverages in-memory computing techniques to mitigate the limitations of the \acrshort{op} approach, thereby approaching the performance levels achievable in graph~\ding{199}.
 \acrshort{gust} accelerators correspond to optimizations of the algorithm approach in graph~\ding{197}, to approach the performance in graph~\ding{200}.
 This is mainly achieved by custom local memories and caches for the $B$-matrix to address the \textit{orange} region, given that it is only necessary to store a limited number of $B$-rows, and to get ahead-of-time information from the reading of the matrix $A$.
@@ -165,10 +169,10 @@ This is mainly achieved by custom local memories and caches for the $B$-matrix t
 Nevertheless, several recent accelerators (\eg CoSPARSE, Flexagon, Sparm, Vesper and IOPS) have demonstrated that \acrshort{ip} delivers competitive performance on certain matrices, comparable to \acrshort{op} and \acrshort{gust} approaches.
 To capitalize on this observation, these designs support multiple or all three algorithms, enabling adaptive algorithm selection.
 While this flexibility for \textit{standalone} accelerators increases hardware complexity, it yields substantial performance gains and drives the field toward adaptive dataflow architectures.
-These findings validate that the model presented in Section~\ref{sec:bg:AnalyticalModel} provides valuable insights into local memory requirements for sparse \acrshort{mm} accelerators.
+These findings validate the model presented in Section~\ref{sec:bg:AnalyticalModel} and demonstrate that it provides valuable insights into local memory requirements for sparse \acrshort{mm} accelerators.
 
 \begin{highlight}{Conclusion}{Red}
-    This comparative analysis of state-of-the-art sparse matrix accelerators reveals that \textbf{\acrlong{gust}'s algorithm is the most effective for high-performance} when coupled with \textit{standalone} hardware implementations, \textbf{followed by \acrlong{op}} which is particularly leveraged in \textit{processor-assist} designs, with \acrlong{ip} showing competitive results in specific cases, highlighting the importance of algorithmic adaptability and tailored memory hierarchies in optimizing sparse computations.
+    This comparative analysis of state-of-the-art sparse matrix accelerators reveals that \textbf{\acrlong{gust}'s algorithm is the most effective for high-performance} when coupled with \textit{standalone} hardware implementations, \textbf{followed by \acrlong{op}} which is used especially in \textit{processor-assist} designs.
 \end{highlight}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

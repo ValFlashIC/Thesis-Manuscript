@@ -9,20 +9,20 @@
 \lettrine{T}{he} challenges of efficiently processing sparse matrices have been recognized since the 1960s, when it became clear that using dense array representations for sparse datasets was highly inefficient~\cite{Saad2003_COO_CSR_DIA_ELL}.
 The seminal work of OSKI~\cite{Vuduc2005} in 2003 formalized alternative sparse representations and identified numerous optimization opportunities, paving the way for specialized software libraries for sparse algebra~\cite{Williams2007}.
 However, even with these advancements, single-core software implementations often achieve only around 10\% of peak performance [37], highlighting the need for more efficient hardware solutions.
-Sparse matrix operations, particularly sparse \acrfull{mv} and sparse \acrfull{mm} multiplication, pose distinct computational challenges:
+Sparse matrix kernels, particularly sparse \acrfull{mv} and sparse \acrfull{mm} multiplication, pose distinct computational challenges:
 \begin{itemize}
-    \item Access to sparse input data, which requires efficient handling of irregular memory patterns.
+    \item Reading of sparse input data, which may require efficient handling of irregular memory patterns.
     \item \Gls{reduction} operations on intermediate results, where \glspl{psum} must be accumulated and managed.
-    \item Formatting and writing back results to memory, which becomes critical when outputs are large or dense.
+    \item Formatting and writing back results to memory.
 \end{itemize}
 
 As seen in the previous chapter, the choice of algorithm, \eg \acrfull{ip}, \acrfull{op}, or \acrlong{gust}'s (\acrshort{gust}), directly influences how these challenges are addressed.
-For example, \acrshort{ip} algorithms struggle with \gls{intersection} searches (\gls{gather} problem), while \acrshort{op} algorithms face irregular updates (\gls{scatter} problem).
+For example, with \acrshort{ip} algorithms, the key challenge is \gls{intersection} searches (\gls{gather} problem), while \acrshort{op} algorithms must deal with irregular updates (\gls{scatter} problem).
 \acrlong{gust}'s algorithm offers a trade-off, balancing input reuse and output generation but still requires careful optimization.
 On conventional CPUs, memory throughput is the primary bottleneck, leading to optimizations such as row reordering, blocking, and loop transformations to improve data locality.
 For GPUs, the challenge shifts to thread assignment, warp balancing, and efficient use of shared memory~\cite{Liu2014}.
 Sparse \acrshort{mm} introduces additional complexity due to dynamic \glspl{reduction} and irregular output generation~\cite{Gao2020}, which dominate execution time and memory traffic on both CPUs and GPUs~\cite{Zachariadis2020, Nagasaka2018, Deveci2018}.
 Hardware accelerators address these issues by optimizing the memory hierarchy, ensuring input data availability near compute units and offloading accumulation/\gls{reduction} operations from processors.
-This chapter reviews state-of-the-art hardware accelerators for sparse matrix computations, comparing their architectures, algorithms, and performance.
+This chapter reviews many state-of-the-art hardware accelerators for sparse matrix computations, comparing their architectures, algorithms, and performance.
 Our analysis identifies common architectural trends, evaluates design trade-offs, and provides insights for future accelerator development.
 The goal is to offer a structured comparison that helps designers select or refine architectures based on specific workload requirements.

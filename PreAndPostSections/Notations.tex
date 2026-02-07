@@ -16,7 +16,9 @@
     \DefTblrTemplate{firsthead,middlehead,lasthead}{default}{}
     \DefTblrTemplate{contfoot-text}{normal}{}
     \SetTblrTemplate{contfoot-text}{normal}
-    \begin{longtblr}{
+    \begin{longtblr}[
+            entry = none,
+        ]{
             width = {\linewidth},
             colspec = {X[2.5,r] X[10,j]}, % rowspec
             rows = {t},

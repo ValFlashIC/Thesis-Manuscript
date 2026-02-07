@@ -6,7 +6,7 @@
 \section{Analysis of Reduction Cache Behavior}
 \label{sec:theory:analysis}
 
-\lettrine{W}{e} now study the \gls{redC} behavior when computing \acrshort{op} \acrshort{spmv}, starting with the simple case of \gls{PBanded} matrices with varying \gls{band} widths.
+\lettrine{W}{e} now study the \gls{redC} behavior when computing \acrshort{op} \acrshort{spmv}, starting with the simple case of \gls{PBanded} matrices with varying \glspl{bw}.
 We then use the analytical model to analyse the \gls{redC} behavior, varying the out-of-\gls{band} density and the cache-size.
 We show the benefit of storing the in- and out-of-\gls{band} of the matrix in separate regions of the cache, to minimize memory traffic.
 
@@ -18,9 +18,9 @@ In the previous chapter, we presented \acrlong{spdc} and a \gls{redC} baseline w
 We defined the \gls{bw} of the matrix based on the \acrshort{drc} size.
 In this section, we explain and justify this choice by analyzing the behavior of a \gls{redC} when processing an \acrshort{op} \acrshort{spmv} kernel with a \gls{PBanded} matrix.
 
-We show that the \gls{redC} must be `properly' dimensioned with respect to the \gls{band} width of a \gls{PBanded} matrix, in order to avoid unnecessary \glspl{eviction}.
+We show that the \gls{redC} must be `properly' dimensioned with respect to the \gls{bw} of a \gls{PBanded} matrix, in order to avoid unnecessary \glspl{eviction}.
 Indeed, if the cache is too small compared to the \gls{band}, \glspl{eviction} occur before the column iteration is over, leading to poor data-reuse for the next iteration.
-To achieve high data-reuse, we show that the cache-size ($s_C$) and the \gls{band} width ($w_B$) must respect the relationship given in Equation~\ref{eq:theory:in_band_cond}.
+To achieve high data-reuse, we show that the cache-size ($s_C$) and the \gls{bw} ($w_B$) must respect the relationship given in Equation~\ref{eq:theory:in_band_cond}.
 
 \begin{equation}
     s_C \geqslant w_B + l - 1
@@ -83,15 +83,15 @@ If the cache-size is larger than required by Equation~\ref{eq:theory:in_band_con
 To produce this perfect cache rotation, we assume an LRU \gls{eviction} policy and dense vertical-strips, although, even with a \textit{random} policy, the general pattern still holds.
 
 This analysis shows that, with a ``properly-sized'' \gls{redC}, a \gls{PBanded} matrix provokes no unnecessary \glspl{eviction} and the cache-lines are fully utilized.
-With a given cache-size, Equation~\ref{eq:theory:in_band_cond} defines the maximum \gls{band} width that can be efficiently stored in the \gls{redC} or in the \acrshort{drc} of \acrlong{spdc}.
-For example, with a cache-size of $s_C = 2048$ elements (16~KiB) and a cache-line size of $l = 8$ elements, the maximum \gls{band} width is $w_B = 2041$ elements (which means a half-\gls{band} of $w_\mathit{hB} = 1020$ elements).
+With a given cache-size, Equation~\ref{eq:theory:in_band_cond} defines the maximum \gls{bw} that can be efficiently stored in the \gls{redC} or in the \acrshort{drc} of \acrlong{spdc}.
+For example, with a cache-size of $s_C = 2048$ elements (16~KiB) and a cache-line size of $l = 8$ elements, the maximum \gls{bw} is $w_B = 2041$ elements (which means a half-\gls{band} of $w_\mathit{hB} = 1020$ elements).
 
 Large, \gls{PBanded} matrices are rare in practice, especially with such narrow \acrshort{band}-width.
 In the next sections, we extend this analysis to \gls{banded} matrices, studying the impact of out-of-\gls{band} non-zero elements on the \gls{redC} behavior.
 
 \begin{highlight}{Conclusion}{Red}
-    A \gls{redC} can achieve an efficient \textbf{rotating pattern} when processing a \gls{PBanded} matrix, provided that the cache-size and \gls{band} width respect the \textbf{relationship given in Equation~\ref{eq:theory:in_band_cond}}: $s_C \geqslant w_B + l - 1$.
-    This relationship defines the \textbf{maximum \gls{band} width} that can be efficiently stored in the \gls{redC} for a given cache-size.
+    A \gls{redC} can achieve an efficient \textbf{rotating pattern} when processing a \gls{PBanded} matrix, provided that the cache-size and \gls{bw} respect the \textbf{relationship given in Equation~\ref{eq:theory:in_band_cond}}: $s_C \geqslant w_B + l - 1$.
+    This relationship defines the \textbf{maximum \gls{bw}} that can be efficiently stored in the \gls{redC} for a given cache-size.
 \end{highlight}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,11 +128,11 @@ Avoiding the perturbations induced by the out-of-\gls{band} elements would enabl
 
 Not surprisingly, at the left of the graph, $\mathit{normMT}$ varies depending on the cache-size.
 This is due to the relative size of the \gls{band} and the cache.
-Indeed, if the matrix \gls{band} width is large compared to the cache-size, processing one column of the \gls{band} will generate many \glspl{eviction}.
+Indeed, if the matrix \gls{bw} is large compared to the cache-size, processing one column of the \gls{band} will generate many \glspl{eviction}.
 To avoid \glspl{eviction} in the \gls{band}, the relationship given by Equation~\ref{eq:theory:in_band_cond} in Section~\ref{sec:theory:perfectband_vs_cache} must be fulfilled.
 Indeed, for this example, for $S \geqslant 8$, this relationship holds and the corresponding plots have significantly lower $\mathit{normMT}$, up to two orders of magnitude lower.
 Conversely, the first three plots ($S = 1$ to $4$) do not respect this condition, explaining their high $\mathit{normMT}$.
-Thus, the second takeaway from this graph is that, given a cache memory size, there is an ideal \gls{band} width that generates minimal $\mathit{normMT}$.
+Thus, the second takeaway from this graph is that, given a cache memory size, there is an ideal \gls{bw} that generates minimal $\mathit{normMT}$.
 Increasing the cache-size beyond this threshold only produces a minor reduction in memory traffic, between $\sim 9 \times 10^{-3}$ and $\sim 2 \times 10^{-2}$, since at the beginning of matrix traversal, the first \gls{eviction} is deferred before reaching the steady state rotating pattern, as discuss in Section~\ref{sec:theory:perfectband_vs_cache}.
 
 These observations explains the need of dividing the \gls{redC} into two regions.
@@ -196,13 +196,13 @@ Increasing the cache-size from $128$ (\textit{solid}) to $256$ (\textit{dashed})
 
 Up to now in this chapter, we considered a dense \gls{band} ($d_\mathit{IB} = 1$) to show the importance of having a rotating \gls{eviction} pattern to decrease memory traffic.
 However, matrices from real applications do not have fully dense \glspl{band}.
-Indeed, from our set of 48 matrices used in the previous chapter, considering a \gls{band} width of $w_B = 2041$ that fits into a \acrshort{drc} of 16~KiB ($s_C = 2048$ elements), the average in-\gls{band} density is $d_\mathit{IB} = 2.11 \times 10^{-3}$, ranging from $2.00 \times 10^{-8}$ and $5.44 \times 10^{-2}$, compared to an average out-of-\gls{band} density $d_\mathit{OB} = 1.28 \times 10^{-4}$, ranging from $0.00$ and $1.04 \times 10^{-2}$.
+Indeed, from our set of 48 matrices used in the previous chapter, considering a \gls{bw} of $w_B = 2041$ that fits into a \acrshort{drc} of 16~KiB ($s_C = 2048$ elements), the average in-\gls{band} density is $d_\mathit{IB} = 2.11 \times 10^{-3}$, ranging from $2.00 \times 10^{-8}$ and $5.44 \times 10^{-2}$, compared to an average out-of-\gls{band} density $d_\mathit{OB} = 1.28 \times 10^{-4}$, ranging from $0.00$ and $1.04 \times 10^{-2}$.
 Considering that a part of the matrices of our set are not considered as \gls{banded}, this order of magnitude difference between $d_\mathit{IB}$ and $d_\mathit{OB}$ on average across all 48 matrices shows that, even in matrices that do not appear to be \gls{banded}, it is reasonable to assume that the region along the diagonal is much denser (10$ \times$) than the region away from the diagonal.
 
 Since the in-\gls{band} density is lower than 1 in practice, we use the model to analyse the impact on normalized memory traffic of $d_\mathit{IB}$ variations.
 We use the same parameters as in the previous sections, a matrix of dimension $M = 1000$ and a cache with four \glspl{way} ($W = 4$) and cache-lines of size $l = 8$.
 We do not consider the out-of-\gls{band} ($d_\mathit{OB} = 0$) since it is processed in a separate region.
-We focus on the in-\gls{band} region for several cache configurations, making sure that the \gls{band} width for each \gls{set} size follows the relationship in Equation~\ref{eq:theory:in_band_cond}.
+We focus on the in-\gls{band} region for several cache configurations, making sure that the \gls{bw} for each \gls{set} size follows the relationship in Equation~\ref{eq:theory:in_band_cond}.
 In Figure~\ref{fig:theory:theory_IBtraffic_vs_d_IB}, we plot $\mathit{normMT}$ for the output vector $c$, depending on $d_\mathit{IB}$, for varying cache configurations.
 
 \begin{figure}[htbp]

@@ -6,7 +6,7 @@
 \subsection{Gamma}
 \label{sec:soa:gamma}
 
-Gamma~\cite{Zhang2021_Gamma} is a dedicated accelerator for \acrshort{spmspm} kernels, which uses \acrshort{gust} algorithm.
+Gamma~\cite{Zhang2021_Gamma} is a dedicated accelerator for \acrshort{spmspm} kernels, which uses the \acrshort{gust} algorithm.
 The two input matrices are both stored in \acrshort{csr} format and the output is generated in the same format, providing consistency.
 
 \begin{figure}[htbp]
@@ -40,10 +40,10 @@ However, if the row of $A$ contains more than 64 non-zero elements, then it must
 After each pass, the partial $C$-row is stored temporarily.
 Finally, the temporary $C$-rows are read-back and merged by the \acrshortpl{pe}.
 Of course, the rows of $B$ must be accessed repeatedly by the different \acrshortpl{pe}, and Gamma proposes \textit{FiberCache} which is a highly banked cache which fetches the $B$-rows in advance, based on the column index table of $A$.
-It keeps track of which rows of $B$ are most needed by the \acrshortpl{pe}, and when an \gls{eviction} is necessary, the victim is the row which is least needed.
+It keeps track of which rows of $B$ are most needed by the \acrshortpl{pe}, and when an \gls{eviction} is necessary, the victim is selected to be the row which is least needed.
 
 Gamma encounters some difficulties when the matrix $A$ has rows that are too dense, requiring multiple iterations through the \acrshortpl{pe}, which creates a high-load on the cache.
-The authors propose a software preprocessing technique which splits dense rows od $A$ and rearranges them to make best use of the \textit{FiberCache}.
+The authors propose a software preprocessing technique which splits dense rows of $A$ and rearranges them to make better use of the \textit{FiberCache}.
 
 \begin{highlight}{Conclusion}{Red}
     \textbf{Gamma} is a \acrlong{gust}-based \acrshort{spmspm} accelerator that leverages a 32-\acrshort{pe} architecture with a \textit{FiberCache} to optimize row-wise processing and reduce memory traffic, while simplifying \glspl{reduction} through ordered output generation.

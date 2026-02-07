@@ -104,7 +104,7 @@ The code shown is for \acrlong{spdc}.
 Variants for other designs differ as follows: \acrshort{redc} omits region selection (line~15) and invokes \acrshort{reg} once before the loops with \acrshort{ibr} as the argument; \acrshort{gc} requires no \acrshort{reg} instruction and replaces \acrshort{red} with standard accumulation: $c[idx] \acc val$.
 
 For \acrlong{spdc}, it is necessary to know the target region for each \acrshort{red} instruction based on the size of the \gls{band} (line~15).
-The half-\gls{band} width $w_\mathit{hB}$ is derived from Chapter~\ref{cha:theory} (Equation~\ref{eq:theory:in_band_cond}) to ensure the in-\gls{band} region fits within the \acrshort{drc} independent of matrix structure.
+The half-\gls{bw} $w_\mathit{hB}$ is derived from Chapter~\ref{cha:theory} (Equation~\ref{eq:theory:in_band_cond}) to ensure the in-\gls{band} region fits within the \acrshort{drc} independent of matrix structure.
 In our reference configuration ($s_C(\mathit{DRC}) = 2048$, $l = 8$), $w_\mathit{hB} = 1021$.
 Region selection follows Equation~\ref{eq:arch:reg_select} via an inline function, avoiding conditional branches within the inner-loop.
 
@@ -447,7 +447,7 @@ In comparison, \textit{standalone} accelerators have area overheads about one or
 To validate consistency between our models and implementations, we compare the normalized output memory traffic produced by three sources: the analytical model of Chapter~\ref{cha:theory}, the Python model of Chapter~\ref{cha:spdc}, and the \acrshort{rtl} implementation presented in this chapter.
 For a fair comparison, the caches for \acrshort{redc} and \acrlong{spdc} are configured to 32~KiB total (see Table~\ref{tab:arch:region_configs}): 50/50/0\% for \acrshort{redc} and 25/50/25\% for \acrlong{spdc}.
 The analytical model accepts global parameters and density distributions rather than actual matrices, so we synthesize \gls{banded} matrices for the Python and \acrshort{rtl} simulations that match those parameters.
-All synthetic matrices use $M = 10^{4}$, half-\gls{band} width $w_\mathit{hB} = 1021$, in-\gls{band} density $d_\mathit{IB} = 10^{-2}$, and out-of-\gls{band} density $d_\mathit{OB}$ varying from $10^{-7}$ to $10^{-2}$.
+All synthetic matrices use $M = 10^{4}$, half-\gls{bw} $w_\mathit{hB} = 1021$, in-\gls{band} density $d_\mathit{IB} = 10^{-2}$, and out-of-\gls{band} density $d_\mathit{OB}$ varying from $10^{-7}$ to $10^{-2}$.
 Note that at $d_\mathit{OB} \simeq 8\times10^{-3}$, approximately one non-zero element exists per column in the out-of-\gls{band} region, whereas at $d_\mathit{OB} \simeq 8\times10^{-7}$, approximately one non-zero element exists in the entire out-of-\gls{band} region of the full matrix, resulting in a nearly \gls{PBanded} matrix.
 
 \begin{figure}[htbp]
