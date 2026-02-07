@@ -349,13 +349,13 @@
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Personalize Chapter Titles
-\newtcolorbox{titlecolorbox}[1]{
+\newtcolorbox{titlecolorbox}[2]{
 	sharp corners,
 	rounded corners=northeast,
 	frame hidden,
     coltext=white,
     boxrule=0pt,
-    arc=5pt,
+    arc=#2,
     notitle,
     height=#1,
 	interior style = {draw=none, fill=none, left color=black!2, right color=black},
@@ -369,7 +369,7 @@
 	{0pt}
 	{
 		\vspace*{-1em}
-		\begin{titlecolorbox}{28pt}
+		\begin{titlecolorbox}{28pt}{5pt}
 			\raggedleft
 			{\Large\sffamily\MakeUppercase{\chaptername}}
 		\end{titlecolorbox}
@@ -391,7 +391,7 @@
 	{0pt}
 	{
 		\vspace*{-1em}
-		\begin{titlecolorbox}{10pt}
+		\begin{titlecolorbox}{10pt}{1pt}
 		\end{titlecolorbox}
 		\vspace*{-1.3em}
 		\begin{minipage}[b]{0.79\linewidth}

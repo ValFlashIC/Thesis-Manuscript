@@ -1025,7 +1025,8 @@
     numpages = {14},
     keywords = {graphics processing units, neural networks, sparse matrices},
     location = {Atlanta, Georgia},
-    series = {SC '20}
+    series = {SC '20},
+    url = {https://dl.acm.org/doi/10.5555/3433701.3433723}
 }
 
 @article{Xia2023_Flash-LLM,
@@ -1169,7 +1170,8 @@
   keywords={},
   doi={},
   ISSN={2379-3155},
-  month={Dec}
+  month={Dec},
+  url = {https://dl.acm.org/doi/10.1145/1669112.1669172}
 }
 
 @INPROCEEDINGS{Munoz-Martinez2021_STONNE,
@@ -1307,7 +1309,8 @@
     pages = {375–386},
     numpages = {12},
     location = {Santa Clara, CA},
-    series = {USENIX ATC '15}
+    series = {USENIX ATC '15},
+    url = {https://dl.acm.org/doi/10.5555/2813767.2813795}
 }
 
 @inproceedings{Wang2016_Gunrock,
@@ -1530,7 +1533,6 @@
     year = {2004},
     doi = {10.1177/1094342004041296},
     URL = {https://doi.org/10.1177/1094342004041296},
-    eprint = {https://doi.org/10.1177/1094342004041296},
     abstract = { Sparse matrix–vector multiplication is an important computational kernel that performs poorly on most modern processors due to a low compute-to-memory ratio and irregular memory access patterns. Optimization is difficult because of the complexity of cache-based memory systems and because performance is highly dependent on the non-zero structure of the matrix. The SPARSITY system is designed to address these problems by allowing users to automatically build sparse matrix kernels that are tuned to their matrices and machines. SPARSITY combines traditional techniques such as loop transformations with data structure transformations and optimization heuristics that are specific to sparse matrices. It provides a novel framework for selecting optimization parameters, such as block size, using a combination of performance models and search.In this paper we discuss the optimization of two operations: a sparse matrix times a dense vector and a sparse matrix times a set of dense vectors. Our experience indicates that register level optimizations are effective for matrices arising in certain scientific simulations, in particular finite-element problems. Cache level optimizations are important when the vector used in multiplication is larger than the cache size, especially for matrices in which the non-zero structure is random. For applications involving multiple vectors, reorganizing the computation to perform the entire set of multiplications as a single operation produces significant speedups. We describe the different optimizations and parameter selection techniques and evaluate them on several machines using over 40 matrices taken from a broad set of application domains. Our results demonstrate speedups of up to 4× for the single vector case and up to 10× for the multiple vector case.}
 }
 
@@ -1626,7 +1628,6 @@
     issn = {0305-1048},
     doi = {10.1093/nar/gkx1313},
     url = {https://doi.org/10.1093/nar/gkx1313},
-    eprint = {https://academic.oup.com/nar/article-pdf/46/6/e33/24525991/gkx1313.pdf},
 }
 
 @INPROCEEDINGS{Reddi2020_MLPerf,
@@ -2090,7 +2091,8 @@
     month = {05},
     pages = {},
     title = {Graph Clustering by Flow Simulation},
-    journal = {PhD thesis, Center for Math and Computer Science (CWI)}
+    journal = {PhD thesis, Center for Math and Computer Science (CWI)},
+    url = {https://www.researchgate.net/publication/27685884_Graph_Clustering_by_Flow_Simulation}
 }
 
 @article{Kepner2015,
@@ -2178,7 +2180,7 @@
     number = {1},
     pages = {107-117},
     year = {1998},
-    note = {Proceedings of the Seventh International World Wide Web Conference},
+    booktitle = {Proceedings of the Seventh International World Wide Web Conference},
     issn = {0169-7552},
     doi = {https://doi.org/10.1016/S0169-7552(98)00110-X},
     url = {https://www.sciencedirect.com/science/article/pii/S016975529800110X},
@@ -2211,7 +2213,7 @@
     number = {1},
     pages = {72-81},
     year = {2006},
-    note = {Algebraic Methods in Language Processing},
+    booktitle = {Algebraic Methods in Language Processing},
     issn = {0304-3975},
     doi = {https://doi.org/10.1016/j.tcs.2005.11.008},
     url = {https://www.sciencedirect.com/science/article/pii/S0304397505008546},
@@ -2230,7 +2232,8 @@
     address="Berlin, Heidelberg",
     pages="421--434",
     abstract="A hybrid linear solver based on the Schur complement method has great potential to be a general purpose solver scalable on tens of thousands of processors. For this, it is imperative to exploit two levels of parallelism; namely, solving independent subdomains in parallel and using multiple processors per subdomain. This hierarchical parallelism can lead to a scalable implementation which maintains numerical stability at the same time. In this framework, load imbalance and excessive communication, which can lead to performance bottlenecks, occur at two levels: in an intra-processor group assigned to the same subdomain and among inter-processor groups assigned to different subdomains. We developed several techniques to address these issues, such as taking advantage of the sparsity of right-hand-sides during the triangular solutions with interfaces, load balancing sparse matrix-matrix multiplication to form update matrices, and designing an effective asynchronous point-to-point communication of the update matrices. We present numerical results to demonstrate that with the help of these techniques, our hybrid solver can efficiently solve large-scale highly-indefinite linear systems on thousands of processors.",
-    isbn="978-3-642-19328-6"
+    isbn="978-3-642-19328-6",
+    url = {https://doi.org/10.1007/978-3-642-19328-6_38}
 }
 
 @article{Itoh1995,
