@@ -69,7 +69,7 @@ Additional optimizations include Variable Length Delta Index (VLDI) compression 
 
 \paragraph{SPU -- 2019}
 
-SPU~\cite{Dadu2019_SPU} (Sparse Processing Unit) is a general-purpose accelerator designed to efficiently handle both data-dependent and regular algorithms by specializing in two common forms of data-dependence: stream-join and alias-free indirection.
+SPU~\cite{Dadu2019_SPU} (Sparse Processing Unit) is a general purpose accelerator designed to efficiently handle both data-dependent and regular algorithms by specializing in two common forms of data-dependence: stream-join and alias-free indirection.
 It integrates a systolic-style coarse-grained reconfigurable architecture with a compute-enabled scratchpad and aggressive stream reordering to support high-bandwidth indirect memory access and fully-pipelined stream-join operations.
 The accelerator employs decomposability across compute, network, and memory pipelines to flexibly support various data types, enabling independent flow control for finer-grain resources.
 SPU's stream-dataflow ISA and multicore mesh network-on-chip facilitate efficient communication, synchronization, and workload partitioning, making it adaptable across domains like machine learning, graph processing, and databases.
@@ -85,7 +85,7 @@ Tensaurus features a 2D array of \acrfullpl{pe}, scratchpad memories, and specia
 
 \paragraph{MatRaptor -- 2020}
 
-MatRaptor~\cite{Srivastava2020_MatRaptor} is a hardware accelerator designed for the \acrshort{spgemm} kernel, leveraging row-wise \acrlong{gust}'s algorithm to optimize data reuse and on-chip memory efficiency.
+MatRaptor~\cite{Srivastava2020_MatRaptor}\footnote{\label{fn:extended_description}See an extended description in Paper~\ref{publ:SoA}.} is a hardware accelerator designed for the \acrshort{spgemm} kernel, leveraging row-wise \acrlong{gust}'s algorithm to optimize data reuse and on-chip memory efficiency.
 It introduces a novel Cyclic Channel Sparse Row (C\textsuperscript{2}SR) \gls{spFormat}, which enables parallel, vectorized, and streaming memory access, maximizing bandwidth utilization.
 The accelerator uses a systolic array architecture with specialized loaders for input matrices and \acrfullpl{pe} that perform multiplication and merge operations using queues for efficient sorting and accumulation.
 MatRaptor avoids synchronization bottlenecks and minimizes on-chip memory requirements by processing rows asynchronously and using a round-robin allocation strategy for load balancing.
@@ -93,7 +93,7 @@ MatRaptor avoids synchronization bottlenecks and minimizes on-chip memory requir
 
 \paragraph{SpArch -- 2020}
 
-SpArch~\cite{Zhekai2020_SpArch} is a domain-specific accelerator designed to optimize the \acrlong{op} \acrshort{spgemm} kernel by jointly improving input and output data reuse.
+SpArch~\cite{Zhekai2020_SpArch}\footref{fn:extended_description} is a domain-specific accelerator designed to optimize the \acrlong{op} \acrshort{spgemm} kernel by jointly improving input and output data reuse.
 It employs a highly parallelized, streaming-based merger to pipeline the multiply and merge stages, enabling on-chip merging of \acrlong{po} matrices immediately after generation.
 SpArch introduces a condensed matrix representation to reduce the number of \acrlong{po} matrices by up to three orders of magnitude, minimizing \acrshort{dram} access.
 A Huffman tree scheduler optimizes the merge order of \acrlong{po} matrices, further reducing memory traffic, while a row prefetcher with near-optimal buffer replacement recovers input reuse lost during matrix condensing.
@@ -137,7 +137,7 @@ Its streaming microarchitecture includes parallel multipliers, a round-robin all
 
 \paragraph{InnerSP -- 2021}
 
-InnerSP~\cite{Baek2021_InnerSP} is a hardware accelerator designed to optimize sparse matrix multiplication by leveraging the row-wise \acrlong{gust}'s algorithm, avoiding the memory bloating issues common in \acrlong{op} methods.
+InnerSP~\cite{Baek2021_InnerSP}\footref{fn:extended_description} is a hardware accelerator designed to optimize sparse matrix multiplication by leveraging the row-wise \acrlong{gust}'s algorithm, avoiding the memory bloating issues common in \acrlong{op} methods.
 It uses a smart caching scheme to exploit locality in the second input matrix ($B$), reducing memory traffic and improving efficiency.
 InnerSP features an on-chip hash table for accumulating intermediate results, preventing overflows through pre-scanning and row splitting/merging techniques.
 The accelerator integrates $B$-caches (row and column-value of $B$) to further enhance data reuse, and employs a locality-aware replacement policy to minimize cache \glspl{miss}.
@@ -153,7 +153,7 @@ CoSPARSE is built on a programmable, many-core hardware substrate (Transmuter), 
 
 \paragraph{SortCache -- 2021}
 
-SortCache~\cite{Srikanth2021_SortCache} is a near-cache accelerator designed to optimize sparse data workloads by intelligently managing on-chip cache resources.
+SortCache~\cite{Srikanth2021_SortCache}\footref{fn:extended_description} is a near-cache accelerator designed to optimize sparse data workloads by intelligently managing on-chip cache resources.
 It leverages Vectorized Binary Search Trees (VBSTs) to dynamically reorder sparse data during \gls{gather}-\gls{scatter} operations, extracting sequential locality and maximizing cache bandwidth utilization.
 The system integrates specialized hardware for merging and preconditioning data, enabling efficient parallel \glspl{reduction} and minimizing redundant memory access.
 SortCache operates with minimal programmer intervention, requiring only simple annotations to specify parameters like cache size and \gls{reduction} operations.
@@ -169,11 +169,11 @@ Sextans also features hardware flexibility, allowing it to support \acrshortpl{s
 
 \paragraph{ASA -- 2022}
 
-ASA~\cite{Zhang2022_ASA} (Accelerating Sparse Accumulation) is a hardware accelerator designed to optimize the sparse accumulation (SPA) step in column-wise \acrshort{spgemm} operations.
+ASA~\cite{Zhang2022_ASA}\footref{fn:extended_description} (Accelerating Sparse Accumulation) is a hardware accelerator designed to optimize the sparse accumulation (SPA) step in column-wise \acrshort{spgemm} operations.
 It replaces traditional software-based hash table lookups (prone to branch mispredictions and collisions) with a dedicated, \gls{set}-associative on-chip cache and a pipelined hardware accumulator.
 ASA extends the processor's instruction set with a Hardware Probing and Accumulation (HPA) instruction, eliminating data-dependent branches and enabling efficient, atomic search-and-accumulate operations.
 Overflowed entries are stored in a pre-allocated memory buffer and merged later, minimizing stalls.
-% The design integrates seamlessly with general-purpose processors, requiring minimal hardware overhead and providing a simple software interface for sparse accumulation tasks.
+% The design integrates seamlessly with general purpose processors, requiring minimal hardware overhead and providing a simple software interface for sparse accumulation tasks.
 
 \paragraph{Spada -- 2023}
 
@@ -220,7 +220,7 @@ Sparse Stream Semantic Registers~\cite{Scheffler2023_SSSR} (SSSRs) is a lightwei
 It extends Stream Semantic Registers (SSRs), which map memory streams to architectural registers, to support sparse tensor formats like \acrshort{csr} and \acrshort{csf}, enabling efficient streaming of both sparse-dense and sparse-sparse computations.
 SSSRs introduce indirection SSRs (ISSR) for reading index streams and generating indirect addresses, and egress SSRs (ESSR) for writing back indices, while an index comparator enables \gls{intersection} and union of sparse operands.
 By offloading index processing and comparison to hardware, SSSRs reduce control overhead and maximize \acrfull{fpu} utilization, supporting flexible dataflows and a wide range of sparsity without requiring structural constraints.
-% Integrated into the Snitch core and cluster, SSSRs maintain backward compatibility and incur minimal area overhead, making them suitable for general-purpose sparse compute acceleration.
+% Integrated into the Snitch core and cluster, SSSRs maintain backward compatibility and incur minimal area overhead, making them suitable for general purpose sparse compute acceleration.
 
 \paragraph{Funnel -- 2024}
 
@@ -232,7 +232,7 @@ A lightweight buffer and data \gls{tiling} strategy enhance data reuse, while a 
 
 \paragraph{GAS -- 2024}
 
-GAS~\cite{Zhang2024_GAS} is a general-purpose in-memory computing (IMC) accelerator designed for sparse matrix multiplication, supporting \acrshort{spmv}, \acrshort{spmspv}, \acrshort{spmm}, and \acrshort{spmspm} kernels.
+GAS~\cite{Zhang2024_GAS} is a general purpose in-memory computing (IMC) accelerator designed for sparse matrix multiplication, supporting \acrshort{spmv}, \acrshort{spmspv}, \acrshort{spmm}, and \acrshort{spmspm} kernels.
 It integrates FeFET-based \acrfull{cam} arrays for index matching and multiply-add computation (MAC) arrays for in-situ floating-point operations, using a unified \acrlong{op}-based methodology to handle all four functions.
 The accelerator employs three working phases, write, load, and compute, to efficiently process sparse matrices, with optimization techniques like zero-padding adjustment, early termination, and workload balancing to enhance performance.
 GAS dynamically aligns mantissas and handles exponent sums to support double-precision floating-point arithmetic directly within the memory arrays.

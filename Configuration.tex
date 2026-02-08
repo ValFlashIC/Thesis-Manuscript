@@ -77,6 +77,7 @@
 \usepackage{listings}
 \usepackage[most]{tcolorbox}
 \usepackage[explicit]{titlesec}
+\usepackage[bottom]{footmisc}
 \if\DoMinitoc\YES \usepackage{minitoc}
 \else \usepackage{mtcoff} \fi
 
@@ -150,6 +151,11 @@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Change enumerate configuration
 \setlist[enumerate]{parsep=0cm, itemsep=0cm, topsep=0cm}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Footnote setup
+\renewcommand{\thefootnote}{(\arabic{footnote})}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

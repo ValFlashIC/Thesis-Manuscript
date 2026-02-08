@@ -28,7 +28,7 @@ For example, some accelerators (\ex OuterSPACE) are specialized for an \acrshort
 Finally, accelerators may be optimized for sparse \acrshort{mm}, \acrshort{mv} or both, our final criterion.
 
 After this first comparison, in Sections~\ref{sec:soa:outerspace} to~\ref{sec:soa:phi} we present in detail three \textit{standalone} accelerators (\eg OuterSPACE, ExTensor and Gamma) and one \textit{processor-assist} accelerator (\eg PHI), which cover several types of architectures and algorithms.
-In Section~\ref{sec:soa:other_accel}, we give bief descriptions on other accelerators from Table~\ref{tab:soa:classificationOverview}.
+In Section~\ref{sec:soa:other_accel}, we summarize the other accelerators from Table~\ref{tab:soa:classificationOverview}.
 
 {
     \DefTblrTemplate{caption-sep}{default}{~--\enskip}
@@ -117,7 +117,7 @@ In Section~\ref{sec:soa:other_accel}, we give bief descriptions on other acceler
         IOPS~\cite{Sun2025_IOPS}                      & 2025 & \ck &     &     &     & \sa & \ck & \ck &     & \ck & \ck &     & \ck \\
         Leda~\cite{Yi2025_Leda}                       & 2025 & \ck &     &     &     & \sa &     & \ck &     & \ck & \ck &     & \ck \\
         DMSA~\cite{Nagahara2025_DMSA}                 & 2025 & \ck &     &     &     & \sa &     &     & \sd & \ck & \ck &     & \ck \\
-        C\textsuperscript{3}ache~\cite{li2025_C3ache} & 2025 &     & \ck &     & \ck &     &     & \sd & \sd & \ck & \ck &     & \ck \\
+        C\textsuperscript{3}ache~\cite{Li2025_C3ache} & 2025 &     & \ck &     & \ck &     &     & \sd & \sd & \ck & \ck &     & \ck \\
         ScanNow~\cite{Ma2025_ScanNow}                 & 2025 & \ck &     &     &     & \sa &     &     & \sd & \ck & \ck &     & \ck \\
         %
         \sa \; Most standalone accelerators connect directly to main memory. \\
@@ -150,103 +150,59 @@ In Section~\ref{sec:soa:other_accel}, we give bief descriptions on other acceler
 \subsection{Other Accelerators}
 \label{sec:soa:other_accel}
 
-In the above sections, we have described four sparse accelerators, covering different matrix multiplication algorithms and architectures.
-In the following paragraphs we present the other accelerators which we cover in less detail, to expose the reader to the diversity of architectures.
+In the previous sections, we introduced four sparse accelerators, each implementing different matrix multiplication algorithms and architectures.
+This section explores additional accelerators to showcase the wide range of architectural approaches available.
+We focus on their primary applications and design features, emphasizing their advantages and limitations.
+For operational summaries of these accelerators, refer to Appendix~\ref{app:other_acc}, and for detailed descriptions of some, see Paper~\ref{publ:SoA}.
 
-\ref{app:other_acc}
+Coup~\cite{Zhang2015_Coup}, PHI~\cite{Mukkara2019_PHI}, SortCache~\cite{Srikanth2021_SortCache}, ASA~\cite{Zhang2022_ASA}, SpDCache~[\ref{publ:SpDC}] and C\textsuperscript{3}ache~\cite{Li2025_C3ache} are \textit{processor-assist} accelerators that modify existing caches to support near-memory \gls{reduction} operations with in-place accumulation.
+By focusing solely on the \gls{scatter} operation, they achieve performance improvements while maintaining scalability, versatility, and low area overhead.
+However, their performance relies on shifting computation toward the memory hierarchy, which can create bottlenecks.
+Among these, SortCache incorporates a large merger, which introduces scalability challenges, as large mergers are difficult to scale efficiently.
+In contrast, SortCache offers a solution to completely reorganize data storage and processing within caches, while Coup, PHI, and SpDCache are lightweight solutions that retain more of the original cache functionality.
+ASA follows a similar approach but adds a dedicated cache near the core, parallel to the memory hierarchy.
+While most of these accelerators integrate into classical memory hierarchies, C\textsuperscript{3}ache is specifically designed for GPGPU (General-Purpose GPU) integration.
 
+ExTensor~\cite{Hegde2019_ExTensor}, SPiDRE~\cite{Barredo2019_SPiDRE} and SSSR~\cite{Scheffler2023_SSSR} are \textit{processor-assist} accelerators that specifically target the \gls{gather} operation.
+SSSR and ExTensor utilize efficient streamers to process \glspl{intersection} between input data, while SPiDRE employs a near-main memory converter to fetch and reorganize data in advance.
+These solutions address \gls{gather} operations with simple, lightweight architectures suitable for general purpose computing.
+SSSR is the least resource-intensive and highly flexible but requires in-core integration (developed for RISC-V).
+SPiDRE, on the other hand, demands more area and may dominate main memory traffic.
+ExTensor, while offering general purpose streamers, is optimized for building \textit{standalone}, highly tiled accelerators.
 
-\bigskip\bigskip
+Alongside \textit{processor-assist} accelerators, a wide variety of \textit{standalone} accelerators have been proposed.
+These achieve high performance by avoiding synchronization bottlenecks and reducing on-chip memory traffic.
+However, they often come with high area overhead and face significant scalability challenges.
+Most \textit{standalone} accelerators rely on large mergers or lookup tables to efficiently handle \gls{gather} and \gls{scatter} operations.
+Additionally, many are tailored to specific applications or algorithms.
 
-Coup cache coherence protocol
-PHI
-SortCache
-SpDCache (merger and are is high)
-ASA (additional cache, mm)
+EIE~\cite{Han2016_EIE}, SDMA~\cite{Gao2023_SDMA}, Funnel~\cite{Ma2024_Funnel}, FullSparse~\cite{Yu2024_FullSparse}, CANDLES~\cite{Gudaparthi2022_CANDLES}\footnote{\label{fn:additional_acc}Not listed in Table~\ref{tab:soa:classificationOverview}. We explore these accelerators in our study but our classification does not fit their architecture.}, MaxK-GNN~\cite{Peng2024_MaxK-GNN}\footref{fn:additional_acc}, SCNN~\cite{Angshuman2017_SCNN}\footref{fn:additional_acc}, SparTA~\cite{Ningxin2022_SparTA}\footref{fn:additional_acc} and SparTen~\cite{Gondimalla2019_SparTen}\footref{fn:additional_acc} are specialized for neural network applications, focusing on \acrshort{mm} kernels.
+They employ various techniques to exploit sparsity in weights and activations.
+Funnel, in particular, uses a prediction-based mechanism, while FullSparse dynamically switches between dense and sparse modes depending on the data.
 
-C3ache (GPGPU, mm, op-Gust)
+GraphR~\cite{Song2018_GraphR}, SpaceA~\cite{Xie2021_SpaceA} and GAS~\cite{Zhang2024_GAS} leverage in-memory computing, demonstrating significant potential for data reuse and reducing memory traffic.
+However, analog in-memory computing approaches are limited to low-precision data and are generally not suitable for high-performance computing.
+GraphR and SpaceA specialize in graph applications, focusing on \acrshort{mv} kernels, while GAS is designed for general purpose use.
 
-+ reductions in cache, scatter, general purpose, scalable, minor area overhead
-- compute is deferred (potential bottleneck)
+SDE~\cite{Hosseinabady2019_SDE}, SPAGHETTI~\cite{Hojabr2021_SPAGHETTI}, Sextans~\cite{Song2022_Sextans}, MOSCON~\cite{Noble2023_MOSCON}, GSCSp~\cite{Li2023_GSCSp}, DySpMM~\cite{Wang2024_DySpMM}, AiSpGEMM~\cite{Tang2025_AiSpGEMM}\footref{fn:additional_acc}, GraphLily~\cite{Hu2021_GraphLily}\footref{fn:additional_acc}, HiSparse~\cite{Du2022_HiSparse}\footref{fn:additional_acc}, HitGraph~\cite{Zhou2019_HitGraph}\footref{fn:additional_acc}, Leda~\cite{Yi2025_Leda}\footref{fn:additional_acc} and ThunderGP~\cite{Chen2022_ThunderGP}\footref{fn:additional_acc} are highly optimized for \acrshort{fpga} implementations across various applications, all centered on \acrshort{mm} kernels.
+Some, such as HiSparse, are specifically optimized for \acrshortpl{fpga} equipped with \acrfull{hbm}.
+Notably, HitGraph, GraphLily, and ThunderGP are specialized for graph applications.
 
-SPiDRE
-SSSR (riscv)
-ExTensor *
-simple, main memory or core, gather, streaming and intersection, general purpose
-Spider heavy compared to in cache/core solutions, traffic on main mem
-SSSR light weight, but necessitate in core integration
-ASA is near core only, easier
+Tensaurus~\cite{Srivastava2020_Tensaurus}, Block-SpMM~\cite{NVIDIA2014_cuSPARSE}\footref{fn:additional_acc}, DTC-SpMM~\cite{Fan2024_DTC-SpMM}\footref{fn:additional_acc}, Flash-LLM~\cite{Xia2023_Flash-LLM}\footref{fn:additional_acc}, HARP~\cite{Kim2023_HARP}\footref{fn:additional_acc}, TC-GNN~\cite{Yuke2023_TC-GNN}\footref{fn:additional_acc} and vectorSparse~\cite{Gale2020_vectorSparse}\footref{fn:additional_acc} are designed for tensor kernels (\acrshort{mv}, \acrshort{mm}, and higher dimensions).
+Most are general purpose but rely on highly tiled architectures that require dedicated \glspl{spFormat}.
+HARP, however, aims to eliminate this constraint.
 
+Beyond ITS~\cite{Sadi2019_ITS}, which is specialized for graph applications, other accelerators, such as OuterSPACE~\cite{Pal2018_OuterSPACE}, SPU~\cite{Dadu2019_SPU}, MatRaptor~\cite{Srivastava2020_MatRaptor}, SpArch~\cite{Zhekai2020_SpArch}, Alrescha~\cite{Asgari2020_Alrescha}, SIGMA~\cite{Qin2020_SIGMA}, Gamma~\cite{Zhang2021_Gamma}, InnerSP~\cite{Baek2021_InnerSP}, Mentor~\cite{Lu2024_Mentor}, ScanNow~\cite{Ma2025_ScanNow} and RTSpMSpM~\cite{Zhang2025_RTSpMSpM}\footref{fn:additional_acc}, are not application-specific but focus primarily on \acrshort{mm} kernels, with many employing the \acrfull{gust} algorithm.
+SPU adapts to both dense and sparse data using two modes, similar to FullSparse.
+Alrescha offers a configurable design for general purpose applications but focuses on the \acrfull{ip} algorithm, much like SIGMA.
+SpArch is tailored for the \acrfull{op} algorithm, aiming to reduce the number of \acrfullpl{po}, while InnerSP, Mentor, ScanNow, MatRaptor, and RTSpMSpM concentrate on \acrshort{gust}, with design goals akin to Gamma.
 
+CoSPARSE~\cite{Feng2021_CoSPARSE}, Spada~\cite{Li2023_Spada}, Flexagon~\cite{Munoz-Martinez2023_Flexagon}, ACES~\cite{Lu2024_ACES}, Sparm~\cite{Luo2024_Sparm}, Vesper~\cite{Jin2024_Vesper}, IOPS~\cite{Sun2025_IOPS} and DMSA~\cite{Nagahara2025_DMSA} represent some of the latest accelerators, all emphasizing adaptive dataflows that combine \acrshort{ip}, \acrshort{op}, and \acrshort{gust} algorithms.
+They feature switching modes or innovative dataflows inspired by the strengths and weaknesses of these three approaches.
+Notably, CoSPARSE and Spada employ hardware/software co-optimization strategies.
 
-
-
-EIE
-SDMA (adaptative gust, hw/sw)
-SCNN SparTen CANDLES SparTA MaxK-GNN
-DNN ASIC weight and activation sparsity
-Funnel (mm)
-prediction based
-FullSparse
-mm, dense and sparse mode, detector
-
-
-GraphR (graph, spmv)
-SpaceA (spmv)
-GAS (general purpose)
-In memory
-great potential for data reuse and low traffic
-but Apparoches based on analog compute in memory can only work with low precision data and are not applicable for HPC.
-
-
-SDE
-SPAGHETTI (MM, op)
-Sextans (mm)
-MOSCON (op, mm, dnn)
-GSCSp (mm, gust)
-DySpMM (mm)
-Leda (mm, gmm, op)
-AiSpGEMM
-highly tuned for an FPGA implementation (some HBM equipped)
-HBM optimized HiSparse
-Graph specific HitGraph GraphLily ThunderGP
-
-
-
-ITS (graph, spmv)
-SPU (general purpose -> sparse and dense applications)
-Alrescha (configurable -> general purpose, but IP only)
-InnerSP (gust)
-Mentor (gust)
-ScanNow (mm, gust inspired)
-High perf, because avoid synchronization bottlenecks and minimize memory on chip traffic, but high area overhead
-Scalability is delicate (big mergers and lookup tables)
-
-Tensaurus
-Tensors -> general purpose, highly tiled
-Depend on specific sparse storage
-not HARP
-Block-SpMM vectorSparse Flash-LLM TC-GNN DTC-SpMM
-
-MatRaptor (gust, special format)
-SpArch (domain specific, op -> POs)
-SIGMA (ip, DNN)
-RTSpMSpM (application specific)
-Focus on MM
-
-CoSPARSE (spmv, hw/sw)
-Spada (hw/sw, mm, adaptative)
-Flexagon (mm, dnn)
-ACES (gust based, mm)
-Sparm (mm)
-Vesper (general purpose)
-IOPS (mm)
-DMSA (gust based, mm)
-Multi algo, adapt to the matrix structure, more general purpose
-more delicate on scalability -> do everything is costly
-
-SPADES
-gzip decompression
+Finally, SPADES~\cite{Huang2024_SPADES} stands out as the only accelerator in this list that does not rely on \glspl{spFormat}.
+Instead, it uses GZIP compression, with dedicated hardware for efficient, on-the-fly decompression during sparse computing.
 
 \begin{highlight}{Conclusion}{Red}
     This comprehensive overview demonstrates that sparse matrix accelerators have evolved significantly from \textbf{2015 to 2025}, with diverse architectural approaches addressing different algorithmic paradigms, memory hierarchies, and sparsity patterns to maximize performance and energy efficiency when handling increasingly irregular and diverse sparse workloads in machine learning, graph processing, and scientific computing.
