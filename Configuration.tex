@@ -30,7 +30,7 @@
 \newcommand{\sectitle}{Sec. Title} % Don't modify this
 
 \newcommand{\StartYear}{2022}
-\newcommand{\EndYear}{2025}
+\newcommand{\EndYear}{2026}
 \newcommand{\StartDate}{10.25.\StartYear}
 \newcommand{\EndDate}{10.24.\EndYear}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,6 +78,7 @@
 \usepackage[most]{tcolorbox}
 \usepackage[explicit]{titlesec}
 \usepackage[bottom]{footmisc}
+\usepackage{pgfornament}
 \if\DoMinitoc\YES \usepackage{minitoc}
 \else \usepackage{mtcoff} \fi
 
@@ -259,22 +260,7 @@
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Lists generic parameters
-% To register algorithms in tocloft package
-% \makeatletter
-% \begingroup
-%   \let\newcounter\@gobble
-%   \let\setcounter\@gobbletwo
-%   \globaldefs\@ne
-%   \let\c@loadepth\@ne
-%   \newlistof{algorithmes}{loa}{\listalgorithmcfname}
-% \endgroup
-% \let\l@algorithm\l@algorithmes
-% \makeatother
-
-% \cftsetindents{figure}{0em}{3.5em}
-% \cftsetindents{table}{0em}{3.5em}
-% \cftsetindents{sourcecode}{0em}{3.5em}
-% \cftsetindents{algorithmes}{0em}{3.5em}
+\setlength{\cftfignumwidth}{3em}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -293,31 +279,7 @@
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Variables
-% \def\HeadPageLogos{
-%     % Version with CEA and blanc logos
-%     \begin{minipage}[b]{0.072\linewidth}
-%         \includegraphics[width=\linewidth]{Figures/PDF/LogoBlanc1.pdf}
-%         \includegraphics[width=\linewidth]{Figures/PDF/LogoBlanc2.pdf}
-%     \end{minipage}
-%     \!
-%     \includegraphics[width=0.15\linewidth]{Figures/PDF/LIST.pdf}
-% }
-% \def\HeadPageLogos{
-%     % Version with CEA, UGA and TIMA
-%     \begin{minipage}[b]{0.072\linewidth}
-%         \includegraphics[width=\linewidth]{Figures/PDF/LogoUGA.pdf}
-%         \includegraphics[width=\linewidth]{Figures/PDF/LogoTIMA.pdf}
-%     \end{minipage}
-%     \!
-%     \includegraphics[width=0.15\linewidth]{Figures/PDF/LIST.pdf}
-% }
-% \def\HeadPageLogos{
-%     % Version with CEA and UGA
-%     \includegraphics[scale=0.5]{Figures/PDF/LogoUGA.pdf}
-%     \includegraphics[scale=0.08]{Figures/PDF/LIST.pdf}}
-% }
-
-\def\FootpageNote{Universit\'e Grenoble Alpes, CEA, LIST} % Your affiliation for example
+\def\FootpageNote{Universit\'e Grenoble Alpes, CEA, LIST, TIMA}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -326,16 +288,6 @@
 \renewcommand\headrulewidth{0.4pt}
 \renewcommand\footrulewidth{0.4pt}
 
-% \fancyhead[R]{\HeadPageLogos}
-% \newcommand{\FancyHeadLeft}[1]{
-%     \fancyhead[L]{
-%         \begin{minipage}[b]{0.7\linewidth}
-%             \textsc{\doctype}
-%             \newline
-%             {\footnotesize \textit{\MakeUppercase{#1}}}
-%         \end{minipage}
-%     }
-% }
 \fancyhead[L]{\textsc{\doctype}}
 \newcommand{\FancyHeadRight}[1]{
     \fancyhead[R]{

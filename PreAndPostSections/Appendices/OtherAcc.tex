@@ -304,7 +304,7 @@ An adaptive partition strategy dynamically \glspl{tile} input matrices based on 
 
 \paragraph{Leda -- 2025}
 
-Leda~\cite{Yi2025_Leda} is a high-performance \acrshort{spmm} accelerator designed for \acrshort{hbm}-equipped \acrshortpl{fpga}, optimized for \acrfullpl{gnn}.
+Leda~\cite{Yi2025_Leda} is a highly-tiled \acrshort{spmm} accelerator designed for \acrshort{hbm}-equipped \acrshortpl{fpga}, optimized for \acrfullpl{gnn}.
 It employs a \gls{tiling} \gls{spFormat} to balance workloads across \acrfullpl{pe} and enhance data locality, mitigating load imbalance and random memory access issues.
 Leda uses an improved \acrlong{op} dataflow to reduce memory bottlenecks and a minimum similarity reordering algorithm to optimize read-after-write dependencies, improving compute occupancy and throughput.
 The accelerator features a highly parallel hardware architecture with a matrix multiplication unit (MMU)-centric design, enabling efficient input reuse and high throughput.

@@ -37,7 +37,7 @@ Note that computing an \gls{intersection} in software induces the use of conditi
 In case the matrix $B$ (or vector $b$) is stored in a dense format, the \gls{intersection} search is simplified, since all indices are implicitly present, but the accesses to $B$ (or $b$) remain indirect.
 As we see in Chapter~\ref{cha:soa}, certain accelerators provide support for performing the \gls{intersection} operation directly in hardware.
 
-\begin{algorithm}[htbp]
+\begin{algorithm}[htb]
     \caption{\acrshort{ip} \acrshort{spmspm} Performing \Gls{intersection} Searches with \acrshort{csr} and \acrshort{csc} Formats}
     \label{alg:bg:IPSpMSpMCSR}
     %
@@ -46,8 +46,8 @@ As we see in Chapter~\ref{cha:soa}, certain accelerators provide support for per
     \KwData{$C(M, N)$ in \gls{dFormat} (for readability)}
     \KwResult{$C = A \times B$}
     \BlankLine
-    \For(\tcp*[f]{Iterations over the rows of A}){$i \in \ldb 0, M-1 \rdb$}{
-        \For(\tcp*[f]{Iterations over the columns of B}){$j \in \ldb 0, N-1 \rdb$}{
+    \For(\tcp*[h]{Iterations over the rows of A}){$i \in \ldb 0, M-1 \rdb$}{
+        \For(\tcp*[h]{Iterations over the columns of B}){$j \in \ldb 0, N-1 \rdb$}{
             $acc \gets 0$; $pos_B \gets \mathit{B.ptr}_j$\;
             \For{$pos_A \in \ldb \mathit{A.ptr}_i, \mathit{A.ptr}_{i+1}-1 \rdb$}{
                 \tcp{Iterations over the non-zero elements of the i-th row of A}
@@ -55,12 +55,12 @@ As we see in Chapter~\ref{cha:soa}, certain accelerators provide support for per
                 \tcp{Column-index of the (i, pos\textsubscript{A}) non-zero element of A}
                 $(\mathit{isMatch}, pos_B) \gets \mathit{IntersectionSearch}(k_A, j, pos_B, \mathit{B.idx}, \mathit{B.ptr})$\;
                 \tcp{Return true and the matching pos\textsubscript{B} if idx exists in the j-th column of B}
-                \If(\tcp*[f]{If indices did match}){$\mathit{isMatch}$}{
+                \If(\tcp*[h]{If indices did match}){$\mathit{isMatch}$}{
                     $acc \gets acc + \mathit{A.val}_{pos_A} \times \mathit{B.val}_{pos_B}$\;
                     \tcp{Local partial sum accumulation}
                 }
             }
-            $C_{i,j} \gets acc$\tcp*[r]{Write in memory of the resulting (i, j) element of C}
+            $C_{i,j} \gets acc$\tcp*[l]{Write in memory of the resulting (i, j) element of C}
         }
     }
     \BlankLine
@@ -69,7 +69,7 @@ As we see in Chapter~\ref{cha:soa}, certain accelerators provide support for per
         \While{$\mathit{B.idx}_{pos_B} < k_A$ \textbf{and} $pos_B < \mathit{B.ptr}_{j+1}$}{
             $pos_B \gets pos_B + 1$\;
         }
-        \If(\tcp*[f]{Returns true if indices from A and B match}){$\mathit{B.idx}_{pos_B} = k_A$}{
+        \If(\tcp*[h]{Returns true if indices from A and B match}){$\mathit{B.idx}_{pos_B} = k_A$}{
             \textbf{return} $(true, pos_B)$\;
         }
         \textbf{return} $(false, pos_B)$\;
@@ -121,10 +121,10 @@ As we see in Chapter~\ref{cha:soa}, hardware accelerators may combine the \emph{
     \BlankLine
     \tcp{* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *}
     \tcp{* * * `Immediate updates' version * * * * * * * * * * * * * * * * * * * * * *}
-    \For(\tcp*[f]{Iterations over the columns of A and the rows of B}){$k \in \ldb 0, K-1 \rdb$}{
+    \For(\tcp*[h]{Iterations over the columns of A and the rows of B}){$k \in \ldb 0, K-1 \rdb$}{
         \For{$pos_A \in \ldb \mathit{A.ptr}_k, \mathit{A.ptr}_{k+1} \rdb$}{
             \tcp{Iterations over the non-zero elements of the k-th column of A}
-            $i_A \gets \mathit{A.idx}_{pos_A}$\tcp*[r]{Row-index of the (pos\textsubscript{A}, k) non-zero element of A}
+            $i_A \gets \mathit{A.idx}_{pos_A}$\tcp*[l]{Row-index of the (pos\textsubscript{A}, k) non-zero element of A}
             \For{$pos_B \in \ldb \mathit{B.ptr}_k, \mathit{B.ptr}_{k+1} \rdb$}{
                 \tcp{Iterations over the non-zero elements of the k-th row of B}
                 $j_B \gets \mathit{B.idx}_{pos_B}$\;
@@ -138,11 +138,11 @@ As we see in Chapter~\ref{cha:soa}, hardware accelerators may combine the \emph{
     \tcp{* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *}
     \tcp{* * * `Deferred updates' version~~* * * * * * * * * * * * * * * * * * * * * *}
     \tcp{Multiply phase}
-    \For(\tcp*[f]{Iterations over the columns of A and the rows of B}){$k \in \ldb 0, K-1 \rdb$}{
+    \For(\tcp*[h]{Iterations over the columns of A and the rows of B}){$k \in \ldb 0, K-1 \rdb$}{
         $pos_\mathit{PO} \gets 0$\;
         \For{$pos_A \in \ldb \mathit{A.ptr}_k, \mathit{A.ptr}_{k+1} \rdb$}{
             \tcp{Iterations over the non-zero elements of the k-th column of A}
-            $i_A \gets \mathit{A.idx}_{pos_A}$\tcp*[r]{Row-index of the (pos\textsubscript{A}, k) non-zero element of A}
+            $i_A \gets \mathit{A.idx}_{pos_A}$\tcp*[l]{Row-index of the (pos\textsubscript{A}, k) non-zero element of A}
             \For{$pos_B \in \ldb \mathit{B.ptr}_k, \mathit{B.ptr}_{k+1} \rdb$}{
                 \tcp{Iterations over the non-zero elements of the k-th row of B}
                 $j_B \gets \mathit{B.idx}_{pos_B}$\;
@@ -157,7 +157,7 @@ As we see in Chapter~\ref{cha:soa}, hardware accelerators may combine the \emph{
         \tcp{Each partial output is generated sorted, row-wise}
     }
     \tcp{Merge phase}
-    \For(\tcp*[f]{Naive serial merge of the K partial outputs}){$k \in \ldb 0, K-2 \rdb$}{
+    \For(\tcp*[h]{Naive serial merge of the K partial outputs}){$k \in \ldb 0, K-2 \rdb$}{
         $\mathit{PO}_{k+1} \gets \mathit{2DListsMerge}(\mathit{PO}_k, \mathit{PO}_{k+1})$\;
     }
     \tcp{PO\textsubscript{K-1} is C stored in COO format}
@@ -165,7 +165,7 @@ As we see in Chapter~\ref{cha:soa}, hardware accelerators may combine the \emph{
         \tcp{Update C (dense) from the fully merged partial outputs}
         $i \gets \mathit{PO_{K-1}.row}_{pos}$\;
         $j \gets \mathit{PO_{K-1}.col}_{pos}$\;
-        $C_{i, j} \gets \mathit{PO_{K-1}.val}_{pos}$\tcp*[r]{Write in memory of the (i, j) element of C}
+        $C_{i, j} \gets \mathit{PO_{K-1}.val}_{pos}$\tcp*[l]{Write in memory of the (i, j) element of C}
     }
 \end{algorithm}
 
@@ -183,7 +183,7 @@ The potential for parallelism and data-reuse varies across algorithms, \acrshort
 With \acrshort{op}, \acrshortpl{po} can easily be generated across a multicore system but at the cost of transferring a large volume of data to memory.
 With \emph{immediate updates}, \acrshort{op} transfers less data but all accesses on the output are ``random'' \glspl{reduction}.
 
-\begin{table}[htbp]
+\begin{table}[htb]
     \centering
     \caption{Comparison of Advantages and Challenges with Matrix Multiplication Algorithms}
     \label{tab:bg:AlgosHWComp}
@@ -289,7 +289,7 @@ If $A$ or $B$ are \gls{banded} matrices, for example, there would be fewer non-z
 In each graph, we have separated the accesses into $A$ (\textit{bottom}), $B$ (\textit{middle}) and $C$ (\textit{top}).
 The color code shows the access pattern, based on the five categories described above.
 
-\begin{table}[htbp]
+\begin{table}[htb]
     \centering
     \caption{Memory Access Count for Each Matrices of \acrshort{ip}, \acrshort{op} and \acrshort{gust} \acrshort{spmspm}}
     \label{tab:bg:spmspm_access_count}
@@ -341,7 +341,7 @@ The color code shows the access pattern, based on the five categories described 
     \end{tblr}
 \end{table}
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{Chapter_Background/Figures/PDF/RawSpMSpMAccessesCountAnalysis.pdf}
     \caption{Model of Memory Access Counts Depending on Algorithm and Local Memory Size}

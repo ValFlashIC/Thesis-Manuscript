@@ -28,7 +28,7 @@ We excluded matrices whose output vector $c$ fits entirely in the cache (fewer t
 In Table~\ref{tab:spdc:results}, we report the results for all three caches, along with statistical indicators.
 Most, but not all, of the matrices have a dense \gls{band} and even some matrices without an obvious \gls{band} benefit from the blocking effect in the \acrshort{drc}.
 
-\begin{table}[htbp]
+\begin{table}[htb]
     \caption{Decrease in Memory Traffic and Improvement in Cache Utilization from Python Simulation}
     \label{tab:spdc:results}
     \centering
@@ -121,7 +121,7 @@ We thus adapted our simulation to use this algorithm for PHI.
 To ensure a fair comparison, we allocated the same amount of memory to PHI as for \acrlong{spdc} and the baselines (32~KiB).
 In Table~\ref{tab:spdc:results_overall}, we report the results for PHI alongside our previous results (columns \no 1, 2, 5 and 6).
 
-\begin{table}[htbp]
+\begin{table}[htb]
     \caption{All Results from Python Simulation}
     \label{tab:spdc:results_overall}
     \centering

@@ -46,12 +46,12 @@ In Algorithm~\ref{alg:bg:MMinner}, exchanging $M$ and $N$ (lines 1 and 2) simply
     \label{eq:bg:MMinner}
 \end{equation}
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \begin{minipage}[t]{0.49\linewidth}
         \begin{algorithm}[H]
         \caption{Dense \acrlong{mv} \acrlong{ip} Algorithm}
         \label{alg:bg:MVinner}
-        \For(\tcp*[f]{row first}){$i \in \ldb 0, M-1 \rdb$}{
+        \For(\tcp*[h]{row first}){$i \in \ldb 0, M-1 \rdb$}{
             \For{$k \in \ldb 0, K-1 \rdb$}{
                 $c_{i} \acc A_{i,k} \times b_{k}$
             }
@@ -63,7 +63,7 @@ In Algorithm~\ref{alg:bg:MMinner}, exchanging $M$ and $N$ (lines 1 and 2) simply
         \begin{algorithm}[H]
         \caption{Dense \acrlong{mm} \acrlong{ip} Algorithm}
         \label{alg:bg:MMinner}
-        \For(\tcp*[f]{A-row first}){$i \in \ldb 0, M-1 \rdb$}{
+        \For(\tcp*[h]{A-row first}){$i \in \ldb 0, M-1 \rdb$}{
             \For{$j \in \ldb 0, N-1 \rdb$}{
                 \For{$k \in \ldb 0, K-1 \rdb$}{
                     $C_{i,j} \acc A_{i,k} \times B_{k,j}$
@@ -85,12 +85,12 @@ To avoid irregularity when updating $C$ (or $c$), the \acrshort{op} algorithm is
 First, during the \emph{multiply} phase, we compute several \acrfullpl{po} consisting of intermediate matrices (or vectors) of \glspl{psum} $A_{j,k} \times B_{k,j}$ (or $A_{j,k} \times b_{k}$), then during the \emph{merge} phase, we accumulate all the \acrshortpl{po} to form the final $C$-matrix (or $c$-vector).
 With this method, \acrshort{op} necessitates the generation of at most $K$ \acrshortpl{po} of densities conditioned by the non-zeros elements of both inputs $A$ and $B$ (or $b$).
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \begin{minipage}[t]{0.49\linewidth}
         \begin{algorithm}[H]
         \caption{Dense \acrlong{mv} \acrlong{op} Algorithm}
         \label{alg:bg:MVouter}
-        \For(\tcp*[f]{column first}){$k \in \ldb 0, K-1 \rdb$}{
+        \For(\tcp*[h]{column first}){$k \in \ldb 0, K-1 \rdb$}{
             \For{$i \in \ldb 0, M-1 \rdb$}{
                 $c_{i} \acc A_{i,k} \times b_{k}$
             }
@@ -102,7 +102,7 @@ With this method, \acrshort{op} necessitates the generation of at most $K$ \acrs
         \begin{algorithm}[H]
         \caption{Dense \acrlong{mm} \acrlong{op} Algorithm}
         \label{alg:bg:MMouter}
-        \For(\tcp*[f]{common rank first}){$k \in \ldb 0, K-1 \rdb$}{
+        \For(\tcp*[h]{common rank first}){$k \in \ldb 0, K-1 \rdb$}{
             \For{$i \in \ldb 0, M-1 \rdb$}{
                 \For{$j \in \ldb 0, N-1 \rdb$}{
                     $C_{i,j} \acc A_{i,k} \times B_{k,j}$
@@ -125,14 +125,14 @@ The \acrshort{po}-rows can be accumulated before computing the next $C$-row.
 Overall, this algorithm can be seen as a trade-off between \acrshort{ip} and \acrshort{op} for \acrshort{mm} kernels, since the indirect accesses are shared between $B$ and $C$.
 Again, for this algorithm, exchanging $M$ and $N$ causes the three matrices to be accessed \emph{column-wise} instead of \emph{row-wise}.
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \begin{minipage}[t]{0.49\linewidth}
         \begin{algorithm}[H]
         \caption{Dense \acrlong{mm} \acrlong{gust}'s Algorithm}
         \label{alg:bg:MMgustavson}
         \For{$i \in \ldb 0, M-1 \rdb$}{
-            \For(\tcp*[f]{common rank}){$k \in \ldb 0, K-1 \rdb$}{
+            \For(\tcp*[h]{common rank}){$k \in \ldb 0, K-1 \rdb$}{
                 \For{$j \in \ldb 0, N-1 \rdb$}{
                     $C_{i,j} \acc A_{i,k} \times B_{k,j}$
                 }
@@ -154,7 +154,7 @@ To have a better understanding of the consequences on the actual number of memor
     Sparse versions of these algorithms are presented in Section~\ref{sec:bg:hwchallenges}.
 \end{highlight}
 
-\begin{table}[htbp]
+\begin{table}[htb]
     \centering
     \caption{Comparison of Matrix Multiplication Algorithms}
     \label{tab:AlgosCompSum}
@@ -237,7 +237,7 @@ The lower-left $A$-\gls{tile} (\textit{yellow}) is then computed the same way.
 At this point, \glspl{intersection} have been done with only the upper $b$-\gls{tile}, and $c$ has been updated sequentially (first \acrshort{po}).
 The two next $A$-\glspl{tile} (\textit{green}, then \textit{blue}) will compute \glspl{intersection} with the lower $b$-\gls{tile} and update the entire $c$-vector sequentially, showing the \acrshort{op} characteristic of having \acrshortpl{po} to \emph{merge}, two in this case.
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \begin{minipage}[t]{0.49\linewidth}
         \begin{figure}[H]

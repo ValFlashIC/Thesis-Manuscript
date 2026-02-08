@@ -12,9 +12,9 @@ As discussed in Chapter~\ref{cha:background}, \acrlong{gust}'s algorithm (\acrsh
 However, it requires handling \glspl{irrAccess} to both input matrix $B$ and output matrix $C$.
 Since \acrlong{spdc} targets \glspl{reduction} on the output, additional hardware for fetching $B$ is necessary to achieve peak performance, as demonstrated by the Gamma accelerator~\cite{Zhang2021_Gamma}.
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
-    \includegraphics[width=\linewidth]{Chapter_Optim/Figures/PDF/SpMSpM_SpDC.pdf}
+    \includegraphics[width=0.8\linewidth]{Chapter_Optim/Figures/PDF/SpMSpM_SpDC.pdf}
     \caption{\acrlong{gust} \acrshort{spmspm} Kernel with an \acrlong{op} \acrshort{spmspv} Iteration}
     \label{fig:optim:spdc_spmspm}
 \end{figure}

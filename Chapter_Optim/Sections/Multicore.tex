@@ -16,7 +16,7 @@ As shown in Figure~\ref{fig:optim:spdc_multicore}, each core computes half of th
 This approach favors the \acrshort{csc} format, which stores matrices column-wise, minimizing required software changes.
 Consequently, each core reads a different portion of matrix $A$ and vector $b$, while both cores perform updates to the entire output vector $c$.
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=0.5\linewidth]{Chapter_Optim/Figures/PDF/MultiCore_SpDC.pdf}
     \caption{An Example of \acrlong{spdc} Usage on a Three-Level, Two-Core System}

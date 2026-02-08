@@ -25,7 +25,7 @@ The difference with the \acrshort{grc} is that it is able to perform \glspl{redu
 Finally, the \acrshort{srt} works as an element-wise, fully-associative table whose role is to handle sparse regions, such as the \acrlong{obr} in the matrix (\acrshort{obr}, \textit{blue}).
 This region is well-suited for handling isolated data and reducing memory traffic, with further analysis of this design choice presented in the next chapter.
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \begin{minipage}[b]{0.58\linewidth}
         \begin{figure}[H]
@@ -64,7 +64,7 @@ First, we ensure a given \emph{key} is in only one region at a time, to avoid co
 Second, the \acrshort{drc} is given priority over the \acrshort{srt}, to enable coalescing.
 Third, we avoid bringing a full line from memory to the L1 to simply update one or a few entries.
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{Chapter_SpDC/Figures/PDF/SpDC_behavior.pdf}
     \caption{Internal Operation of \acrlong{spdc} with Examples}

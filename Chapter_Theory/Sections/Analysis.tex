@@ -35,7 +35,7 @@ The cache-line $L_1$ (\textit{orange}) is evicted, and allocated to new elements
 In this case, there are still elements of the \gls{band} above the \textit{green} area, whose corresponding cache-line has, unfortunately, been evicted.
 Thus, on iteration $j+2$, cache-line $L_1$ must be fetched again and this pattern continues creating \emph{thrashing}.
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \begin{subfigure}{0.49\linewidth}
         \centering
@@ -60,7 +60,7 @@ This time, the cache-line $L_1$ is evicted only when all elements of the \gls{ba
 Indeed, the \gls{eviction} of cache-line $L_1$ occurs just in time so that it can be allocated to the new region at the bottom of the \gls{band}, below the \textit{yellow} area.
 In this way, when processing columns, the cache-lines do a rotation where the top one is evicted and allocated at the bottom, with one \gls{eviction} occurring after the processing of every $l$ columns.
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \begin{subfigure}{0.49\linewidth}
         \centering
@@ -105,7 +105,7 @@ The size of the cache varies from $S = 1$ to $S = 32$ \textit{sets}.
 When the cache-size reaches $S = 32$, the cache can hold the full output vector: $S \times W \times l \geqslant M$.
 We developed a C program which implements the hybrid probabilistic-fast simulation model and in Figure~\ref{fig:theory:theory_traffic_vs_d_ob}, we plot the normalized memory traffic, $\mathit{normMT}$, for the output vector $c$, depending on the out-of-\gls{band} density $d_\mathit{OB}$, for varying cache-sizes.
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{Chapter_Theory/Figures/PDF/graph1_25.11.28.pdf}
     \caption{Normalized Output Memory Traffic Depending on the Out-of-\Gls{band} Density for Several Cache-Sizes}
@@ -165,7 +165,7 @@ To analyse the impact of the cache-size, we consider two different sizes (\texti
 For a given cache-size, we adjust the number of ways ($W$), based on the associativity, to keep the cache-size constant.
 In Figure~\ref{fig:theory:theory_OBtraffic_vs_d_OB}, we plot $\mathit{normMT}$ for the output vector $c$, depending on $d_\mathit{OB}$, for varying cache configurations.
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{Chapter_Theory/Figures/PDF/graph3_25.12.15.pdf}
     \caption{Normalized Output Memory Traffic of the Out-of-\Gls{band}, Depending on the Density for Several Cache-Sizes}
@@ -205,7 +205,7 @@ We do not consider the out-of-\gls{band} ($d_\mathit{OB} = 0$) since it is proce
 We focus on the in-\gls{band} region for several cache configurations, making sure that the \gls{bw} for each \gls{set} size follows the relationship in Equation~\ref{eq:theory:in_band_cond}.
 In Figure~\ref{fig:theory:theory_IBtraffic_vs_d_IB}, we plot $\mathit{normMT}$ for the output vector $c$, depending on $d_\mathit{IB}$, for varying cache configurations.
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{Chapter_Theory/Figures/PDF/graph12_25.12.15.pdf}
     \caption{Normalized Output Memory Traffic of the In-\Gls{band}, Depending on the Density for Several Cache-Sizes}

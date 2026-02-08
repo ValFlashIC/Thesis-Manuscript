@@ -16,7 +16,7 @@ Most accelerators originate from universities and institutes, with MIT (US) nota
 Industry participation is also evident: NVIDIA was involved in five accelerators (\eg EIE, ExTensor, SpArch, Flexagon, and Vesper), while companies such as Axelera, Intel, Meta, Microsoft, SiFive, and Zettaflops contributed to individual projects.
 The research is geographically distributed across Canada, China, France, Hong Kong, India, Iran, Italy, Japan, Singapore, South Korea, Spain, Switzerland, the United Kingdom, and the United States.
 
-\begin{table}[htbp]
+\begin{table}[htb]
     \caption{Chronological Summary of a Representative Sparse Accelerator Subset}
     \label{tab:soa:classificationMaturity}
     \centering
@@ -82,7 +82,7 @@ Accelerators like Coup, PHI, SortCache, and ASA do not require preprocessing as 
 CoSPARSE is notably the only accelerator proposing to maintain two matrix copies in main memory (one in \acrshort{csr} and one in \acrshort{csc}) to enable joint software/hardware optimization.
 Regardless, fair benchmarking must consider the costs associated with specialized preprocessing if this is required.
 
-\begin{table}[htbp]
+\begin{table}[htb]
     \caption{Qualitative Analysis and Evaluation of Sparse Accelerators Subset}
     \label{tab:soa:evaluation}
     \centering
@@ -185,7 +185,7 @@ In Figure~\ref{fig:soa:taxonomy} we present a flow diagram which can guide a des
 Starting from the top-right of the figure, the designer must first decide between a \textit{specialized accelerator} for a specific kernel or a \textit{general purpose accelerator}.
 The former is preferable if performance must be maximized, requiring a \textit{standalone} accelerator addressing both \gls{gather} and \gls{scatter} (\eg ITS, SpaceA, Gamma, Spada, Flexagon, ACES, IOPS and DMSA, from the subset of accelerators).
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{Chapter_SoA/Figures/PDF/SoA_AnalysisForDesigners.pdf}
     \caption{Flow Diagram for Architecture Selection}

@@ -15,21 +15,29 @@ To improve the performance of these operations, specialized hardware has been pr
 \bigskip\bigskip
 
 \begin{highlight}{Takeaways}{Mulberry}
-    \raggedright
-    \colorbf{Mulberry}{Sparse matrices:} large, highly sparse, structured (such as \gls{banded} matrices) \\
+    \colorbf{Mulberry}{Sparse matrices:} large, highly sparse, structured (such as \gls{banded} matrices)
+
+    \bigskip
     \colorbf{Mulberry}{Sparse formats:} diverse, reduce memory footprint
     \begin{itemize}
         \item \acrshort{coo}, the simplest
         \item \acrshort{csr} and \acrshort{csc}, the mostly used
         \item \acrshort{bacsc}, our own \gls{spFormat} for \gls{banded} matrices
     \end{itemize}
-    \colorbf{Mulberry}{Sparse kernels:} sparse \acrshort{mv} and \acrshort{mm} multiplications (such as \acrshort{spmv} and \acrshort{spmspm}), generate indirect accesses \\
+
+    \bigskip
+    \colorbf{Mulberry}{Sparse kernels:} sparse \acrshort{mv} and \acrshort{mm} multiplications (such as \acrshort{spmv} and \acrshort{spmspm}), generate indirect accesses
+
+    \bigskip
     \colorbf{Mulberry}{Algorithms:} \acrfull{ip}, \acrfull{op} and \acrfull{gust}, extended with \gls{tiling} methods
     \begin{itemize}
         \item Best potential to reduce memory transfers: \acrshort{gust}, followed by \acrshort{op} at low density
     \end{itemize}
+
     \bigskip
-    \colorbf{Mulberry}{Problem:} \glspl{irrAccess}, generate high memory transaction latencies \\
+    \colorbf{Mulberry}{Problem:} \glspl{irrAccess}, generate high memory transaction latencies
+
+    \bigskip
     \colorbf{Mulberry}{Challenges:}
     \begin{itemize}
         \item \gls{gather}: \gls{intersection} searches

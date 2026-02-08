@@ -12,15 +12,15 @@ When performing an \acrshort{op} \acrshort{spmv} ($A \times b = c$) with this fo
 Moreover, $A$ is read sequentially while $c$ is updated ``randomly''.
 In fact, the \emph{key} is determined via an indirection with an access to $\mathit{idx}$.
 
-\begin{algorithm}[htbp]
+\begin{algorithm}[htb]
     \caption{\acrlong{op} \acrshort{spmv} -- Single Threaded}
     \label{alg:spdc:spmv_with_red}
     %
-    \For(\tcp*[f]{Loop over the columns of A}){$n \in \ldb 0, N-1 \rdb$}{
+    \For(\tcp*[h]{Loop over the columns of A}){$n \in \ldb 0, N-1 \rdb$}{
         \For{$pos \in \ldb ptr_n, ptr_{n+1}-1 \rdb$}{
-            $key \gets idx_{pos}$\tcp*[r]{Row index}
-            $val \gets val_{pos} \times b_n$\tcp*[r]{val = A\textsubscript{key,n} \tm b\textsubscript{n}}
-            $\mathit{RED}(key, val)$\tcp*[r]{c\textsubscript{key} += val}
+            $key \gets idx_{pos}$\tcp*[l]{Row index}
+            $val \gets val_{pos} \times b_n$\tcp*[l]{val = A\textsubscript{key,n} {\tm} b\textsubscript{n}}
+            $\mathit{RED}(key, val)$\tcp*[l]{c\textsubscript{key} += val}
         }
     }
 \end{algorithm}
@@ -33,7 +33,7 @@ Each of these results in a \acrshort{red} on $c$.
 As we continue, we then \gls{hit} another value \ding{196} on the row $\mathit{key}_{10}$ which must be \emph{reduced} with an existing entry \ding{192}
  (as shown on the left of Figure~\ref{fig:spdc:spmv_on_matrix}, \emph{Conceptual View}).
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{Chapter_SpDC/Figures/PDF/REDonSpMV.pdf}
     \caption{Traversal of Non-Zero Elements of Input Matrix for \acrshort{op} \acrshort{spmv} (left) and Impact on Cache (right)}

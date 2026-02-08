@@ -24,7 +24,7 @@ The instruction is then replayed with the highest priority once its dependencies
 If the instruction does not need to be replayed at \textit{st1}, it is consumed and processed.
 This \gls{pipeline} serves as the foundation for implementing \acrlong{spdc}'s \gls{reduction} operations.
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=0.56\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_MicroArchi.pdf}
     \caption{\acrlong{spdc} Microarchitecture, based on HPDcache}
@@ -91,7 +91,7 @@ However, if the address matches a \gls{set} $s_\mathit{addr}$ outside the region
 The three regions \acrshort{grc}, \acrshort{drc}, and \acrshort{srt} (\textit{green}, \textit{orange} and \textit{blue}, respectively, in the example) are each defined by their number of \glspl{set} $S_R$ and their first \gls{set}, $s_\mathit{offset}$.
 \acrlong{spdc} can thus be reconfigured to operate as a generic cache, a traditional \gls{redC} or a region-based \gls{redC} based on the needs of the application (\textit{config} in Figure~\ref{fig:arch:microarch}).
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{Chapter_MicroArch/Figures/PDF/SpDC_SetsRedirection.pdf}
     \caption{Set Redirection Depending on the Region}
@@ -146,7 +146,7 @@ The subsequent two \acrshort{red} instructions are then executed and stored in t
 At line~13, we switch to the \acrfull{obr} region, causing the following \acrshort{red} instruction to be processed by the \acrshort{srt}.
 Once all \acrshort{red} operations complete, \acrlong{spdc} is flushed at line~17 before disabling the reduction engine, reverting to standard cache operation.
 
-\sourcecode{Chapter_MicroArch/Code/red_example.c}{A Simple Example of \acrshort{red} Operations Usage}{src:arch:red_ex}{htbp}
+\sourcecode{Chapter_MicroArch/Code/red_example.c}{A Simple Example of \acrshort{red} Operations Usage}{src:arch:red_ex}{htb}
 
 \begin{highlight}{Conclusion}{Red}
     \textbf{\acrlong{spdc} provides a simple and flexible software interface} through a minimal set of custom RISC-V instructions.
@@ -163,7 +163,7 @@ We represent the three \gls{pipeline} stages (\textit{st0}, \textit{st1}, and \t
 The \textit{green}, \textit{red}, and \textit{blue} arrows represent read and write operations, and unit allocations, respectively.
 The \textit{Dir} and \textit{Data} \acrshort{ram} units, marked with an hourglass, require one full cycle to respond.
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \begin{subfigure}{0.32\linewidth}
         \centering
@@ -255,7 +255,7 @@ Once the \textit{Accumulation Table} has both data lines, it performs word-by-wo
 \end{itemize}
 \bigskip
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \begin{subfigure}{0.32\linewidth}
         \centering
