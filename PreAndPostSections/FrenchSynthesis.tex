@@ -38,8 +38,8 @@ Cependant, leur structure irrégulière engendre des accès mémoire imprévisib
 
 Trois algorithmes principaux sont analysés pour les opérations de multiplication matrice-vecteur \acrshort{mv} (\acrshort{spmv}, \acrshort{spmspv} ; $A \times b = c$) et matrice-matrice \acrshort{mm} (\acrshort{spmm}, \acrshort{spmspm}, \acrshort{spgemm} ; $A \times B = C$) :
 \begin{itemize}
-    \item \acrfull{ip} (voir Algorithmes~\ref{alg:bg:MVinner} et~\ref{alg:bg:MMinner}) : Intuitif mais souffrant de recherches d'intersection coûteuses entre les éléments non nuls des matrices/vecteurs d'entrée, surtout lorsque les données sont stockées dans des formats compressés.
-    \item \acrfull{op} (voir Algorithmes~\ref{alg:bg:MVouter} et~\ref{alg:bg:MMouter}) : Génère des réductions aléatoires sur le vecteur ou la matrice de sortie, stressant le système mémoire en raison d'accès irréguliers et de mises à jour partielles fréquentes.
+    \item \acrfull{ip} (voir Algorithmes~\ref{alg:bg:MVinner} et~\ref{alg:bg:MMinner}) : Intuitif mais souffrant de recherches d'intersection coûteuses entre les éléments non nuls des matrices/vecteurs d'entrée, lorsque les données sont stockées dans des formats compressés.
+    \item \acrfull{op} (voir Algorithmes~\ref{alg:bg:MVouter} et~\ref{alg:bg:MMouter}) : Génère des réductions aléatoires sur le vecteur ou la matrice de sortie, stressant le système mémoire en raison d'accès irréguliers et de mises à jour de sommes partielles fréquentes.
     \item \acrfull{gust} (voir Algorithme~\ref{alg:bg:MMgustavson}) : Un compromis entre \acrshort{ip} et \acrshort{op}, uniquement pour les opérations \acrshort{mm}, optimisant la réutilisation des données d'entrée (lignes de $B$) et la génération séquentielle des résultats (lignes de $C$), ce qui en fait le candidat le plus adapté pour une implémentation matérielle efficace.
 \end{itemize}
 
@@ -162,7 +162,7 @@ Ces dernières provoquent des évincements fréquentes de lignes de cache très 
 
 \subsection*{Architecture de \acrlong{spdc}}
 
-\acrlong{spdc} repose sur un partitionnement virtuel de la mémoire cache en trois régions distinctes (voir Figure~\ref{fig:spdc:cache_partition}), chacune optimisée pour un type d'accès spécifique :
+\acrlong{spdc} repose sur un partitionnement de la mémoire cache en trois régions distinctes (voir Figure~\ref{fig:spdc:cache_partition}), chacune optimisée pour un type d'accès spécifique :
 \begin{itemize}
     \item \acrshort{grc} (\acrlong{grc}) : Gère les accès séquentiels (ex. : lecture des entrées de la matrice $A$ ou du vecteur $b$), similaire à un cache générique.
     \item \acrshort{drc} (\acrlong{drc}) : Optimisée pour les zones denses de la matrix $A$, qui génèrent des réductions fréquentes sur le vecteur de sortie $c$.
@@ -179,12 +179,12 @@ Ces dernières provoquent des évincements fréquentes de lignes de cache très 
     \item Réduction du trafic mémoire : En séparant les régions denses et creuses, \acrlong{spdc} minimise les évincements coûteux et les lectures/écritures redondantes.
     Par exemple, les mises à jour dans la \acrshort{drc} sont rassemblées et fusionnées avant d'être propagées, tandis que la \acrshort{srt} évite de charger des lignes de cache entière pour des éléments non nuls isolés.
     \item Flexibilité et adaptabilité : Le partitionnement est configurable (ex. : 25/50/25\% pour \acrshort{grc}/\acrshort{drc}/\acrshort{srt}), permettant une étude du dimensionnement des régions pour optimiser les performance en fonction des matrices.
-    \item Compatibilité avec les caches existants : \acrlong{spdc} peut être intégré comme remplaçant d'un ou plusieurs caches dans les hiérarchies mémoire traditionnelles (ex. : entre le cache L1 et la mémoire principale), sans modifier radicalement l'architecture sous-jacente.
+    \item Compatibilité avec les caches existants : \acrlong{spdc} peut être intégré comme remplaçant d'un ou plusieurs caches dans les hiérarchies mémoire traditionnelles (ex. : entre le cache L1 et la mémoire principale), sans modifier significativement l'architecture sous-jacente.
 \end{itemize}
 
 \subsection*{\'Evaluation préliminaire}
 
-Une modélisation haut niveau (Python) compare \acrlong{spdc} à un cache générique (\acrshort{gc}) sur des matrices bandées issues d'applications réelles (ex. : \textit{roadNet-CA} de la SuiteSparse Matrix Collection).
+Une modélisation haut niveau (Python) compare \acrlong{spdc} à un cache générique (\acrshort{gc}) sur 48 matrices issues d'applications réelles (ex. : \textit{roadNet-CA} de la SuiteSparse Matrix Collection).
 Les résultats montrent :
 \begin{itemize}
     \item Une réduction significative du trafic mémoire (4.1\tm par rapport à \acrshort{gc}, voir Table~\ref{tab:spdc:results}), notamment grâce à la \textit{coalescence} des réductions dans la \acrshort{drc}.
@@ -273,7 +273,7 @@ Par ailleurs, ce modèle permet une exploration rapide des configurations de cac
         \item L'exploitation de la structure matricielle pour optimiser les politiques d'évincement.
         \item La séparation des régions du cache selon la densité des données, validant l'architecture de \acrlong{spdc}.
     \end{itemize}
-    Ces analyses préparent le terrain pour le Chapitre~\ref{cha:arch}, qui traduira ces principes en une implémentation microarchitecturale (\acrshort{rtl}) de \acrlong{spdc}, tout en identifiant des classes de matrices aux profils de performance distincts.
+    Ces analyses préparent le terrain pour le Chapitre~\ref{cha:arch}, qui traduira ces principes en une implémentation matérielle (\acrshort{rtl}) de \acrlong{spdc}, tout en identifiant des classes de matrices aux profils de performance distincts.
 \end{highlight}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -311,13 +311,13 @@ Le fonctionnement de \acrlong{spdc} s'articule autour d'un \gls{pipeline} (chaî
 \subsubsection*{Principaux résultats}
 
 \begin{enumerate}
-    \item Réduction du trafic mémoire (voir Figure~\ref{fig:arch:outMT}) : \acrlong{spdc} réduit le trafic du vecteur de sortie $c$ de 3.9\tm en moyenne par rapport à un cache générique (\acrshort{gc}) pour toutes les matrices.
+    \item Réduction du trafic mémoire (voir Figure~\ref{fig:arch:outMT}) : \acrlong{spdc} réduit le trafic du vecteur de sortie de 3.9\tm en moyenne par rapport à un cache générique (\acrshort{gc}) pour toutes les matrices.
     \item Réduction des latences d'exécution (voir Figure~\ref{fig:arch:speedup}) : \acrlong{spdc} réduit les latences de 1.1\tm en moyenne par rapport à un cache générique (\acrshort{gc}) pour toutes les matrices.
     \item Comportement par classe de matrices (voir Figure~\ref{fig:arch:perfOnMat}) :
     \begin{itemize}
         \item Matrice à basse $d_\mathit{cd}$ : \acrlong{spdc} obtient les meilleurs performances (6.4\tm en trafic mémoire, speedups positifs) lorsque la densité à petit grain est faible.
         Dans ces conditions, la \acrshort{srt} traite un maximum d'éléments isolés, et la \acrshort{drc} densifie la bande.
-        \item Matrice à haute $d_\mathit{cd}$ : \acrlong{spdc} obtient des performances moins élevées (3.0\tm en trafic mémoire, speedups négatifs ou nuls) lorsque la densité à petit grain est élevée.
+        \item Matrice à haute $d_\mathit{cd}$ : \acrlong{spdc} obtient des performances moins élevées (3.0\tm en trafic mémoire, speedups négatifs ou unitaires) lorsque la densité à petit grain est élevée.
         Dans ces conditions, les matrices profitent déjà de meilleurs performances avec la baseline \acrshort{gc} qui sait tirer avantage de cette localité spatiale.
         Bien que la \acrshort{drc} fonctionne toujours de façon optimale, la \acrshort{srt} isole des éléments qui étaient groupés.
     \end{itemize}
@@ -349,9 +349,9 @@ Quatre axes d'optimisation sont envisagés pour améliorer \acrlong{spdc} :
     L'ajout de ce support est donc essentiel pour un déploiement futur.
     \item Configuration dynamique des régions : Les mécanismes de configuration des régions (GRC, DRC, SRT) sont actuellement partiellement statiques.
     Une approche entièrement dynamique améliorerait la flexibilité du cache.
-    \item Calcul matériel de la région cible : La détermination logicielle de la région cible des réductions pourrait être déléguée au matériel, réduisant significativement les latences et optimisant les performances globales.
-    \item Cohérence inter-régions : Contrairement aux \acrshort{srt} et \acrshort{drc}, la \acrshort{grc} autorise des duplications de données, ce qui complexifie la gestion de la cohérence.
-    Une implémentation de la cohérence globale entre toutes les régions simplifierait l'utilisation et renforcerait la robustesse du système.
+    \item Calcul matériel de la région cible : La détermination logicielle de la région cible des réductions pourrait être déléguée au matériel, réduisant significativement le nombre d'instructions exécutées par le processeur et donc les latences et optimisant les performances globales.
+    \item Cohérence inter-régions : Contrairement aux \acrshort{srt} et \acrshort{drc}, la \acrshort{grc} autorise des duplications de données, ce qui pourrait complexifier la gestion de la cohérence.
+    Une implémentation de la cohérence globale entre toutes les régions renforcerait la robustesse du système.
 \end{itemize}
 
 \subsection*{2. Extension aux noyaux \acrshort{spmspm}}
@@ -371,7 +371,7 @@ Au niveau du cache partagé de dernier niveau (\acrshort{llc}), les réductions 
     \begin{itemize}
         \item Gagner en efficacité et performance grâce à quelques optimisations légères mais impactantes.
         \item Optimiser les noyaux de calcul de type \acrshort{mm}.
-        \item Scaler vers des systèmes multi-c\oe{}urs.
+        \item Passer à l'échelle vers des systèmes multi-c\oe{}urs.
     \end{itemize}
     En résumé, \acrlong{spdc} offre une solution scalable et adaptative pour les défis des données creuses.
 \end{highlight}
@@ -392,7 +392,7 @@ Notre contribution principale est \acrlong{spdc}, une architecture de cache de r
 Les contributions clés incluent :
 \begin{itemize}
     \item Une modélisation architecturale via des modèles Python et probabilistes (en C) pour analyser les transactions mémoire et explorer le dimensionnement des caches.
-    \item Une implémentation microarchitecturale validée par des simulations \acrshort{rtl}, mettant en lumière l'importance de la structure petit grain des matrices (comme la densité des lignes de cache).
+    \item Une implémentation matérielle validée par des simulations \acrshort{rtl}, mettant en lumière l'importance de la structure petit grain des matrices (comme la densité des lignes de cache).
     \item Des optimisations pour la scalabilité, incluant des extensions aux noyaux \acrshort{spmspm} et aux architectures multi-c\oe{}urs.
 \end{itemize}
 

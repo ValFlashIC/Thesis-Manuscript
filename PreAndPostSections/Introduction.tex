@@ -27,7 +27,7 @@ We then evaluate the behaviour of this specialized cache through modeling, simul
 
 \bigskip\bigskip
 
-This manuscript is structured around several key contributions.
+The manuscript is structured as follows.
 We begin with an in-depth discussion of \gls{irrData}, with a particular emphasis on sparse matrices (Chapter~\ref{cha:background}).
 This includes a study of fundamental sparse matrix multiplication kernels and their associated algorithms, highlighting the main hardware challenges that arise when dealing with sparse data.
 A \gls{highLevel} analysis of algorithms for sparse data computing is provided, with a focus on basic storage schemes and opportunities for data reuse.
@@ -36,9 +36,9 @@ This review identifies common characteristics, proposes a classification of exis
 This analysis guided our subsequent architectural choices.
 
 Following this survey, we introduce a novel cache architecture specifically designed to address the challenge of read-accumulate-write operations on sparse data, called ``random'' \glspl{reduction} (Chapter~\ref{cha:spdc}).
-The proposed cache integrates \gls{reduction} support and organizes its memory into multiple regions optimized for denser and sparser data regions.
+The proposed cache integrates \gls{reduction} support and organizes its storage into multiple regions optimized for denser and sparser data regions.
 A Python model was developed to simulate memory transactions in this cache and to compare its behavior with that of a generic cache.
-To further investigate its performance, we complement this analysis with a probabilistic model, that enables rapid simulation and sizing parameters exploration depending on matrices structure (Chapter~\ref{cha:theory}).
+To further investigate its performance, we complement this analysis with a probabilistic model, that enables rapid simulation and design parameters exploration depending on matrix structure (Chapter~\ref{cha:theory}).
 
 At the micro-architectural level, we detail the virtual partitioning of cache memory into multiple configurable regions, which ensures both flexibility and adaptability to diverse workloads (Chapter~\ref{cha:arch}).
 The proposed cache is then evaluated through \acrshort{rtl} simulation, which reveals two distinct classes of matrices that exhibit different performance profiles.
@@ -52,7 +52,7 @@ The main contributions of this thesis can be summarized as follows:
     \item \textbf{Analysis of sparse data computing} {\raggedleft \hfill (Chapter~\ref{cha:background})}
     \begin{itemize}
         \item Study of fundamental sparse matrix multiplication kernels and algorithms.
-        \item Identification of the key hardware challenges associated with sparse data processing.
+        \item Identification of the hardware challenges associated with sparse data processing.
         \item \Gls{highLevel} analysis of algorithms for sparse data computing, with emphasis on storage schemes and data reuse opportunities.
     \end{itemize}
 
@@ -60,7 +60,7 @@ The main contributions of this thesis can be summarized as follows:
     \begin{itemize}
         \item Comprehensive review of hardware accelerators for sparse matrix computing.
         \item Identification of common architectural features and design tendencies.
-        \item Comparative analysis to explain design choices under varying objectives and constraints.
+        \item Comparative analysis to explain design choices under varying constraints.
     \end{itemize}
 
     \item \textbf{Design of a cache architecture for ``random'' \glspl{reduction}} {\raggedleft \hfill (Chapter~\ref{cha:spdc})}
@@ -77,16 +77,15 @@ The main contributions of this thesis can be summarized as follows:
 
     \item \textbf{Micro-architecture and evaluation through \acrshort{rtl} simulation} {\raggedleft \hfill (Chapter~\ref{cha:arch})}
     \begin{itemize}
-        \item Introduction of a virtual memory partitioning scheme enabling multiple configurable regions.
-        \item Emphasis on flexibility and adaptability in cache design.
+        \item Introduction of a memory partitioning scheme enabling multiple configurable regions.
         \item Assessment of the proposed cache architecture using \acrshort{rtl}-level simulation.
-        \item Identification of two distinct groups of sparse matrices leading to different performance profiles.
+        \item Identification of two groups of sparse matrices leading to different performance profiles.
     \end{itemize}
 
     \item \textbf{Future directions for performance and scalability} {\raggedleft \hfill (Chapter~\ref{cha:optim})}
     \begin{itemize}
         \item Extension of the cache architecture to multicore systems for improved scalability.
-        \item Investigation of optimization techniques to enhance usability and practical deployment.
+        \item Optimization techniques to enhance usability and practical deployment.
     \end{itemize}
 \end{enumerate}
 

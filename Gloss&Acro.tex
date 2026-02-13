@@ -33,7 +33,7 @@
 
 \newglossaryentry{randAccess}{
     name=``random'' access,
-    description={Is a memory access that occurs on an arbitrary memory address (not necessarily conscutive in memory with previous and next accesses)},
+    description={Is a memory access that occurs on an arbitrary or unpredictable memory address (not necessarily conscutive in memory)},
     plural=``random'' accesses,
     sort=randomaccess
 }
@@ -59,19 +59,19 @@
 
 \newglossaryentry{dFormat}{
     name=dense format,
-    description={Is the uncompressed format where all zeros and non-zeros are stored, without any use of \gls{metadata}},
+    description={Is the uncompressed format where all values of a matrix (zeros and non-zeroes) are stored directly in memory},
     plural=dense formats
 }
 
 \newglossaryentry{spFormat}{
     name=sparse format,
-    description={Is a compression format for sparse matrices, which avoids storing zeros by using \gls{metadata}},
+    description={Is a compression format for sparse matrices, which avoids storing zeros by using \gls{metadata}. Common sparse formats include \acrshort{coo}, \acrshort{csr} and \acrshort{csc}},
     plural=sparse formats
 }
 
 \newglossaryentry{metadata}{
     name=metadata,
-    description={Is data that provides information about other data, such as index arrays of \glspl{spFormat}},
+    description={Is data that provides information about how to interpret the main data, such as index arrays of \glspl{spFormat}},
     plural=metadata
 }
 
@@ -83,19 +83,19 @@
 
 \newglossaryentry{tile}{
     name=tile,
-    description={Refers to a sub-region of a \gls{tiling} process},
+    description={Refers to a sub-region of a \gls{tiling} process. In the simplest case, this could correspond to a rectangular region in a matrix},
     plural=tiles
 }
 
 \newglossaryentry{rank}{
     name=rank,
-    description={Refers to a dimension of the kernel},
+    description={Refers to a dimension of a tensor, such as a vector or a matrix},
     plural=ranks
 }
 
 \newglossaryentry{crank}{
     name=common rank,
-    description={Refers to a \gls{rank} that is common between two data-entries, when computing a kernel},
+    description={Refers to a \gls{rank} that is shared between two tensors},
     plural=common ranks
 }
 
@@ -107,13 +107,13 @@
 
 \newglossaryentry{intersection}{
     name=\textit{intersection},
-    description={Refers to the process of finding non-zero \glspl{psum}, when computing a matrix multiplication},
+    description={Refers to the process of finding non-zero \glspl{psum}, when computing a matrix multiplication. Typically this involves finding the overlapping non-zero values in the input matrices},
     plural=\textit{intersections}
 }
 
 \newglossaryentry{reduction}{
     name=\textit{reduction},
-    description={Refers to the process of updating an entry},
+    description={Refers to the process of updating an entry. Typically, in this thesis, a \textit{reduction} consists of adding a \gls{psum} to an output vector: $c_i \acc \mathit{partial\_sum}$},
     plural=\textit{reductions}
 }
 
@@ -137,7 +137,7 @@
 
 \newglossaryentry{band}{
     name=band,
-    description={Refers to an area of a matrix that is concentrated around the diagonal},
+    description={Refers to an region of a matrix that is concentrated around the diagonal},
     plural=bands
 }
 
@@ -149,14 +149,14 @@
 
 \newglossaryentry{PBanded}{
     name=`perfectly' banded,
-    description={Refers to a matrix structure where all the non-zero elements are concentrated within a delimitated area around the diagonal (the \gls{band})},
+    description={Refers to a matrix structure where all the non-zero elements are fully concentrated within a delimitated area around the diagonal (the \gls{band})},
     plural=`perfectly' banded,
     sort=perfectlybanded
 }
 
 \newglossaryentry{bw}{
     name=\textit{band-width},
-    description={With this typography, refers to the size of the \gls{band} of a matrix ($w_B$), to not be mistaken with memory `bandwidth'},
+    description={With this typography, refers to the size of the \gls{band} of a matrix ($w_B$), not to be confused with memory `bandwidth'},
     plural=\textit{band-widths}
 }
 
@@ -168,7 +168,7 @@
 
 \newglossaryentry{hit}{
     name=hit,
-    description={Is a cache event where a given address does match one of the valid cache entries},
+    description={Is a cache event where a given address matches one of the valid cache entries},
     plural=hits
 }
 
@@ -186,7 +186,7 @@
 
 \newglossaryentry{redC}{
     name=\textit{reduction cache},
-    description={Is a data-cache supporting \gls{reduction} operations},
+    description={Is a data-cache with hardware support for \gls{reduction} operations},
     plural=\textit{reduction caches}
 }
 
@@ -216,7 +216,7 @@
 
 \newglossaryentry{highLevel}{
     name=high-level,
-    description={Refers to an implementation, modelisation, or language that is relatively accessible to the user, in general subject to many simplifications},
+    description={Refers to an implementation, modeling approach, or language that is easily understood by the user, in general subject to many simplifications},
     plural=high-levels
 }
 

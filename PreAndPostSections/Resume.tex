@@ -20,7 +20,7 @@ This thesis addresses the core challenge of designing hardware and architectural
 We analyze the fundamental algorithms for sparse matrix multiplication, \acrlong{ip}, \acrlong{op}, and \acrlong{gust}'s, and identify their hardware challenges, separated into the \gls{gather} and \gls{scatter} problems.
 \acrlong{gust}'s algorithm emerges as the most promising for hardware implementation due to its balanced trade-offs, while the \acrlong{op} algorithm is well-suited for \acrlong{mv} kernels.
 
-Our main contribution is \acrlong{spdc}, a novel region-based \acrlong{redC} architecture that optimizes memory transactions for sparse data by leveraging the structural properties of \gls{banded} matrices.
+Our main contribution is \acrlong{spdc}, a region-based \acrlong{redC} architecture that optimizes memory transactions for sparse data by leveraging the structural properties of \gls{banded} matrices.
 \acrlong{spdc} partitions cache memory into in-\gls{band} and out-of-\gls{band} regions, significantly reducing memory traffic compared to generic caches.
 Key contributions include:
 \begin{itemize}
@@ -54,7 +54,7 @@ This thesis advances the state-of-the-art in cache architectures for sparse data
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Your Text %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \lettrine{L}{es} matrices creuses sont omniprésentes dans les applications gourmandes en données, telles que le calcul scientifique, l'analyse de graphes et l'apprentissage automatique.
-Pourtant, leurs schémas d'accès mémoire irréguliers posent des défis majeurs pour les architectures informatiques traditionnelles.
+Pourtant, leurs schémas d'accès mémoire irréguliers posent des défis majeurs pour les architectures d'ordinateurs et de mémoires traditionnelles.
 Cette thèse aborde le défi central de la conception de mécanismes matériels et architecturaux pour prendre en charge efficacement le traitement des données creuses, en mettant l'accent sur la scalabilité, l'adaptabilité et les hautes performances.
 
 Nous analysons les algorithmes fondamentaux de multiplication de matrices creuses, à savoir \acrlong{ip}, \acrlong{op} et \acrlong{gust}, et identifions leurs défis matériels, séparés en problèmes de \gls{gather} (recherche d'intersections) et de \gls{scatter} (réductions aléatoires).

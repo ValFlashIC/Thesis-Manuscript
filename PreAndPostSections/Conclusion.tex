@@ -17,53 +17,53 @@ Our approach focused on the challenges posed by irregular memory access patterns
 We identified that the \acrshort{op} algorithm, while promising for parallelism and optimization with \acrshort{mv} kernels, generates ``random'' \glspl{reduction} (irregular updates on the output vector) that stress traditional memory systems.
 To mitigate these challenges, we proposed \textbf{\acrlong{spdc}}, a novel \textbf{region-based \gls{redC}} architecture designed to optimize memory transactions for sparse data by leveraging the structural properties of \gls{banded} matrices.
 
-Through this work, we developed a \textbf{lightweight, flexible solution} that can be integrated into any kernel suffering from ``random'' \glspl{reduction}, recognizing that caches are a fundamental component of memory hierarchies in CPUs, GPUs, and accelerators.
-Our design prioritizes \textbf{scalability}, ensuring that the solution remains effective across different system scales.
+Through this work, we developed a \textbf{lightweight, flexible solution} that can be integrated into any kernel requiring efficient ``random'' \glspl{reduction}, recognizing that caches are a fundamental component of memory hierarchies in CPUs, GPUs, and accelerators.
+Our design prioritizes \textbf{scalability} and the required storage in \acrlong{spdc} (32~KiB) is much smaller than most accelerators (Chapter~\ref{cha:soa}).
 Additionally, we addressed the critical influence of \textbf{matrix structure} on performance, conducting a detailed analysis of cache behavior specifically for \gls{banded} matrices.
 By adapting our architecture to better handle dense and sparse regions, we provided insights into how matrix structure can inform the design of efficient architectures, with \textbf{\acrlong{spdc}} serving as a practical example.
 This work also demonstrated how \textbf{simple yet targeted modifications} to cache design can yield significant performance improvements for \gls{reduction}-based kernels.
 
-While our approach has limitations, such as the absence of a full evaluation on multi-level, multi-core systems and the early-stage refinement of \acrlong{spdc}, we intentionally focused on \textbf{precision and conceptual clarity} over raw performance metrics.
-This emphasis on intrinsic understanding, rather than merely achieving impressive results, offers a more meaningful response to our central question and addresses a gap often overlooked in existing accelerator research.
+While our approach has limitations, such as the absence of a full evaluation on multi-level, multi-core systems and the early-stage refinement of \acrlong{spdc}, we intentionally focused on a \textbf{simpler and explainable design} rather than raw performance.
+This emphasis on intrinsic understanding, rather than merely achieving impressive results, offers a more meaningful response to the central question and gives greater understanding of the execution patterns, some that is often overlooked in existing accelerator research.
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Summary of Contributions}
+% \section*{Summary of Contributions}
 
-\paragraph*{Chapter~\ref{cha:background}. Analysis of Sparse Data Computing}
+% \paragraph*{Chapter~\ref{cha:background}. Analysis of Sparse Data Computing}
 
-We established a foundational understanding of sparse matrices, their storage formats, and the hardware challenges associated with their computation.
-Our analysis of \acrfull{ip}, \acrfull{op}, and \acrfull{gust} algorithms revealed that \acrshort{op} and \acrshort{gust} are the most promising for hardware acceleration, particularly due to their potential for parallelism and data reuse.
-We identified \gls{gather} (\gls{intersection} searches) and \gls{scatter} (``random'' \glspl{reduction}) as the two core challenges in sparse matrix processing, which guided our subsequent architectural choices.
+% We established a foundational understanding of sparse matrices, their storage formats, and the hardware challenges associated with their computation.
+% Our analysis of \acrfull{ip}, \acrfull{op}, and \acrfull{gust} algorithms revealed that \acrshort{op} and \acrshort{gust} are the most promising for hardware acceleration, particularly due to their potential for parallelism and data reuse.
+% We identified \gls{gather} (\gls{intersection} searches) and \gls{scatter} (``random'' \glspl{reduction}) as the two core challenges in sparse matrix processing, which guided our subsequent architectural choices.
 
-\paragraph*{Chapter~\ref{cha:soa}. Survey and Classification of State-of-the-Art Accelerators}
+% \paragraph*{Chapter~\ref{cha:soa}. Survey and Classification of State-of-the-Art Accelerators}
 
-We conducted a comprehensive review of recent hardware accelerators for sparse matrix computations, categorizing them based on autonomy, memory hierarchy position, algorithm compatibility, and hardware support for \gls{gather}/\gls{scatter} operations.
-Our comparative analysis highlighted that \acrlong{gust}-based accelerators often achieve the best performance due to their balanced approach to input reuse and output generation.
-This survey informed the design of \acrlong{spdc}, positioning it as a \textit{processor-assist}, near-cache accelerator optimized for \acrshort{op} \acrshort{spmv} kernels.
+% We conducted a comprehensive review of recent hardware accelerators for sparse matrix computations, categorizing them based on autonomy, memory hierarchy position, algorithm compatibility, and hardware support for \gls{gather}/\gls{scatter} operations.
+% Our comparative analysis highlighted that \acrlong{gust}-based accelerators often achieve the best performance due to their balanced approach to input reuse and output generation.
+% This survey informed the design of \acrlong{spdc}, positioning it as a \textit{processor-assist}, near-cache accelerator optimized for \acrshort{op} \acrshort{spmv} kernels.
 
-\paragraph*{Chapter~\ref{cha:spdc}. Design of \acrlong{spdc} for ``Random'' \Glspl{reduction}}
+% \paragraph*{Chapter~\ref{cha:spdc}. Design of \acrlong{spdc} for ``Random'' \Glspl{reduction}}
 
-We introduced \acrlong{spdc}, a region-based \gls{redC} that partitions memory into in-\gls{band} (\acrshort{ibr}) and out-of-\gls{band} (\acrshort{obr}) regions to optimize handling of both dense and sparse data.
-Our Python-based simulation model demonstrated that \acrlong{spdc} significantly reduces memory traffic compared to generic caches (4.1\tm).
-The cache region partitioning and \gls{reduction} support enable efficient management of irregular updates, addressing the \gls{scatter} problem inherent in \acrshort{op} algorithms.
+% We introduced \acrlong{spdc}, a region-based \gls{redC} that partitions memory into in-\gls{band} (\acrshort{ibr}) and out-of-\gls{band} (\acrshort{obr}) regions to optimize handling of both dense and sparse data.
+% Our Python-based simulation model demonstrated that \acrlong{spdc} significantly reduces memory traffic compared to generic caches (4.1\tm).
+% The cache region partitioning and \gls{reduction} support enable efficient management of irregular updates, addressing the \gls{scatter} problem inherent in \acrshort{op} algorithms.
 
-\paragraph*{Chapter~\ref{cha:theory}. Probabilistic Modeling and Exploration of Cache Behavior}
+% \paragraph*{Chapter~\ref{cha:theory}. Probabilistic Modeling and Exploration of Cache Behavior}
 
-We developed a hybrid probabilistic and analytical model to simulate \acrlong{spdc}'s behavior during \acrshort{op} \acrshort{spmv} operations.
-This model allowed us to explore how different cache configurations impact memory traffic, particularly for \gls{banded} matrices.
-Our findings demonstrated that a fully-associative table of moderate size, dedicated to handling isolated elements, is sufficient to substantially reduce memory traffic while allowing the remainder of the cache to operate at peak efficiency on dense data.
+% We developed a hybrid probabilistic and analytical model to simulate \acrlong{spdc}'s behavior during \acrshort{op} \acrshort{spmv} operations.
+% This model allowed us to explore how different cache configurations impact memory traffic, particularly for \gls{banded} matrices.
+% Our findings demonstrated that a fully-associative table of moderate size, dedicated to handling isolated elements, is sufficient to substantially reduce memory traffic while allowing the remainder of the cache to operate at peak efficiency on dense data.
 
-\paragraph*{Chapter~\ref{cha:arch}. Microarchitecture and \acrshort{rtl} Evaluation}
+% \paragraph*{Chapter~\ref{cha:arch}. Microarchitecture and \acrshort{rtl} Evaluation}
 
-We detailed the microarchitectural implementation of \acrlong{spdc}, featuring three dedicated regions: \acrfull{grc}, \acrfull{drc}, and \acrfull{srt}, all virtually separated in the cache memory.
-Our \acrshort{rtl} simulations validated the architecture's effectiveness, showing significant reductions in memory traffic (3.9\tm) and improved cache utilization.
-Our analysis revealed two distinct groups of matrices based on their fine-grain structure.
-This distinction underscores the importance of adapting cache regions to the specific structure of the input matrices.
+% We detailed the microarchitectural implementation of \acrlong{spdc}, featuring three dedicated regions: \acrfull{grc}, \acrfull{drc}, and \acrfull{srt}, all virtually separated in the cache memory.
+% Our \acrshort{rtl} simulations validated the architecture's effectiveness, showing significant reductions in memory traffic (3.9\tm) and improved cache utilization.
+% Our analysis revealed two distinct groups of matrices based on their fine-grain structure.
+% This distinction underscores the importance of adapting cache regions to the specific structure of the input matrices.
 
-\paragraph*{Chapter~\ref{cha:optim}. Optimizations and Future Directions}
+% \paragraph*{Chapter~\ref{cha:optim}. Optimizations and Future Directions}
 
-We explored \acrshort{rtl}-level optimizations for \acrlong{spdc}, including multi-core integration and extensions to sparse \acrshort{mm} kernels.
-These enhancements position \acrlong{spdc} as a scalable, easy-to-use, versatile solution for modern sparse matrix processing systems.
+% We explored \acrshort{rtl}-level optimizations for \acrlong{spdc}, including multi-core integration and extensions to sparse \acrshort{mm} kernels.
+% These enhancements position \acrlong{spdc} as a scalable, easy-to-use, versatile solution for modern sparse matrix processing systems.
 
 \bigskip
 \begin{highlight}{Key Results and Insights}{Mulberry}
@@ -86,7 +86,7 @@ These enhancements position \acrlong{spdc} as a scalable, easy-to-use, versatile
 
 \bigskip
 \begin{highlight}{Final Thoughts}{Red}
-    This thesis contributes a \colorbf{Red}{novel, reduction-aware cache architecture} that bridges the gap between theoretical insights and practical hardware implementations for sparse matrix computing.
+    This thesis contributes a \colorbf{Red}{reduction-aware cache architecture} that bridges the gap between theoretical insights and practical hardware implementations for sparse matrix computing.
     By addressing the challenges of \colorbf{Red}{irregular memory accesses} and \colorbf{Red}{efficient data reuse}, \acrlong{spdc} provides a \colorbf{Red}{scalable, adaptable solution} for modern computational demands.
     As sparse data continues to grow in importance across scientific, machine learning, and graph analytics applications, architectures like \acrlong{spdc} will play a critical role in enabling \colorbf{Red}{high-performance, energy-efficient processing} of these challenging workloads.
 \end{highlight}

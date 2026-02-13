@@ -35,7 +35,7 @@
         %
         General Notations \\
         $[a, b]$                               & Real interval, \eg $[a, b]$ contains any real value in $\mathbb{R}$ ranging between $a \in \mathbb{R}$ and $b \in \mathbb{R}$, both included \\
-        $\ldb a, b \rdb$                       & Integer interval, \eg $\ldb a, b \rdb$ contains any integer value in $\mathbb{Z}$ ranging between $a \in \mathbb{Z}$ and $b \in \mathbb{Z}$, both included; can be seen as $[a, b] \cap \mathbb{Z}$; can also be noted $a \leqslant i,j \leqslant b \in \mathbb{Z}$ \\
+        $\ldb a, b \rdb$                       & Integer interval, \eg $\ldb a, b \rdb$ contains any integer value in $\mathbb{Z}$ ranging between $a \in \mathbb{Z}$ and $b \in \mathbb{Z}$, both included \\
         $a\%b$                                 & $a$ modulo $b$ \\
         $\{a, b, c\}$                          & Set, containing $a$, $b$ and $c$ in this example \\
         0.00 e-0                               & Scientific notation, equivalent with $0.00 \times 10^{-0}$ \\
@@ -51,13 +51,13 @@
         $i$, $j$, $k$                          & Matrix and vectors indices (for $M$, $N$ and $K$, respectively), \ex $A_{i,k}$, $c_j$ \\
         $\mathit{nnz}$                         & Number of non-zero elements; can be annotated, \ex $\mathit{nnz}_A$ or $\mathit{nnz}(A)$ \\
         $\overline{nnz_r}$, $\overline{nnz_c}$ & Average number of non-zero elements per row or column, respectively; can be annotated, \ex $\overline{nnz_r}(A)$ \\
-        $d$                                    & Density; can be annotated, \ex $d_A$ or $d(A)$ \\
+        $d$                                    & Density, the ratio of non-zero values; can be annotated, \ex $d_A$ or $d(A)$ \\
         $d_\mathit{IB}$, $d_\mathit{OB}$       & Densities of in- and out-of-\gls{band} regions of a matrix \\
-        $w_B$                                  & \Gls{bw} of a matrix \\
+        $w_B$                                  & \Gls{bw} of a matrix, that is the width of the diagonal band \\
         $w_\mathit{hB}$                        & Half-\gls{bw} of a matrix, such that $w_B = 2 \times w_\mathit{hB} - 1$ \\
         $d_\mathit{cd}$                        & Average density of non-empty lines of a cache, or vertical-stripes of a matrix, ranging between $\frac{1}{l}$ and 1 \\
         %
-        \Gls{spFormat} Related \\
+        Sparse Format Related \\
         $ptr$, $idx$, $val$                    & Storages tables used for \acrshort{csr} and \acrshort{csc} formats; can be annotated, \ex $A.idx$, $A.ptr$, $A.val$ \\
         $pos$                                  & Index for the $ptr$ table \\
         %

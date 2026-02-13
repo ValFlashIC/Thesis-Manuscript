@@ -74,8 +74,8 @@ Some accelerators, such as ExTensor, Tensaurus, SortCache, and Flexagon, also in
 All studies evaluate large matrices with several million non-zeros, which is critical since these exceed typical cache sizes.
 However, performance results often depend heavily on the matrices chosen.
 
-Matrices are typically stored in straightforward formats like \acrshort{coo} (row-major sorted) as found in the SuiteSparse Matrix Collection, necessitating preprocessing for compatibility with certain accelerators.
-For instance, some accelerators, such as EIE, ExTensor, Tensaurus, MatRaptor, Alrescha, \acrlong{spdc} and C\textsuperscript{3}ache, require conversion to their specific custom formats.
+Matrices are typically stored in straightforward formats such as \acrshort{coo} (row-major sorted) as found in the SuiteSparse Matrix Collection, necessitating preprocessing for compatibility with certain accelerators.
+For instance, some accelerators, such as EIE, ExTensor, Tensaurus, MatRaptor, Alrescha, \acrlong{spdc} and C\textsuperscript{3}ache, require conversion to their custom formats.
 Other \textit{standalone} accelerators utilize unique internal formats with \gls{tiling} methods but perform the conversion in hardware (\eg InnerSP, Spada, Flexagon, IOPS, DMSA).
 Accelerators like Coup, PHI, SortCache, and ASA do not require preprocessing as they focus solely on \gls{scatter}.
 \Gls{gather} focused accelerators such as SPiDRE and SSSR do not require preprocessing, as they directly stream matrices from standard sparse formats.
@@ -140,7 +140,7 @@ Except for SPiDRE and SpaceA which work directly in main memory, the local memor
 Thus, in the model presented in Section~\ref{sec:bg:AnalyticalModel} of the previous chapter, most of the accelerators are situated in the middle-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}, with a local memory corresponding to a few matrix rows.
 Indeed, some accelerators have so much storage, they are closer to the bottom-row of Figure~\ref{fig:bg:AnalyticalModel_SpMSpM}, where the full matrix could be held entirely in local memory.
 
-The accelerators performance is reported as a speedup versus a baseline, which may differ according to their hardware and software platforms: typically the Intel MKL library~\cite{Intel2003_IntelMKL}, the Armadillo library~\cite{Conrad2016_Armadillo}, SparseBLAS~\cite{Duff2002_SparseBLAS} for CPUs, or GridGraph~\cite{Zhu2015_GridGraph}, Gunrock~\cite{Wang2016_Gunrock} and GraphMat~\cite{Sundaram2015_GraphMat} specifically for graphs on CPUs, or cuSPARSE~\cite{NVIDIA2014_cuSPARSE} and CUSP~\cite{Dalton2014_Cusp} for GPUs.
+The accelerators' performance is reported as a speedup versus a baseline, which may differ according to their hardware and software platforms: typically the Intel MKL library~\cite{Intel2003_IntelMKL}, the Armadillo library~\cite{Conrad2016_Armadillo}, SparseBLAS~\cite{Duff2002_SparseBLAS} for CPUs, or GridGraph~\cite{Zhu2015_GridGraph}, Gunrock~\cite{Wang2016_Gunrock} and GraphMat~\cite{Sundaram2015_GraphMat} specifically for graphs on CPUs, or cuSPARSE~\cite{NVIDIA2014_cuSPARSE} and CUSP~\cite{Dalton2014_Cusp} for GPUs.
 Since different baselines with different numbers of threads and cores are used, these speedups need to be interpreted with care.
 The speedups are in general higher for the \textit{standalone} accelerators as they provide optimized hardware for the entire kernel, while \textit{processor-assist} accelerators have less impressive speedups.
 Although many \textit{standalone} sparse accelerators have been proposed by the academic community, it is not clear how such an accelerator could become an economically viable product.
@@ -169,7 +169,7 @@ This is mainly achieved by custom local memories and caches for the $B$-matrix t
 Nevertheless, several recent accelerators (\eg CoSPARSE, Flexagon, Sparm, Vesper and IOPS) have demonstrated that \acrshort{ip} delivers competitive performance on certain matrices, comparable to \acrshort{op} and \acrshort{gust} approaches.
 To capitalize on this observation, these designs support multiple or all three algorithms, enabling adaptive algorithm selection.
 While this flexibility for \textit{standalone} accelerators increases hardware complexity, it yields substantial performance gains and drives the field toward adaptive dataflow architectures.
-These findings validate the model presented in Section~\ref{sec:bg:AnalyticalModel} and demonstrate that it provides valuable insights into local memory requirements for sparse \acrshort{mm} accelerators.
+These findings are consistent with the model presented in Section~\ref{sec:bg:AnalyticalModel} and demonstrate that it provides valuable insights into local memory requirements for sparse \acrshort{mm} accelerators.
 
 \begin{highlight}{Conclusion}{Red}
     This comparative analysis of state-of-the-art sparse matrix accelerators reveals that \textbf{\acrlong{gust}'s algorithm is the most effective for high-performance} when coupled with \textit{standalone} hardware implementations, \textbf{followed by \acrlong{op}} which is used especially in \textit{processor-assist} designs.
@@ -200,7 +200,7 @@ Finally, the designer must decide whether the storage is done by reusing existin
 
 Going back to the case of a \textit{standalone} accelerator, the algorithms differ according to the supported kernels.
 For sparse \acrshort{mv}, most of the accelerators studied here have opted for an \acrshort{op} algorithm.
-For sparse \acrshort{mm}, the designers of around nine of the eleven highest performing accelerators have chosen \acrshort{gust} algorithm, as this algorithm provides a good trade-off, simplifying the \gls{gather} by reusing input $B$-rows and the row-by-row generation of the output, simplifying the \gls{scatter} aspect.
+For sparse \acrshort{mm}, the designers of nine of the eleven highest performing accelerators have chosen the \acrshort{gust} algorithm, as this algorithm provides a good trade-off, simplifying the \gls{gather} by reusing input $B$-rows and the row-by-row generation of the output, simplifying the \gls{scatter} aspect.
 The fact that the outputs are generated row-by-row, facilitates parallel implementations.
 \acrshort{gust} works well with \acrshort{csr} or \acrshort{csc}, providing consistent input and output formats.
 Beyond the basic algorithm, \gls{tiling} approaches or new dataflows mixing algorithms can be explored (\eg ExTensor, SPU, Spada, Flexagon, IOPS and DMSA).

@@ -6,7 +6,7 @@
 \section{Extended List of State-of-the-Art Accelerator Summaries}
 \label{app:other_acc}
 
-\lettrine{T}{his} appendix summarizes all the accelerators listed in Table~\ref{tab:soa:classificationOverview} (Chapter~\ref{cha:soa}) to help readers understand how they operate.
+\lettrine{T}{his} appendix chronologically summarizes all the accelerators listed in Table~\ref{tab:soa:classificationOverview} (Chapter~\ref{cha:soa}) to help readers understand how they operate.
 
 \paragraph{Coup -- 2015}
 
@@ -37,7 +37,7 @@ The architecture supports a wide range of graph algorithms (\eg PageRank, BFS, S
 
 \paragraph{SDE -- 2019}
 
-SDE~\cite{Hosseinabady2019_SDE} (Streaming Dataflow Engine) is a high-performance, adaptable streaming dataflow accelerator designed for the \acrshort{spmv} kernel on embedded \acrshortpl{fpga}, optimized using \gls{highLevel} synthesis (HLS).
+SDE~\cite{Hosseinabady2019_SDE} (Streaming Dataflow Engine) is a high-performance, adaptable streaming dataflow accelerator designed for the \acrshort{spmv} kernel on \acrshortpl{fpga}, optimized using \gls{highLevel} synthesis (HLS).
 It leverages loop pipelining, dataflow graphs, and data streaming to maximize memory bandwidth utilization, addressing the memory-bound nature of \acrshort{spmv}.
 The engine employs a modified \acrshort{csr} (MCSR) format to make loop iteration lengths predictable, enabling efficient pipelining and unrolling, and uses zero-padding to align row sizes for parallel processing.
 SDE supports multiport streaming to reduce memory port usage and load balancing to evenly distribute workloads across parallel computing processes, ensuring high throughput and scalability.
@@ -200,7 +200,7 @@ MOSCON incorporates a sparsity checking unit to identify and skip zero rows/colu
 
 \paragraph{GSCSp -- 2023}
 
-GSCSp~\cite{Li2023_GSCSp} is an efficient \acrlong{gust}-based \acrshort{spmm} accelerator designed for embedded \acrshortpl{fpga}.
+GSCSp~\cite{Li2023_GSCSp} is an efficient \acrlong{gust}-based \acrshort{spmm} accelerator designed for \acrshortpl{fpga}.
 It optimizes memory traffic and parallelism by employing element-wise parallelism, which evenly distributes workloads across \acrfullpl{pe} and reduces idle time caused by synchronization.
 The accelerator features SpCache, an access pattern-aware caching scheme that combines streaming and caching to handle irregular memory accesses and unpredictable row lengths in sparse matrices.
 GSCSp also introduces an optimized merge algorithm that processes only \acrlongpl{po}, eliminating redundant merges and improving efficiency.

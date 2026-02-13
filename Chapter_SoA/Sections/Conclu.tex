@@ -21,7 +21,7 @@ The diversity of existing designs underscores that there is no single ``best'' s
 Instead, the optimal architecture depends on the specific problem class, matrix structure, and performance requirements.
 Future advancements will likely focus on tailoring accelerators to the unique characteristics of different matrix structures, ensuring that caches, memory hierarchies, and computational units are optimized for the workload at hand.
 
-This chapter not only synthesizes the current state of sparse matrix acceleration but also provides a roadmap for future research, emphasizing the need for architectures that are both highly efficient and adaptable to the diverse and evolving landscape of sparse data processing.
+This chapter not only summarizes the current state of sparse matrix acceleration but also provides a roadmap for future research, emphasizing the need for architectures that are both highly efficient and adaptable to the diverse and evolving landscape of sparse data processing.
 
 \bigskip\bigskip
 
@@ -30,7 +30,7 @@ This chapter not only synthesizes the current state of sparse matrix acceleratio
     Hardware accelerators for sparse matrix computations can be categorized by:
     \begin{itemize}
         \item \textbf{Autonomy:} \textit{standalone} versus \textit{processor-assist}
-        \item \textbf{Position in the memory hierarchy:} near-processor, near-cache, or near-main memory
+        \item \textbf{Position in memory hierarchy:} near-processor, near-cache, or near-main memory
         \item \textbf{Algorithm compatibility:} \acrfull{ip}, \acrfull{op}, or \acrfull{gust}
         \item \textbf{Supported Memory Flows:} \gls{gather}/\gls{scatter} hardware support
         \item \textbf{Targeted kernels:} sparse \acrfull{mv}, sparse \acrfull{mm}, or both
@@ -40,7 +40,7 @@ This chapter not only synthesizes the current state of sparse matrix acceleratio
     \colorbf{Mulberry}{Key Findings:}
     \begin{itemize}
         \item \textbf{Algorithm Selection:} \acrlong{gust}'s algorithm offers the best trade-off for hardware implementation, balancing input reuse and output generation, while the \acrlong{op} algorithm remains a strong alternative, particularly for parallelism.
-        \item \textbf{Memory Optimization:} Efficient use of local memory, whether through custom caches or smart \gls{eviction} policies, is critical to reduce off-chip traffic and to improve performance.
+        \item \textbf{Memory Optimization:} Efficient use of local memory, whether through custom caches or smart \gls{eviction} policies, is critical to reduce off-chip traffic.
         \item \textbf{Adaptability:} The most successful accelerators dynamically adjust their dataflows and memory strategies to match the sparsity patterns of the input matrices, highlighting the importance of adaptability.
         \item \textbf{Scalability and Parallelism:} High-performance designs leverage parallel \gls{reduction} and merger units and optimized memory hierarchies.
     \end{itemize}
@@ -51,7 +51,7 @@ This chapter not only synthesizes the current state of sparse matrix acceleratio
 
     \bigskip
     \colorbf{Mulberry}{SpDCache:}
-    Our work focuses on near-cache, \textit{processor-assist} accelerators that compute \gls{scatter}-focused \acrlong{op} \acrshort{spmv} kernels.
+    Our work focuses on near-cache, \textit{processor-assist} accelerators that computes \gls{scatter}-focused \acrlong{op} \acrshort{spmv} kernels.
 \end{highlight}
 
 \clearpage

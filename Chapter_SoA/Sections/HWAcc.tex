@@ -9,12 +9,12 @@
 \lettrine{I}{n} this section, we describe the recent (2015-2025) hardware accelerators for sparse \acrshort{mm} and \acrshort{mv}, targeting mainly \acrshort{asic}-type implementation.
 We note there are many \acrshort{fpga}-based accelerators, however, to limit the scope we do not focus on these and only include those which can be classified along the \acrshort{asic}-type accelerators.
 We try to use consistent notation, for example in the color code in the architecture figures.
-Particularly, all kinds of compute units are represented in \textit{red}, control units in \textit{orange}, all kinds of data transfer units in \textit{yellow}, caches in \textit{blue}, and all kinds of memories in \textit{green}.
+Particularly, compute units are represented in \textit{red}, control units in \textit{orange}, data transfer units in \textit{yellow}, caches in \textit{blue}, and memories in \textit{green}.
 We include our work, the \acrlong{spdc} accelerator~[\ref{publ:SpDC}], which we describe in subsequent chapters, as we published initial results in 2024.
 Before going into detailed overviews of specific accelerators, in Table~\ref{tab:soa:classificationOverview} we present a criteria-based classification of the designs which were studied.
 
 A first criterion to classify the accelerators is between \textit{standalone} accelerators that address the full kernel without the assist of a processor (\ex OuterSPACE~\cite{Pal2018_OuterSPACE}) and ones that address only a part of the kernel and need a processor to manage the computation (\ex PHI~\cite{Mukkara2019_PHI}).
-Most of the \textit{standalone} accelerators are directly connected to the main memory and internally manage their internal memories.
+Most of the \textit{standalone} accelerators are directly connected to the main memory and internally manage their local memories.
 Accelerators can also intervene at different levels of the memory hierarchy, giving a second classification criterion.
 Certain accelerators intervene near the processors (\ex ASA~\cite{Zhang2022_ASA}), near the cache (\ex PHI), or near the main memory (\ex SPiDRE~\cite{Barredo2019_SPiDRE}).
 
@@ -27,7 +27,7 @@ Certain accelerators offer solutions for one, the other or both.
 For example, some accelerators (\ex OuterSPACE) are specialized for an \acrshort{op} algorithm but optimize both \gls{gather} and \gls{scatter}.
 Finally, accelerators may be optimized for sparse \acrshort{mm}, \acrshort{mv} or both, our final criterion.
 
-After this first comparison, in Sections~\ref{sec:soa:outerspace} to~\ref{sec:soa:phi} we present in detail three \textit{standalone} accelerators (\eg OuterSPACE, ExTensor and Gamma) and one \textit{processor-assist} accelerator (\eg PHI), which cover several types of architectures and algorithms.
+After this first comparison, in Sections~\ref{sec:soa:outerspace} to~\ref{sec:soa:phi} we present, in detail, three \textit{standalone} accelerators (\eg OuterSPACE, ExTensor and Gamma) and one \textit{processor-assist} accelerator (\eg PHI), which cover several types of architectures and algorithms.
 In Section~\ref{sec:soa:other_accel}, we summarize the other accelerators from Table~\ref{tab:soa:classificationOverview}.
 
 {
@@ -123,12 +123,12 @@ In Section~\ref{sec:soa:other_accel}, we summarize the other accelerators from T
         \sa \; Most standalone accelerators connect directly to main memory. \\
         \sb \; Not main contribution but addressed in the article. \\
         \sc \; Could be adapted but not discussed in the article. \\
-        \sd \; New complex algorithm inspired by.
+        \sd \; New dataflow based on one or several algorithms.
     \end{longtblr}
 }
 
 \begin{highlight}{Conclusion}{Red}
-    Hardware accelerators for sparse matrix operations are categorized by level of \textbf{autonomy} (\textit{standalone}, \textit{processor-assist}), \textbf{memory hierarchy position} (near-core, near-cache, near-main memory), supported \textbf{algorithms} (\acrshort{ip}, \acrshort{op} and \acrshort{gust}), supported \textbf{memory flows} (\gls{gather} and \gls{scatter}), and \textbf{kernels} (sparse \acrshort{mv} and \acrshort{mm}).
+    Hardware accelerators for sparse matrix operations are categorized by their level of \textbf{autonomy} (\textit{standalone}, \textit{processor-assist}), \textbf{memory hierarchy position} (near-core, near-cache, near-main memory), supported \textbf{algorithms} (\acrshort{ip}, \acrshort{op} and \acrshort{gust}), supported \textbf{memory flows} (\gls{gather} and \gls{scatter}), and \textbf{kernels} (sparse \acrshort{mv} and \acrshort{mm}).
     While \textbf{\textit{standalone} accelerators dominate} the landscape with diverse architectural approaches focusing on specific applications, recent trends show \textbf{increased focus on algorithm-adaptive designs and \textit{processor-assist} variants} for generic problem classes.
 \end{highlight}
 
@@ -153,9 +153,9 @@ In Section~\ref{sec:soa:other_accel}, we summarize the other accelerators from T
 In the previous sections, we introduced four sparse accelerators, each implementing different matrix multiplication algorithms and architectures.
 This section explores additional accelerators to showcase the wide range of architectural approaches available.
 We focus on their primary applications and design features, emphasizing their advantages and limitations.
-For operational summaries of these accelerators, refer to Appendix~\ref{app:other_acc}, and for detailed descriptions of some, see Paper~\ref{publ:SoA}.
+In Appendix~\ref{app:other_acc}, the reader can find a short summary of over 40 different sparse accelerators that were studied, some of which were also presented in Paper~\ref{publ:SoA}.
 
-Coup~\cite{Zhang2015_Coup}, PHI~\cite{Mukkara2019_PHI}, SortCache~\cite{Srikanth2021_SortCache}, ASA~\cite{Zhang2022_ASA}, SpDCache~[\ref{publ:SpDC}] and C\textsuperscript{3}ache~\cite{Li2025_C3ache} are \textit{processor-assist} accelerators that modify existing caches to support near-memory \gls{reduction} operations with in-place accumulation.
+Coup~\cite{Zhang2015_Coup}, PHI~\cite{Mukkara2019_PHI}, SortCache~\cite{Srikanth2021_SortCache}, ASA~\cite{Zhang2022_ASA}, SpDCache~[\ref{publ:SpDC}] and C\textsuperscript{3}ache~\cite{Li2025_C3ache} are \textit{processor-assist} accelerators that modify an existing cache to support near-memory \gls{reduction} operations with in-place accumulation.
 By focusing solely on the \gls{scatter} operation, they achieve performance improvements while maintaining scalability, versatility, and low area overhead.
 However, their performance relies on shifting computation toward the memory hierarchy, which can create bottlenecks.
 Among these, SortCache incorporates a large merger, which introduces scalability challenges, as large mergers are difficult to scale efficiently.
@@ -171,7 +171,7 @@ SPiDRE, on the other hand, demands more area and may dominate main memory traffi
 ExTensor, while offering general purpose streamers, is optimized for building \textit{standalone}, highly tiled accelerators.
 
 Alongside \textit{processor-assist} accelerators, a wide variety of \textit{standalone} accelerators have been proposed.
-These achieve high performance by avoiding synchronization bottlenecks and reducing on-chip memory traffic.
+These achieve achieve high performance by providing a customized memory hierarchy which can feed parallel compute units and merge results back to memory.
 However, they often come with high area overhead and face significant scalability challenges.
 Most \textit{standalone} accelerators rely on large mergers or lookup tables to efficiently handle \gls{gather} and \gls{scatter} operations.
 Additionally, many are tailored to specific applications or algorithms.
@@ -205,5 +205,5 @@ Finally, SPADES~\cite{Huang2024_SPADES} stands out as the only accelerator in th
 Instead, it uses GZIP compression, with dedicated hardware for efficient, on-the-fly decompression during sparse computing.
 
 \begin{highlight}{Conclusion}{Red}
-    This comprehensive overview demonstrates that sparse matrix accelerators have evolved significantly from \textbf{2015 to 2025}, with diverse architectural approaches addressing different algorithmic paradigms, memory hierarchies, and sparsity patterns to maximize performance and energy efficiency when handling increasingly irregular and diverse sparse workloads in machine learning, graph processing, and scientific computing.
+    This overview demonstrates that sparse matrix accelerators have evolved significantly from \textbf{2015 to 2025}, with diverse architectural approaches addressing different algorithmic paradigms, memory hierarchies, and sparsity patterns to maximize performance and energy efficiency when handling increasingly irregular and diverse sparse workloads in machine learning, graph processing, and scientific computing.
 \end{highlight}

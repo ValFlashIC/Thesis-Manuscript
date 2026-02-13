@@ -12,7 +12,7 @@ By doing the \glspl{intersection} ahead of time, at different levels of the memo
 Note that the input matrices would typically be stored in a complex sparse format derived from \acrshort{csr}, corresponding to three levels of \gls{tiling}.
 Thus, at a given \gls{tile} level, each \gls{tile} is represented by coordinates (\textit{coord}), the \acrshort{csr} \gls{metadata} stored in $idx$ and $ptr$, with the \gls{tile} data itself compressed using \acrshort{csr} (next \gls{tile} level).
 ExTensor is designed with a flexible architecture composed of different bricks, as shown in Figure~\ref{fig:soa:extensor}.
-To aid in the understanding, the interactions between the bricks are described using function calls:
+To aid in the understanding, the interactions between the bricks are described using the semantics of function calls.
 \begin{itemize}
     \item The \textit{Scanner} is a storage unit that delivers a stream of coordinates in increasing order, fetching them from memory.
     The coordinates are delivered through the \textit{Iterate()} operation call.
