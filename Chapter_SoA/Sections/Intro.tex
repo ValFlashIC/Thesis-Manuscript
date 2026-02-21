@@ -21,7 +21,7 @@ For example, with \acrshort{ip} algorithms, the key challenge is \gls{intersecti
 \acrlong{gust}'s algorithm offers a trade-off, balancing input reuse and output generation but still requires careful optimization.
 On conventional CPUs, memory throughput is the primary bottleneck, leading to optimizations such as row reordering, blocking, and loop transformations to improve data locality.
 For GPUs, the challenge shifts to thread assignment, warp balancing, and efficient use of shared memory~\cite{Liu2014}.
-Sparse \acrshort{mm} introduces additional complexity due to dynamic \glspl{reduction} and irregular output generation~\cite{Gao2020}, which dominate execution time and memory traffic on both CPUs and GPUs~\cite{Zachariadis2020, Nagasaka2018, Deveci2018}.
+Sparse \acrfull{mm} introduces additional complexity due to dynamic \glspl{reduction} and irregular output generation~\cite{Gao2020}, which dominate execution time and memory traffic on both CPUs and GPUs~\cite{Zachariadis2020, Nagasaka2018, Deveci2018}.
 Hardware accelerators address these issues by optimizing the memory hierarchy, ensuring input data availability near compute units and offloading accumulation/\gls{reduction}/\textit{merge} operations from processors.
 This chapter reviews many state-of-the-art hardware accelerators for sparse matrix computations, comparing their architectures, algorithms, and performance.
 Our analysis identifies common architectural trends, evaluates design trade-offs, and provides insights for future accelerator development.

@@ -2,14 +2,14 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="339.37268mm"
-   height="805.98456mm"
-   viewBox="0 0 339.37266 805.98449"
+   width="571.85297mm"
+   height="817.91565mm"
+   viewBox="0 0 571.85291 817.91557"
    version="1.1"
    id="svg1"
    sodipodi:docname="SoA_AcceleratorsArchis.svg"
    inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
-   inkscape:export-filename="SoA_AcceleratorsArchis_PHI.pdf"
+   inkscape:export-filename="SoA_AcceleratorsArchis_Gamma.pdf"
    inkscape:export-xdpi="333"
    inkscape:export-ydpi="333"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -28,9 +28,9 @@
      inkscape:deskcolor="#505050"
      inkscape:document-units="mm"
      showgrid="true"
-     inkscape:zoom="0.1280329"
-     inkscape:cx="-1972.1493"
-     inkscape:cy="894.30139"
+     inkscape:zoom="0.5121316"
+     inkscape:cx="1166.6923"
+     inkscape:cy="1840.3473"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
@@ -40,8 +40,8 @@
     <inkscape:grid
        id="grid1"
        units="px"
-       originx="32.103013"
-       originy="72.735631"
+       originx="264.58329"
+       originy="84.6667"
        spacingx="0.26458333"
        spacingy="0.26458334"
        empcolor="#0099e5"
@@ -480,7 +480,7 @@
      inkscape:label="Calque 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(32.103016,72.735606)">
+     transform="translate(264.58331,84.666672)">
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.705556;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        id="rect11-2-2-2-5-1-70"
@@ -3477,9 +3477,9 @@
        transform="rotate(-90,80.036289,360.49467)"><tspan
          x="42.333328"
          y="373.06253"
-         id="tspan15"><tspan
+         id="tspan22"><tspan
            style="stroke-width:0.706"
-           id="tspan13">Reduction</tspan></tspan></text>
+           id="tspan21">Reduction</tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444px;line-height:6.20888px;font-family:Cambria;-inkscape-font-specification:Cambria;text-align:center;letter-spacing:0px;text-anchor:middle;white-space:pre;inline-size:37.0417;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.706001;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
@@ -3489,9 +3489,9 @@
        transform="rotate(-90,18.520671,378.35405)"><tspan
          x="42.333328"
          y="373.06253"
-         id="tspan17"><tspan
+         id="tspan24"><tspan
    style="font-style:italic;-inkscape-font-specification:'Cambria Italic'"
-   id="tspan16">A</tspan>-Row</tspan></text>
+   id="tspan23">A</tspan>-Row</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444px;line-height:6.20888px;font-family:Cambria;-inkscape-font-specification:Cambria;text-align:center;letter-spacing:0px;text-anchor:middle;white-space:pre;inline-size:37.0417;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.706001;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
@@ -3501,9 +3501,9 @@
        transform="rotate(-90,41.010256,400.84364)"><tspan
          x="42.333328"
          y="373.06253"
-         id="tspan19"><tspan
+         id="tspan26"><tspan
    style="font-style:italic;-inkscape-font-specification:'Cambria Italic'"
-   id="tspan18">A</tspan>-Indices</tspan></text>
+   id="tspan25">A</tspan>-Indices</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444px;line-height:6.20888px;font-family:Cambria;-inkscape-font-specification:Cambria;text-align:center;letter-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.706001;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
@@ -4059,23 +4059,28 @@
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke:#404040;stroke-width:0.352778;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        id="rect11-2-2-2-5-3-1-15-2-5-3"
-       width="13.229166"
-       height="5.291667"
-       x="38.364559"
-       y="416.71884"
+       width="7.9375005"
+       height="9.2604313"
+       x="-1.3229173"
+       y="351.89594"
        rx="1.3229133"
        ry="1.3229167" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:4.65666px;font-family:Cambria;-inkscape-font-specification:Cambria;text-align:center;letter-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.705556;stroke-linecap:round;stroke-linejoin:round"
-       x="44.979145"
-       y="420.68759"
+       x="2.6458349"
+       y="355.86469"
        id="text10-2-1-0"><tspan
          sodipodi:role="line"
          id="tspan10-4-0-8"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.23333px;line-height:4.65666px;font-family:Cambria;-inkscape-font-specification:'Cambria Bold';stroke-width:0.705556"
-         x="44.979145"
-         y="420.68759">32 PEs</tspan></text>
+         x="2.6458349"
+         y="355.86469">32</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.23333px;line-height:4.65666px;font-family:Cambria;-inkscape-font-specification:'Cambria Bold';stroke-width:0.705556"
+         x="2.6458349"
+         y="360.52133"
+         id="tspan20">PEs</tspan></text>
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke:#404040;stroke-width:0.352778;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        id="rect11-2-2-2-5-3-1-15-2-5-3-6"

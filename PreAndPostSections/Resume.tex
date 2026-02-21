@@ -21,13 +21,13 @@ We analyze the fundamental algorithms for sparse matrix multiplication, \acrlong
 \acrlong{gust}'s algorithm emerges as the most promising for hardware implementation due to its balanced trade-offs, while the \acrlong{op} algorithm is well-suited for \acrlong{mv} kernels.
 
 Our main contribution is \acrlong{spdc}, a region-based \acrlong{redC} architecture that optimizes memory transactions for sparse data by leveraging the structural properties of \gls{banded} matrices.
-\acrlong{spdc} partitions cache memory into in-\gls{band} and out-of-\gls{band} regions, significantly reducing memory traffic compared to generic caches.
+\acrlong{spdc} partitions cache memory into sparse and dense regions, significantly reducing memory traffic compared to generic caches.
 Key contributions include:
 \begin{itemize}
     \item Architectural Design and Modeling: A Python-based simulation model and a probabilistic C-based model analyze \acrlong{spdc}'s memory transactions, revealing the importance of coarse-grain matrix structure (\ex \gls{banded} matrices).
     \item Microarchitectural Implementation: \acrshort{rtl}-level simulations validate \acrlong{spdc}'s effectiveness in reducing memory traffic and improving cache utilization, with virtual partitioning ensuring flexibility and adaptability.
     Further analysis reveals the importance of fine-grain matrix structure in optimizing performance (\eg cache-line density).
-    \item Optimizations and Scalability: Extensions to \acrshort{spmspm} kernels and multi-core architectures position \acrlong{spdc} as a versatile, scalable solution for modern sparse matrix processing.
+    \item Optimizations and Scalability: Extensions to sparse \acrlong{mm} kernels and multi-core architectures position \acrlong{spdc} as a versatile, scalable solution for modern sparse matrix processing.
 \end{itemize}
 
 This thesis advances the state-of-the-art in cache architectures for sparse data, emphasizing intrinsic understanding and adaptive, structure-aware design for high-performance hardware solutions.
@@ -61,12 +61,12 @@ Nous analysons les algorithmes fondamentaux de multiplication de matrices creuse
 L'algorithme de \acrlong{gust} s'impose comme le plus prometteur pour une implémentation matérielle en raison de ses compromis équilibrés, tandis que l'algorithme \acrlong{op} est particulièrement adapté aux opérations matrice-vecteur.
 
 Notre contribution principale est \acrlong{spdc}, une architecture de cache de réduction basée sur des régions qui optimise les transactions mémoire pour les données creuses en exploitant les propriétés structurelles des matrices bandées.
-\acrlong{spdc} partitionne la mémoire cache en régions en-bande et hors-bande, réduisant significativement le trafic mémoire par rapport aux caches génériques.
+\acrlong{spdc} partitionne la mémoire cache en régions denses et creuses, réduisant significativement le trafic mémoire par rapport aux caches génériques.
 Les contributions clés incluent :
 \begin{itemize}
     \item Conception architecturale et modélisation : Un modèle de simulation basé sur Python et un modèle probabiliste en C analysent les transactions mémoire de \acrlong{spdc}, révélant l'importance de la structure matricielle à gros grain (par exemple, les matrices bandées).
     \item Implémentation microarchitecturale : Des simulations au niveau \acrshort{rtl} valident l'efficacité de \acrlong{spdc} dans la réduction du trafic mémoire et l'amélioration de l'utilisation du cache, avec un partitionnement virtuel de la mémoire garantissant flexibilité et adaptabilité.
-    Une analyse approfondie révèle l'importance de la structure matricielle à petit grain pour optimiser les performances (en particulier la densité des lignes de cache).
+    Une analyse approfondie révèle l'importance de la structure matricielle à grain fin pour optimiser les performances (en particulier la densité des lignes de cache).
     \item Optimisations et scalabilité : Des extensions aux multiplications matrice-matrice et aux architectures multi-c\oe{}urs positionnent \acrlong{spdc} comme une solution polyvalente et évolutive pour le traitement moderne des matrices creuses.
 \end{itemize}
 
