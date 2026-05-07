@@ -33,7 +33,7 @@ This issue vanishes entirely for \acrlong{spmm} (\acrshort{spmm}).
 Explicit flushes are unnecessary between successive \acrshort{spmspv} operations except the last one, since each iteration updates a distinct address range in $C$.
 The next iteration implicitly flushes previous values through replacements and \glspl{eviction}.
 
-This approach suits multicore architectures, where multiple \acrshort{spmspv} iterations can execute in parallel.
+This approach suits multi-core architectures, where multiple \acrshort{spmspv} iterations can execute in parallel.
 The primary hardware challenge is managing shared access to matrix $A$ across cores.
 
 \begin{highlight}{Conclusion}{Red}

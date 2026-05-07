@@ -180,7 +180,7 @@ As we see in Chapter~\ref{cha:soa}, hardware accelerators may combine the \emph{
 
 In Table~\ref{tab:bg:AlgosHWComp}, we summarize the advantages and hardware challenges for each algorithm, including \acrshort{gust} which presents a trade-off between \acrshort{ip} and \acrshort{op}.
 The potential for parallelism and data-reuse varies across algorithms, \acrshort{ip} being the most limited unless \gls{tiling} methods are used.
-With \acrshort{op}, \acrshortpl{po} can easily be generated across a multicore system but at the cost of transferring a large volume of data to memory.
+With \acrshort{op}, \acrshortpl{po} can easily be generated across a multi-core system but at the cost of transferring a large volume of data to memory.
 With \emph{immediate updates}, \acrshort{op} transfers less data but all accesses on the output are ``random'' \glspl{reduction}.
 
 \begin{table}[htb]

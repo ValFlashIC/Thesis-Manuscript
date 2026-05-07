@@ -4,8 +4,8 @@
 
 \FancyHeadRight{\sectitle}
 
-\if\Language\EN \renewcommand{\sectitle}{Acknowledgements}
-\else \renewcommand{\sectitle}{Remerciements} \fi
+% Section en français
+\renewcommand{\sectitle}{Remerciements}
 
 \phantomsection
 \addcontentsline{toc}{chapter}{\sectitle}
@@ -13,89 +13,99 @@
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Your Text %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\textbf{Will be present in the final version}
+\lettrine{P}{our} commencer, je tiens à remercier mon directeur de thèse, Frédéric Rousseau, et mes co-encadrants, Adrian Evans et Yves Durand, pour leur direction et leurs nombreux efforts qui ont grandement contribué au bon déroulement de la thèse dans son ensemble, et en particulier pour la rédaction d'articles scientifiques.
+Je remercie César Fuguet qui m'a fourni une base RTL sur laquelle travailler en plus de support et avis précieux sur mon travail d'implémentation.
+Je remercie Jules Dubois sans qui je n'aurais pu finir dans les temps, pour son travail laborieux de benchmarking, en tant que stagiaire de fin d'études.
+Vous étiez tous les cinq la structure indispensable de ma thèse.
 
-% Fred
-% Adrian
-% Yves (D)
+Je remercie Yves Robert et Christophe Picard pour avoir été membres de mon CSI trois années de suite, et s'être assuré de la bonne conduite de la thèse.
 
-% Cesar
+Je remercie les membres de mon jury de thèse, Yves Robert (en tant que président), Roselyne Chotin (en tant que rapporteur), Olivier Sentieys (en tant que rapporteur), Benoit Dupont De Dinechin (en tant qu'examinateur), Frédéric Rousseau (en tant qu'examinateur), et Adrian Evans (en tant qu'invité), pour avoir accepté d'évaluer mon travail et \textcolor{Red}{\textbf{pour leur pertinence et bonne humeur lors de la soutenance}}.
 
-% Jules
+\bigskip
 
-% Yves (R)
-% Christophe
+J'en viens maintenant à mes nombreux collègues de travail, à commencer par le LSTA.
+Je remercie tous les membres du laboratoire, anciens et nouveaux qui j'ai rencontrés, qui ont contribué à une ambiance fort sympathique que je ne risque pas d'oublier.
+Certains en particuliers en sont toujours au c\oe{}ur, n'est-ce pas, Ludo, Jérôme, Tanuj ?
+Beaucoup de doctorants, stagiaires et alternants également, avec qui j'ai pu passer du bon temps au delà du cadre du travail,
+Antoine F.,
+Antoine R.,
+Camille,
+Davy,
+Eduardo,
+Elian,
+Emma,
+Fouad,
+Gabriel,
+Joe,
+Joris,
+Juan,
+Jules,
+Julien,
+Junheng,
+Louis,
+Marlène,
+Mathieu C.,
+Mathieu T.,
+Pierre,
+Quan,
+Simone,
+Théo,
+Victor,
+Virgile,
+Yann,
+Yannick,
+Yuliana,
+Zach.
+Je tiens à remercier Alex, le chef, qui a fait de ce labo un lieu agréable pour travailler.
+Et je remercie Caroline, la secrétaire sans qui on ne pourrait guère naviguer dans les méandre de l'administration du CEA.
+Je remercie plus généralement le CEA pour m'avoir accueilli, m'avoir permis de participer à des conférences et écoles d'été/hivers, expérience des plus intéressante, en particulier celle qui m'a amené à voyagé à Hong Kong.
+Merci à tout le personnel des restaurants (H3 en particulier) pour nous avoir servit des plats et desserts de qualité, fait maison et excellents (je maintient qu'être bien nourrit à un impact certain sur le bon déroulement d'une thèse).
 
-% Roselyne
-% Olivier
+\bigskip
 
-% Benoit
-% Yves (R) *
-% Fred *
+Le deuxième laboratoire qui m'a accueilli est le TIMA, dans l'équipe MADMAX, anciennement SLS.
+J'ai peu interagi avec le TIMA pendant les premières années de la thèse, je vais donc faire court, mais beaucoup plus sur la fin, puisque j'y travaille désormais (jusqu'à mi-2027 du moins).
+Je remercie tous les membres de l'équipe pour m'avoir accueilli pendant et après ma thèse, dans une ambiance unique et fort sympathique qu'est la leur.
+Merci à Julie pour avoir été l'interface entre le CEA et le TIMA pour toutes les réunions étudiantes.
+Merci à Arthur et Frédéric pour leur flexibilité par rapport à la gestion de ma fin de thèse et mon démarrage au TIMA.
 
-% ---
+\bigskip
 
-% LSTA
+Une mention spéciale pour ceux qui ont été le plus présents pendant mes trois années de thèse, et qui sont devenus des amis précieux, 
+Davy, le bon vivant par excellence, toujours d'humeur joyeuse et prompt à savourer un bon restaurant,
+Eduardo, le maître absolue des saintes pauses, de la vie tranquille et en fête, apportant la chaleur et le soleil du Brésil,
+Joe, le génie farceur, pile électrique (à une bulle), moteur de tous les délires de la chambre et au-delà,
+Yann, le sportif tranquille, sérieux et détaché, au c\oe{}ur de parties endiablées, de courses effrénées, et de vacances décontractées.
+Rim et Meg, heureuses élues de Davy et Yann (vous êtes bien veinardes, non je ne suis pas jaloux), et Loïc, frère jumeau de Davy (malheureusement déjà pris, non je ne suis pas jaloux), qui viennent embellir le tout lors de nos divers voyages ensembles.
+Merci à vous, grâce à qui mes trois années de thèse sont passées comme trois lettres à la poste.
+Je souhaite sincèrement que ce ne soit là que du début de nos aventures.
 
-% Duo Gérôme Ludo
+\bigskip
 
-% Alex
-% Je remercie Alex, le chef. Bien que je n'ai eu que peu de chef avant lui, il m'a semblé être un chef d'exception, et des dires de gens de plus d'expérience, ce n'est pas qu'une impression !
+Je remercie à présent mes amis d'avant, avec qui j'ai passé des vacances et bons moments pendant ma thèse,
+Julien, l'imperturbable divin chauve,
+Marin, l'amis des arbres et du vent,
+Pierre, le poète-danseur de soirée.
 
-% Caroline
-% Encore une fois, je parle avec peu d'expérience professionnel, et pourtant il me semble évident que Caroline représente la secrétaire modèle, indispensable pour le labo et toujours disponible et entreprenante en plus d'être des plus agréables. Demandez à n'importe qui au LSTA !
+\bigskip
 
-% PhD
+Un clin d'\oe{}il à ma promo de Popo 2022, avec qui j'ai appris les bases nécessaires pour affronter techniquement la thèse, dont Cyril, Elios, Johan et Mathis, mon bien solide petit groupe de travail.
 
-% Mathieu
-% Eduardo
-% Davy & Rim
-% Joe
-% Louis
-% Gabriel
-% Antoine
-% Juan
-% Quan
-% Junheng
-% Yannick
+\bigskip
 
-% Joris
-% Yann & Meg
-% Julien
+Une pensé pour mes professeurs de piano, qui m'ont fourni pendant la thèse un petit havre de paix musicale une heure par semaine.
 
-% Elian
-% Mathieu
+Une pensé pour Albert, le propriétaire de mon logement, qui a toujours été disponible et présent en cas de besoin, me permettant d'être bien installé tout au long de la thèse.
 
-% Pierre Camille ? ; Yuliana Antoine R Fouad Emma Victor Théo Virgile
+\bigskip
 
-% Je remercie plus généralement le CEA pour m'avoir accueilli [], m'avoir permis de participer à des conférences et écoles d'été/hivers, expérience des plus intéressante, en particulier celle qui m'a amené à voyagé à Hong Kong.
-% Merci à tout le personnel des restaurants (H3 en particulier) pour nous avoir servit des plats et desserts de qualité, fait maison et excellents (je maintient qu'être bien nourrit à un impact certain sur le bon déroulement d'une thèse).
-
-% ---
-
-% TIMA
-% rester vague trop de monde
-
-% (Chandana HiPEAC ACACES)
-
-% Arthur
-
-% ---
-
-% Marin
-% Pierre H
-% Julien
-
-% Johan (Mathis Cyril Elios)
-% Clin d'oeil a ma promo 2022 popo
-
-% ---
-
-% Piano?
-
-% Albert
-
-% Famille
+Pour finir, je remercie ma famille, au grand complet, qui est avec moi depuis toujours et qui le sera toujours.
+Merci à Karen, Laurent, Amélia, Roxane, Florian et Tristan, mes tante, oncle et cousins, et Daniel et Renée, mes grand-parents, parmi les plus présents dans ma vie.
+Merci à Sylvaine, ma maman, qui passe son temps à m'aider au maximum de son énergie au moindre besoin.
+Merci à Richard, mon papa, qui m'apprend à relativiser sur ma vie et mes soucis.
+Merci à Sacha, mon petit frère, qui est toujours là pour discuter quand je le fais sortir.
+Merci à Ambre et Jade, mes petites s\oe{}urs jumelles, toujours pleines d'énergie et de bonne humeur.
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

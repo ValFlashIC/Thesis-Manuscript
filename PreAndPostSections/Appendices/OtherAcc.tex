@@ -72,7 +72,7 @@ Additional optimizations include Variable Length Delta Index (VLDI) compression 
 SPU~\cite{Dadu2019_SPU} (Sparse Processing Unit) is a general purpose accelerator designed to efficiently handle both data-dependent and regular algorithms by specializing in two common forms of data-dependence: stream-join and alias-free indirection.
 It integrates a systolic-style coarse-grained reconfigurable architecture with a compute-enabled scratchpad and aggressive stream reordering to support high-bandwidth indirect memory access and fully-pipelined stream-join operations.
 The accelerator employs decomposability across compute, network, and memory pipelines to flexibly support various data types, enabling independent flow control for finer-grain resources.
-SPU's stream-dataflow ISA and multicore mesh network-on-chip facilitate efficient communication, synchronization, and workload partitioning, making it adaptable across domains like machine learning, graph processing, and databases.
+SPU's stream-dataflow ISA and multi-core mesh network-on-chip facilitate efficient communication, synchronization, and workload partitioning, making it adaptable across domains like machine learning, graph processing, and databases.
 % By combining these features, SPU achieves high throughput and hardware utilization for both sparse and dense computations while maintaining a domain-neutral interface.
 
 \paragraph{Tensaurus -- 2020}

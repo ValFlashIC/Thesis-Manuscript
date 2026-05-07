@@ -8,7 +8,7 @@
 
 \lettrine{W}{e} design a specialized data-cache architecture, called \acrlong{spdc}, that exploits the two-region structure of \gls{banded} matrices to reduce memory traffic during \glspl{reduction} operations on the output vector $c$.
 To better understand \acrlong{spdc} behavior, our study focuses on a single-level cache hierarchy with a single core executing \acrshort{spmv} kernels on \gls{banded} matrix case.
-However, \acrlong{spdc} is designed to extend to multilevel memory hierarchies and multicore architectures (see Chapter~\ref{cha:optim}), and to adapt to other region configurations.
+However, \acrlong{spdc} is designed to extend to multilevel memory hierarchies and multi-core architectures (see Chapter~\ref{cha:optim}), and to adapt to other region configurations.
 As an isolated data-cache, \acrlong{spdc} must satisfy three key requirements:
 \begin{itemize}
     \item \textbf{Generic cache functionality:} \acrlong{spdc} operates as a standard cache for load and store instructions from the processor, enabling sequential reads of matrix $A$ and vector $b$ to leverage spatial locality.

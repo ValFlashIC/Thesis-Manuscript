@@ -79,7 +79,7 @@ The required \acrlong{spdc} modifications are:
     \item Region determination: For each $RED(addr, val)$ instruction, \acrlong{spdc} computes the current row $i \in \ldb 0; M-1 \rdb$ from the address: $i = \dfrac{addr-c}{s_w}$, then determines the region as \acrshort{ibr} if $|i-j| \leqslant w_\mathit{hB}$, otherwise \acrshort{obr}.
 \end{itemize}
 These modifications impose minimal hardware overhead, with per-\gls{reduction} computations executed at \textit{st0} in the \acrlong{spdc} \gls{pipeline}.
-This feature becomes essential when extending \acrlong{spdc} to multi-level, multi-core architectures (Section~\ref{sec:optim:multicore}).
+This feature becomes essential when extending \acrlong{spdc} to multi-level, multi-core architectures (Section~\ref{sec:optim:multi-core}).
 
 \begin{highlight}{Conclusion}{Red}
     \textbf{Hardware-based region computation} eliminates unnecessary instructions in the software's inner-loop, enabling \acrshort{csc} format compatibility and simplifying the \acrshort{spmv} kernel with minimal hardware overhead.
