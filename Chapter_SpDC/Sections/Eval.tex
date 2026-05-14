@@ -20,7 +20,7 @@ In the \acrshort{redc}, 25\% of the memory is allocated for the inputs ($A$ and 
 In \acrlong{spdc} (\acrshort{spdc}), 25\% is allocated for the \acrshort{grc}, 50\% for the \acrshort{drc} and 25\% for the \acrshort{srt}.
 In the next section, we present more results with varying region sizes, confirming that this allocation is indeed a good compromise.
 All three caches use a \acrfull{lru} \gls{eviction} policy, except the \acrshort{srt} region of \acrlong{spdc} which uses a \emph{random} policy.
-All three caches have a total data storage of 32~KiB, not including the \acrshort{tag} storage.
+All three caches have a total data storage of 32~KiB, not including the \gls{tag} storage.
 The \gls{set}-associative regions have 4~\glspl{way} and 64B cache-lines (8 \emph{double} words per line).
 
 We simulated 48 matrices that have been used by the state-of-the-art accelerators~\cite{Pal2018_OuterSPACE, Hegde2019_ExTensor, Srivastava2020_MatRaptor, Baek2021_InnerSP, Zhang2021_Gamma, Srikanth2021_SortCache, Zhang2022_ASA}, which are listed in Appendix~\ref{app:mat_list}.

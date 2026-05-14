@@ -359,7 +359,13 @@
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This package must be the last loaded
-\usepackage{hyperref}
+\usepackage[pdftex,
+            pdfauthor={\author},
+            pdftitle={Thesis Manuscript},
+            pdfsubject={\title},
+            pdfkeywords={Sparse Matrices; Data-Caches; Microarchitecture},
+            pdfproducer={Latex with hyperref},
+            pdfcreator={pdflatex}]{hyperref}
 \hypersetup{ % hyperlinks parameters
     colorlinks=true,                % allow colors
     breaklinks=true,                % allow to break links when too long
